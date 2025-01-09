@@ -3,12 +3,14 @@
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGui.Widgets.Dialogs;
     using Hexa.NET.Utilities;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Dialogs;
+    using HexaEngine.Editor.Extensions;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Scenes.Serialization;
@@ -1302,18 +1304,20 @@
             }, (files, currentDir));
         }
 
-        private void DrawMenuBar()
+        private unsafe void DrawMenuBar()
         {
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
             if (ImGui.BeginMenuBar())
             {
                 // something here causes gc pressue needs investigation.
-                if (ImGui.BeginMenu($"{UwU.Gear}"))
+                if (ImGui.BeginMenu(builder.BuildLabel(UwU.Gear)))
                 {
                     DrawSettings();
                     ImGui.EndMenu();
                 }
 
-                if (ImGui.Button($"{UwU.FileImport} Import"))
+                if (ImGui.Button(builder.BuildLabel(UwU.FileImport, " Import")))
                 {
                     OpenFileDialog openFileDialog = new();
                     openFileDialog.AllowMultipleSelection = true;

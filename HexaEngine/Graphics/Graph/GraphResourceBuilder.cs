@@ -115,7 +115,8 @@
                     continue;
                 }
 
-                if (descShared.Container != null && descShared.Container == descriptor.Container && ((descriptor.Flags & ResourceCreationFlags.GroupShared) == 0 || (descShared.Flags & ResourceCreationFlags.GroupShared) == 0))
+                if (descShared.Container != null && descShared.Container == descriptor.Container &&
+                    ((descriptor.Flags & ResourceCreationFlags.GroupShared) == 0 || (descShared.Flags & ResourceCreationFlags.GroupShared) == 0))
                 {
                     continue;
                 }

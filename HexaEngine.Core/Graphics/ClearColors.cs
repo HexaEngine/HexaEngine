@@ -3,8 +3,8 @@
 namespace HexaEngine.Core.Graphics
 {
     [InlineArray(BlendDescription.SimultaneousRenderTargetCount)]
-    public struct RenderTargetArray
+    public struct ClearColors
     {
-        public IRenderTargetView View;
+        public ClearColorValue Color;
     }
 }

@@ -4,9 +4,11 @@
     using Hexa.NET.Logging;
     using Hexa.NET.Mathematics;
     using Hexa.NET.Utilities;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Logging;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Extensions;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
     using HexaEngine.Physics;
@@ -58,8 +60,6 @@
         private byte monochromeBrightness = 0xac;
         private bool reverseColoring = false;
 
-        private UnsafeList<char> labelBuffer = new();
-        private UnsafeList<byte> labelOutBuffer = new();
         private readonly List<bool> isLastInLevel = [];
         private string searchString = string.Empty;
         private bool windowHovered;
@@ -92,7 +92,7 @@
 
         protected override string Name { get; } = $"{UwU.Sitemap} Hierarchy";
 
-        public override void DrawContent(IGraphicsContext context)
+        public override unsafe void DrawContent(IGraphicsContext context)
         {
             focused = ImGui.IsWindowFocused();
             var scene = SceneManager.Current;
@@ -102,15 +102,18 @@
                 return;
             }
 
-            ImGui.InputTextWithHint("##SearchBar", $"{UwU.MagnifyingGlass} Search...", ref searchString, 1024);
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
+
+            ImGui.InputTextWithHint("##SearchBar"u8, builder.BuildLabel(UwU.MagnifyingGlass, " Search..."u8), ref searchString, 1024);
 
             ImGui.PushStyleColor(ImGuiCol.ChildBg, 0xff1c1c1c);
 
-            ImGui.BeginChild("LayoutContent");
+            ImGui.BeginChild("LayoutContent"u8);
 
             windowHovered = ImGui.IsWindowHovered();
 
-            DisplayContextMenu();
+            DisplayContextMenu(ref builder);
 
             Vector2 avail = ImGui.GetContentRegionAvail();
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
@@ -125,9 +128,9 @@
                 levelColor = sceneLevelColor;
             }
 
-            if (ImGui.BeginTable("Table", 1, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.PreciseWidths))
+            if (ImGui.BeginTable("Table"u8, 1, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.PreciseWidths))
             {
-                ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("Name"u8, ImGuiTableColumnFlags.WidthStretch);
 
                 ImGui.PushStyleColor(ImGuiCol.TableRowBg, 0xff1c1c1c);
                 ImGui.PushStyleColor(ImGuiCol.TableRowBgAlt, 0xff232323);
@@ -187,49 +190,49 @@
             ImGui.PopStyleColor();
         }
 
-        private void DrawSettingsMenu()
+        private unsafe void DrawSettingsMenu(ref StrBuilder builder)
         {
-            if (ImGui.BeginMenu($"{UwU.Gear} Settings"))
+            if (ImGui.BeginMenu(builder.BuildLabel(UwU.Gear, " Settings"u8)))
             {
-                ImGui.Checkbox("Show Hidden", ref showHidden);
+                ImGui.Checkbox("Show Hidden"u8, ref showHidden);
 
-                if (ImGui.RadioButton("Monochrome", coloring == HierarchyLevelColoring.Mono))
+                if (ImGui.RadioButton("Monochrome"u8, coloring == HierarchyLevelColoring.Mono))
                 {
                     coloring = HierarchyLevelColoring.Mono;
                 }
 
-                if (ImGui.RadioButton("Gradient Color", coloring == HierarchyLevelColoring.Color))
+                if (ImGui.RadioButton("Gradient Color"u8, coloring == HierarchyLevelColoring.Color))
                 {
                     coloring = HierarchyLevelColoring.Color;
                 }
 
-                if (ImGui.RadioButton("Multi Color", coloring == HierarchyLevelColoring.Multi))
+                if (ImGui.RadioButton("Multi Color"u8, coloring == HierarchyLevelColoring.Multi))
                 {
                     coloring = HierarchyLevelColoring.Multi;
                 }
 
-                if (ImGui.BeginMenu("Colors"))
+                if (ImGui.BeginMenu("Colors"u8))
                 {
                     Vector4 color = Color.FromABGR(levelColor).ToVector4();
-                    if (ImGui.ColorEdit4("Base Color", ref color))
+                    if (ImGui.ColorEdit4("Base Color"u8, (float*)&color))
                     {
                         levelColor = new Color(color).ToUIntABGR();
                     }
                     ImGui.EndMenu();
                 }
 
-                ImGui.Checkbox("Reverse Coloring", ref reverseColoring);
+                ImGui.Checkbox("Reverse Coloring"u8, ref reverseColoring);
 
                 ImGui.EndMenu();
             }
         }
 
-        private void DisplayContextMenu()
+        private unsafe void DisplayContextMenu(ref StrBuilder builder)
         {
             var scene = SceneManager.Current;
             if (ImGui.BeginPopupContextWindow(ImGuiPopupFlags.NoOpenOverItems | ImGuiPopupFlags.MouseButtonRight | ImGuiPopupFlags.NoOpenOverExistingPopup))
             {
-                if (ImGui.BeginMenu($"{UwU.SquarePlus} Add"))
+                if (ImGui.BeginMenu(builder.BuildLabel(UwU.SquarePlus, " Add"u8)))
                 {
                     foreach (var item in cache)
                     {
@@ -246,35 +249,37 @@
                     ImGui.EndMenu();
                 }
 
-                DrawSettingsMenu();
+                DrawSettingsMenu(ref builder);
 
                 ImGui.EndPopup();
             }
         }
 
-        private static void DisplayNodeContextMenu(GameObject element)
+        private static unsafe void DisplayNodeContextMenu(GameObject element)
         {
+            byte* buffer = stackalloc byte[512];
+            StrBuilder builder = new(buffer, 512);
             if (ImGui.BeginPopupContextItem(element.FullName, ImGuiPopupFlags.MouseButtonRight))
             {
-                if (ImGui.MenuItem($"{UwU.MagnifyingGlassPlus} Focus"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.MagnifyingGlassPlus, " Focus"u8)))
                 {
                     EditorCameraController.Center = element.Transform.GlobalPosition;
                 }
-                if (ImGui.MenuItem($"{UwU.MagnifyingGlassMinus} Defocus"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.MagnifyingGlassMinus, " Unfocus"u8)))
                 {
                     EditorCameraController.Center = Vector3.Zero;
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem($"{UwU.Minus} Unselect"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.Minus, " Unselect"u8)))
                 {
                     SelectionCollection.Global.ClearSelection();
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem($"{UwU.Clone} Clone"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.Clone, " Clone")))
                 {
                     for (int i = 0; i < SelectionCollection.Global.Count; i++)
                     {
@@ -296,7 +301,7 @@
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem($"{UwU.Trash} Delete"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.Trash, " Delete"u8)))
                 {
                     SelectionCollection.Global.PurgeSelection();
                 }
@@ -342,8 +347,10 @@
             return levelColorPalette[levelNormalized];
         }
 
-        private void DisplayNode(GameObject element, bool isRoot, bool searchHidden, ImDrawListPtr drawList, ImGuiTablePtr table, Vector2 avail, int level, bool isLast)
+        private unsafe void DisplayNode(GameObject element, bool isRoot, bool searchHidden, ImDrawListPtr drawList, ImGuiTablePtr table, Vector2 avail, int level, bool isLast)
         {
+            byte* buffer = stackalloc byte[512];
+            StrBuilder builder = new(buffer, 512);
             SetLevel(level, isLast);
 
             if (element.IsHidden && !showHidden)
@@ -421,7 +428,7 @@
 
             char icon = GetIcon(element);
 
-            bool isOpen = ImGui.TreeNodeEx($"{icon} {element.Name}", flags);
+            bool isOpen = ImGui.TreeNodeEx(builder.BuildLabel(icon, element.Name), flags);
             ImGui.PopStyleColor();
             ImGui.PopStyleColor();
 
@@ -580,50 +587,50 @@
 
         private unsafe void DrawObjectLabels(Vector2 avail, GameObject element)
         {
-            labelBuffer.Clear();
-            labelOutBuffer.Clear();
+            byte* buffer = stackalloc byte[512];
+            StrBuilder builder = new(buffer, 512);
 
+            float padding = ImGui.CalcTextSize(builder.BuildLabel(UwU.Eye)).X + 7;
+
+            builder.Reset();
             if (element.HasComponent<ScriptComponent>())
             {
-                labelBuffer.PushBack(UwU.Scroll);
+                builder.Append(UwU.Scroll);
             }
 
             if (element.HasComponent<IDrawable>())
             {
-                labelBuffer.PushBack(UwU.DrawPolygon);
+                builder.Append(UwU.DrawPolygon);
             }
 
             if (element.HasComponent<IActorComponent>())
             {
-                labelBuffer.PushBack(UwU.CircleDot);
+                builder.Append(UwU.CircleDot);
             }
 
             if (element.HasComponent<IColliderComponent>())
             {
-                labelBuffer.PushBack(UwU.Shapes);
+                builder.Append(UwU.Shapes);
             }
 
             if (element.HasComponent<IJointComponent>())
             {
-                labelBuffer.PushBack(UwU.Link);
+                builder.Append(UwU.Link);
             }
+            builder.End();
 
-            ToUTF8(ref labelBuffer, ref labelOutBuffer);
-
-            float padding = ImGui.CalcTextSize($"{UwU.Eye}").X + 7;
-
-            float width = ImGui.CalcTextSize(labelOutBuffer.Data).X + padding;
+            float width = ImGui.CalcTextSize(builder).X + padding;
             ImGui.SameLine();
             ImGui.SetCursorPosX(avail.X - width);
-            ImGui.Text(labelOutBuffer.Data);
+            ImGui.Text(builder);
 
             ImGui.SameLine();
             bool visible = element.IsEditorVisible;
-            if (visible && ImGui.MenuItem($"{UwU.Eye}"))
+            if (visible && ImGui.MenuItem(builder.BuildLabel(UwU.Eye)))
             {
                 element.IsEditorVisible = false;
             }
-            if (!visible && ImGui.MenuItem($"{UwU.EyeSlash}"))
+            if (!visible && ImGui.MenuItem(builder.BuildLabel(UwU.EyeSlash)))
             {
                 element.IsEditorVisible = true;
             }

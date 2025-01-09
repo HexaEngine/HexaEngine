@@ -1,8 +1,9 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core.Graphics;
-    using System;
+    using HexaEngine.Editor.Extensions;
 
     public class GraphicsDebugger : EditorWindow
     {
@@ -11,7 +12,9 @@
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
-            ImGui.InputTextWithHint("##Search", "Search", ref searchString, 1024);
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
+            ImGui.InputTextWithHint("##Search"u8, "Search"u8, ref searchString, 1024);
 
             foreach (var pso in PipelineStateManager.GraphicsPipelineStates)
             {
@@ -31,7 +34,7 @@
                     ImGui.Text(desc.PixelShader?.Identifier ?? "none");
 
                     var bindings = pso.Bindings;
-                    if (ImGui.CollapsingHeader($"SRVs##{pso.DebugName}", ImGuiTreeNodeFlags.DefaultOpen))
+                    if (ImGui.CollapsingHeader(builder.BuildLabelId("SRVs"u8, pso.DebugName), ImGuiTreeNodeFlags.DefaultOpen))
                     {
                         DisplayBindings(bindings.SRVs);
                     }

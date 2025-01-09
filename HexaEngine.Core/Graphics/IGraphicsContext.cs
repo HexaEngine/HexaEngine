@@ -162,6 +162,8 @@
         /// <param name="offset">The offset (in bytes) to start reading from the buffer.</param>
         void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset);
 
+        void BeginDraw(BeginDrawDesc desc);
+
         /// <summary>
         /// Clears the specified render target view with the specified clear color.
         /// </summary>

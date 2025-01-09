@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Vulkan
 {
+    using Hexa.NET.SDL2;
     using Hexa.NET.Vulkan;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Hexa.NET.SDL2;
     using System;
     using System.Runtime.CompilerServices;
     using Format = Core.Graphics.Format;

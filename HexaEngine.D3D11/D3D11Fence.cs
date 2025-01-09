@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using System;
 
     public unsafe class D3D11Fence : DeviceChildBase, IFence
     {
@@ -25,7 +24,7 @@
 
         protected override void DisposeCore()
         {
-            throw new NotImplementedException();
+            fence.Release();
         }
     }
 }

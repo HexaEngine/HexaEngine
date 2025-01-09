@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
@@ -12,25 +13,32 @@
     {
         public bool CanEditMultiple { get; } = false;
 
-        public void Edit(IGraphicsContext context, AssetFileInfo assetFile)
+        public unsafe void Edit(IGraphicsContext context, AssetFileInfo assetFile)
         {
-            ImGui.Text($"{assetFile.Name} File Properties");
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
 
-            if (ImGui.CollapsingHeader("Misc", ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.CollapsingHeader))
+            builder.Reset();
+            builder.Append(assetFile.Name);
+            builder.Append(" File Properties"u8);
+            builder.End();
+            ImGui.Text(builder);
+
+            if (ImGui.CollapsingHeader("Misc"u8, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.CollapsingHeader))
             {
-                ImGui.BeginTable("FileMeta", 2, ImGuiTableFlags.SizingFixedSame);
-                ImGui.TableSetupColumn("", ImGuiTableColumnFlags.None);
-                ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.BeginTable("FileMeta"u8, 2, ImGuiTableFlags.SizingFixedSame);
+                ImGui.TableSetupColumn(""u8, ImGuiTableColumnFlags.None);
+                ImGui.TableSetupColumn(""u8, ImGuiTableColumnFlags.WidthStretch);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("File Name");
+                ImGui.Text("File Name"u8);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.Text(assetFile.Name);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("Full Path");
+                ImGui.Text("Full Path"u8);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.Text(assetFile.Path);
 

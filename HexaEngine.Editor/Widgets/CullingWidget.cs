@@ -2,7 +2,9 @@
 {
     using Hexa.NET.DebugDraw;
     using Hexa.NET.ImGui;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Extensions;
     using HexaEngine.Graphics.Culling;
     using System.Numerics;
 
@@ -37,21 +39,21 @@
             }
 
             var flags = (int)manager.CullingFlags;
-            if (ImGuiP.CheckboxFlags("Enable", ref flags, (int)CullingFlags.Debug))
+            if (ImGuiP.CheckboxFlags("Enable"u8, ref flags, (int)CullingFlags.Debug))
             {
                 manager.CullingFlags |= CullingFlags.Debug;
                 return; // we have to skip this frame.
             }
 
             var depthBias = manager.DepthBias;
-            if (ImGui.InputFloat("Depth Bias", ref depthBias))
+            if (ImGui.InputFloat("Depth Bias"u8, ref depthBias))
             {
                 manager.DepthBias = depthBias;
             }
 
             CullingStats stats = manager.Stats;
 
-            ImGui.Checkbox("Draw Bounding Spheres", ref drawBoundingSpheres);
+            ImGui.Checkbox("Draw Bounding Spheres"u8, ref drawBoundingSpheres);
 
             if (drawBoundingSpheres)
             {
@@ -68,25 +70,29 @@
 
             var vertexCount = stats.VertexCount;
 
-            uint fmt = 0;
-            while (vertexCount > 1000)
-            {
-                vertexCount /= 1000;
-                fmt++;
-            }
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
 
-            char suffix = fmt switch
-            {
-                0 => ' ',
-                1 => 'K',
-                _ => 'M',
-            };
+            builder.Reset();
+            builder.Append("Draw Calls: "u8);
+            builder.Append(stats.DrawCalls);
+            builder.Append('/');
+            builder.Append(stats.ActualDrawCalls);
 
-            ImGui.Text($"Draw Calls: {stats.DrawCalls}/{stats.ActualDrawCalls}, Instances: {stats.DrawInstanceCount}/{stats.ActualDrawInstanceCount}, Vertices: {vertexCount}{suffix}");
+            builder.Append(", Instances: "u8);
+            builder.Append(stats.DrawInstanceCount);
+            builder.Append('/');
+            builder.Append(stats.ActualDrawInstanceCount);
+
+            builder.Append(", Vertices: "u8);
+            builder.AppendByteSize(vertexCount, false);
+            builder.End();
+
+            ImGui.Text(builder);
 
             bool changed = false;
-            changed |= ImGuiP.CheckboxFlags("Frustum Culling", ref flags, (int)CullingFlags.Frustum);
-            changed |= ImGuiP.CheckboxFlags("Occlusion Culling", ref flags, (int)CullingFlags.Occlusion);
+            changed |= ImGuiP.CheckboxFlags("Frustum Culling"u8, ref flags, (int)CullingFlags.Frustum);
+            changed |= ImGuiP.CheckboxFlags("Occlusion Culling"u8, ref flags, (int)CullingFlags.Occlusion);
             if (changed)
             {
                 manager.CullingFlags = (CullingFlags)flags;

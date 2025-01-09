@@ -25,6 +25,7 @@ namespace HexaEngine.Graphics.Renderers
         private static ISamplerState fontSampler;
         private static IShaderResourceView fontTextureView;
         private static int vertexBufferSize = 5000, indexBufferSize = 10000;
+        private static SRVWrapper srvWrapper = new(0);
 
         /// <summary>
         /// Renderer data
@@ -188,8 +189,8 @@ namespace HexaEngine.Graphics.Renderers
                         ctx.SetScissorRect((int)clip_min.X, (int)clip_min.Y, (int)clip_max.X, (int)clip_max.Y);
 
                         // Bind texture, Draw
-                        var srv = new SRVWrapper((nint)cmd.TextureId.Handle);
-                        pso.Bindings.SetSRV("fontTex", srv);
+                        srvWrapper.NativePointer = (nint)cmd.TextureId.Handle;
+                        pso.Bindings.SetSRV("fontTex", srvWrapper);
                         if (Samplers.TryGetValue(cmd.TextureId, out ISamplerState sampler))
                         {
                             pso.Bindings.SetSampler("fontSampler", sampler);
@@ -218,7 +219,7 @@ namespace HexaEngine.Graphics.Renderers
 #endif
         }
 
-        private struct SRVWrapper : IShaderResourceView
+        private class SRVWrapper : IShaderResourceView
         {
             public SRVWrapper(nint p)
             {
@@ -227,7 +228,7 @@ namespace HexaEngine.Graphics.Renderers
 
             public ShaderResourceViewDescription Description { get; }
 
-            public nint NativePointer { get; }
+            public nint NativePointer { get; set; }
 
             public string DebugName { get; set; }
 
@@ -235,7 +236,7 @@ namespace HexaEngine.Graphics.Renderers
 
             public event EventHandler OnDisposed;
 
-            public readonly void Dispose()
+            public void Dispose()
             {
             }
         }

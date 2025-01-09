@@ -2,7 +2,9 @@
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGui.Widgets.Dialogs;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core;
+    using HexaEngine.Editor.Extensions;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
@@ -103,23 +105,22 @@
                 return;
             }
 
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
+
             var entries = ProjectHistory.Entries;
+            var pinned = ProjectHistory.Pinned;
 
             Vector2 entryChildSize = new(entrySize.X, avail.Y);
             ImGui.BeginChild("Entries"u8, entryChildSize);
 
             ImGui.InputTextWithHint("##SearchBar", "Search ...", ref searchString, 1024);
 
-            if (entries.Any(x => x.Pinned) && ImGui.TreeNodeEx("Pinned", ImGuiTreeNodeFlags.DefaultOpen))
+            if (ImGui.TreeNodeEx("Pinned", ImGuiTreeNodeFlags.DefaultOpen))
             {
-                for (int i = 0; i < entries.Count; i++)
+                for (int i = 0; i < pinned.Count; i++)
                 {
-                    HistoryEntry entry = entries[i];
-
-                    if (!entry.Pinned)
-                    {
-                        continue;
-                    }
+                    HistoryEntry entry = pinned[i];
 
                     if (!string.IsNullOrWhiteSpace(searchString) && (!entry.Name.Contains(searchString) || !entry.Path.Contains(searchString)))
                     {
@@ -133,8 +134,9 @@
 
             int activeNode = -1;
             bool open = false;
-            foreach (var entry in entries.OrderByDescending(x => x.LastAccess))
+            for (int i = 0; i < entries.Count; i++)
             {
+                HistoryEntry entry = entries[i];
                 if (!string.IsNullOrWhiteSpace(searchString) && (!entry.Name.Contains(searchString) || !entry.Path.Contains(searchString)))
                 {
                     continue;
@@ -218,20 +220,20 @@
 
             Vector2 childSize = new(widthSide - padding.X, avail.Y);
             ImGui.SetCursorPos(pos + new Vector2(entrySize.X + padding.X, 0));
-            ImGui.BeginChild("Child", childSize);
+            ImGui.BeginChild("Child"u8, childSize);
 
-            if (ImGui.Button($"{UwU.SquarePlus} New Project", new(childSize.X, 50)))
+            if (ImGui.Button(builder.BuildLabel(UwU.SquarePlus, " New Project"), new(childSize.X, 50)))
             {
                 createProjectDialog = true;
             }
-            if (ImGui.Button($"{UwU.MagnifyingGlass} Open Project", new(childSize.X, 50)))
+            if (ImGui.Button(builder.BuildLabel(UwU.MagnifyingGlass, " Open Project"), new(childSize.X, 50)))
             {
                 OpenFileDialog dialog = new();
                 dialog.AllowedExtensions.Add(".hexproj");
                 dialog.OnlyAllowFilteredExtensions = true;
                 dialog.Show(OpenProjectCallback);
             }
-            if (ImGui.Button($"{UwU.Clone} Clone Project", new(childSize.X, 50)))
+            if (ImGui.Button(builder.BuildLabel(UwU.Clone, " Clone Project"), new(childSize.X, 50)))
             {
                 // TODO: Implement git clone.
             }
@@ -265,23 +267,23 @@
         {
             const float footerHeight = 50;
             avail.Y -= footerHeight;
-            ImGui.BeginChild("Content", avail);
+            ImGui.BeginChild("Content"u8, avail);
 
             icon.Image(new(48));
             ImGui.SameLine();
-            ImGui.Text("Create a new Project");
+            ImGui.Text("Create a new Project"u8);
 
             ImGui.Dummy(new(0, 20));
 
             ImGui.Indent(48);
 
-            ImGui.Text("Project Name:");
+            ImGui.Text("Project Name:"u8);
 
-            if (ImGui.InputText("##ProjectName", ref newProjectName, 1024))
+            if (ImGui.InputText("##ProjectName"u8, ref newProjectName, 1024))
             {
                 newProjectPath = Path.Combine(EditorConfig.Default.ProjectsFolder, newProjectName);
                 canCreateProject = IsValidProjectDir(newProjectPath) && !string.IsNullOrWhiteSpace(newProjectName);
-                canCreateFailReason = canCreateProject ? null : string.IsNullOrWhiteSpace(newProjectName) ? $"{UwU.Warning} Project name cannot be empty." : "{UwU.Warning} Project already exists.";
+                canCreateFailReason = canCreateProject ? null : string.IsNullOrWhiteSpace(newProjectName) ? $"{UwU.Warning} Project name cannot be empty." : $"{UwU.Warning} Project already exists.";
             }
 
             ImGui.TextDisabled(newProjectPath);
@@ -296,14 +298,14 @@
 
             ImGui.EndChild();
 
-            ImGui.BeginTable("#Table", 2, ImGuiTableFlags.SizingFixedFit);
-            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("");
+            ImGui.BeginTable("#Table"u8, 2, ImGuiTableFlags.SizingFixedFit);
+            ImGui.TableSetupColumn(""u8, ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn(""u8);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(1);
 
-            if (ImGui.Button("Cancel"))
+            if (ImGui.Button("Cancel"u8))
             {
                 CreateProjectDialogReset();
             }
@@ -311,7 +313,7 @@
 
             ImGui.BeginDisabled(!canCreateProject);
 
-            if (ImGui.Button("Create"))
+            if (ImGui.Button("Create"u8))
             {
                 Directory.CreateDirectory(newProjectPath);
                 ProjectManager.Create(newProjectPath);
@@ -341,8 +343,10 @@
             createProjectDialog = false;
         }
 
-        private void DisplayEntry(HistoryEntry entry, Icon icon, Vector2 padding, Vector2 spacing, float lineHeight, Vector2 entrySize)
+        private unsafe void DisplayEntry(HistoryEntry entry, Icon icon, Vector2 padding, Vector2 spacing, float lineHeight, Vector2 entrySize)
         {
+            byte* buffer = stackalloc byte[512];
+            StrBuilder builder = new(buffer, 512);
             Vector2 pos = ImGui.GetCursorPos();
 
             ImGui.SetCursorPos(new(entrySize.X, pos.Y + padding.Y));
@@ -351,7 +355,7 @@
             {
                 ImGuiManager.PushFont("Icons-Regular");
             }
-            if (ImGui.SmallButton($"{UwU.Bookmark}##{entry.Path}"))
+            if (ImGui.SmallButton(builder.BuildLabelId(UwU.Bookmark, entry.Path)))
             {
                 if (entry.Pinned)
                 {
@@ -367,7 +371,7 @@
 
             ImGui.SetCursorPos(pos);
 
-            if (ImGui.Button($"##{entry.Path}", entrySize))
+            if (ImGui.Button(builder.BuildId(entry.Path), entrySize))
             {
                 if (File.Exists(entry.Path))
                 {
@@ -395,10 +399,14 @@
 
             ImGui.Text(entry.Name);
 
-            float size = ImGui.CalcTextSize(entry.LastAccessString).X;
+            builder.Reset();
+            builder.Append(entry.LastAccess, "dd/MM/yyyy HH:mm");
+            builder.End();
+
+            float size = ImGui.CalcTextSize(builder).X;
 
             ImGui.SetCursorPos(new(entrySize.X - size, nextPos.Y));
-            ImGui.Text(entry.LastAccessString);
+            ImGui.Text(builder);
 
             nextPos.Y += spacing.Y + lineHeight;
             nextPos.X += 5;
@@ -410,11 +418,13 @@
             ImGui.SetCursorPosY(pos.Y + entrySize.Y + spacing.Y);
         }
 
-        private static void DisplayEntryContextMenu(HistoryEntry entry)
+        private static unsafe void DisplayEntryContextMenu(HistoryEntry entry)
         {
-            if (ImGui.BeginPopupContextItem($"##{entry.Path}"))
+            byte* buffer = stackalloc byte[512];
+            StrBuilder builder = new(buffer, 512);
+            if (ImGui.BeginPopupContextItem(builder.BuildId(entry.Path)))
             {
-                if (ImGui.MenuItem($"{UwU.Trash} Remove from List"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.Trash, " Remove from List"u8)))
                 {
                     ProjectHistory.RemoveEntryByPath(entry.Path);
                 }
@@ -422,16 +432,16 @@
                 {
                     ImGuiManager.PushFont("Icons-Regular");
                 }
-                if (!entry.Pinned && ImGui.MenuItem($"{UwU.Bookmark} Pin"))
+                if (!entry.Pinned && ImGui.MenuItem(builder.BuildLabel(UwU.Bookmark, " Pin"u8)))
                 {
                     ProjectHistory.Pin(entry.Path);
                 }
-                if (entry.Pinned && ImGui.MenuItem($"{UwU.Bookmark} Unpin"))
+                if (entry.Pinned && ImGui.MenuItem(builder.BuildLabel(UwU.Bookmark, " Unpin")))
                 {
                     ProjectHistory.Unpin(entry.Path);
                 }
                 ImGuiManager.PopFont();
-                if (ImGui.MenuItem($"{UwU.Copy} Copy Path"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.Copy, " Copy Path")))
                 {
                     Clipboard.SetText(entry.Path);
                 }

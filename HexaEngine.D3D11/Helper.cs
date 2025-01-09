@@ -2894,5 +2894,312 @@
                 bindFlags = BindFlags.None;
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ShaderResourceViewDescription ConvertBack(ShaderResourceViewDesc desc)
+        {
+            var result = new ShaderResourceViewDescription()
+            {
+                Format = ConvertBack(desc.Format),
+            };
+
+            switch (desc.ViewDimension)
+            {
+                case Hexa.NET.D3DCommon.SrvDimension.Buffer:
+                    result.ViewDimension = ShaderResourceViewDimension.Buffer;
+                    result.Buffer = new()
+                    {
+                        ElementOffset = (int)desc.Union.Buffer.Union0.ElementOffset,
+                        FirstElement = (int)desc.Union.Buffer.Union0.FirstElement,
+                        ElementWidth = (int)desc.Union.Buffer.Union1.ElementWidth,
+                        NumElements = (int)desc.Union.Buffer.Union1.NumElements
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Texture1D:
+                    result.ViewDimension = ShaderResourceViewDimension.Texture1D;
+                    result.Texture1D = new()
+                    {
+                        MipLevels = (int)desc.Union.Texture1D.MipLevels,
+                        MostDetailedMip = (int)desc.Union.Texture1D.MostDetailedMip
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Texture1Darray:
+                    result.ViewDimension = ShaderResourceViewDimension.Texture1DArray;
+                    result.Texture1DArray = new()
+                    {
+                        ArraySize = (int)desc.Union.Texture1DArray.ArraySize,
+                        FirstArraySlice = (int)desc.Union.Texture1DArray.FirstArraySlice,
+                        MipLevels = (int)desc.Union.Texture1DArray.MipLevels,
+                        MostDetailedMip = (int)desc.Union.Texture1DArray.MostDetailedMip
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Texture2D:
+                    result.ViewDimension = ShaderResourceViewDimension.Texture2D;
+                    result.Texture2D = new()
+                    {
+                        MipLevels = (int)desc.Union.Texture2D.MipLevels,
+                        MostDetailedMip = (int)desc.Union.Texture2D.MostDetailedMip
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Texture2Darray:
+                    result.ViewDimension = ShaderResourceViewDimension.Texture2DArray;
+                    result.Texture2DArray = new()
+                    {
+                        ArraySize = (int)desc.Union.Texture2DArray.ArraySize,
+                        FirstArraySlice = (int)desc.Union.Texture2DArray.FirstArraySlice,
+                        MipLevels = (int)desc.Union.Texture2DArray.MipLevels,
+                        MostDetailedMip = (int)desc.Union.Texture2DArray.MostDetailedMip
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Texture2Dms:
+                    result.ViewDimension = ShaderResourceViewDimension.Texture2DMultisampled;
+                    result.Texture2DMS = new()
+                    {
+                        UnusedFieldNothingToDefine = (int)desc.Union.Texture2DMS.UnusedFieldNothingToDefine
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Texture2Dmsarray:
+                    result.ViewDimension = ShaderResourceViewDimension.Texture2DMultisampledArray;
+                    result.Texture2DMSArray = new()
+                    {
+                        ArraySize = (int)desc.Union.Texture2DMSArray.ArraySize,
+                        FirstArraySlice = (int)desc.Union.Texture2DMSArray.FirstArraySlice
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Texture3D:
+                    result.ViewDimension = ShaderResourceViewDimension.Texture3D;
+                    result.Texture3D = new()
+                    {
+                        MipLevels = (int)desc.Union.TextureCube.MipLevels,
+                        MostDetailedMip = (int)desc.Union.TextureCube.MostDetailedMip
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Texturecube:
+                    result.ViewDimension = ShaderResourceViewDimension.TextureCube;
+                    result.TextureCube = new()
+                    {
+                        MipLevels = (int)desc.Union.TextureCube.MipLevels,
+                        MostDetailedMip = (int)desc.Union.TextureCube.MostDetailedMip
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Texturecubearray:
+                    result.ViewDimension = ShaderResourceViewDimension.TextureCubeArray;
+                    result.TextureCubeArray = new()
+                    {
+                        First2DArrayFace = (int)desc.Union.TextureCubeArray.First2DArrayFace,
+                        MipLevels = (int)desc.Union.TextureCubeArray.MipLevels,
+                        MostDetailedMip = (int)desc.Union.TextureCubeArray.MostDetailedMip,
+                        NumCubes = (int)desc.Union.TextureCubeArray.NumCubes
+                    };
+                    break;
+
+                case Hexa.NET.D3DCommon.SrvDimension.Bufferex:
+                    result.ViewDimension = ShaderResourceViewDimension.BufferExtended;
+                    result.BufferEx = new()
+                    {
+                        FirstElement = (int)desc.Union.BufferEx.FirstElement,
+                        Flags = ConvertBack((BufferexSrvFlag)desc.Union.BufferEx.Flags),
+                        NumElements = (int)desc.Union.BufferEx.NumElements,
+                    };
+                    break;
+            }
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static BufferExtendedShaderResourceViewFlags ConvertBack(BufferexSrvFlag flags)
+        {
+            BufferExtendedShaderResourceViewFlags result = 0;
+            if ((flags & BufferexSrvFlag.Raw) != 0)
+            {
+                result |= BufferExtendedShaderResourceViewFlags.Raw;
+            }
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static RenderTargetViewDescription ConvertBack(RenderTargetViewDesc desc)
+        {
+            RenderTargetViewDescription result = new()
+            {
+                Format = ConvertBack(desc.Format)
+            };
+
+            switch (desc.ViewDimension)
+            {
+                case RtvDimension.Buffer:
+                    result.ViewDimension = RenderTargetViewDimension.Buffer;
+                    result.Buffer = new()
+                    {
+                        ElementOffset = (int)desc.Union.Buffer.Union0.ElementOffset,
+                        FirstElement = (int)desc.Union.Buffer.Union0.FirstElement,
+                        ElementWidth = (int)desc.Union.Buffer.Union1.ElementWidth,
+                        NumElements = (int)desc.Union.Buffer.Union1.NumElements,
+                    };
+                    break;
+
+                case RtvDimension.Texture1D:
+                    result.ViewDimension = RenderTargetViewDimension.Texture1D;
+                    result.Texture1D = new()
+                    {
+                        MipSlice = (int)desc.Union.Texture1D.MipSlice,
+                    };
+                    break;
+
+                case RtvDimension.Texture1Darray:
+                    result.ViewDimension = RenderTargetViewDimension.Texture1DArray;
+                    result.Texture1DArray = new()
+                    {
+                        ArraySize = (int)desc.Union.Texture1DArray.ArraySize,
+                        FirstArraySlice = (int)desc.Union.Texture1DArray.FirstArraySlice,
+                        MipSlice = (int)desc.Union.Texture1DArray.MipSlice,
+                    };
+                    break;
+
+                case RtvDimension.Texture2D:
+                    result.ViewDimension = RenderTargetViewDimension.Texture2D;
+                    result.Texture2D = new()
+                    {
+                        MipSlice = (int)desc.Union.Texture2D.MipSlice,
+                    };
+                    break;
+
+                case RtvDimension.Texture2Darray:
+                    result.ViewDimension = RenderTargetViewDimension.Texture2DArray;
+                    result.Texture2DArray = new()
+                    {
+                        ArraySize = (int)desc.Union.Texture2DArray.ArraySize,
+                        FirstArraySlice = (int)desc.Union.Texture2DArray.FirstArraySlice,
+                        MipSlice = (int)desc.Union.Texture2DArray.MipSlice,
+                    };
+                    break;
+
+                case RtvDimension.Texture2Dms:
+                    result.ViewDimension = RenderTargetViewDimension.Texture2DMultisampled;
+                    result.Texture2DMS = new()
+                    {
+                        UnusedFieldNothingToDefine = (int)desc.Union.Texture2DMS.UnusedFieldNothingToDefine,
+                    };
+                    break;
+
+                case RtvDimension.Texture2Dmsarray:
+                    result.ViewDimension = RenderTargetViewDimension.Texture2DMultisampledArray;
+                    result.Texture2DMSArray = new()
+                    {
+                        ArraySize = (int)desc.Union.Texture2DMSArray.ArraySize,
+                        FirstArraySlice = (int)desc.Union.Texture2DMSArray.FirstArraySlice,
+                    };
+                    break;
+
+                case RtvDimension.Texture3D:
+                    result.ViewDimension = RenderTargetViewDimension.Texture3D;
+                    result.Texture3D = new()
+                    {
+                        FirstWSlice = (int)desc.Union.Texture3D.FirstWSlice,
+                        MipSlice = (int)desc.Union.Texture3D.MipSlice,
+                        WSize = (int)desc.Union.Texture3D.WSize,
+                    };
+                    break;
+            }
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static RenderTargetViewDimension ConvertBack(RtvDimension viewDimension)
+        {
+            return viewDimension switch
+            {
+                RtvDimension.Unknown => RenderTargetViewDimension.Unknown,
+                RtvDimension.Buffer => RenderTargetViewDimension.Buffer,
+                RtvDimension.Texture1D => RenderTargetViewDimension.Texture1D,
+                RtvDimension.Texture1Darray => RenderTargetViewDimension.Texture1DArray,
+                RtvDimension.Texture2D => RenderTargetViewDimension.Texture2D,
+                RtvDimension.Texture2Darray => RenderTargetViewDimension.Texture2DArray,
+                RtvDimension.Texture2Dms => RenderTargetViewDimension.Texture2DMultisampled,
+                RtvDimension.Texture2Dmsarray => RenderTargetViewDimension.Texture2DMultisampled,
+                RtvDimension.Texture3D => RenderTargetViewDimension.Texture3D,
+                _ => throw new NotSupportedException()
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static DepthStencilViewDescription ConvertBack(DepthStencilViewDesc desc)
+        {
+            DepthStencilViewDescription result = default;
+
+            result.Format = ConvertBack(desc.Format);
+
+            switch (desc.ViewDimension)
+            {
+                case DsvDimension.Unknown:
+                    break;
+
+                case DsvDimension.Texture1D:
+                    result.ViewDimension = DepthStencilViewDimension.Texture1D;
+                    result.Texture1D = new()
+                    {
+                        MipSlice = (int)desc.Union.Texture1D.MipSlice
+                    };
+                    break;
+
+                case DsvDimension.Texture1Darray:
+                    result.ViewDimension = DepthStencilViewDimension.Texture1DArray;
+                    result.Texture1DArray = new()
+                    {
+                        MipSlice = (int)desc.Union.Texture1DArray.MipSlice,
+                        FirstArraySlice = (int)desc.Union.Texture1DArray.FirstArraySlice,
+                        ArraySize = (int)desc.Union.Texture1DArray.ArraySize,
+                    };
+                    break;
+
+                case DsvDimension.Texture2D:
+                    result.ViewDimension = DepthStencilViewDimension.Texture2D;
+                    result.Texture2D = new()
+                    {
+                        MipSlice = (int)desc.Union.Texture2D.MipSlice,
+                    };
+                    break;
+
+                case DsvDimension.Texture2Darray:
+                    result.ViewDimension = DepthStencilViewDimension.Texture2DArray;
+                    result.Texture2DArray = new()
+                    {
+                        MipSlice = (int)desc.Union.Texture2DArray.MipSlice,
+                        FirstArraySlice = (int)desc.Union.Texture2DArray.FirstArraySlice,
+                        ArraySize = (int)desc.Union.Texture2DArray.ArraySize,
+                    };
+                    break;
+
+                case DsvDimension.Texture2Dms:
+                    result.ViewDimension = DepthStencilViewDimension.Texture2DMultisampled;
+                    result.Texture2DMS = new()
+                    {
+                        UnusedFieldNothingToDefine = (int)desc.Union.Texture2DMS.UnusedFieldNothingToDefine,
+                    };
+                    break;
+
+                case DsvDimension.Texture2Dmsarray:
+                    result.ViewDimension = DepthStencilViewDimension.Texture2DMultisampledArray;
+                    result.Texture2DMSArray = new()
+                    {
+                        FirstArraySlice = (int)desc.Union.Texture2DMSArray.FirstArraySlice,
+                        ArraySize = (int)desc.Union.Texture2DMSArray.ArraySize,
+                    };
+                    break;
+            }
+
+            return result;
+        }
     }
 }

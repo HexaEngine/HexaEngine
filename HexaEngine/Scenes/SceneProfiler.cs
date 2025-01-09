@@ -5,15 +5,15 @@
 
     public struct SceneProfiler
     {
-        private readonly ConcurrentDictionary<object, double> stages;
-        private readonly ConcurrentDictionary<object, long> startTimeStamps;
+        private readonly Dictionary<object, double> stages;
+        private readonly Dictionary<object, long> startTimeStamps;
         private readonly object _lock = new();
         private bool enabled = true;
 
         public SceneProfiler(int initialStageCount)
         {
-            stages = new ConcurrentDictionary<object, double>(2, initialStageCount);
-            startTimeStamps = new ConcurrentDictionary<object, long>(2, initialStageCount);
+            stages = new Dictionary<object, double>(initialStageCount);
+            startTimeStamps = new Dictionary<object, long>(initialStageCount);
         }
 
         public double this[object stage]
@@ -68,7 +68,7 @@
                 }
 
                 stages[o] = value + (timestamp - startTimeStamps[o]) / (double)Stopwatch.Frequency;
-                startTimeStamps.TryRemove(o, out _);
+                startTimeStamps.Remove(o, out _);
             }
         }
 
@@ -77,7 +77,7 @@
             lock (_lock)
             {
                 stages[o] = value;
-                startTimeStamps.TryRemove(o, out _);
+                startTimeStamps.Remove(o, out _);
             }
         }
 

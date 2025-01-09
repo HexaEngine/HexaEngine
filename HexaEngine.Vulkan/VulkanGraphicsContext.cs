@@ -551,5 +551,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public void BeginDraw(BeginDrawDesc desc)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -3,9 +3,11 @@
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGuizmo;
     using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Extensions;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;
@@ -152,6 +154,9 @@
                 return;
             }
 
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
+
             isFocused = ImGui.IsWindowFocused();
             isHovered = ImGui.IsWindowHovered();
 
@@ -219,7 +224,7 @@
                             ImGui.BeginDisabled(true);
                         }
 
-                        if (ImGui.Button($"{UwU.Play}")) // Play "\xE768"
+                        if (ImGui.Button(builder.BuildLabel(UwU.Play)))
                         {
                             Play(scene);
                             modeSwitched = true;
@@ -238,7 +243,7 @@
                             ImGui.BeginDisabled(true);
                         }
 
-                        if (ImGui.Button($"{UwU.Pause}")) // Pause "\xE769"
+                        if (ImGui.Button(builder.BuildLabel(UwU.Pause)))
                         {
                             Pause(scene);
                             modeSwitched = true;
@@ -257,7 +262,7 @@
                             ImGui.BeginDisabled(true);
                         }
 
-                        if (ImGui.Button($"{UwU.Stop}")) // Stop "xE71A"
+                        if (ImGui.Button(builder.BuildLabel(UwU.Stop)))
                         {
                             Stop(scene);
                             modeSwitched = true;
@@ -277,7 +282,7 @@
 
                     ImGui.Separator();
 
-                    if (inEdit && ImGui.BeginMenu($"{UwU.Gear}"))
+                    if (inEdit && ImGui.BeginMenu(builder.BuildLabel(UwU.Gear)))
                     {
                         ImGui.Checkbox("Fullscreen"u8, ref Fullframe);
 
@@ -379,29 +384,29 @@
                 // something here causes gc pressue needs investigation.
                 ImGui.PopItemWidth();
 
-                if (ImGui.Button($"{UwU.UpDownLeftRight}", new(32, 32)))
+                if (ImGui.Button(builder.BuildLabel(UwU.UpDownLeftRight), new(32, 32)))
                 {
                     Inspector.Operation = ImGuizmoOperation.Translate;
                 }
-                TooltipHelper.Tooltip("Translate");
+                TooltipHelper.Tooltip("Translate"u8);
 
-                if (ImGui.Button($"{UwU.Rotate}", new(32, 32)))
+                if (ImGui.Button(builder.BuildLabel(UwU.Rotate), new(32, 32)))
                 {
                     Inspector.Operation = ImGuizmoOperation.Rotate;
                 }
-                TooltipHelper.Tooltip("Rotate");
+                TooltipHelper.Tooltip("Rotate"u8);
 
-                if (ImGui.Button($"{UwU.Maximize}", new(32, 32)))
+                if (ImGui.Button(builder.BuildLabel(UwU.Maximize), new(32, 32)))
                 {
                     Inspector.Operation = ImGuizmoOperation.Scale;
                 }
-                TooltipHelper.Tooltip("Scale");
+                TooltipHelper.Tooltip("Scale"u8);
 
-                if (ImGui.Button($"{UwU.ArrowsToDot}", new(32, 32)))
+                if (ImGui.Button(builder.BuildLabel(UwU.ArrowsToDot), new(32, 32)))
                 {
                     Inspector.Operation = ImGuizmoOperation.Universal;
                 }
-                TooltipHelper.Tooltip("Translate & Rotate & Scale");
+                TooltipHelper.Tooltip("Translate & Rotate & Scale"u8);
 
                 Inspector.Draw();
             }

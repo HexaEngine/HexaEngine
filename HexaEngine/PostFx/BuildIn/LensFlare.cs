@@ -7,20 +7,22 @@
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
+    using System;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     [EditorDisplayName("Lens Flare")]
     public class LensFlare : PostFxBase
     {
 #nullable disable
-        private IGraphicsPipelineState downsamplePipeline;
+        private IGraphicsPipelineState downsamplePSO;
         private ConstantBuffer<DownsampleParams> downsampleCB;
 
         private ResourceRef<Texture2D> downsampleBuffer;
         private Viewport downsampleViewport;
         private ResourceRef<Texture2D> accumBuffer;
 
-        private IGraphicsPipelineState lensPipeline;
+        private IGraphicsPipelineState lensPSO;
         private ConstantBuffer<LensParams> lensCB;
 
         private GaussianBlur blur;
@@ -104,18 +106,18 @@
 
         public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            downsamplePipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            downsamplePSO = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/lensflare/downsample.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
-            downsampleCB = new(CpuAccessFlags.Write);
+            downsampleCB = new(new DownsampleParams(scale, bias), CpuAccessFlags.Write);
 
             downsampleBuffer = creator.CreateBufferHalfRes("LENS_DOWNSAMPLE_BUFFER");
             downsampleViewport = creator.ViewportHalf;
 
-            lensPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            lensPSO = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/lensflare/lens.hlsl",
@@ -143,25 +145,23 @@
 
         public override void UpdateBindings()
         {
-            downsamplePipeline.Bindings.SetSRV("inputTexture", Input);
-            downsamplePipeline.Bindings.SetCBV("DownsampleParams", downsampleCB);
+            downsamplePSO.Bindings.SetSRV("inputTexture", Input);
+            downsamplePSO.Bindings.SetCBV("DownsampleParams", downsampleCB);
 
-            lensPipeline.Bindings.SetSRV("inputTexture", Input);
-            lensPipeline.Bindings.SetCBV("LensParams", lensCB);
+            lensPSO.Bindings.SetSRV("inputTexture", downsampleBuffer.Value!.SRV);
+            lensPSO.Bindings.SetCBV("LensParams", lensCB);
         }
 
         public override void Draw(IGraphicsContext context)
         {
             // downsample and threshold
-            context.SetGraphicsPipelineState(downsamplePipeline);
-            context.SetRenderTarget(downsampleBuffer.Value!.RTV, null);
-            context.SetViewport(downsampleBuffer.Value.Viewport);
+            context.BeginDraw(new(downsampleBuffer.Value!, null));
+            context.SetGraphicsPipelineState(downsamplePSO);
             context.DrawInstanced(4, 1, 0, 0);
 
             // lens
-            context.SetGraphicsPipelineState(lensPipeline);
-            context.SetRenderTarget(accumBuffer.Value!.RTV, null);
-            context.SetViewport(accumBuffer.Value.Viewport);
+            context.BeginDraw(new(accumBuffer.Value!, null));
+            context.SetGraphicsPipelineState(lensPSO);
             context.DrawInstanced(4, 1, 0, 0);
         }
 
@@ -173,9 +173,9 @@
 
         protected override void DisposeCore()
         {
-            downsamplePipeline.Dispose();
+            downsamplePSO.Dispose();
             downsampleCB.Dispose();
-            lensPipeline.Dispose();
+            lensPSO.Dispose();
             lensCB.Dispose();
             blur.Dispose();
             blendPipeline.Dispose();

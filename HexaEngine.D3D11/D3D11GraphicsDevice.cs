@@ -250,7 +250,8 @@
             ComPtr<ID3D11DepthStencilView> view;
             var desc = Helper.Convert(description);
             Device.CreateDepthStencilView((ID3D11Resource*)resource.NativePointer, &desc, &view.Handle).ThrowIf();
-            return new D3D11DepthStencilView(view, description);
+            view.GetDesc(&desc);
+            return new D3D11DepthStencilView(view, Helper.ConvertBack(desc));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -304,7 +305,8 @@
             ComPtr<ID3D11RenderTargetView> rtv;
             var desc = Helper.Convert(description);
             Device.CreateRenderTargetView((ID3D11Resource*)resource.NativePointer, &desc, &rtv.Handle).ThrowIf();
-            return new D3D11RenderTargetView(rtv, description);
+            rtv.GetDesc(&desc);
+            return new D3D11RenderTargetView(rtv, Helper.ConvertBack(desc));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -371,7 +373,8 @@
             ComPtr<ID3D11ShaderResourceView> srv;
             var desc = Helper.Convert(description);
             Device.CreateShaderResourceView((ID3D11Resource*)resource.NativePointer, &desc, &srv.Handle).ThrowIf();
-            return new D3D11ShaderResourceView(srv, description);
+            srv.GetDesc(&desc);
+            return new D3D11ShaderResourceView(srv, Helper.ConvertBack(desc));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -379,7 +382,9 @@
         {
             ComPtr<ID3D11ShaderResourceView> srv;
             Device.CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, (ShaderResourceViewDesc*)null, &srv.Handle).ThrowIf();
-            return new D3D11ShaderResourceView(srv, default);
+            ShaderResourceViewDesc desc;
+            srv.GetDesc(&desc);
+            return new D3D11ShaderResourceView(srv, Helper.ConvertBack(desc));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -388,7 +393,8 @@
             ComPtr<ID3D11ShaderResourceView> srv;
             var desc = Helper.Convert(description);
             Device.CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, &desc, &srv.Handle).ThrowIf();
-            return new D3D11ShaderResourceView(srv, default);
+            srv.GetDesc(&desc);
+            return new D3D11ShaderResourceView(srv, Helper.ConvertBack(desc));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

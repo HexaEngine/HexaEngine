@@ -2,8 +2,6 @@
 {
     public struct HistoryEntry
     {
-        private string? lastAccessCache;
-
         public HistoryEntry(string name, string path)
         {
             Name = name;
@@ -36,7 +34,5 @@
         public bool Pinned { get; set; }
 
         public DateTime LastAccess { get; set; }
-
-        public string LastAccessString => lastAccessCache ??= LastAccess.ToLocalTime().ToString("dd/MM/yyyy HH:mm");
     }
 }

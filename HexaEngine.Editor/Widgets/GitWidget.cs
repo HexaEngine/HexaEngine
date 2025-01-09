@@ -19,7 +19,7 @@
             {
                 if (ProjectManager.Loaded)
                 {
-                    if (ImGui.Button("Init Git Repo"))
+                    if (ImGui.Button("Init Git Repo"u8))
                     {
                         ProjectVersionControl.Init();
                     }
@@ -28,9 +28,9 @@
                 return;
             }
 
-            if (ImGui.BeginCombo("##Branches", ProjectVersionControl.HeadName))
+            if (ImGui.BeginCombo("##Branches"u8, ProjectVersionControl.HeadName))
             {
-                ImGui.SeparatorText("Local Branches");
+                ImGui.SeparatorText("Local Branches"u8);
 
                 foreach (var branch in ProjectVersionControl.GetLocalBranches())
                 {
@@ -42,7 +42,7 @@
                     BranchContextMenu(branch);
                 }
 
-                ImGui.SeparatorText("Remote Branches");
+                ImGui.SeparatorText("Remote Branches"u8);
 
                 foreach (var branch in ProjectVersionControl.GetRemoteBranches())
                 {
@@ -57,28 +57,28 @@
                 ImGui.EndCombo();
             }
 
-            if (ImGui.Button("\xE74B"))
+            if (ImGui.Button("\xE74B"u8))
             {
                 ProjectVersionControl.Fetch();
             }
 
             ImGui.SameLine();
 
-            if (ImGui.Button("\xE896"))
+            if (ImGui.Button("\xE896"u8))
             {
                 ProjectVersionControl.Pull();
             }
 
             ImGui.SameLine();
 
-            if (ImGui.Button("\xE898"))
+            if (ImGui.Button("\xE898"u8))
             {
                 ProjectVersionControl.Push();
             }
 
             ImGui.SameLine();
 
-            if (ImGui.Button("\xE895"))
+            if (ImGui.Button("\xE895"u8))
             {
                 ProjectVersionControl.Sync();
             }
@@ -87,8 +87,8 @@
 
             ImGui.Text(ProjectVersionControl.CommitDifference.Text);
 
-            ImGui.InputTextMultiline("Commit Message:", ref commitMessage, 1024);
-            if (ImGui.Button("Commit All"))
+            ImGui.InputTextMultiline("Commit Message:"u8, ref commitMessage, 1024);
+            if (ImGui.Button("Commit All"u8))
             {
                 if (!string.IsNullOrWhiteSpace(commitMessage))
 
@@ -99,9 +99,9 @@
             }
 
             ImGui.SameLine();
-            ImGui.Checkbox("Amend", ref commitAmend);
+            ImGui.Checkbox("Amend"u8, ref commitAmend);
 
-            if (ImGui.BeginListBox("Changes"))
+            if (ImGui.BeginListBox("Changes"u8))
             {
                 lock (ProjectVersionControl.SyncObject)
                 {
@@ -119,7 +119,7 @@
         {
             if (ImGui.BeginPopupContextItem())
             {
-                if (ImGui.MenuItem("Checkout"))
+                if (ImGui.MenuItem("Checkout"u8))
                 {
                     CheckoutBranch(branch);
                 }
@@ -128,7 +128,7 @@
 
                 ImGui.BeginDisabled(ProjectVersionControl.Head.FriendlyName == branch.FriendlyName);
 
-                if (ImGui.MenuItem("\xEA3C Merge into Current Branch"))
+                if (ImGui.MenuItem("\xEA3C Merge into Current Branch"u8))
                 {
                     MessageBox.Show("Merge Branch", "Are you sure you want to merge the branch with HEAD?", null, (s, e) =>
                     {
@@ -143,7 +143,7 @@
                     }, MessageBoxType.YesNo);
                 }
 
-                if (ImGui.MenuItem("\xE8B5 Rebase Current Branch onto"))
+                if (ImGui.MenuItem("\xE8B5 Rebase Current Branch onto"u8))
                 {
                     MessageBox.Show("Rebase Branch", "Are you sure you want to rebase HEAD with the branch?", null, (s, e) =>
                     {
@@ -164,11 +164,11 @@
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE8AC Rename"))
+                if (ImGui.MenuItem("\xE8AC Rename"u8))
                 {
                 }
 
-                if (ImGui.MenuItem("\xE711 Delete"))
+                if (ImGui.MenuItem("\xE711 Delete"u8))
                 {
                     MessageBox.Show("Delete Branch", "Are you sure you want to delete the branch?", null, (s, e) =>
                     {

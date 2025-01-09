@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.Mathematics;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
@@ -133,20 +134,20 @@
             return changed;
         }
 
-        private void DrawContextMenuComponent(string name, Scene scene, GameObject element, IComponent component)
+        private unsafe void DrawContextMenuComponent(byte* name, Scene scene, GameObject element, IComponent component)
         {
             if (ImGui.BeginPopupContextItem(name))
             {
                 ImGui.BeginDisabled(element is PrefabObject);
 
-                if (ImGui.MenuItem("\xE738 Delete"))
+                if (ImGui.MenuItem("\xE738 Delete"u8))
                 {
                     History.Default.Do("Remove Component", (scene, element, component), DoRemoveComponent, DoAddComponent);
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("\xE8C8 Clone"))
+                if (ImGui.MenuItem("\xE8C8 Clone"u8))
                 {
                     History.Default.Do("Clone Component", (scene, element, Instantiator.Instantiate(component)), DoAddComponent, DoRemoveComponent);
                 }
@@ -163,9 +164,9 @@
 
         private void DrawSettingsMenu()
         {
-            if (ImGui.BeginMenu("\xE713 Settings"))
+            if (ImGui.BeginMenu("\xE713 Settings"u8))
             {
-                ImGui.Checkbox("Show Hidden", ref showHidden);
+                ImGui.Checkbox("Show Hidden"u8, ref showHidden);
 
                 ImGui.EndMenu();
             }
@@ -180,7 +181,7 @@
             changed |= DrawContextMenu(type, gameObject);
 
             bool isEnabled = gameObject.IsEnabled;
-            if (ImGui.Checkbox("##Enabled", ref isEnabled))
+            if (ImGui.Checkbox("##Enabled"u8, ref isEnabled))
             {
                 gameObject.IsEnabled = isEnabled; changed = true;
             }
@@ -188,7 +189,7 @@
             ImGui.SameLine();
             string id = gameObject.FullName;
             string name = gameObject.Name;
-            if (ImGui.InputText("##Name", ref name, TextBufSize, ImGuiInputTextFlags.EnterReturnsTrue))
+            if (ImGui.InputText("##Name"u8, ref name, TextBufSize, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 gameObject.Name = name; changed = true;
             }
@@ -209,12 +210,12 @@
             avail.Y = 0;
             avail.X -= 40;
             ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 20);
-            if (ImGui.Button("Add Component", avail))
+            if (ImGui.Button("Add Component"u8, avail))
             {
-                ImGui.OpenPopup("AddComponentPopup");
+                ImGui.OpenPopup("AddComponentPopup"u8);
             }
 
-            if (ImGui.BeginPopupContextItem("AddComponentPopup"))
+            if (ImGui.BeginPopupContextItem("AddComponentPopup"u8))
             {
                 if (typeFilterComponentCache.TryGetValue(type, out EditorComponentCacheEntry? cacheEntry))
                 {
@@ -244,8 +245,11 @@
             }
         }
 
-        private bool DrawComponents(IGraphicsContext context, GameObject element, Scene scene)
+        private unsafe bool DrawComponents(IGraphicsContext context, GameObject element, Scene scene)
         {
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
+
             bool changed = false;
             for (int i = 0; i < element.Components.Count; i++)
             {
@@ -257,10 +261,16 @@
                     continue;
                 }
 
-                string name = $"{editor.Name}##{i}";
-                string id = $"##{i}";
+                builder.Reset();
+                builder.Append(editor.Name);
+                builder.Append("##"u8);
+                builder.Append(i);
+                builder.End();
 
-                ImGui.PushID(name);
+                byte* name = builder.Buffer;
+                byte* id = builder.Buffer + editor.Name.Length;
+
+                ImGui.PushID(builder);
 
                 ImGui.BeginDisabled(editor.IsHidden);
 
@@ -288,7 +298,7 @@
             return changed;
         }
 
-        private static bool TreeNode(IObjectEditor editor, string id, string idCheckbox, ref bool enabled, ImGuiTreeNodeFlags flags)
+        private static unsafe bool TreeNode(IObjectEditor editor, byte* id, string idCheckbox, ref bool enabled, ImGuiTreeNodeFlags flags)
         {
             bool open = ImGui.TreeNodeEx(id, flags);
             ImGui.SameLine();
@@ -300,7 +310,7 @@
             return open;
         }
 
-        private static bool TreeNode(IObjectEditor editor, string id, ImGuiTreeNodeFlags flags)
+        private static unsafe bool TreeNode(IObjectEditor editor, byte* id, ImGuiTreeNodeFlags flags)
         {
             bool open = ImGui.TreeNodeEx(id, flags);
             ImGui.SameLine(0, 30);
@@ -310,25 +320,25 @@
             return open;
         }
 
-        private static bool DrawObjectEditor(IGraphicsContext context, GameObject element, Type type)
+        private static unsafe bool DrawObjectEditor(IGraphicsContext context, GameObject element, Type type)
         {
             bool changed = false;
             var transform = element.Transform;
             if (ImGui.CollapsingHeader(nameof(Transform), ImGuiTreeNodeFlags.DefaultOpen))
             {
-                ImGui.BeginTable("Transform", 2, ImGuiTableFlags.SizingFixedFit);
-                ImGui.TableSetupColumn("");
-                ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.BeginTable("Transform"u8, 2, ImGuiTableFlags.SizingFixedFit);
+                ImGui.TableSetupColumn(""u8);
+                ImGui.TableSetupColumn(""u8, ImGuiTableColumnFlags.WidthStretch);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("Position");
+                ImGui.Text("Position"u8);
                 ImGui.TableSetColumnIndex(1);
 
                 var flags = (int)transform.Flags;
                 var oldFlags = flags;
 
-                if (ImGui.SmallButton(transform.LockPosition ? "\xE72E##LockPosition" : "\xE785##LockPosition"))
+                if (ImGui.SmallButton(transform.LockPosition ? "\xE72E##LockPosition"u8 : "\xE785##LockPosition"u8))
                 {
                     if (!transform.LockPosition)
                     {
@@ -343,21 +353,21 @@
                     changed = true;
                 }
 
-                if (ImGui.BeginPopupContextItem("##LockPosition"))
+                if (ImGui.BeginPopupContextItem("##LockPosition"u8))
                 {
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-X Position", ref flags, (int)TransformFlags.LockPositionX))
+                    if (ImGuiP.CheckboxFlags("\xE72E Axis-X Position"u8, ref flags, (int)TransformFlags.LockPositionX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Y Position", ref flags, (int)TransformFlags.LockPositionY))
+                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Y Position"u8, ref flags, (int)TransformFlags.LockPositionY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Z Position", ref flags, (int)TransformFlags.LockPositionZ))
+                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Z Position"u8, ref flags, (int)TransformFlags.LockPositionZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
@@ -372,7 +382,7 @@
                     var val = transform.Position;
 
                     var oldVal = val;
-                    if (ImGui.DragFloat3("##Position", ref val))
+                    if (ImGui.DragFloat3("##Position"u8, (float*)&val))
                     {
                         History.Default.Do("Set Position", transform, oldVal, val, SetPosition, RestorePosition);
                         changed = true;
@@ -381,10 +391,10 @@
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("Rotation");
+                ImGui.Text("Rotation"u8);
                 ImGui.TableSetColumnIndex(1);
 
-                if (ImGui.SmallButton(transform.LockRotation ? "\xE72E##LockRotation" : "\xE785##LockRotation"))
+                if (ImGui.SmallButton(transform.LockRotation ? "\xE72E##LockRotation"u8 : "\xE785##LockRotation"u8))
                 {
                     if (!transform.LockRotation)
                     {
@@ -399,7 +409,7 @@
                     changed = true;
                 }
 
-                if (ImGui.BeginPopupContextItem("##LockRotation"))
+                if (ImGui.BeginPopupContextItem("##LockRotation"u8))
                 {
                     if (ImGuiP.CheckboxFlags("\xE72E Axis-X Rotation", ref flags, (int)TransformFlags.LockRotationX))
                     {
@@ -407,13 +417,13 @@
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Y Rotation", ref flags, (int)TransformFlags.LockRotationY))
+                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Y Rotation"u8, ref flags, (int)TransformFlags.LockRotationY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Z Rotation", ref flags, (int)TransformFlags.LockRotationZ))
+                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Z Rotation"u8, ref flags, (int)TransformFlags.LockRotationZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
@@ -427,7 +437,7 @@
                 {
                     var val = transform.Rotation;
                     var oldVal = val;
-                    if (ImGui.DragFloat3("##Rotation", ref val))
+                    if (ImGui.DragFloat3("##Rotation"u8, (float*)&val))
                     {
                         History.Default.Do("Set Rotation", transform, oldVal, val, SetRotation, RestoreRotation);
                         changed = true;
@@ -436,10 +446,10 @@
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("Scale");
+                ImGui.Text("Scale"u8);
                 ImGui.TableSetColumnIndex(1);
 
-                if (ImGui.SmallButton(transform.LockScale ? "\xE72E##LockScale" : "\xE785##LockScale"))
+                if (ImGui.SmallButton(transform.LockScale ? "\xE72E##LockScale"u8 : "\xE785##LockScale"u8))
                 {
                     if (!transform.LockScale)
                     {
@@ -454,21 +464,21 @@
                     changed = true;
                 }
 
-                if (ImGui.BeginPopupContextItem("##LockScale"))
+                if (ImGui.BeginPopupContextItem("##LockScale"u8))
                 {
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-X Scale", ref flags, (int)TransformFlags.LockScaleX))
+                    if (ImGuiP.CheckboxFlags("\xE72E Axis-X Scale"u8, ref flags, (int)TransformFlags.LockScaleX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Y Scale", ref flags, (int)TransformFlags.LockScaleY))
+                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Y Scale"u8, ref flags, (int)TransformFlags.LockScaleY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Z Scale", ref flags, (int)TransformFlags.LockScaleZ))
+                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Z Scale"u8, ref flags, (int)TransformFlags.LockScaleZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
@@ -482,7 +492,7 @@
                 {
                     var val = transform.Scale;
                     var oldVal = val;
-                    if (ImGui.DragFloat3("##Scale", ref val))
+                    if (ImGui.DragFloat3("##Scale"u8, (float*)&val))
                     {
                         if (transform.UniformScale)
                         {
@@ -495,7 +505,7 @@
 
                 ImGui.SameLine();
 
-                if (ImGui.SmallButton(transform.UniformScale ? "\xF19F##UniformScale" : "\xF19E##UniformScale"))
+                if (ImGui.SmallButton(transform.UniformScale ? "\xF19F##UniformScale"u8 : "\xF19E##UniformScale"u8))
                 {
                     if (!transform.UniformScale)
                     {
@@ -509,7 +519,7 @@
                     History.Default.Do("Uniform Scale On/Off", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                     changed = true;
                 }
-                TooltipHelper.Tooltip("Uniform Scale On/Off");
+                TooltipHelper.Tooltip("Uniform Scale On/Off"u8);
 
                 ImGui.EndTable();
             }

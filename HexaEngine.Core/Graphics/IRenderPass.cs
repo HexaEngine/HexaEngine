@@ -1,17 +1,7 @@
-﻿using System.Numerics;
-using System.Runtime.InteropServices;
-
-namespace HexaEngine.Core.Graphics
+﻿namespace HexaEngine.Core.Graphics
 {
     public interface IRenderPass : IDeviceChild
     {
-    }
-
-    public interface ICommandBuffer : IGraphicsContext
-    {
-        void Begin();
-
-        void End();
     }
 
     public struct RenderPassDesc
@@ -55,26 +45,5 @@ namespace HexaEngine.Core.Graphics
             RenderTargetClearValues = colors;
             DepthStencilClearValue = depth;
         }
-    }
-
-    public struct ClearColorValue
-    {
-        public Vector4 Color;
-    }
-
-    public struct ClearDepthStencilValue
-    {
-        public float depth;
-        public uint stencil;
-    }
-
-    [StructLayout(LayoutKind.Explicit)]
-    public struct ClearValue
-    {
-        [FieldOffset(0)]
-        public ClearColorValue ColorValue;
-
-        [FieldOffset(0)]
-        public ClearDepthStencilValue DepthStencilValue;
     }
 }

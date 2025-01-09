@@ -1,13 +1,11 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using Hexa.NET.Vulkan;
-    using HexaEngine.Core;
     using Hexa.NET.SDL2;
     using Hexa.NET.Utilities;
+    using Hexa.NET.Vulkan;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.Core.Native;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -459,7 +457,6 @@
         private VkSurfaceKHR CreateSurface(SDLWindow* window)
         {
             VkSurfaceKHR surface;
-            VkHandle handle = new(Instance.Handle);
             SDL.VulkanCreateSurface(window, Instance.Handle, (Hexa.NET.SDL2.VkSurfaceKHR*)&surface);
             return surface;
         }

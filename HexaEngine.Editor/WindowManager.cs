@@ -323,7 +323,7 @@
             ImGuiManager.PushFont("WidgetsFont");
             DialogManager.Draw();
             MessageBoxes.Draw();
-            AnimationManager.Tick();
+            //AnimationManager.Tick();
             ImGuiManager.PopFont();
         }
 

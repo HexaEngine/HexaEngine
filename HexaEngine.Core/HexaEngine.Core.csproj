@@ -40,11 +40,11 @@
 		<PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
 		<PackageReference Include="Hardware.Info" Version="101.0.0" />
 		<PackageReference Include="Hexa.NET.FreeType" Version="1.1.1" />
-		<PackageReference Include="Hexa.NET.ImGui" Version="2.2.3" />
-		<PackageReference Include="Hexa.NET.ImGuizmo" Version="2.2.3" />
-		<PackageReference Include="Hexa.NET.ImNodes" Version="2.2.3" />
-		<PackageReference Include="Hexa.NET.ImPlot" Version="2.2.3" />
-		<PackageReference Include="Hexa.NET.SDL2" Version="1.2.9" />
+		<PackageReference Include="Hexa.NET.ImGui" Version="2.2.4" />
+		<PackageReference Include="Hexa.NET.ImGuizmo" Version="2.2.4" />
+		<PackageReference Include="Hexa.NET.ImNodes" Version="2.2.4" />
+		<PackageReference Include="Hexa.NET.ImPlot" Version="2.2.4" />
+		<PackageReference Include="Hexa.NET.SDL2" Version="1.2.10" />
 		<PackageReference Include="Hexa.NET.Shaderc" Version="1.0.0" />
 		<PackageReference Include="Hexa.NET.SPIRVCross" Version="1.0.1" />
 		<PackageReference Include="Hexa.NET.SPIRVReflect" Version="1.0.1" />

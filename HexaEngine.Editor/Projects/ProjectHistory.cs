@@ -3,25 +3,49 @@
     using System.Collections.Generic;
     using System.IO;
 
+    public readonly struct LastAccessComparer : IComparer<HistoryEntry>
+    {
+        public static readonly LastAccessComparer Instance = new();
+
+        public readonly int Compare(HistoryEntry x, HistoryEntry y)
+        {
+            if (x.Pinned && !y.Pinned)
+            {
+                return -1;
+            }
+            else if (!x.Pinned && y.Pinned)
+            {
+                return 1;
+            }
+            return y.LastAccess.CompareTo(x.LastAccess);
+        }
+    }
+
     public static class ProjectHistory
     {
         private const string historyFile = "projectHistory.json";
         private static readonly string historyPath = Path.Combine(EditorConfig.BasePath, historyFile);
         private static readonly List<HistoryEntry> entries;
+        private static readonly List<HistoryEntry> pinned;
 
         static ProjectHistory()
         {
             if (File.Exists(historyPath))
             {
                 entries = JsonConvert.DeserializeObject<List<HistoryEntry>>(File.ReadAllText(historyPath)) ?? new();
+                entries.Sort(LastAccessComparer.Instance);
             }
             else
             {
-                entries = new();
+                entries = [];
             }
+
+            pinned = entries.Where(x => x.Pinned).ToList();
         }
 
         public static IReadOnlyList<HistoryEntry> Entries => entries;
+
+        public static IReadOnlyList<HistoryEntry> Pinned => pinned;
 
         public static void AddEntry(string name, string path)
         {
@@ -49,6 +73,7 @@
                 if (entry.Path == path)
                 {
                     entry.Pinned = true;
+                    pinned.Add(entry);
                     entries[i] = entry;
                     Save();
                     return;
@@ -64,6 +89,7 @@
                 if (entry.Path == path)
                 {
                     entry.Pinned = false;
+                    pinned.Remove(entry);
                     entries[i] = entry;
                     Save();
                     return;

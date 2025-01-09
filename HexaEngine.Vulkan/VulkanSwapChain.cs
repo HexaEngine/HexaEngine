@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Vulkan
 {
+    using Hexa.NET.SDL2;
+    using Hexa.NET.Utilities;
     using Hexa.NET.Vulkan;
     using HexaEngine.Core.Graphics;
-    using Hexa.NET.Utilities;
     using HexaEngine.Core.Windows.Events;
-    using Hexa.NET.SDL2;
     using System;
     using VkSurfaceKHR = Hexa.NET.Vulkan.VkSurfaceKHR;
 

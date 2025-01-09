@@ -16,6 +16,7 @@
         private static IBuffer constantBuffer = null!;
         private static ISamplerState fontSampler = null!;
         private static IShaderResourceView fontTextureView = null!;
+        private static readonly SRVWrapper srvWrapper = new(0);
 
         private static DebugDrawContext debugDrawContext = null!;
 
@@ -150,7 +151,7 @@
             Render(DebugDraw.GetDrawData());
         }
 
-        private struct SRVWrapper : IShaderResourceView
+        private class SRVWrapper : IShaderResourceView
         {
             public SRVWrapper(nint p)
             {
@@ -159,7 +160,7 @@
 
             public ShaderResourceViewDescription Description { get; }
 
-            public nint NativePointer { get; }
+            public nint NativePointer { get; set; }
 
             public string? DebugName { get; set; }
 
@@ -243,8 +244,9 @@
                     {
                         texId = fontTextureView.NativePointer;
                     }
-                    var srv = new SRVWrapper(texId);
-                    pso.Bindings.SetSRV("fontTex", srv);
+
+                    srvWrapper.NativePointer = texId;
+                    pso.Bindings.SetSRV("fontTex", srvWrapper);
                     context.SetGraphicsPipelineState(pso);
                     context.SetPrimitiveTopology((PrimitiveTopology)cmd.Topology);
                     context.DrawIndexedInstanced(cmd.IndexCount, 1, ioffset, voffset, 0);

@@ -9,6 +9,11 @@
     {
         public static readonly Guid D3DDebugObjectName = new(0x429b8c22, 0x9188, 0x4b0c, 0x87, 0x42, 0xac, 0xb0, 0xbf, 0x85, 0xc2, 0x00);
 
+        internal static string? GetDebugName<T>(ComPtr<T> target) where T : unmanaged, IComObject<T>
+        {
+            return GetDebugName(target.Handle);
+        }
+
         internal static string? GetDebugName(void* target)
         {
             ID3D11DeviceChild* child = (ID3D11DeviceChild*)target;
@@ -30,6 +35,12 @@
             string str = ToStr(pName, len);
             Free(pName);
             return str;
+        }
+
+        internal static void SetDebugName<T>(ComPtr<T> target, string? name) where T : unmanaged, IComObject<T>
+        {
+            if (name == null) return;
+            SetDebugName(target.Handle, name);
         }
 
         internal static void SetDebugName(void* target, string name)

@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Extensions;
     using HexaEngine.Editor.Projects;
     using System.Numerics;
 
@@ -69,30 +71,36 @@
                 return;
             }
 
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
+
             if (ImGui.BeginMenuBar())
             {
-                ImGui.TextColored(Colors.Crimson, $"{UwU.Xmark}");
+                ImGui.TextColored(Colors.Crimson, builder.BuildLabel(UwU.Xmark));
 
-                if (ImGui.MenuItem($"{compilation.ErrorCount} Errors", !showErrors))
+                builder.Reset(); builder.Append(compilation.ErrorCount); builder.Append(" Errors"u8); builder.End();
+                if (ImGui.MenuItem(builder, !showErrors))
                 {
                     showErrors = !showErrors;
                 }
 
-                ImGui.TextColored(Colors.Yellow, $"{UwU.TriangleExclamation}");
+                ImGui.TextColored(Colors.Yellow, builder.BuildLabel(UwU.TriangleExclamation));
 
-                if (ImGui.MenuItem($"{compilation.WarningCount} Warnings", !showWarnings))
+                builder.Reset(); builder.Append(compilation.WarningCount); builder.Append(" Warnings"u8); builder.End();
+                if (ImGui.MenuItem(builder, !showWarnings))
                 {
                     showWarnings = !showWarnings;
                 }
 
-                ImGui.TextColored(Colors.LightBlue, $"{UwU.CircleExclamation}");
+                ImGui.TextColored(Colors.LightBlue, builder.BuildLabel(UwU.CircleExclamation));
 
-                if (ImGui.MenuItem($"{compilation.MessageCount} Messages", !showMessages))
+                builder.Reset(); builder.Append(compilation.MessageCount); builder.Append(" Messages"u8); builder.End();
+                if (ImGui.MenuItem(builder, !showMessages))
                 {
                     showMessages = !showMessages;
                 }
 
-                if (ImGui.MenuItem($"{UwU.FilterCircleXmark}"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.FilterCircleXmark)))
                 {
                     showErrors = showWarnings = showMessages = true;
                     codesFilter.Clear();
@@ -100,48 +108,48 @@
                     filesFilter.Clear();
                     searchString = string.Empty;
                 }
-                ImGui.SetItemTooltip("Clear All Filters");
+                ImGui.SetItemTooltip("Clear All Filters"u8);
 
                 var avail = ImGui.GetContentRegionAvail();
                 var cursor = ImGui.GetCursorPos();
                 const float filterWidth = 200;
                 ImGui.SetCursorPos(new Vector2(cursor.X + avail.X - filterWidth, cursor.Y));
                 ImGui.SetNextItemWidth(filterWidth);
-                ImGui.InputTextWithHint("##Filter", "Search ...", ref searchString, 1024);
+                ImGui.InputTextWithHint("##Filter"u8, "Search ..."u8, ref searchString, 1024);
 
                 ImGui.EndMenuBar();
             }
 
-            if (!ImGui.BeginTable("ErrorTable", 6, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable | ImGuiTableFlags.Reorderable))
+            if (!ImGui.BeginTable("ErrorTable"u8, 6, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable | ImGuiTableFlags.Reorderable))
             {
                 return;
             }
 
-            ImGui.TableSetupColumn("");
-            ImGui.TableSetupColumn("");
-            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("", 200);
-            ImGui.TableSetupColumn("");
-            ImGui.TableSetupColumn("");
+            ImGui.TableSetupColumn(""u8);
+            ImGui.TableSetupColumn(""u8);
+            ImGui.TableSetupColumn(""u8, ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn(""u8, 200);
+            ImGui.TableSetupColumn(""u8);
+            ImGui.TableSetupColumn(""u8);
 
             ImGui.TableNextRow(ImGuiTableRowFlags.Headers);
             ImGui.TableSetColumnIndex(0);
-            ImGui.Text("");
+            ImGui.Text(""u8);
             ImGui.TableSetColumnIndex(1);
-            ImGui.Text("Code");
+            ImGui.Text("Code"u8);
             ImGui.SameLine();
-            if (ImGui.SmallButton($"{UwU.Filter}##Code"))
+            if (ImGui.SmallButton(builder.BuildLabelId(UwU.Filter, "Code"u8)))
             {
-                ImGui.OpenPopup($"{UwU.Filter}##Code");
+                ImGui.OpenPopup(builder.BuildLabelId(UwU.Filter, "Code"u8));
             }
-            if (ImGui.BeginPopupContextItem($"{UwU.Filter}##Code", ImGuiPopupFlags.None))
+            if (ImGui.BeginPopupContextItem(builder.BuildLabelId(UwU.Filter, "Code"u8), ImGuiPopupFlags.None))
             {
-                if (ImGui.MenuItem("Clear Filter"))
+                if (ImGui.MenuItem("Clear Filter"u8))
                 {
                     codesFilter.Clear();
                 }
                 ImGui.Separator();
-                if (ImGui.BeginListBox("Codes"))
+                if (ImGui.BeginListBox("Codes"u8))
                 {
                     for (int i = 0; i < compilation.Codes.Count; i++)
                     {
@@ -165,22 +173,22 @@
             }
 
             ImGui.TableSetColumnIndex(2);
-            ImGui.Text("Description");
+            ImGui.Text("Description"u8);
             ImGui.TableSetColumnIndex(3);
-            ImGui.Text("Project");
+            ImGui.Text("Project"u8);
             ImGui.SameLine();
-            if (ImGui.SmallButton($"{UwU.Filter}##Project"))
+            if (ImGui.SmallButton(builder.BuildLabelId(UwU.Filter, "Project"u8)))
             {
-                ImGui.OpenPopup($"{UwU.Filter}##Project");
+                ImGui.OpenPopup(builder.BuildLabelId(UwU.Filter, "Project"u8));
             }
-            if (ImGui.BeginPopupContextItem($"{UwU.Filter}##Project", ImGuiPopupFlags.None))
+            if (ImGui.BeginPopupContextItem(builder.BuildLabelId(UwU.Filter, "Project"u8), ImGuiPopupFlags.None))
             {
-                if (ImGui.MenuItem("Clear Filter"))
+                if (ImGui.MenuItem("Clear Filter"u8))
                 {
                     projectsFilter.Clear();
                 }
                 ImGui.Separator();
-                if (ImGui.BeginListBox("Projects"))
+                if (ImGui.BeginListBox("Projects"u8))
                 {
                     for (int i = 0; i < compilation.Projects.Count; i++)
                     {
@@ -203,20 +211,20 @@
                 ImGui.EndPopup();
             }
             ImGui.TableSetColumnIndex(4);
-            ImGui.Text("File");
+            ImGui.Text("File"u8);
             ImGui.SameLine();
-            if (ImGui.SmallButton($"{UwU.Filter}##File"))
+            if (ImGui.SmallButton(builder.BuildLabelId(UwU.Filter, "File"u8)))
             {
-                ImGui.OpenPopup($"{UwU.Filter}##File");
+                ImGui.OpenPopup(builder.BuildLabelId(UwU.Filter, "File"u8));
             }
-            if (ImGui.BeginPopupContextItem($"{UwU.Filter}##File", ImGuiPopupFlags.None))
+            if (ImGui.BeginPopupContextItem(builder.BuildLabelId(UwU.Filter, "File"u8), ImGuiPopupFlags.None))
             {
-                if (ImGui.MenuItem("Clear Filter"))
+                if (ImGui.MenuItem("Clear Filter"u8))
                 {
                     filesFilter.Clear();
                 }
                 ImGui.Separator();
-                if (ImGui.BeginListBox("Files"))
+                if (ImGui.BeginListBox("Files"u8))
                 {
                     for (int i = 0; i < compilation.Files.Count; i++)
                     {
@@ -239,7 +247,7 @@
                 ImGui.EndPopup();
             }
             ImGui.TableSetColumnIndex(5);
-            ImGui.Text("Location");
+            ImGui.Text("Location"u8);
 
             for (int i = 0; i < compilation.Messages.Count; i++)
             {
@@ -257,19 +265,19 @@
                 switch (message.Severity)
                 {
                     case MSBuildMessageSeverity.Error:
-                        ImGui.TextColored(Colors.Crimson, $"{UwU.Xmark}");
+                        ImGui.TextColored(Colors.Crimson, builder.BuildLabel(UwU.Xmark));
                         break;
 
                     case MSBuildMessageSeverity.Warning:
-                        ImGui.TextColored(Colors.Yellow, $"{UwU.TriangleExclamation}");
+                        ImGui.TextColored(Colors.Yellow, builder.BuildLabel(UwU.TriangleExclamation));
                         break;
 
                     case MSBuildMessageSeverity.Message:
-                        ImGui.TextColored(Colors.LightBlue, $"{UwU.CircleExclamation}");
+                        ImGui.TextColored(Colors.LightBlue, builder.BuildLabel(UwU.CircleExclamation));
                         break;
 
                     default:
-                        ImGui.TextColored(Colors.LightBlue, $"{UwU.CircleQuestion}");
+                        ImGui.TextColored(Colors.LightBlue, builder.BuildLabel(UwU.CircleQuestion));
                         break;
                 }
 
@@ -285,7 +293,8 @@
                     ProjectManager.OpenFileInEditor($"{message.File}##{i}", message.Line, message.Column);
                 }
                 ImGui.TableSetColumnIndex(5);
-                ImGui.Text($"{message.Location}");
+                builder.Reset(); builder.Append(message.Location); builder.End();
+                ImGui.Text(builder);
             }
 
             ImGui.EndTable();

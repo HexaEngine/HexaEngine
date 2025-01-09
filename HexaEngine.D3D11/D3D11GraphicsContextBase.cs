@@ -45,6 +45,37 @@
 
         #region IGraphicsContext
 
+        public void BeginDraw(BeginDrawDesc desc)
+        {
+            ID3D11RenderTargetView** rtvs = stackalloc ID3D11RenderTargetView*[BlendDescription.SimultaneousRenderTargetCount];
+            ID3D11DepthStencilView* dsv = (ID3D11DepthStencilView*)(desc.DepthStencil?.NativePointer ?? 0);
+
+            for (int i = 0; i < desc.NumViews; i++)
+            {
+                rtvs[i] = (ID3D11RenderTargetView*)desc.RenderTargets[i].NativePointer;
+            }
+
+            ClearFlag flag = (ClearFlag)(((int)desc.ClearFlags & 0b_0110) >> 1);
+
+            if (flag != 0)
+            {
+                DeviceContext.ClearDepthStencilView(dsv, (uint)flag, desc.ClearDepthStencilValue.Depth, desc.ClearDepthStencilValue.Stencil);
+            }
+
+            if ((desc.ClearFlags & ClearFlags.Color) != 0)
+            {
+                for (int i = 0; i < desc.NumViews; i++)
+                {
+                    DeviceContext.ClearRenderTargetView(rtvs[i], (float*)&desc.ClearColors[i]);
+                }
+            }
+
+            DeviceContext.OMSetRenderTargets(desc.NumViews, rtvs, dsv);
+
+            Viewport* viewports = &desc.Viewports.Viewport;
+            DeviceContext.RSSetViewports(desc.NumViews, (Hexa.NET.D3D11.Viewport*)viewports);
+        }
+
         public void ExecuteCommandBuffer(ICommandBuffer commandBuffer)
         {
             D3D11CommandBuffer cmdBuf = (D3D11CommandBuffer)commandBuffer;

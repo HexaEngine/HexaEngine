@@ -127,7 +127,7 @@
         public bool Draw(GameObject gameObject)
         {
             bool changed = false;
-            if (ImGui.BeginMenu("\xE710 Add Component"))
+            if (ImGui.BeginMenu("\xE710 Add Component"u8))
             {
                 for (int i = 0; i < categories.Count; i++)
                 {

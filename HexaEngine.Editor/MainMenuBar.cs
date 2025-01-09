@@ -3,11 +3,13 @@
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGui.Widgets.Dialogs;
     using Hexa.NET.Logging;
+    using Hexa.NET.Utilities.Text;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Dialogs;
+    using HexaEngine.Editor.Extensions;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.UI;
     using HexaEngine.Editor.Widgets;
@@ -62,14 +64,17 @@
                 return;
             }
 
-            if (ImGui.BeginMenu("File"))
+            byte* buffer = stackalloc byte[2048];
+            StrBuilder builder = new(buffer, 2048);
+
+            if (ImGui.BeginMenu("File"u8))
             {
-                if (ImGui.MenuItem("Save Scene (CTRL+S)"))
+                if (ImGui.MenuItem("Save Scene"u8, "Ctrl+S"u8))
                 {
                     SceneManager.Save();
                 }
 
-                if (ImGui.MenuItem("Unload Scene"))
+                if (ImGui.MenuItem("Unload Scene"u8))
                 {
                     SceneManager.Unload();
                 }
@@ -77,20 +82,20 @@
                 ImGui.EndMenu();
             }
 
-            if (ImGui.BeginMenu("Edit"))
+            if (ImGui.BeginMenu("Edit"u8))
             {
                 EditSubMenu();
                 ImGui.EndMenu();
             }
-            if (ImGui.BeginMenu("View"))
+            if (ImGui.BeginMenu("View"u8))
             {
                 WindowManager.DrawMenu();
 
                 ImGui.EndMenu();
             }
-            if (ImGui.BeginMenu("Project"))
+            if (ImGui.BeginMenu("Project"u8))
             {
-                if (ImGui.MenuItem("Load Project"))
+                if (ImGui.MenuItem("Load Project"u8))
                 {
                     OpenFileDialog dialog = new();
                     dialog.AllowedExtensions.Add(".hexproj");
@@ -98,17 +103,17 @@
                     dialog.Show(OpenProjectCallback);
                 }
 
-                if (ImGui.MenuItem("New Project"))
+                if (ImGui.MenuItem("New Project"u8))
                 {
-                    SaveFileDialog dialog = new SaveFileDialog();
+                    SaveFileDialog dialog = new();
                     dialog.Show(NewProjectCallback);
                 }
 
-                if (ImGui.MenuItem("Init Git"))
+                if (ImGui.MenuItem("Init Git"u8))
                 {
                 }
 
-                if (ImGui.BeginMenu("Open Recent"))
+                if (ImGui.BeginMenu("Open Recent"u8))
                 {
                     var entries = ProjectHistory.Entries;
                     for (int i = 0; i < entries.Count; i++)
@@ -124,21 +129,21 @@
                     ImGui.EndMenu();
                 }
 
-                ImGui.SeparatorText("Scripts");
+                ImGui.SeparatorText("Scripts"u8);
 
-                if (ImGui.MenuItem("Build Project"))
+                if (ImGui.MenuItem("Build Project"u8))
                 {
                     ProjectManager.BuildScriptsAsync(true);
                 }
 
-                if (ImGui.MenuItem("Clean Project"))
+                if (ImGui.MenuItem("Clean Project"u8))
                 {
                     ProjectManager.CleanScriptsAsync();
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("Open Text Editor"))
+                if (ImGui.MenuItem("Open Text Editor"u8))
                 {
                     ProjectManager.OpenVisualStudio();
                 }
@@ -146,22 +151,22 @@
                 ImGui.EndMenu();
             }
 
-            if (ImGui.BeginMenu("Inspector"))
+            if (ImGui.BeginMenu("Inspector"u8))
             {
                 var enabled = Inspector.Enabled;
-                if (ImGui.Checkbox("Enabled", ref enabled))
+                if (ImGui.Checkbox("Enabled"u8, ref enabled))
                 {
                     Inspector.Enabled = enabled;
                 }
 
                 var drawGimbal = Inspector.DrawGimbal;
-                if (ImGui.Checkbox("Draw Gimbal", ref drawGimbal))
+                if (ImGui.Checkbox("Draw Gimbal"u8, ref drawGimbal))
                 {
                     Inspector.DrawGimbal = drawGimbal;
                 }
 
                 var drawGrid = Inspector.DrawGrid;
-                if (ImGui.Checkbox("Draw Grid", ref drawGrid))
+                if (ImGui.Checkbox("Draw Grid"u8, ref drawGrid))
                 {
                     Inspector.DrawGrid = drawGrid;
                 }
@@ -169,7 +174,7 @@
                 if (ImGui.BeginPopupContextItem())
                 {
                     int gridSize = Inspector.GridSize;
-                    if (ImGui.SliderInt("Grid Size", ref gridSize, 1, 500))
+                    if (ImGui.SliderInt("Grid Size"u8, ref gridSize, 1, 500))
                     {
                         Inspector.GridSize = gridSize;
                     }
@@ -178,24 +183,24 @@
                 }
 
                 var drawLights = (int)Inspector.DrawLights;
-                if (ImGuiP.CheckboxFlags("Draw Lights", ref drawLights, (int)EditorDrawLightsFlags.DrawLights))
+                if (ImGuiP.CheckboxFlags("Draw Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.DrawLights))
                 {
                     Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                 }
 
                 if (ImGui.BeginPopupContextItem())
                 {
-                    if (ImGuiP.CheckboxFlags("No Directional Lights", ref drawLights, (int)EditorDrawLightsFlags.NoDirectionalLights))
+                    if (ImGuiP.CheckboxFlags("No Directional Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.NoDirectionalLights))
                     {
                         Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                     }
 
-                    if (ImGuiP.CheckboxFlags("No Point Lights", ref drawLights, (int)EditorDrawLightsFlags.NoPointLights))
+                    if (ImGuiP.CheckboxFlags("No Point Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.NoPointLights))
                     {
                         Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                     }
 
-                    if (ImGuiP.CheckboxFlags("No Spot Lights", ref drawLights, (int)EditorDrawLightsFlags.NoSpotLights))
+                    if (ImGuiP.CheckboxFlags("No Spot Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.NoSpotLights))
                     {
                         Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                     }
@@ -204,41 +209,41 @@
                 }
 
                 var drawCameras = Inspector.DrawCameras;
-                if (ImGui.Checkbox("Draw Cameras", ref drawCameras))
+                if (ImGui.Checkbox("Draw Cameras"u8, ref drawCameras))
                 {
                     Inspector.DrawCameras = drawCameras;
                 }
 
                 var drawLightBounds = Inspector.DrawLightBounds;
-                if (ImGui.Checkbox("Draw Light Bounds", ref drawLightBounds))
+                if (ImGui.Checkbox("Draw Light Bounds"u8, ref drawLightBounds))
                 {
                     Inspector.DrawLightBounds = drawLightBounds;
                 }
 
                 var drawSkeletons = Inspector.DrawSkeletons;
-                if (ImGui.Checkbox("Draw Skeletons", ref drawSkeletons))
+                if (ImGui.Checkbox("Draw Skeletons"u8, ref drawSkeletons))
                 {
                     Inspector.DrawSkeletons = drawSkeletons;
                 }
 
                 var drawColliders = Inspector.DrawColliders;
-                if (ImGui.Checkbox("Draw Colliders", ref drawColliders))
+                if (ImGui.Checkbox("Draw Colliders"u8, ref drawColliders))
                 {
                     Inspector.DrawColliders = drawColliders;
                 }
 
                 var drawBoundingBoxes = Inspector.DrawBoundingBoxes;
-                if (ImGui.Checkbox("Draw Bounding Boxes", ref drawBoundingBoxes))
+                if (ImGui.Checkbox("Draw Bounding Boxes"u8, ref drawBoundingBoxes))
                 {
                     Inspector.DrawBoundingBoxes = drawBoundingBoxes;
                 }
 
                 ImGui.EndMenu();
             }
-            if (ImGui.BeginMenu("Debug"))
+            if (ImGui.BeginMenu("Debug"u8))
             {
-                ImGui.TextDisabled("Shaders");
-                if (ImGui.MenuItem("Reload All Shaders", (byte*)null, false, recompileShadersTaskIsComplete))
+                ImGui.TextDisabled("Shaders"u8);
+                if (ImGui.MenuItem("Reload All Shaders"u8, (byte*)null, false, recompileShadersTaskIsComplete))
                 {
                     recompileShadersTaskIsComplete = false;
                     var recompileShadersTask = Task.Run(() =>
@@ -247,7 +252,7 @@
                            PipelineManager.Recompile();
                        }).ContinueWith(x => { recompileShadersTaskIsComplete = true; });
                 }
-                if (ImGui.MenuItem("Reload Material Shaders", (byte*)null, false, recompileShadersTaskIsComplete))
+                if (ImGui.MenuItem("Reload Material Shaders"u8, (byte*)null, false, recompileShadersTaskIsComplete))
                 {
                     recompileShadersTaskIsComplete = false;
                     var recompileShadersTask = Task.Run(() =>
@@ -259,7 +264,7 @@
                             progressOverlay = "Reload Shaders Done";
                         }).ContinueWith(x => { recompileShadersTaskIsComplete = true; });
                 }
-                if (ImGui.MenuItem("Take Screenshot"))
+                if (ImGui.MenuItem("Take Screenshot"u8))
                 {
                     var win = Application.MainWindow as Window;
                     win?.Dispatcher.Invoke(() =>
@@ -269,37 +274,37 @@
                         LoggerFactory.General.Info($"Saved screenshot: {Path.GetFullPath(fileName)}");
                     });
                 }
-                if (ImGui.MenuItem("Clear Shader Cache"))
+                if (ImGui.MenuItem("Clear Shader Cache"u8))
                 {
                     ShaderCache.Clear();
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("Console"))
+                if (ImGui.MenuItem("Console"u8))
                 {
                     ImGuiConsole.IsDisplayed = !ImGuiConsole.IsDisplayed;
                 }
 
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("ImGui Demo"))
+                if (ImGui.MenuItem("ImGui Demo"u8))
                 {
                     showImGuiDemo = !showImGuiDemo;
                 }
 
-                if (ImGui.MenuItem("Progress Modal Test (Spinner)"))
+                if (ImGui.MenuItem("Progress Modal Test (Spinner)"u8))
                 {
                     popup = PopupManager.Show(new ProgressModal("Test progress", "Test progress"));
                 }
 
-                if (ImGui.MenuItem("Progress Modal Test (Bar)"))
+                if (ImGui.MenuItem("Progress Modal Test (Bar)"u8))
                 {
                     popup = PopupManager.Show(new ProgressModal("Test progress", "Test progress", ProgressType.Bar));
                     ((ProgressModal)popup).Report(0.8f);
                 }
 
-                if (ImGui.MenuItem("Progress Import Test"))
+                if (ImGui.MenuItem("Progress Import Test"u8))
                 {
                     ImportProgressModal modal = new("Test progress", "Test progress");
                     popup = PopupManager.Show(modal);
@@ -320,13 +325,13 @@
 
             if (ImGui.BeginMenu("Layout"u8))
             {
-                if (ImGui.MenuItem("Save Layout"))
+                if (ImGui.MenuItem("Save Layout"u8))
                 {
                     CreateFileDialog dialog = new(LayoutManager.BasePath);
                     dialog.Extension = ".ini";
                     dialog.Show(CreateNewLayoutCallback);
                 }
-                if (ImGui.BeginMenu("Apply Layout"))
+                if (ImGui.BeginMenu("Apply Layout"u8))
                 {
                     foreach (var layout in LayoutManager.Layouts)
                     {
@@ -337,11 +342,11 @@
                     }
                     ImGui.EndMenu();
                 }
-                if (ImGui.MenuItem("Manage Layouts"))
+                if (ImGui.MenuItem("Manage Layouts"u8))
                 {
                     WindowManager.ShowWindow<LayoutsWidget>();
                 }
-                if (ImGui.MenuItem("Reset Layout"))
+                if (ImGui.MenuItem("Reset Layout"u8))
                 {
                     LayoutManager.ResetLayout();
                 }
@@ -350,22 +355,22 @@
 
             if (ImGui.BeginMenu("Help"u8))
             {
-                if (ImGui.MenuItem($"{UwU.Github} HexaEngine on GitHub"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.Github, " HexaEngine on GitHub"u8)))
                 {
                     Designer.OpenLink("https://github.com/HexaEngine/HexaEngine");
                 }
 
-                if (ImGui.MenuItem($"{UwU.Book} HexaEngine Documentation"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.Book, " HexaEngine Documentation"u8)))
                 {
                     Designer.OpenLink("https://hexaengine.github.io/HexaEngine/");
                 }
 
-                if (ImGui.MenuItem($"{UwU.Bug} Report a bug"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.Bug, " Report a bug"u8)))
                 {
                     Designer.OpenLink("https://github.com/HexaEngine/HexaEngine/issues");
                 }
 
-                if (ImGui.MenuItem($"{UwU.Discord} Join our Discord"))
+                if (ImGui.MenuItem(builder.BuildLabel(UwU.Discord, " Join our Discord"u8)))
                 {
                     Designer.OpenLink("https://discord.gg/VawN5d8HMh");
                 }

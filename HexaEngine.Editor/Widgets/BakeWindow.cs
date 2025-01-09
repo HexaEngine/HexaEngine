@@ -35,14 +35,14 @@
 
             if (task != null && !task.IsCompleted)
             {
-                if (ImGui.Button("Cancel"))
+                if (ImGui.Button("Cancel"u8))
                 {
                     cancellationToken.Cancel();
                 }
             }
             else
             {
-                if (ImGui.Button("Bake"))
+                if (ImGui.Button("Bake"u8))
                 {
                     Bake(context);
                 }
