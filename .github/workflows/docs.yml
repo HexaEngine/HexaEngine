@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main # Set a branch name to trigger deployment
-  pull_request:
-    branches:
-      - main # Set a branch name to trigger deployment
 
 jobs:
   publish-docs:
