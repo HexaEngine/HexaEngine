@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Materials.Nodes.Functions
 {
+    using HexaEngine.Core.Materials;
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Generator.Enums;
@@ -10,6 +11,7 @@
 
     public class CamPosNode : FuncCallDeclarationBaseNode
     {
+        [JsonConstructor]
         public CamPosNode(int id, bool removable, bool isStatic) : base(id, "Camera Pos", removable, isStatic)
         {
             TitleColor = 0x473874FF.RGBAToVec4();
@@ -17,9 +19,13 @@
             TitleSelectedColor = 0x74679AFF.RGBAToVec4();
         }
 
+        public CamPosNode() : this(0, true, false)
+        {
+        }
+
         public override void Initialize(NodeEditor editor)
         {
-            Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, PinType.Float3));
+            Out = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, PinType.Float3));
 
             base.Initialize(editor);
         }
@@ -29,7 +35,7 @@
             table.AddInclude("../../camera.hlsl");
         }
 
-        public override FloatPin Out { get; protected set; } = null!;
+        public override PrimitivePin Out { get; protected set; } = null!;
 
         [JsonIgnore]
         public override string MethodName => "GetCameraPos";

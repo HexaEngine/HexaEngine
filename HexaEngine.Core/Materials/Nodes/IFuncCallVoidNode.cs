@@ -4,7 +4,7 @@
 
     public interface IFuncCallVoidNode : ITypedNode
     {
-        IReadOnlyList<FloatPin> Params { get; }
+        IReadOnlyList<PrimitivePin> Params { get; }
 
         string Op { get; }
     }

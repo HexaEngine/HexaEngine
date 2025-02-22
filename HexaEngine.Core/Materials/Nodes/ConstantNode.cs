@@ -1,62 +1,46 @@
 ﻿namespace HexaEngine.Materials.Nodes
 {
     using HexaEngine.Materials;
-    using HexaEngine.Materials.Generator;
-    using HexaEngine.Materials.Generator.Enums;
     using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
-    public class ConstantNode : Node
+    public class ConstantNode : TypedNodeBase
     {
-        [JsonIgnore] public PinType mode = PinType.Float4;
-        [JsonIgnore] public string[] names;
-        [JsonIgnore] public PinType[] modes;
-        [JsonIgnore] public int item = 3;
-
+        [JsonConstructor]
         public ConstantNode(int id, bool removable, bool isStatic) : base(id, "Constant", removable, isStatic)
         {
             TitleColor = 0x5A37A1FF.RGBAToVec4();
             TitleHoveredColor = 0x6A48B0FF.RGBAToVec4();
             TitleSelectedColor = 0x7D5CBFFF.RGBAToVec4();
-            modes = [PinType.Float, PinType.Float2, PinType.Float3, PinType.Float4];
-            names = modes.Select(x => x.ToString()).ToArray();
-            Type = new(VectorType.Float4);
+            Mode = PinType.Float4;
+            Type = Mode.ToSType();
         }
 
-        public override void Initialize(NodeEditor editor)
+        public ConstantNode() : this(0, true, false)
         {
-            Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Const", PinShape.QuadFilled, PinKind.Output, mode, 1, PinFlags.AllowOutput));
-            base.Initialize(editor);
-        }
-
-        public void UpdateMode()
-        {
-            Out.Type = mode;
-            switch (mode)
-            {
-                case PinType.Float:
-                    Type = new(ScalarType.Float);
-                    break;
-
-                case PinType.Float2:
-                    Type = new(VectorType.Float2);
-                    break;
-
-                case PinType.Float3:
-                    Type = new(VectorType.Float3);
-                    break;
-
-                case PinType.Float4:
-                    Type = new(VectorType.Float4);
-                    break;
-            }
         }
 
         [JsonIgnore]
-        public SType Type { get; private set; }
+        public override string ModesComboString => PinTypeHelper.NumericTypesCombo;
+
+        [JsonIgnore]
+        public override PinType[] Modes => PinTypeHelper.NumericTypes;
 
         [JsonIgnore]
         public Pin Out { get; private set; } = null!;
+
+        public override void Initialize(NodeEditor editor)
+        {
+            Out = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Const", PinShape.QuadFilled, PinKind.Output, Mode, uint.MaxValue, PinFlags.AllowOutput));
+            base.Initialize(editor);
+            UpdateMode();
+        }
+
+        public override void UpdateMode()
+        {
+            Out.Type = Mode;
+            base.UpdateMode();
+        }
     }
 }

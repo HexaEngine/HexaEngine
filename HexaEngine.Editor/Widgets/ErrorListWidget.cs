@@ -132,9 +132,11 @@
             ImGui.TableSetupColumn(""u8);
             ImGui.TableSetupColumn(""u8);
 
+            float fontSize = ImGui.GetTextLineHeightWithSpacing();
+
             ImGui.TableNextRow(ImGuiTableRowFlags.Headers);
             ImGui.TableSetColumnIndex(0);
-            ImGui.Text(""u8);
+            ImGui.Dummy(new(fontSize));
             ImGui.TableSetColumnIndex(1);
             ImGui.Text("Code"u8);
             ImGui.SameLine();

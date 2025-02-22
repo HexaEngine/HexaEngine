@@ -5,9 +5,9 @@
     using HexaEngine.Materials.Nodes;
     using System.Text;
 
-    public class ComponentMaskNodeAnalyzer : NodeAnalyzer<ComponentMaskNode>
+    public class ComponentMaskNodeAnalyzer : NodeAnalyzer<SwizzleVectorNode>
     {
-        public override void Analyze(ComponentMaskNode node, GenerationContext context, StringBuilder builder)
+        public override void Analyze(SwizzleVectorNode node, GenerationContext context, StringBuilder builder)
         {
             var def = context.GetVariableFirstLink(node.In);
 

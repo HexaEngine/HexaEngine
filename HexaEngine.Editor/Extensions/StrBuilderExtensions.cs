@@ -1,9 +1,26 @@
 ﻿namespace HexaEngine.Editor.Extensions
 {
     using Hexa.NET.Utilities.Text;
+    using System.Buffers.Binary;
 
     public static class StrBuilderExtensions
     {
+        public static StrBuilder BuildLabel(this ref StrBuilder builder, ReadOnlySpan<byte> text)
+        {
+            builder.Reset();
+            builder.Append(text);
+            builder.End();
+            return builder;
+        }
+
+        public static StrBuilder BuildLabel(this ref StrBuilder builder, string text)
+        {
+            builder.Reset();
+            builder.Append(text);
+            builder.End();
+            return builder;
+        }
+
         public static StrBuilder BuildLabel(this ref StrBuilder builder, ReadOnlySpan<byte> icon, ReadOnlySpan<byte> text)
         {
             builder.Reset();
@@ -87,6 +104,16 @@
         }
 
         public static StrBuilder BuildLabelId(this ref StrBuilder builder, ReadOnlySpan<byte> text, string id)
+        {
+            builder.Reset();
+            builder.Append(text);
+            builder.Append("##"u8);
+            builder.Append(id);
+            builder.End();
+            return builder;
+        }
+
+        public static StrBuilder BuildLabelId(this ref StrBuilder builder, ReadOnlySpan<byte> text, int id)
         {
             builder.Reset();
             builder.Append(text);
@@ -186,6 +213,12 @@
             builder.Append(id);
             builder.End();
             return builder;
+        }
+
+        public static unsafe void AppendHex(this ref StrBuilder builder, nint value, bool leadingZeros, bool uppercase)
+        {
+            value = BinaryPrimitives.ReverseEndianness(value);
+            builder.Index += Utf8Formatter.FormatHex(value, builder.Buffer + builder.Index, builder.Count - builder.Index, leadingZeros, uppercase);
         }
     }
 }

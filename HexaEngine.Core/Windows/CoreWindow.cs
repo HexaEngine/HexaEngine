@@ -46,7 +46,7 @@
             GraphicsContext = graphicsDevice.Context;
             SwapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
             SwapChain.Active = true;
-            Dispatcher = new ThreadDispatcher(System.Threading.Thread.CurrentThread);
+            Dispatcher = new ThreadDispatcher(Thread.CurrentThread);
         }
 
         public abstract void Render(IGraphicsContext context);

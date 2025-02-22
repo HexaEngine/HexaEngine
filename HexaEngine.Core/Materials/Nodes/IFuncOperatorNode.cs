@@ -1,16 +1,13 @@
 ﻿namespace HexaEngine.Materials.Nodes
 {
-    using HexaEngine.Materials;
     using HexaEngine.Materials.Pins;
 
-    public interface IFuncOperatorNode : ITypedNode
+    public interface IFuncOperatorNode : ITypedNode, IOutNode
     {
-        FloatPin InLeft { get; }
+        PrimitivePin InLeft { get; }
 
-        FloatPin InRight { get; }
+        PrimitivePin InRight { get; }
 
         string Op { get; }
-
-        Pin Out { get; }
     }
 }

@@ -14,7 +14,12 @@
 
     public class RotateUVNode : FuncCallDeclarationBaseNode
     {
+        [JsonConstructor]
         public RotateUVNode(int id, bool removable, bool isStatic) : base(id, "Rotate UV", removable, isStatic)
+        {
+        }
+
+        public RotateUVNode() : this(0, true, false)
         {
         }
 
@@ -24,7 +29,7 @@
         [JsonIgnore]
         public override SType Type { get; } = new SType(ScalarType.Float);
 
-        public override FloatPin Out { get; protected set; } = null!;
+        public override PrimitivePin Out { get; protected set; } = null!;
 
         public override void Initialize(NodeEditor editor)
         {

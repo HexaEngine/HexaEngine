@@ -6,15 +6,22 @@
 
     public class FmodNode : FuncCallNodeBase
     {
+        [JsonConstructor]
         public FmodNode(int id, bool removable, bool isStatic) : base(id, "Fmod", removable, isStatic)
+        {
+            AddAllowedMode(PinType.AnyFloat);
+        }
+
+        public FmodNode() : this(0, true, false)
         {
         }
 
         public override void Initialize(NodeEditor editor)
         {
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Left", PinShape.QuadFilled, PinKind.Input, mode, 1));
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Right", PinShape.QuadFilled, PinKind.Input, mode, 1));
             base.Initialize(editor);
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Left", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Right", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            UpdateInferState();
             UpdateMode();
         }
 

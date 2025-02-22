@@ -2,68 +2,69 @@
 {
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
-    using HexaEngine.Materials.Generator.Enums;
     using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
-    public class SplitNode : Node, ITypedNode
+    public class SplitNode : InferTypedNodeBase, ITypedNode
     {
-        [JsonIgnore] private static readonly int[] componentMasks = [1, 2, 3, 4];
-        [JsonIgnore] public PinType mode = PinType.Float4;
-        [JsonIgnore] public int item = 3;
-
-        [JsonIgnore]
-        public FloatPin[] OutPins = new FloatPin[4];
-
+        [JsonConstructor]
         public SplitNode(int id, bool removable, bool isStatic) : base(id, "Split Vector", removable, isStatic)
         {
             TitleColor = 0x5D3874FF.RGBAToVec4();
             TitleHoveredColor = 0x6F4C85FF.RGBAToVec4();
             TitleSelectedColor = 0x79578FFF.RGBAToVec4();
+            DefaultMode = Mode = PinType.Float4;
         }
 
-        public PinType Mode { get => mode; set => mode = value; }
+        public SplitNode() : this(0, true, false)
+        {
+        }
 
-        public int Item { get => item; set => item = value; }
+        [JsonIgnore]
+        public Pin In { get; private set; } = null!;
+
+        [JsonIgnore]
+        public UniversalPin[] OutPins { get; } = new UniversalPin[4];
+
+        [JsonIgnore]
+        public override string ModesComboString => PinTypeHelper.NumericTypesCombo;
+
+        [JsonIgnore]
+        public override PinType[] Modes => PinTypeHelper.NumericTypes;
 
         public override void Initialize(NodeEditor editor)
         {
-            In = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "in", PinShape.QuadFilled, PinKind.Input, mode, 1));
-            OutPins[0] = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "x", PinShape.QuadFilled, PinKind.Output, PinType.Float));
-            OutPins[1] = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "y", PinShape.QuadFilled, PinKind.Output, PinType.Float));
-            OutPins[2] = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "z", PinShape.QuadFilled, PinKind.Output, PinType.Float));
-            OutPins[3] = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "w", PinShape.QuadFilled, PinKind.Output, PinType.Float));
+            In = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "in", PinShape.QuadFilled, PinKind.Input, Mode, 1, PinFlags.InferType));
+            var scalarType = Mode.ToScalar();
+            OutPins[0] = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "x", PinShape.QuadFilled, PinKind.Output, scalarType));
+            OutPins[1] = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "y", PinShape.QuadFilled, PinKind.Output, scalarType));
+            OutPins[2] = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "z", PinShape.QuadFilled, PinKind.Output, scalarType));
+            OutPins[3] = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "w", PinShape.QuadFilled, PinKind.Output, scalarType));
             base.Initialize(editor);
             UpdateMode();
         }
 
-        public void UpdateMode()
+        public override void UpdateMode()
         {
+            base.UpdateMode();
             for (int i = 0; i < 4; i++)
             {
                 DestroyPin(OutPins[i]);
             }
-            for (int i = 0; i < componentMasks[item]; i++)
+
+            int componentCount = Mode.ComponentCount();
+            var scalarType = Mode.ToScalar();
+            for (int i = 0; i < componentCount; i++)
             {
-                AddPin(OutPins[i]);
+                var pin = OutPins[i];
+                pin.Type = scalarType;
+                AddPin(pin);
             }
-            In.Type = mode;
-            SType type = mode switch
-            {
-                PinType.Float => new(ScalarType.Float),
-                PinType.Float2 => new(VectorType.Float2),
-                PinType.Float3 => new(VectorType.Float3),
-                PinType.Float4 => new(VectorType.Float4),
-                _ => throw new NotImplementedException(),
-            };
+
+            In.Type = Mode;
+            SType type = Mode.ToSType();
             Type = new(type.Name);
         }
-
-        [JsonIgnore]
-        public SType Type { get; private set; }
-
-        [JsonIgnore]
-        public Pin In { get; private set; } = null!;
     }
 }

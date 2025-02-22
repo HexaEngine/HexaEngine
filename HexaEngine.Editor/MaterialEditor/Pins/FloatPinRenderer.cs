@@ -27,7 +27,7 @@
                 int components = PinTypeHelper.ComponentCount(Type);
                 ImGui.PushItemWidth(100);
 
-                if (flags != PinFlags.ColorEdit && flags != PinFlags.ColorPicker)
+                if (flags == PinFlags.None)
                 {
                     changed |= ImGui.InputScalarN(pin.name, ImGuiDataType.Float, val, components, "%.6f");
                 }

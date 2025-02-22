@@ -9,7 +9,12 @@
 
     public class NormalMapNode : FuncCallDeclarationBaseNode
     {
+        [JsonConstructor]
         public NormalMapNode(int id, bool removable, bool isStatic) : base(id, "Normal Map", removable, isStatic)
+        {
+        }
+
+        public NormalMapNode() : this(0, true, false)
         {
         }
 
@@ -25,7 +30,7 @@
         }
 
         [JsonIgnore]
-        public override FloatPin Out { get; protected set; } = null!;
+        public override PrimitivePin Out { get; protected set; } = null!;
 
         [JsonIgnore]
         public override string MethodName => "NormalMap";

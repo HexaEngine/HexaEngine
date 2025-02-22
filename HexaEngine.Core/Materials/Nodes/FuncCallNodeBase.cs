@@ -5,36 +5,37 @@
     using Newtonsoft.Json;
     using System.Collections.Generic;
 
-    public abstract class FuncCallNodeBase : TypedNodeBase, IFuncCallNode
+    public abstract class FuncCallNodeBase : InferTypedNodeBase, IFuncCallNode
     {
-        private readonly List<FloatPin> pins = new();
+        private readonly List<PrimitivePin> pins = [];
 
         protected FuncCallNodeBase(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
+            DefaultMode = Mode = PinType.Float4OrFloat;
         }
 
         [JsonIgnore]
         public abstract string Op { get; }
 
         [JsonIgnore]
-        public IReadOnlyList<FloatPin> Params => pins;
+        public IReadOnlyList<PrimitivePin> Params => pins;
 
         [JsonIgnore]
-        public Pin Out { get; private set; } = null!;
+        public PrimitivePin Out { get; private set; } = null!;
 
         public override void Initialize(NodeEditor editor)
         {
-            Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, mode));
+            Out = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, Mode));
             base.Initialize(editor);
         }
 
         public override T AddPin<T>(T pin)
         {
-            if (pin is FloatPin floatPin)
+            if (pin is PrimitivePin primitvePin)
             {
-                if (floatPin.Kind == PinKind.Input && !pins.Contains(floatPin))
+                if (primitvePin.Kind == PinKind.Input && !pins.Contains(primitvePin))
                 {
-                    pins.Add(floatPin);
+                    pins.Add(primitvePin);
                 }
             }
             return base.AddPin(pin);
@@ -43,11 +44,11 @@
         public override T AddOrGetPin<T>(T pin)
         {
             var e = base.AddOrGetPin(pin);
-            if (e is FloatPin floatPin)
+            if (e is PrimitivePin primitvePin)
             {
-                if (floatPin.Kind == PinKind.Input && !pins.Contains(floatPin))
+                if (primitvePin.Kind == PinKind.Input && !pins.Contains(primitvePin))
                 {
-                    pins.Add(floatPin);
+                    pins.Add(primitvePin);
                 }
             }
             return e;
@@ -55,11 +56,11 @@
 
         public override void DestroyPin<T>(T pin)
         {
-            if (pin is FloatPin floatPin)
+            if (pin is PrimitivePin primitvePin)
             {
-                if (floatPin.Kind == PinKind.Input)
+                if (primitvePin.Kind == PinKind.Input)
                 {
-                    pins.Remove(floatPin);
+                    pins.Remove(primitvePin);
                 }
             }
             base.DestroyPin(pin);
@@ -67,14 +68,14 @@
 
         public override void UpdateMode()
         {
-            if (lockType)
+            if (LockType)
             {
                 return;
             }
 
             for (int i = 0; i < pins.Count; i++)
             {
-                pins[i].Type = mode;
+                //pins[i].Type = Mode;
             }
             base.UpdateMode();
         }

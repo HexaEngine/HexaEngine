@@ -21,7 +21,12 @@
         private int maxLayers = 32;
         private int minLayers = 8;
 
+        [JsonConstructor]
         public ParallaxMapNode(int id, bool removable, bool isStatic) : base(id, "Parallax Map", removable, isStatic)
+        {
+        }
+
+        public ParallaxMapNode() : this(0, true, false)
         {
         }
 
@@ -74,7 +79,7 @@
         }
 
         [JsonIgnore]
-        public override FloatPin Out { get; protected set; } = null!;
+        public override PrimitivePin Out { get; protected set; } = null!;
 
         [JsonIgnore] public Pin InTex { get; protected set; } = null!;
 

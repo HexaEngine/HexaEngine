@@ -23,7 +23,7 @@
         {
         }
 
-        public override string Name => "Open Project";
+        public override string Name { get; } = "Open Project";
 
         protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoTitleBar;
 
@@ -85,6 +85,8 @@
 
         protected override unsafe void DrawContent()
         {
+            var window = ImGuiP.GetCurrentWindow();
+            ImGuiP.BringWindowToDisplayFront(window);
             ImGui.Separator();
 
             Vector2 pos = ImGui.GetCursorPos();

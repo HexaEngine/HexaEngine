@@ -6,14 +6,22 @@
 
     public class RpcNode : FuncCallNodeBase
     {
+        [JsonConstructor]
         public RpcNode(int id, bool removable, bool isStatic) : base(id, "Rpc", removable, isStatic)
+        {
+            AddAllowedMode(PinType.AnyFloat);
+            AddAllowedMode(PinType.AnyDouble);
+        }
+
+        public RpcNode() : this(0, true, false)
         {
         }
 
         public override void Initialize(NodeEditor editor)
         {
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "value", PinShape.QuadFilled, PinKind.Input, mode, 1));
             base.Initialize(editor);
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "value", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            UpdateInferState();
             UpdateMode();
         }
 

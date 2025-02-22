@@ -81,8 +81,8 @@
                 ImGui.End();
             }
 
-            ImGui.SetWindowPos(Vector2.Zero);
-            ImGui.SetWindowSize(Viewport.Size);
+            ImGuiP.SetWindowPos(Vector2.Zero);
+            ImGuiP.SetWindowSize(Viewport.Size);
 
             float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
             if (ImGui.BeginChild(1, new Vector2(0, -footerHeightToReserve), ImGuiChildFlags.None, ImGuiWindowFlags.HorizontalScrollbar))

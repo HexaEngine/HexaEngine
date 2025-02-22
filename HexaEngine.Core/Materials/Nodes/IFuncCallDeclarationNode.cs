@@ -4,13 +4,11 @@
     using HexaEngine.Materials.Pins;
     using System.Collections.Generic;
 
-    public interface IFuncCallDeclarationNode : ITypedNode
+    public interface IFuncCallDeclarationNode : ITypedNode, IOutNode
     {
         string MethodName { get; }
 
-        FloatPin Out { get; }
-
-        IReadOnlyList<FloatPin> Params { get; }
+        IReadOnlyList<PrimitivePin> Params { get; }
 
         void DefineMethod(GenerationContext context, VariableTable table);
     }

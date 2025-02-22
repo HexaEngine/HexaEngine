@@ -121,6 +121,7 @@
 
         public const int MaxMaxAnisotropy = unchecked(16);
 
+        [JsonConstructor]
         public TextureFileNode(int id, bool removable, bool isStatic) : base(id, "Texture", removable, isStatic)
         {
             TitleColor = 0x9E2A58FF.RGBAToVec4();
@@ -128,9 +129,13 @@
             TitleSelectedColor = 0xAA3363FF.RGBAToVec4();
         }
 
+        public TextureFileNode() : this(0, true, false)
+        {
+        }
+
         public override void Initialize(NodeEditor editor)
         {
-            OutColor = CreateOrGetPin(editor, "out", PinKind.Output, PinType.AnyFloat, PinShape.Quad);
+            OutColor = CreateOrGetPin(editor, "out", PinKind.Output, PinType.Float4, PinShape.Quad);
             OutTex = CreateOrGetPin(editor, "out tex", PinKind.Output, PinType.Texture2D, PinShape.QuadFilled);
             InUV = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "uv", PinShape.CircleFilled, PinKind.Input, PinType.Float2, 1, defaultExpression: "pixel.uv.xy"));
             base.Initialize(editor);

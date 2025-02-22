@@ -6,14 +6,21 @@
 
     public class ExpNode : FuncCallNodeBase
     {
+        [JsonConstructor]
         public ExpNode(int id, bool removable, bool isStatic) : base(id, "Exp", removable, isStatic)
+        {
+            AddAllowedMode(PinType.AnyFloat);
+        }
+
+        public ExpNode() : this(0, true, false)
         {
         }
 
         public override void Initialize(NodeEditor editor)
         {
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "in", PinShape.QuadFilled, PinKind.Input, mode, 1));
             base.Initialize(editor);
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "in", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            UpdateInferState();
             UpdateMode();
         }
 

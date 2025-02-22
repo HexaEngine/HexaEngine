@@ -3,6 +3,7 @@
     using HexaEngine.Core.Collections;
     using HexaEngine.Materials.Nodes.Textures;
     using Newtonsoft.Json;
+    using System.Buffers;
     using System.Collections.Generic;
     using System.Numerics;
 
@@ -15,8 +16,8 @@
         private readonly List<Link> links = new();
         private readonly List<Node> dependencies = new();
 
-        public readonly bool Removable = true;
-        public readonly bool IsStatic;
+        public bool Removable = true;
+        public bool IsStatic;
         public string Name;
         public string OriginalName;
 
@@ -59,7 +60,11 @@
 
         public event EventHandler<Link>? LinkRemoved;
 
-        public int Id => id;
+        public int Id
+        {
+            get => id;
+            set => id = value;
+        }
 
         [JsonIgnore]
         public IReadOnlyList<Link> Links => links;
@@ -261,6 +266,7 @@
 
             if (old != null)
             {
+                old.Flags = pin.Flags;
                 return (T)old;
             }
             else
@@ -277,6 +283,33 @@
             return pin;
         }
 
+        public virtual T InsertPin<T>(int index, T pin) where T : Pin
+        {
+            Pin? old = Find(pin.Name);
+
+            if (old != null)
+            {
+                throw new InvalidOperationException($"Pin with name '{pin.Name}' already exists.");
+            }
+            else
+            {
+                if (editor != null)
+                {
+                    pin.Initialize(editor, this);
+                }
+
+                pins.Insert(index, pin);
+                PinAdded?.Invoke(this, pin);
+            }
+
+            return pin;
+        }
+
+        public virtual int IndexOfPin(Pin pin)
+        {
+            return pins.IndexOf(pin);
+        }
+
         public virtual void DestroyPin<T>(T pin) where T : Pin
         {
             pin.Destroy();
@@ -286,6 +319,7 @@
 
         public virtual void AddLink(Link link)
         {
+            if (links.Contains(link)) return;
             links.Add(link);
             LinkAdded?.Invoke(this, link);
             if (link.InputNode == this && !dependencies.Contains(link.OutputNode))
@@ -372,6 +406,64 @@
         {
             renderer ??= NodeEditorRegistry.GetNodeRenderer(this);
             renderer.Draw(this);
+        }
+
+        public virtual bool CanCreateLink(Pin self, Node parentOther, Pin other)
+        {
+            return true;
+        }
+
+        public virtual void UpdateLinks()
+        {
+            HashSet<Node> visited = ObjectPool<HashSet<Node>>.Shared.Rent();
+            UpdateLinksCore(visited);
+            visited.Clear();
+            ObjectPool<HashSet<Node>>.Shared.Return(visited);
+        }
+
+        protected virtual void UpdateLinksCore(HashSet<Node> visited)
+        {
+            if (!visited.Add(this)) return;
+            if (!editor!.BeginUpdate()) return;
+            int count = Links.Count;
+            Link[] copy = ArrayPool<Link>.Shared.Rent(count);
+
+            int actualCount = 0;
+            for (int i = 0; i < count; i++)
+            {
+                var link = Links[i];
+                if (link.OutputNode != this && visited.Contains(link.OutputNode)) continue;
+                copy[actualCount] = link;
+                actualCount++;
+            }
+
+            for (int i = 0; i < actualCount; i++)
+            {
+                copy[i].Destroy();
+            }
+
+            for (int i = 0; i < actualCount; i++)
+            {
+                Link link = copy[i];
+                var pini = link.Input;
+                var pino = link.Output;
+                if (pini.CanCreateLink(pino) && pino.CanCreateLink(pini))
+                {
+                    link.Recycle();
+                    editor!.AddLink(link);
+                }
+            }
+
+            editor.EndUpdate();
+
+            for (int i = 0; i < actualCount; i++)
+            {
+                Link link = copy[i];
+                if (link.InputNode != this) link.InputNode.UpdateLinksCore(visited);
+                else if (link.OutputNode != this) link.OutputNode.UpdateLinksCore(visited);
+            }
+
+            ArrayPool<Link>.Shared.Return(copy, true);
         }
 
         public override string ToString()

@@ -30,7 +30,7 @@
 
             FTFaceRec* face = (FTFaceRec*)faceHandle.Handle;
 
-            var family = Utils.ToStringFromUTF8(face->FamilyName) ?? "Unknown";
+            var family = ToStringFromUTF8(face->FamilyName) ?? "Unknown";
 
             FontStyle style = FontStyle.Regular;
 
@@ -55,7 +55,7 @@
         {
             FTFaceRec* face = (FTFaceRec*)faceHandle.Handle;
 
-            var family = Utils.ToStringFromUTF8(face->FamilyName) ?? "Unknown";
+            var family = ToStringFromUTF8(face->FamilyName) ?? "Unknown";
 
             FontStyle style = FontStyle.Regular;
 

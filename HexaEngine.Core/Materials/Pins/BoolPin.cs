@@ -5,13 +5,12 @@
     using System.Diagnostics;
     using System.Globalization;
 
-    public class BoolPin : Pin, IDefaultValuePin
+    public class BoolPin : NumericPin
     {
         [JsonIgnore] public readonly string name;
         [JsonIgnore] public readonly string nameY;
         [JsonIgnore] public readonly string nameZ;
         [JsonIgnore] public readonly string nameW;
-        [JsonIgnore] public readonly PinFlags flags;
         [JsonIgnore] public bool valueX;
         [JsonIgnore] public bool valueY;
         [JsonIgnore] public bool valueZ;
@@ -25,7 +24,7 @@
             nameY = $"##Value1{Id.ToString(CultureInfo.InvariantCulture)}";
             nameZ = $"##Value2{Id.ToString(CultureInfo.InvariantCulture)}";
             nameW = $"##Value3{Id.ToString(CultureInfo.InvariantCulture)}";
-            this.flags = flags;
+            this.Flags = flags;
             this.valueX = valueX;
             this.valueY = valueY;
             this.valueZ = valueZ;
@@ -39,7 +38,7 @@
             nameY = $"##Value1{Id.ToString(CultureInfo.InvariantCulture)}";
             nameZ = $"##Value2{Id.ToString(CultureInfo.InvariantCulture)}";
             nameW = $"##Value3{Id.ToString(CultureInfo.InvariantCulture)}";
-            this.flags = flags;
+            this.Flags = flags;
             SanityChecks();
         }
 
@@ -49,7 +48,7 @@
             nameY = $"##Value1{Id.ToString(CultureInfo.InvariantCulture)}";
             nameZ = $"##Value2{Id.ToString(CultureInfo.InvariantCulture)}";
             nameW = $"##Value3{Id.ToString(CultureInfo.InvariantCulture)}";
-            this.flags = flags;
+            this.Flags = flags;
             valueX = value;
             valueY = value;
             valueZ = value;
@@ -77,8 +76,6 @@
             get => valueW; set => valueW = value;
         }
 
-        public PinFlags Flags => flags;
-
         private void SanityChecks()
         {
             Trace.Assert(Type == PinType.Bool || Type == PinType.Bool2 || Type == PinType.Bool3 || Type == PinType.Bool4 || Type == PinType.Bool2OrBool || Type == PinType.Bool3OrBool || Type == PinType.Bool4OrBool, $"PinType {Type} is not a bool!");
@@ -86,7 +83,7 @@
             Trace.Assert((Flags & PinFlags.ColorPicker) == 0 && (Flags & PinFlags.ColorEdit) == 0 && (Flags & PinFlags.Slider) == 0, $"ColorPicker and ColorEdit is not supported!");
         }
 
-        public string GetDefaultValue()
+        public override string GetDefaultValue()
         {
             return Type switch
             {

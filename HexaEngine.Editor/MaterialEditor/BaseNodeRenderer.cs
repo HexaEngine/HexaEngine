@@ -3,6 +3,7 @@
     using Hexa.NET.ImGui;
     using Hexa.NET.ImNodes;
     using HexaEngine.Core;
+    using HexaEngine.Core.Utilities;
     using HexaEngine.Materials;
     using HexaEngine.Materials.Nodes.Textures;
     using System.Numerics;
@@ -225,27 +226,38 @@
         }
     }
 
-    public class BasePinRenderer : DisposableRefBase, IPinRenderer
+    public unsafe class BasePinRenderer : DisposableRefBase, IPinRenderer
     {
         public virtual void Draw(Pin pin)
         {
-            if (pin.Kind == PinKind.Input)
+            int poutId = pin.Id;
+
+            switch (pin.Kind)
             {
-                ImNodes.BeginInputAttribute(pin.Id, (ImNodesPinShape)pin.Shape);
-                DrawContent(pin);
-                ImNodes.EndInputAttribute();
+                case PinKind.Input:
+                    ImNodes.BeginInputAttribute(pin.Id, (ImNodesPinShape)pin.Shape);
+                    DrawContent(pin);
+                    ImNodes.EndInputAttribute();
+                    break;
+
+                case PinKind.Output:
+                    ImNodes.BeginOutputAttribute(pin.Id, (ImNodesPinShape)pin.Shape);
+                    DrawContent(pin);
+                    ImNodes.EndOutputAttribute();
+                    break;
+
+                case PinKind.Static:
+                    ImNodes.BeginStaticAttribute(pin.Id);
+                    DrawContent(pin);
+                    ImNodes.EndStaticAttribute();
+                    break;
+
+                case PinKind.InputOutput:
+                    break;
             }
-            if (pin.Kind == PinKind.Output)
+            if (ImNodes.IsPinHovered(ref poutId))
             {
-                ImNodes.BeginOutputAttribute(pin.Id, (ImNodesPinShape)pin.Shape);
-                DrawContent(pin);
-                ImNodes.EndOutputAttribute();
-            }
-            if (pin.Kind == PinKind.Static)
-            {
-                ImNodes.BeginStaticAttribute(pin.Id);
-                DrawContent(pin);
-                ImNodes.EndStaticAttribute();
+                ImGui.SetTooltip(EnumHelper<PinType>.GetName(pin.Type));
             }
         }
 

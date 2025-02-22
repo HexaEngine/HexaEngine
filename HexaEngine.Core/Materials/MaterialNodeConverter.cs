@@ -258,7 +258,7 @@
                 {
                     SplitNode splitNode = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(splitNode);
-                    editor.CreateLink(splitNode.Pins[0], output);
+                    editor.CreateLink(splitNode.In, output);
                     output = splitNode.Pins[2]; // g
                     foreach (var pin in PropertyPin.FindPropertyPins(editor, "Roughness"))
                     {

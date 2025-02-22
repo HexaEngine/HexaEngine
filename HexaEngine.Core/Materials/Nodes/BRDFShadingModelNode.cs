@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Materials.Nodes
 {
-    using Hexa.NET.Mathematics;
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Nodes.Textures;

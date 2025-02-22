@@ -4,6 +4,7 @@
     {
         Input,
         Output,
-        Static
+        Static,
+        InputOutput
     }
 }

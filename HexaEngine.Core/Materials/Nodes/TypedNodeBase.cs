@@ -2,28 +2,32 @@
 {
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
-    using HexaEngine.Materials.Generator.Enums;
     using HexaEngine.Materials.Nodes.Textures;
+    using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
+    using System.Buffers;
+    using System.Net.NetworkInformation;
 
     public abstract class TypedNodeBase : Node, ITypedNode
     {
         private bool initialized;
-        [JsonIgnore] public PinType mode = PinType.Float;
-        [JsonIgnore] public string[] names;
-        [JsonIgnore] public PinType[] modes;
-        [JsonIgnore] public int item;
-        [JsonIgnore] public bool lockOutputType;
-        [JsonIgnore] public bool lockType;
+        private PinType mode = PinType.Float;
+        private int modeIndex;
+        private bool lockOutputType;
+        private bool lockType;
 
         protected TypedNodeBase(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
             TitleColor = 0x3160A1FF.RGBAToVec4();
             TitleHoveredColor = 0x4371B0FF.RGBAToVec4();
             TitleSelectedColor = 0x5480BBFF.RGBAToVec4();
-            modes = [PinType.Float, PinType.Float2OrFloat, PinType.Float3OrFloat, PinType.Float4OrFloat];
-            names = modes.Select(x => x.ToString()).ToArray();
         }
+
+        [JsonIgnore]
+        public virtual string ModesComboString => PinTypeHelper.NumericVectorOrScalarTypesCombo;
+
+        [JsonIgnore]
+        public virtual PinType[] Modes => PinTypeHelper.NumericVectorOrScalarTypes;
 
         [JsonIgnore]
         public SType Type { get; protected set; }
@@ -37,6 +41,7 @@
                 {
                     return;
                 }
+                if (mode == value) return;
                 mode = value;
                 if (initialized)
                 {
@@ -45,52 +50,65 @@
             }
         }
 
+        [JsonIgnore]
+        public int ModeIndex => modeIndex;
+
+        [JsonIgnore]
+        public bool LockType { get => lockType; set => lockType = value; }
+
+        [JsonIgnore]
+        public bool LockOutputType { get => lockOutputType; set => lockOutputType = value; }
+
         public override void Initialize(NodeEditor editor)
         {
             base.Initialize(editor);
             initialized = true;
         }
 
+        public override void Destroy()
+        {
+            initialized = false;
+            base.Destroy();
+        }
+
         public virtual void UpdateMode()
         {
-            item = Array.IndexOf(modes, mode);
+            modeIndex = Array.IndexOf(Modes, mode);
 
             if (lockType || lockOutputType)
             {
                 return;
             }
 
-            if (this is IFuncCallNode funcNode)
+            if (this is IOutNode node)
             {
-                funcNode.Out.Type = mode;
-            }
-            if (this is IFuncOperatorNode operatorNode)
-            {
-                operatorNode.Out.Type = mode;
-            }
-            if (this is IFuncCallDeclarationNode declarationNode)
-            {
-                declarationNode.Out.Type = mode;
+                node.Out.Type = mode;
             }
 
-            switch (mode)
+            Type = mode.ToSType();
+
+            UpdateLinks();
+        }
+
+        protected void OverwriteMode(PinType type)
+        {
+            mode = type;
+
+            modeIndex = Array.IndexOf(Modes, mode);
+
+            if (lockType || lockOutputType)
             {
-                case PinType.Float:
-                    Type = new(ScalarType.Float);
-                    break;
-
-                case PinType.Float2OrFloat:
-                    Type = new(VectorType.Float2);
-                    break;
-
-                case PinType.Float3OrFloat:
-                    Type = new(VectorType.Float3);
-                    break;
-
-                case PinType.Float4OrFloat:
-                    Type = new(VectorType.Float4);
-                    break;
+                return;
             }
+
+            if (this is IOutNode node)
+            {
+                node.Out.Type = mode;
+            }
+
+            Type = mode.ToSType();
+
+            UpdateLinks();
         }
     }
 }

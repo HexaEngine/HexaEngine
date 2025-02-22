@@ -6,6 +6,7 @@
     using Hexa.NET.Utilities.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.IO;
@@ -426,7 +427,7 @@
                     material.Guid = Guid.NewGuid();
 
                     List<MaterialProperty> properties = [];
-                    List<MaterialTexture> textures = [];
+                    AccessibleList<MaterialTexture> textures = [];
                     List<MaterialShader> shaders = [];
 
                     for (int j = 0; j < mat->MNumProperties; j++)
@@ -441,7 +442,7 @@
                         string key = prop->MKey;
                         int semantic = (int)prop->MSemantic;
 
-                        static ref MaterialTexture FindOrCreate(List<MaterialTexture> textures, TextureType type)
+                        static ref MaterialTexture FindOrCreate(AccessibleList<MaterialTexture> textures, TextureType type)
                         {
                             var t = Convert(type);
                             for (int i = 0; i < textures.Count; i++)
@@ -449,15 +450,15 @@
                                 var tex = textures[i];
                                 if (tex.Type == t)
                                 {
-                                    return ref textures.GetInternalArray()[i];
+                                    return ref textures.Values[i];
                                 }
                             }
                             var index = textures.Count;
                             textures.Add(new MaterialTexture() { Type = t, Filter = TextureMapFilter.Anisotropic, MaxAnisotropy = MaterialTexture.MaxMaxAnisotropy, W = IO.Binary.Materials.TextureMapMode.Clamp, MinLOD = float.MinValue, MaxLOD = float.MaxValue });
-                            return ref textures.GetInternalArray()[index];
+                            return ref textures.Values[index];
                         }
 
-                        static int FindOrCreateIdx(List<MaterialTexture> textures, Guid guid, TextureType type)
+                        static int FindOrCreateIdx(AccessibleList<MaterialTexture> textures, Guid guid, TextureType type)
                         {
                             var t = Convert(type);
                             for (int i = 0; i < textures.Count; i++)
@@ -732,7 +733,7 @@
                     }
 
                     material.Properties = properties;
-                    material.Textures = textures;
+                    material.Textures = textures.ToList();
 
                     MaterialNodeConverter.Convert(material, Logger);
 

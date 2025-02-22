@@ -156,7 +156,7 @@
         {
             GC.SuppressFinalize(this);
             Passes.Clear();
-            commandBuffer.Dispose();
+            commandBuffer?.Dispose();
         }
     }
 }

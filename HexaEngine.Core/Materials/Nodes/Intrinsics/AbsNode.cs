@@ -6,33 +6,25 @@
 
     public class AbsNode : FuncCallNodeBase
     {
+        [JsonConstructor]
         public AbsNode(int id, bool removable, bool isStatic) : base(id, "Abs", removable, isStatic)
+        {
+            AddAllowedMode(PinType.AnyFloat);
+            AddAllowedMode(PinType.AnyInt);
+        }
+
+        public AbsNode() : this(0, true, false)
         {
         }
 
         public override void Initialize(NodeEditor editor)
         {
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Value", PinShape.QuadFilled, PinKind.Input, mode, 1));
             base.Initialize(editor);
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Value", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            UpdateInferState();
             UpdateMode();
         }
 
         public override string Op { get; } = "abs";
-    }
-
-    public class DegreesNode : FuncCallNodeBase
-    {
-        public DegreesNode(int id, bool removable, bool isStatic) : base(id, "Degrees", removable, isStatic)
-        {
-        }
-
-        public override void Initialize(NodeEditor editor)
-        {
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Value", PinShape.QuadFilled, PinKind.Input, mode, 1));
-            base.Initialize(editor);
-            UpdateMode();
-        }
-
-        public override string Op { get; } = "degrees";
     }
 }

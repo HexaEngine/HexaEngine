@@ -6,16 +6,24 @@
 
     public class ClampNode : FuncCallNodeBase
     {
+        [JsonConstructor]
         public ClampNode(int id, bool removable, bool isStatic) : base(id, "Clamp", removable, isStatic)
+        {
+            AddAllowedMode(PinType.AnyFloat);
+            AddAllowedMode(PinType.AnyInt);
+        }
+
+        public ClampNode() : this(0, true, false)
         {
         }
 
         public override void Initialize(NodeEditor editor)
         {
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Value", PinShape.QuadFilled, PinKind.Input, mode, 1));
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Min", PinShape.QuadFilled, PinKind.Input, mode, 1));
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Max", PinShape.QuadFilled, PinKind.Input, mode, 1));
             base.Initialize(editor);
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Value", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Min", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Max", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            UpdateInferState();
             UpdateMode();
         }
 

@@ -8,7 +8,7 @@
 
     public abstract class FuncCallDeclarationBaseNode : Node, IFuncCallDeclarationNode
     {
-        private readonly List<FloatPin> pins = new();
+        private readonly List<PrimitivePin> pins = new();
 
         public FuncCallDeclarationBaseNode(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
@@ -21,9 +21,10 @@
 
         public abstract SType Type { get; }
 
-        public abstract FloatPin Out { get; protected set; }
+        [JsonIgnore]
+        public abstract PrimitivePin Out { get; protected set; }
 
-        public IReadOnlyList<FloatPin> Params => pins;
+        public IReadOnlyList<PrimitivePin> Params => pins;
 
         public override T AddOrGetPin<T>(T pin)
         {
@@ -31,11 +32,11 @@
 
             if (old != null)
             {
-                if (old is FloatPin floatPin)
+                if (old is PrimitivePin primitvePin)
                 {
-                    if (floatPin.Kind == PinKind.Input && !pins.Contains(floatPin))
+                    if (primitvePin.Kind == PinKind.Input && !pins.Contains(primitvePin))
                     {
-                        pins.Add(floatPin);
+                        pins.Add(primitvePin);
                     }
                 }
                 return (T)old;
@@ -50,11 +51,11 @@
 
         public override T AddPin<T>(T pin)
         {
-            if (pin is FloatPin floatPin)
+            if (pin is PrimitivePin primitvePin)
             {
-                if (floatPin.Kind == PinKind.Input && !pins.Contains(floatPin))
+                if (primitvePin.Kind == PinKind.Input && !pins.Contains(primitvePin))
                 {
-                    pins.Add(floatPin);
+                    pins.Add(primitvePin);
                 }
             }
             return base.AddPin(pin);
@@ -62,11 +63,11 @@
 
         public override void DestroyPin<T>(T pin)
         {
-            if (pin is FloatPin floatPin)
+            if (pin is PrimitivePin primitvePin)
             {
-                if (floatPin.Kind == PinKind.Input)
+                if (primitvePin.Kind == PinKind.Input)
                 {
-                    pins.Remove(floatPin);
+                    pins.Remove(primitvePin);
                 }
             }
             base.DestroyPin(pin);

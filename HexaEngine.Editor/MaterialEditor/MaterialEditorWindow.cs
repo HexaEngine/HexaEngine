@@ -9,11 +9,11 @@
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Metadata;
     using HexaEngine.Core.Logging;
+    using HexaEngine.Core.Materials;
     using HexaEngine.Core.Materials.Nodes.Functions;
     using HexaEngine.Core.Materials.Nodes.Noise;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator;
@@ -24,6 +24,7 @@
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
+    using System.Diagnostics;
     using System.Reflection;
     using System.Text;
 
@@ -46,8 +47,6 @@
         private InputNode geometryNode = null!;
         private BRDFShadingModelNode outputNode = null!;
 
-        private (string, Type)[] intrinsicFuncs = null!;
-        private (string, Type)[] operatorFuncs = null!;
         private readonly ShaderGenerator generator = new();
         private bool autoGenerate = true;
 
@@ -67,19 +66,20 @@
 
         private bool showCode;
 
+        private string searchNodeString = "";
+
         public MaterialEditorWindow()
         {
             IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar;
 
-            NodeEditorRegistry.RegisterNodeSingleton<ComponentMaskNode, ComponentMaskNodeRenderer>();
-            NodeEditorRegistry.RegisterNodeSingleton<SplitNode, SplitNodeRenderer>();
+            NodeEditorRegistry.RegisterNodeSingleton<SwizzleVectorNode, SwizzleVectorNodeRenderer>();
             NodeEditorRegistry.RegisterNodeSingleton<TypedNodeBase, TypedNodeBaseRenderer>();
             NodeEditorRegistry.RegisterNodeSingleton<ParallaxMapNode, ParallaxMapNodeRenderer>();
             NodeEditorRegistry.RegisterNodeInstanced<TextureFileNode, TextureFileNodeRenderer>();
-            NodeEditorRegistry.RegisterNodeSingleton<ConstantNode, ConstantNodeRenderer>();
             NodeEditorRegistry.RegisterNodeSingleton<FlipUVNode, FlipUVNodeRenderer>();
-            NodeEditorRegistry.RegisterNodeSingleton<PackNode, PackNodeRenderer>();
+
+            NodeEditorRegistry.RegisterNodeInstanced<CodeNode, CodeNodeRenderer>();
 
             Application.OnEditorPlayStateTransition += ApplicationOnEditorPlayStateTransition;
             Application.MainWindow.Closing += MainWindowClosing;
@@ -373,10 +373,6 @@
             {
                 MaterialFile = material;
             }
-
-            intrinsicFuncs = Assembly.GetAssembly(typeof(Time))!.GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray();
-            intrinsicFuncs = Assembly.GetAssembly(typeof(Time))!.GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncCallVoidNodeBase)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().Union(intrinsicFuncs).OrderBy(x => x.Item1).ToArray();
-            operatorFuncs = Assembly.GetAssembly(typeof(Time))!.GetTypes().AsParallel().Where(x => x.BaseType == typeof(FuncOperatorBaseNode)).Select(x => (x.Name.Replace("Node", string.Empty), x)).ToArray().OrderBy(x => x.Item1).ToArray();
         }
 
         private void LinkRemoved(object? sender, Link e)
@@ -566,7 +562,7 @@
 
                 if (ImGui.BeginMenu("Nodes"))
                 {
-                    DrawNodesMenu(context);
+                    DrawNodesMenu();
                     ImGui.EndMenu();
                 }
 
@@ -591,120 +587,99 @@
             showCode = !showCode;
         }
 
-        private void DrawNodesMenu(IGraphicsContext context)
+        private void DrawNodesMenu()
         {
             if (editor == null)
             {
                 return;
             }
 
+            ImGui.InputTextWithHint("##Search", "Search...", ref searchNodeString, 1024);
+
+            if (!string.IsNullOrEmpty(searchNodeString))
+            {
+                DisplayNodes(MaterialNodeRegistry.GetAllFactories());
+                return;
+            }
+
             if (ImGui.BeginMenu("Textures"))
             {
-                if (ImGui.MenuItem("Texture File"))
+                if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Texture, out var factories))
                 {
-                    TextureFileNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
-                    textureFiles.Add(node);
+                    DisplayNodes(factories);
                 }
-
                 ImGui.EndMenu();
             }
 
             if (ImGui.BeginMenu("Methods"))
             {
-                if (ImGui.MenuItem("Normal Map"))
+                if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Method, out var factories))
                 {
-                    NormalMapNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
+                    DisplayNodes(factories);
                 }
-                if (ImGui.MenuItem("Parallax Map"))
-                {
-                    ParallaxMapNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
-                }
-                if (ImGui.MenuItem("Rotate UV"))
-                {
-                    RotateUVNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
-                }
-                if (ImGui.MenuItem("Flip UVs"))
-                {
-                    FlipUVNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
-                }
-
                 ImGui.EndMenu();
             }
 
             if (ImGui.BeginMenu("Noise"))
             {
-                if (ImGui.MenuItem("Generic Noise"))
+                if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Noise, out var factories))
                 {
-                    GenericNoiseNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
+                    DisplayNodes(factories);
                 }
                 ImGui.EndMenu();
             }
 
             if (ImGui.BeginMenu("Constants"))
             {
-                if (ImGui.MenuItem("Constant"))
+                if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Constant, out var factories))
                 {
-                    ConstantNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
+                    DisplayNodes(factories);
                 }
-                if (ImGui.MenuItem("Component Mask"))
-                {
-                    ComponentMaskNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
-                }
-                if (ImGui.MenuItem("Components to Vector"))
-                {
-                    PackNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
-                }
-                if (ImGui.MenuItem("Vector to Components"))
-                {
-                    SplitNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
-                }
-                if (ImGui.MenuItem("Cam pos"))
-                {
-                    CamPosNode node = new(editor.GetUniqueId(), true, false);
-                    editor.AddNode(node);
-                }
-
                 ImGui.EndMenu();
             }
 
             if (ImGui.BeginMenu("Operators"))
             {
-                for (int i = 0; i < operatorFuncs.Length; i++)
+                if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Operator, out var factories))
                 {
-                    var func = operatorFuncs[i];
-                    if (ImGui.MenuItem(func.Item1))
-                    {
-                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false)!;
-                        editor.AddNode(node);
-                    }
+                    DisplayNodes(factories);
                 }
-
                 ImGui.EndMenu();
             }
 
             if (ImGui.BeginMenu("Intrinsic Functions"))
             {
-                for (int i = 0; i < intrinsicFuncs.Length; i++)
+                if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Intrinsic, out var factories))
                 {
-                    var func = intrinsicFuncs[i];
-                    if (ImGui.MenuItem(func.Item1))
-                    {
-                        Node node = (Node)Activator.CreateInstance(func.Item2, editor.GetUniqueId(), true, false)!;
-                        editor.AddNode(node);
-                    }
+                    DisplayNodes(factories);
                 }
-
                 ImGui.EndMenu();
+            }
+
+            if (ImGui.BeginMenu("Custom"))
+            {
+                if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Custom, out var factories))
+                {
+                    DisplayNodes(factories);
+                }
+                ImGui.EndMenu();
+            }
+        }
+
+        private void DisplayNodes(IReadOnlyList<MaterialNodeFactory> factories)
+        {
+            bool search = !string.IsNullOrEmpty(searchNodeString);
+            foreach (var factory in factories)
+            {
+                if (search && !factory.Name.Contains(searchNodeString, StringComparison.CurrentCultureIgnoreCase)) continue;
+                if (ImGui.MenuItem(factory.Name))
+                {
+                    Node node = factory.CreateInstance();
+                    node.Id = editor.GetUniqueId();
+                    node.Removable = true;
+                    node.IsStatic = false;
+                    editor.AddNode(node);
+                }
             }
         }
 

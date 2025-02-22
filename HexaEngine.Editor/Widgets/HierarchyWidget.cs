@@ -29,7 +29,7 @@
     /// </summary>
     public class HierarchyWidget : EditorWindow
     {
-        private readonly Dictionary<string, EditorGameObjectAttribute> cache = new();
+        private readonly Dictionary<string, EditorGameObjectAttribute> cache = [];
         private bool showHidden;
         private bool focused;
 

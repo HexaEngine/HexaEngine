@@ -5,45 +5,46 @@
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
-    public abstract class FuncOperatorBaseNode : TypedNodeBase, IFuncOperatorNode
+    public abstract class FuncOperatorBaseNode : InferTypedNodeBase, IFuncOperatorNode
     {
         protected FuncOperatorBaseNode(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
             TitleColor = 0x293580FF.RGBAToVec4();
             TitleHoveredColor = 0x34418CFF.RGBAToVec4();
             TitleSelectedColor = 0x414D96FF.RGBAToVec4();
+            DefaultMode = Mode = PinType.Float4OrFloat;
         }
 
         [JsonIgnore]
-        public FloatPin InLeft { get; private set; } = null!;
+        public PrimitivePin InLeft { get; private set; } = null!;
 
         [JsonIgnore]
-        public FloatPin InRight { get; private set; } = null!;
+        public PrimitivePin InRight { get; private set; } = null!;
 
         [JsonIgnore]
         public abstract string Op { get; }
 
         [JsonIgnore]
-        public Pin Out { get; private set; } = null!;
+        public PrimitivePin Out { get; private set; } = null!;
 
         public override void Initialize(NodeEditor editor)
         {
-            Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, mode));
-            InLeft = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Left", PinShape.QuadFilled, PinKind.Input, mode, 1));
-            InRight = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Right", PinShape.QuadFilled, PinKind.Input, mode, 1));
+            Out = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, Mode));
+            InLeft = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Left", PinShape.QuadFilled, PinKind.Input, PinType.DontCare, 1, flags: PinFlags.InferType));
+            InRight = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Right", PinShape.QuadFilled, PinKind.Input, PinType.DontCare, 1, flags: PinFlags.InferType));
             base.Initialize(editor);
             UpdateMode();
         }
 
         public override void UpdateMode()
         {
-            if (lockType)
+            if (LockType)
             {
                 return;
             }
 
-            InLeft.Type = mode;
-            InRight.Type = mode;
+            //InLeft.Type = Mode;
+            //InRight.Type = Mode;
             base.UpdateMode();
         }
     }

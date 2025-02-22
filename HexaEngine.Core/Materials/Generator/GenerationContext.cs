@@ -654,7 +654,7 @@
             }
         }
 
-        public Definition GetVariableFirstLink(ITypedNode node, FloatPin pin)
+        public Definition GetVariableFirstLink(ITypedNode node, PrimitivePin pin)
         {
             if (pin.Links.Count == 0)
             {

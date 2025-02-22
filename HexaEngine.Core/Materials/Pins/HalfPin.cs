@@ -5,13 +5,12 @@
     using System.Diagnostics;
     using System.Globalization;
 
-    public class HalfPin : Pin, IDefaultValuePin
+    public class HalfPin : NumericPin
     {
         [JsonIgnore] public readonly string name;
         [JsonIgnore] public readonly string nameY;
         [JsonIgnore] public readonly string nameZ;
         [JsonIgnore] public readonly string nameW;
-        [JsonIgnore] public readonly PinFlags flags;
         [JsonIgnore] public Half valueX;
         [JsonIgnore] public Half valueY;
         [JsonIgnore] public Half valueZ;
@@ -26,7 +25,7 @@
             nameY = $"##Value1{Id.ToString(CultureInfo.InvariantCulture)}";
             nameZ = $"##Value2{Id.ToString(CultureInfo.InvariantCulture)}";
             nameW = $"##Value3{Id.ToString(CultureInfo.InvariantCulture)}";
-            this.flags = flags;
+            this.Flags = flags;
             this.valueX = valueX;
             this.valueY = valueY;
             this.valueZ = valueZ;
@@ -42,7 +41,7 @@
             nameZ = $"##Value2{Id.ToString(CultureInfo.InvariantCulture)}";
             nameW = $"##Value3{Id.ToString(CultureInfo.InvariantCulture)}";
             this.defaultExpression = defaultExpression;
-            this.flags = flags;
+            this.Flags = flags;
             SanityChecks();
         }
 
@@ -53,7 +52,7 @@
             nameZ = $"##Value2{Id.ToString(CultureInfo.InvariantCulture)}";
             nameW = $"##Value3{Id.ToString(CultureInfo.InvariantCulture)}";
             this.defaultExpression = defaultExpression;
-            this.flags = flags;
+            this.Flags = flags;
             valueX = value;
             valueY = value;
             valueZ = value;
@@ -69,8 +68,6 @@
 
         public Half ValueW { get => valueW; set => valueW = value; }
 
-        public PinFlags Flags => flags;
-
         public string? DefaultExpression { get => defaultExpression; set => defaultExpression = value; }
 
         private void SanityChecks()
@@ -79,7 +76,7 @@
             Trace.Assert(Flags == PinFlags.None || (Flags & PinFlags.ColorPicker) != 0 || (Flags & PinFlags.ColorEdit) != 0 || (Flags & PinFlags.Slider) != 0 || (Flags & PinFlags.AllowOutput) != 0, $"PinFlags {Flags} is not supported!");
         }
 
-        public string GetDefaultValue()
+        public override string GetDefaultValue()
         {
             if (defaultExpression != null)
             {

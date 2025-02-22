@@ -6,14 +6,21 @@
 
     public class CeilingNode : FuncCallNodeBase
     {
-        public CeilingNode(int id, bool removable, bool isStatic) : base(id, "Floor", removable, isStatic)
+        [JsonConstructor]
+        public CeilingNode(int id, bool removable, bool isStatic) : base(id, "Ceiling", removable, isStatic)
+        {
+            AddAllowedMode(PinType.AnyFloat);
+        }
+
+        public CeilingNode() : this(0, true, false)
         {
         }
 
         public override void Initialize(NodeEditor editor)
         {
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "in", PinShape.QuadFilled, PinKind.Input, mode, 1));
             base.Initialize(editor);
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "in", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            UpdateInferState();
             UpdateMode();
         }
 

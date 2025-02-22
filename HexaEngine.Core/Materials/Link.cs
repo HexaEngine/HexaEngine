@@ -13,6 +13,7 @@
         private readonly int id;
         private int outputId;
         private int inputId;
+        private bool destroyed;
 
         public Link(int id, Node outputNode, Pin output, Node inputNode, Pin input)
         {
@@ -63,11 +64,15 @@
             }
 
             editor.RemoveLink(this);
-            OutputNode.RemoveLink(this);
+
             Output.RemoveLink(this);
-            InputNode.RemoveLink(this);
             Input.RemoveLink(this);
+            OutputNode.RemoveLink(this);
+            InputNode.RemoveLink(this);
+
             editor = null;
+
+            destroyed = true;
         }
 
         public virtual void Initialize(NodeEditor editor)
@@ -77,10 +82,19 @@
             outputId = output.Id;
             inputId = input.Id;
 
+            if (destroyed) return;
             OutputNode.AddLink(this);
-            Output.AddLink(this);
+            if (destroyed) return;
             InputNode.AddLink(this);
+            if (destroyed) return;
+            Output.AddLink(this);
+            if (destroyed) return;
             Input.AddLink(this);
+        }
+
+        public virtual void Recycle()
+        {
+            destroyed = false;
         }
     }
 }

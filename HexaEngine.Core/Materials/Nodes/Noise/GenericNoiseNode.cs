@@ -8,7 +8,12 @@
 
     public class GenericNoiseNode : FuncCallDeclarationBaseNode
     {
+        [JsonConstructor]
         public GenericNoiseNode(int id, bool removable, bool isStatic) : base(id, "Generic Noise", removable, isStatic)
+        {
+        }
+
+        public GenericNoiseNode() : this(0, true, false)
         {
         }
 
@@ -16,7 +21,7 @@
 
         public override SType Type { get; } = new SType(ScalarType.Float);
 
-        public override FloatPin Out { get; protected set; } = null!;
+        public override PrimitivePin Out { get; protected set; } = null!;
 
         public override void Initialize(NodeEditor editor)
         {

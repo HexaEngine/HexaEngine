@@ -259,12 +259,13 @@ namespace HexaEngine.Materials
 
         public void AddLink(Link link)
         {
+            links.Add(link);
+
             if (initialized)
             {
                 link.Initialize(this);
             }
 
-            links.Add(link);
             LinkAdded?.Invoke(this, link);
         }
 
@@ -502,6 +503,28 @@ namespace HexaEngine.Materials
 
         public virtual void EndModify()
         {
+        }
+
+        private bool isLinksUpdating;
+
+        public bool BeginUpdate()
+        {
+            if (isLinksUpdating)
+            {
+                return false;
+            }
+            isLinksUpdating = true;
+            return true;
+        }
+
+        public bool EndUpdate()
+        {
+            if (!isLinksUpdating)
+            {
+                return false;
+            }
+            isLinksUpdating = false;
+            return true;
         }
     }
 }

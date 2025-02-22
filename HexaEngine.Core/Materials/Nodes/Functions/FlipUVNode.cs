@@ -13,11 +13,16 @@
 
     public class FlipUVNode : Node
     {
+        [JsonConstructor]
         public FlipUVNode(int id, bool removable, bool isStatic) : base(id, "Flip UV", removable, isStatic)
         {
             TitleColor = 0x473874FF.RGBAToVec4();
             TitleHoveredColor = 0x685797FF.RGBAToVec4();
             TitleSelectedColor = 0x74679AFF.RGBAToVec4();
+        }
+
+        public FlipUVNode() : this(0, true, false)
+        {
         }
 
         public override void Initialize(NodeEditor editor)

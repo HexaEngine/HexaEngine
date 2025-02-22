@@ -5,13 +5,12 @@
     using System.Diagnostics;
     using System.Globalization;
 
-    public class IntPin : Pin, IDefaultValuePin
+    public class IntPin : NumericPin
     {
         [JsonIgnore] public readonly string name;
         [JsonIgnore] public readonly string nameY;
         [JsonIgnore] public readonly string nameZ;
         [JsonIgnore] public readonly string nameW;
-        [JsonIgnore] public readonly PinFlags flags;
         [JsonIgnore] public int valueX;
         [JsonIgnore] public int valueY;
         [JsonIgnore] public int valueZ;
@@ -25,7 +24,7 @@
             nameY = $"##Value1{Id.ToString(CultureInfo.InvariantCulture)}";
             nameZ = $"##Value2{Id.ToString(CultureInfo.InvariantCulture)}";
             nameW = $"##Value3{Id.ToString(CultureInfo.InvariantCulture)}";
-            this.flags = flags;
+            this.Flags = flags;
             this.valueX = valueX;
             this.valueY = valueY;
             this.valueZ = valueZ;
@@ -39,7 +38,7 @@
             nameY = $"##Value1{Id.ToString(CultureInfo.InvariantCulture)}";
             nameZ = $"##Value2{Id.ToString(CultureInfo.InvariantCulture)}";
             nameW = $"##Value3{Id.ToString(CultureInfo.InvariantCulture)}";
-            this.flags = flags;
+            this.Flags = flags;
             SanityChecks();
         }
 
@@ -49,7 +48,7 @@
             nameY = $"##Value1{Id.ToString(CultureInfo.InvariantCulture)}";
             nameZ = $"##Value2{Id.ToString(CultureInfo.InvariantCulture)}";
             nameW = $"##Value3{Id.ToString(CultureInfo.InvariantCulture)}";
-            this.flags = flags;
+            this.Flags = flags;
             valueX = value;
             valueY = value;
             valueZ = value;
@@ -65,8 +64,6 @@
 
         public int ValueW { get => valueW; set => valueW = value; }
 
-        public PinFlags Flags => flags;
-
         private void SanityChecks()
         {
             Trace.Assert(Type == PinType.Int || Type == PinType.Int2 || Type == PinType.Int3 || Type == PinType.Int4 || Type == PinType.Int2OrInt || Type == PinType.Int3OrInt || Type == PinType.Int4OrInt, $"PinType {Type} is not a int!");
@@ -74,7 +71,7 @@
             Trace.Assert((Flags & PinFlags.ColorPicker) == 0 && (Flags & PinFlags.ColorEdit) == 0, $"ColorPicker and ColorEdit is not supported!");
         }
 
-        public string GetDefaultValue()
+        public override string GetDefaultValue()
         {
             return Type switch
             {

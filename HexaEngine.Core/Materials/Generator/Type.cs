@@ -268,6 +268,12 @@
             }
         }
 
+        public TypeFlags Flags
+        {
+            readonly get => _flags;
+            set => _flags = value;
+        }
+
         public static SType Void => new() { _flags = TypeFlags.Void };
 
         public List<Operator> Operators = [];

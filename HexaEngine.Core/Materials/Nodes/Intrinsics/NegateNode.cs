@@ -6,14 +6,20 @@
 
     public class NegateNode : FuncCallNodeBase
     {
+        [JsonConstructor]
         public NegateNode(int id, bool removable, bool isStatic) : base(id, "Negate", removable, isStatic)
+        {
+        }
+
+        public NegateNode() : this(0, true, false)
         {
         }
 
         public override void Initialize(NodeEditor editor)
         {
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "in", PinShape.QuadFilled, PinKind.Input, mode, 1));
             base.Initialize(editor);
+            AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "in", PinShape.QuadFilled, PinKind.Input, Mode, 1, flags: PinFlags.InferType));
+            UpdateInferState();
             UpdateMode();
         }
 

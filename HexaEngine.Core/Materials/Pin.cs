@@ -17,22 +17,20 @@
     public class Pin
     {
         private NodeEditor? editor;
-        private Node parent;
+        private Node parent = null!;
         private int id;
 
         public readonly string Name;
         public PinShape Shape;
         public PinKind Kind;
-        public PinType Type;
+        private PinType type;
+        [JsonIgnore] public PinFlags Flags;
         public uint MaxLinks;
         public bool IsActive;
 
-        private readonly List<Link> links = new();
-
-#pragma warning disable CS8618 // Non-nullable field 'parent' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        private readonly List<Link> links = [];
 
         public Pin(int id, string name, PinShape shape, PinKind kind, PinType type, uint maxLinks = uint.MaxValue)
-#pragma warning restore CS8618 // Non-nullable field 'parent' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             this.id = id;
             Name = name;
@@ -58,6 +56,8 @@
         [JsonIgnore]
         public List<Link> Links => links;
 
+        public virtual PinType Type { get => type; set => type = value; }
+
         public void OnValueChanging()
         {
             ValueChanging?.Invoke(this, this);
@@ -82,6 +82,7 @@
 
         public void AddLink(Link link)
         {
+            if (links.Contains(link)) return;
             links.Add(link);
             LinkCreated?.Invoke(this, link);
         }
@@ -106,7 +107,7 @@
 
             if (Type == PinType.DontCare)
             {
-                return true;
+                return parent.CanCreateLink(this, other.parent, other);
             }
 
             if (!IsType(other))
@@ -119,12 +120,16 @@
                 return false;
             }
 
-            return true;
+            return parent.CanCreateLink(this, other.parent, other);
         }
 
         public bool IsType(Pin other)
         {
-            if (other.Type == PinType.TextureAny)
+            if (other.Type == PinType.DontCare)
+            {
+                return true;
+            }
+            else if (other.Type == PinType.TextureAny)
             {
                 return IsTexture(Type);
             }

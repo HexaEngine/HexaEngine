@@ -45,6 +45,7 @@
             NodeEditorRegistry.RegisterPinSingleton<HalfPin, HalfPinRenderer>();
             NodeEditorRegistry.RegisterPinSingleton<IntPin, IntPinRenderer>();
             NodeEditorRegistry.RegisterPinSingleton<UIntPin, UIntPinRenderer>();
+            NodeEditorRegistry.RegisterPinSingleton<UniversalPin, UniversalPinRenderer>();
             this.drawContextMenuCallback = drawContextMenuCallback;
         }
 

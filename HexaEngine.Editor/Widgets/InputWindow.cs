@@ -10,31 +10,31 @@
     [EditorWindowCategory("Debug")]
     public class InputWindow : EditorWindow
     {
-        protected override string Name => "Input Window";
+        protected override string Name { get; } = "Input Window";
 
         public override void DrawContent(IGraphicsContext context)
         {
-            if (ImGui.BeginTabBar("E"))
+            if (ImGui.BeginTabBar("E"u8))
             {
-                if (ImGui.BeginTabItem("Keyboard"))
+                if (ImGui.BeginTabItem("Keyboard"u8))
                 {
                     DrawKeyboard();
                     ImGui.EndTabItem();
                 }
 
-                if (ImGui.BeginTabItem("Mouse"))
+                if (ImGui.BeginTabItem("Mouse"u8))
                 {
                     DrawMouse();
                     ImGui.EndTabItem();
                 }
 
-                if (ImGui.BeginTabItem("Joysticks"))
+                if (ImGui.BeginTabItem("Joysticks"u8))
                 {
                     DrawJoysticks();
                     ImGui.EndTabItem();
                 }
 
-                if (ImGui.BeginTabItem("Gamepads"))
+                if (ImGui.BeginTabItem("Gamepads"u8))
                 {
                     DrawGamepads();
                     ImGui.EndTabItem();
@@ -55,11 +55,11 @@
                 ImGui.SameLine();
                 if (Keyboard.States[key] == KeyState.Down)
                 {
-                    ImGui.Text("Down");
+                    ImGui.Text("Down"u8);
                 }
                 else
                 {
-                    ImGui.Text("Up");
+                    ImGui.Text("Up"u8);
                 }
             }
         }
@@ -81,11 +81,11 @@
                 ImGui.SameLine();
                 if (Mouse.States[button] == MouseButtonState.Down)
                 {
-                    ImGui.Text("Down");
+                    ImGui.Text("Down"u8);
                 }
                 else
                 {
-                    ImGui.Text("Up");
+                    ImGui.Text("Up"u8);
                 }
             }
         }
@@ -93,7 +93,7 @@
         private static void DrawJoysticks()
         {
             var joystickCount = Joysticks.Sticks.Count;
-            if (ImGui.BeginTabBar("E"))
+            if (ImGui.BeginTabBar("E"u8))
             {
                 for (int i = 0; i < joystickCount; i++)
                 {
@@ -115,50 +115,50 @@
             ImGui.Text($"IsAttached: {joystick.IsAttached}");
 
             var index = joystick.PlayerIndex;
-            if (ImGui.InputInt("PlayerIndex", ref index))
+            if (ImGui.InputInt("PlayerIndex"u8, ref index))
             {
                 joystick.PlayerIndex = index;
             }
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Rumble"))
+            if (ImGui.CollapsingHeader("Rumble"u8))
             {
                 var lofreq = lowFreq;
-                if (ImGui.InputScalar("Low Freq (Right)", ImGuiDataType.U16, &lofreq))
+                if (ImGui.InputScalar("Low Freq (Right)"u8, ImGuiDataType.U16, &lofreq))
                 {
                     lowFreq = lofreq;
                 }
 
                 var hifreq = highFreq;
-                if (ImGui.InputScalar("High Freq (Left)", ImGuiDataType.U16, &hifreq))
+                if (ImGui.InputScalar("High Freq (Left)"u8, ImGuiDataType.U16, &hifreq))
                 {
                     highFreq = hifreq;
                 }
 
                 var duraMs = durationMs;
-                if (ImGui.InputScalar("Duration (ms)", ImGuiDataType.U32, &duraMs))
+                if (ImGui.InputScalar("Duration (ms)"u8, ImGuiDataType.U32, &duraMs))
                 {
                     durationMs = duraMs;
                 }
 
-                if (ImGui.Button("Rumble##BUt"))
+                if (ImGui.Button("Rumble##BUt"u8))
                 {
                     joystick.Rumble(lowFreq, highFreq, durationMs);
                 }
 
-                if (ImGui.Button("Rumble Triggers"))
+                if (ImGui.Button("Rumble Triggers"u8))
                 {
                     joystick.RumbleTriggers(lowFreq, highFreq, durationMs);
                 }
             }
             ImGui.Separator();
-            if (ImGui.CollapsingHeader("LED"))
+            if (ImGui.CollapsingHeader("LED"u8))
             {
                 ImGui.Text($"HasLED: {joystick.HasLED}");
                 if (joystick.HasLED)
                 {
-                    if (ImGui.ColorEdit4("LED##ColEdit", ref color))
+                    if (ImGui.ColorEdit4("LED##ColEdit"u8, ref color.X))
                     {
                         joystick.SetLED(color);
                     }
@@ -167,10 +167,10 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Axes"))
+            if (ImGui.CollapsingHeader("Axes"u8))
             {
                 var dead = joystick.Deadzone;
-                if (ImGui.InputScalar("Deadzone", ImGuiDataType.S16, &dead))
+                if (ImGui.InputScalar("Deadzone"u8, ImGuiDataType.S16, &dead))
                 {
                     joystick.Deadzone = dead;
                 }
@@ -187,9 +187,9 @@
                 if (joystick.Axes.TryGetValue(0, out var leftX) && joystick.Axes.TryGetValue(1, out var leftY))
                 {
                     ImPlot.SetNextAxesLimits(short.MinValue, short.MaxValue, short.MinValue, short.MaxValue);
-                    if (ImPlot.BeginPlot("Analog", new Vector2(512, 512), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Analog"u8, new Vector2(512, 512), ImPlotFlags.NoInputs))
                     {
-                        ImPlot.PlotScatter("Pos", ref leftX, ref leftY, 1);
+                        ImPlot.PlotScatter("Pos"u8, ref leftX, ref leftY, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -198,10 +198,10 @@
                 {
                     ImGui.SameLine();
                     ImPlot.SetNextAxesLimits(short.MinValue, short.MaxValue, short.MinValue, short.MaxValue);
-                    if (ImPlot.BeginPlot("Throttle", new Vector2(128, 512), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Throttle"u8, new Vector2(128, 512), ImPlotFlags.NoInputs))
                     {
                         short x = 0;
-                        ImPlot.PlotScatter("Pos", ref x, ref throttle, 1);
+                        ImPlot.PlotScatter("Pos"u8, ref x, ref throttle, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -209,7 +209,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Balls"))
+            if (ImGui.CollapsingHeader("Balls"u8))
             {
                 var ballsCount = joystick.Balls.Count;
                 for (int i = 0; i < ballsCount; i++)
@@ -221,7 +221,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Buttons"))
+            if (ImGui.CollapsingHeader("Buttons"u8))
             {
                 var buttonsCount = joystick.Buttons.Count;
                 for (int i = 0; i < buttonsCount; i++)
@@ -233,7 +233,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Hats"))
+            if (ImGui.CollapsingHeader("Hats"u8))
             {
                 var hatsCount = joystick.Hats.Count;
                 for (int i = 0; i < hatsCount; i++)
@@ -244,7 +244,7 @@
             }
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Vendor info"))
+            if (ImGui.CollapsingHeader("Vendor info"u8))
             {
                 ImGui.Text($"Vendor: {joystick.Vendor}");
                 ImGui.Text($"Product: {joystick.Product}");
@@ -257,7 +257,7 @@
         private static void DrawGamepads()
         {
             var gamepadCount = Gamepads.Controllers.Count;
-            if (ImGui.BeginTabBar("E"))
+            if (ImGui.BeginTabBar("E"u8))
             {
                 for (int i = 0; i < gamepadCount; i++)
                 {
@@ -284,50 +284,50 @@
             ImGui.Text($"IsAttached: {gamepad.IsAttached}");
 
             var index = gamepad.PlayerIndex;
-            if (ImGui.InputInt("PlayerIndex", ref index))
+            if (ImGui.InputInt("PlayerIndex"u8, ref index))
             {
                 gamepad.PlayerIndex = index;
             }
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Rumble"))
+            if (ImGui.CollapsingHeader("Rumble"u8))
             {
                 var lofreq = lowFreq;
-                if (ImGui.InputScalar("Low Freq (Right)", ImGuiDataType.U16, &lofreq))
+                if (ImGui.InputScalar("Low Freq (Right)"u8, ImGuiDataType.U16, &lofreq))
                 {
                     lowFreq = lofreq;
                 }
 
                 var hifreq = highFreq;
-                if (ImGui.InputScalar("High Freq (Left)", ImGuiDataType.U16, &hifreq))
+                if (ImGui.InputScalar("High Freq (Left)"u8, ImGuiDataType.U16, &hifreq))
                 {
                     highFreq = hifreq;
                 }
 
                 var duraMs = durationMs;
-                if (ImGui.InputScalar("Duration (ms)", ImGuiDataType.U32, &duraMs))
+                if (ImGui.InputScalar("Duration (ms)"u8, ImGuiDataType.U32, &duraMs))
                 {
                     durationMs = duraMs;
                 }
 
-                if (ImGui.Button("Rumble##BUt"))
+                if (ImGui.Button("Rumble##BUt"u8))
                 {
                     gamepad.Rumble(lowFreq, highFreq, durationMs);
                 }
 
-                if (ImGui.Button("Rumble Triggers"))
+                if (ImGui.Button("Rumble Triggers"u8))
                 {
                     gamepad.RumbleTriggers(lowFreq, highFreq, durationMs);
                 }
             }
             ImGui.Separator();
-            if (ImGui.CollapsingHeader("LED"))
+            if (ImGui.CollapsingHeader("LED"u8))
             {
                 ImGui.Text($"HasLED: {gamepad.HasLED}");
                 if (gamepad.HasLED)
                 {
-                    if (ImGui.ColorEdit4("LED##ColEdit", ref color))
+                    if (ImGui.ColorEdit4("LED##ColEdit"u8, ref color.X))
                     {
                         gamepad.SetLED(color);
                     }
@@ -336,10 +336,10 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Axes"))
+            if (ImGui.CollapsingHeader("Axes"u8))
             {
                 var dead = gamepad.Deadzone;
-                if (ImGui.InputScalar("Deadzone", ImGuiDataType.S16, &dead))
+                if (ImGui.InputScalar("Deadzone"u8, ImGuiDataType.S16, &dead))
                 {
                     gamepad.Deadzone = dead;
                 }
@@ -358,9 +358,9 @@
                 if (gamepad.AxisStates.TryGetValue(GamepadAxis.LeftX, out var leftX) && gamepad.AxisStates.TryGetValue(GamepadAxis.LeftY, out var leftY))
                 {
                     ImPlot.SetNextAxesLimits(short.MinValue, short.MaxValue, short.MinValue, short.MaxValue);
-                    if (ImPlot.BeginPlot("Left Analog", new Vector2(256, 256), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Left Analog"u8, new Vector2(256, 256), ImPlotFlags.NoInputs))
                     {
-                        ImPlot.PlotScatter("Pos", ref leftX, ref leftY, 1);
+                        ImPlot.PlotScatter("Pos"u8, ref leftX, ref leftY, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -368,9 +368,9 @@
                 if (gamepad.AxisStates.TryGetValue(GamepadAxis.RightX, out var rightX) && gamepad.AxisStates.TryGetValue(GamepadAxis.RightY, out var rightY))
                 {
                     ImPlot.SetNextAxesLimits(short.MinValue, short.MaxValue, short.MinValue, short.MaxValue);
-                    if (ImPlot.BeginPlot("Right Analog", new Vector2(256, 256), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Right Analog"u8, new Vector2(256, 256), ImPlotFlags.NoInputs))
                     {
-                        ImPlot.PlotScatter("Pos", ref rightX, ref rightY, 1);
+                        ImPlot.PlotScatter("Pos"u8, ref rightX, ref rightY, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -378,10 +378,10 @@
                 if (gamepad.AxisStates.TryGetValue(GamepadAxis.TriggerLeft, out var leftTrigger))
                 {
                     ImPlot.SetNextAxesLimits(-1, 1, 0, short.MaxValue);
-                    if (ImPlot.BeginPlot("Left Trigger", new Vector2(128, 256), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Left Trigger"u8, new Vector2(128, 256), ImPlotFlags.NoInputs))
                     {
                         short x = 0;
-                        ImPlot.PlotScatter("Pos", ref x, ref leftTrigger, 1);
+                        ImPlot.PlotScatter("Pos"u8, ref x, ref leftTrigger, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -389,10 +389,10 @@
                 if (gamepad.AxisStates.TryGetValue(GamepadAxis.TriggerRight, out var rightTrigger))
                 {
                     ImPlot.SetNextAxesLimits(-1, 1, 0, short.MaxValue);
-                    if (ImPlot.BeginPlot("Right Trigger", new Vector2(128, 256), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Right Trigger"u8, new Vector2(128, 256), ImPlotFlags.NoInputs))
                     {
                         short x = 0;
-                        ImPlot.PlotScatter("Pos", ref x, ref rightTrigger, 1);
+                        ImPlot.PlotScatter("Pos"u8, ref x, ref rightTrigger, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -400,7 +400,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Buttons"))
+            if (ImGui.CollapsingHeader("Buttons"u8))
             {
                 var buttonsCount = Gamepad.Buttons.Count;
                 for (int i = 0; i < buttonsCount; i++)
@@ -415,7 +415,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Touchpads"))
+            if (ImGui.CollapsingHeader("Touchpads"u8))
             {
                 var touchpadCount = gamepad.Touchpads.Count;
                 for (int i = 0; i < touchpadCount; i++)
@@ -465,7 +465,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Sensors"))
+            if (ImGui.CollapsingHeader("Sensors"u8))
             {
                 var sensorCount = Gamepad.SensorTypes.Count;
                 for (int i = 0; i < sensorCount; i++)
@@ -485,7 +485,7 @@
                         ImPlot.SetNextAxesLimits(-10, 10, -10, 10);
                         if (ImPlot.BeginPlot($"Sensor {sensorType}", new Vector2(256, 256), ImPlotFlags.NoInputs))
                         {
-                            Vector2 vector = new Vector2(sensor.Vector.X, sensor.Vector.Z);
+                            Vector2 vector = new(sensor.Vector.X, sensor.Vector.Z);
                             ImPlot.PlotScatter($"{sensorType}", ref vector.X, ref vector.Y, 1);
 
                             ImPlot.EndPlot();
@@ -501,7 +501,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Haptic"))
+            if (ImGui.CollapsingHeader("Haptic"u8))
             {
                 var haptic = gamepad.Haptic;
                 if (haptic != null)
@@ -518,7 +518,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Mappings"))
+            if (ImGui.CollapsingHeader("Mappings"u8))
             {
                 ImGui.Text($"Mapping: {gamepad.Mapping}");
                 ImGui.Separator();
@@ -531,7 +531,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.CollapsingHeader("Vendor info"))
+            if (ImGui.CollapsingHeader("Vendor info"u8))
             {
                 ImGui.Text($"Vendor: {gamepad.Vendor}");
                 ImGui.Text($"Product: {gamepad.Product}");

@@ -180,6 +180,7 @@
         ColorEdit = 1,
         ColorPicker = 2,
         Slider = 4,
-        AllowOutput = 8
+        AllowOutput = 8,
+        InferType = 16,
     }
 }
