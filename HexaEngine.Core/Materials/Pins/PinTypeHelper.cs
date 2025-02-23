@@ -112,6 +112,7 @@
         {
             return type switch
             {
+                PinType.Unknown => 0,
                 PinType.DontCare => 0,
                 PinType.Bool => 1,
                 PinType.Bool2 or PinType.Bool2OrBool => 2,
@@ -145,6 +146,7 @@
         {
             return type switch
             {
+                PinType.Unknown => true,
                 PinType.DontCare => true,
                 PinType.Bool => true,
                 PinType.Bool2 or PinType.Bool2OrBool => true,
@@ -184,6 +186,7 @@
         {
             return type switch
             {
+                PinType.Unknown => NumericType.Unknown,
                 PinType.DontCare => NumericType.Unknown,
                 PinType.Bool => NumericType.Bool,
                 PinType.Bool2 or PinType.Bool2OrBool => NumericType.Bool,
@@ -223,6 +226,7 @@
         {
             return pinType switch
             {
+                PinType.Unknown => SType.Unknown,
                 PinType.Half => new(ScalarType.Half),
                 PinType.Half2 or PinType.Half2OrHalf => new(VectorType.Half2),
                 PinType.Half3 or PinType.Half3OrHalf => new(VectorType.Half3),
@@ -255,6 +259,7 @@
         {
             return type switch
             {
+                PinType.Unknown => PinType.Unknown,
                 PinType.Bool => PinType.Bool,
                 PinType.Bool2 or PinType.Bool2OrBool => PinType.Bool,
                 PinType.Bool3 or PinType.Bool3OrBool => PinType.Bool,

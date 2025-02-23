@@ -48,7 +48,7 @@
 
         public event EventHandler<Link>? LinkRemoved;
 
-        public int Id => id;
+        public int Id { get => id; set => id = value; }
 
         [JsonIgnore]
         public Node Parent => parent;
@@ -82,7 +82,11 @@
 
         public void AddLink(Link link)
         {
-            if (links.Contains(link)) return;
+            if (links.Contains(link))
+            {
+                return;
+            }
+
             links.Add(link);
             LinkCreated?.Invoke(this, link);
         }
@@ -125,77 +129,102 @@
 
         public bool IsType(Pin other)
         {
-            if (other.Type == PinType.DontCare)
+            return IsType(this, other);
+        }
+
+        public static bool IsTypeOfVecOrScalar(PinType a, PinType b, PinType baseType, out bool result)
+        {
+            /*
+            Float,          // 0
+            Float2,         // 1
+            Float3,         // 2
+            Float4,         // 3
+            Float2OrFloat,  // 4
+            Float3OrFloat,  // 5
+            Float4OrFloat,  // 6
+            AnyFloat        // 7
+             */
+
+            // early exit.
+            if (a < baseType || a > baseType + 6 || b < baseType || b > baseType + 6)
             {
+                result = false;
+                return false;
+            }
+
+            if (a == baseType + 4)
+            {
+                result = b == baseType || b == baseType + 1 || b == baseType + 4;
                 return true;
             }
-            else if (other.Type == PinType.TextureAny)
+
+            if (a == baseType + 5)
             {
-                return IsTexture(Type);
+                result = b == baseType || b == baseType + 2 || b == baseType + 5;
+                return true;
             }
-            else if (Type == PinType.TextureAny)
+
+            if (a == baseType + 6)
             {
-                return IsTexture(other.Type);
+                result = b == baseType || b == baseType + 3 || b == baseType + 6;
+                return true;
             }
-            else if (other.Type == PinType.AnyFloat)
+
+            if (b == baseType + 4)
             {
-                return IsFloatType(Type);
+                result = a == baseType || a == baseType + 1 || a == baseType + 4;
+                return true;
             }
-            else if (Type == PinType.AnyFloat)
+
+            if (b == baseType + 5)
             {
-                return IsFloatType(other.Type);
+                result = a == baseType || a == baseType + 2 || a == baseType + 5;
+                return true;
             }
-            else if (Type == PinType.Float2OrFloat)
+
+            if (b == baseType + 6)
             {
-                return other.Type == PinType.Float || other.Type == PinType.Float2 || other.Type == PinType.Float2OrFloat;
+                result = a == baseType || a == baseType + 3 || a == baseType + 6;
+                return true;
             }
-            else if (Type == PinType.Float3OrFloat)
-            {
-                return other.Type == PinType.Float || other.Type == PinType.Float3 || other.Type == PinType.Float3OrFloat;
-            }
-            else if (Type == PinType.Float4OrFloat)
-            {
-                return other.Type == PinType.Float || other.Type == PinType.Float4 || other.Type == PinType.Float4OrFloat;
-            }
-            else if (other.Type == PinType.Float2OrFloat)
-            {
-                return Type == PinType.Float || Type == PinType.Float2 || Type == PinType.Float2OrFloat;
-            }
-            else if (other.Type == PinType.Float3OrFloat)
-            {
-                return Type == PinType.Float || Type == PinType.Float3 || Type == PinType.Float3OrFloat;
-            }
-            else if (other.Type == PinType.Float4OrFloat)
-            {
-                return Type == PinType.Float || Type == PinType.Float4 || Type == PinType.Float4OrFloat;
-            }
-            else
-            {
-                return other.Type == Type;
-            }
+
+            result = false;
+            return false;
         }
 
         public static bool IsType(Pin a, Pin b)
         {
-            if (a.Type == PinType.TextureAny)
+            if (b.Type == PinType.DontCare)
             {
-                return IsTexture(b.Type);
+                return true;
             }
-            else if (a.Type == PinType.AnyFloat)
+            else if (IsTypeOfAny(a.Type, b.Type, out bool result) || IsTypeOfAny(b.Type, a.Type, out result))
             {
-                return IsFloatType(b.Type);
+                return result;
             }
-            else if (a.Type == PinType.Float2OrFloat)
+            else if (IsTypeOfVecOrScalar(a.Type, b.Type, PinType.Half, out result))
             {
-                return b.Type == PinType.Float || b.Type == PinType.Float2 || b.Type == PinType.Float2OrFloat;
+                return result;
             }
-            else if (a.Type == PinType.Float3OrFloat)
+            else if (IsTypeOfVecOrScalar(a.Type, b.Type, PinType.Float, out result))
             {
-                return b.Type == PinType.Float || b.Type == PinType.Float3 || b.Type == PinType.Float3OrFloat;
+                return result;
             }
-            else if (a.Type == PinType.Float4OrFloat)
+            else if (IsTypeOfVecOrScalar(a.Type, b.Type, PinType.Double, out result))
             {
-                return b.Type == PinType.Float || b.Type == PinType.Float4 || b.Type == PinType.Float4OrFloat;
+                return result;
+            }
+            else if (IsTypeOfVecOrScalar(a.Type, b.Type, PinType.Bool, out result))
+            {
+                return result;
+            }
+            else if (IsTypeOfVecOrScalar(a.Type, b.Type, PinType.Int, out result))
+            {
+                return result;
+            }
+            else if (IsTypeOfVecOrScalar(a.Type, b.Type, PinType.UInt, out result))
+            {
+                return result;
             }
             else
             {
@@ -205,33 +234,45 @@
 
         public static bool IsTexture(PinType type)
         {
-            return type switch
-            {
-                PinType.TextureAny => true,
-                PinType.Texture1D => true,
-                PinType.Texture1DArray => true,
-                PinType.Texture2D => true,
-                PinType.Texture2DMS => true,
-                PinType.Texture2DArray => true,
-                PinType.Texture2DMSArray => true,
-                PinType.TextureCube => true,
-                PinType.TextureCubeArray => true,
-                PinType.Texture3D => true,
-                _ => false
-            };
+            return type >= PinType.Texture1D && type <= PinType.TextureAny;
         }
 
-        public static bool IsFloatType(PinType type)
+        public static bool IsTypeOfAny(PinType a, PinType b, out bool result)
         {
-            return type switch
+            switch (a)
             {
-                PinType.AnyFloat => true,
-                PinType.Float => true,
-                PinType.Float2 => true,
-                PinType.Float3 => true,
-                PinType.Float4 => true,
-                _ => false
-            };
+                case PinType.AnyHalf:
+                    result = b >= PinType.Half && b <= PinType.AnyHalf && (b < PinType.Half2OrHalf || b > PinType.Half4OrHalf);
+                    return true;
+
+                case PinType.AnyFloat:
+                    result = b >= PinType.Float && b <= PinType.AnyFloat && (b < PinType.Float2OrFloat || b > PinType.Float4OrFloat);
+                    return true;
+
+                case PinType.AnyDouble:
+                    result = b >= PinType.Double && b <= PinType.AnyDouble && (b < PinType.Double2OrDouble || b > PinType.Double4OrDouble);
+                    return true;
+
+                case PinType.AnyBool:
+                    result = b >= PinType.Bool && b <= PinType.AnyBool && (b < PinType.Bool2OrBool || b > PinType.Bool4OrBool);
+                    return true;
+
+                case PinType.AnyInt:
+                    result = b >= PinType.Int && b <= PinType.AnyInt && (b < PinType.Int2OrInt || b > PinType.Int4OrInt);
+                    return true;
+
+                case PinType.AnyUInt:
+                    result = b >= PinType.UInt && b <= PinType.AnyUInt && (b < PinType.UInt2OrUInt || b > PinType.UInt4OrUInt);
+                    return true;
+
+                case PinType.TextureAny:
+                    result = IsTexture(b);
+                    return true;
+
+                default:
+                    result = false;
+                    return false;
+            }
         }
 
         private IPinRenderer? renderer;

@@ -5,14 +5,13 @@
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
-    public abstract class FuncOperatorBaseNode : InferTypedNodeBase, IFuncOperatorNode
+    public abstract class FuncOperatorBaseNode : InferTypedNodeBase, IFuncOperatorNode, INodeDropConnector
     {
         protected FuncOperatorBaseNode(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
             TitleColor = 0x293580FF.RGBAToVec4();
             TitleHoveredColor = 0x34418CFF.RGBAToVec4();
             TitleSelectedColor = 0x414D96FF.RGBAToVec4();
-            DefaultMode = Mode = PinType.Float4OrFloat;
         }
 
         [JsonIgnore]
@@ -33,6 +32,7 @@
             InLeft = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Left", PinShape.QuadFilled, PinKind.Input, PinType.DontCare, 1, flags: PinFlags.InferType));
             InRight = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "Right", PinShape.QuadFilled, PinKind.Input, PinType.DontCare, 1, flags: PinFlags.InferType));
             base.Initialize(editor);
+            UpdateInferState();
             UpdateMode();
         }
 
@@ -45,7 +45,13 @@
 
             //InLeft.Type = Mode;
             //InRight.Type = Mode;
+            Out.Type = Mode;
             base.UpdateMode();
+        }
+
+        void INodeDropConnector.Connect(Pin outputPin)
+        {
+            editor?.TryCreateLink(InLeft, outputPin);
         }
     }
 }

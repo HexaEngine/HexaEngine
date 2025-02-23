@@ -7,6 +7,13 @@
     using System.Collections.Generic;
     using System.Numerics;
 
+    public enum NodeSetPositionFlags
+    {
+        Grid,
+        Editor,
+        Screen,
+    }
+
     public class Node : INode<Node>
     {
         protected NodeEditor? editor;
@@ -34,6 +41,7 @@
         public Vector2 position;
         public Vector2 size;
         public bool wantsSetPosition;
+        public NodeSetPositionFlags setPositionFlags;
 
         public Node(int id, string name, bool removable, bool isStatic)
         {
@@ -74,7 +82,7 @@
 
         [JsonIgnore]
         public Vector2 Position
-        { get => position; set { position = value; wantsSetPosition = true; } }
+        { get => position; set { position = value; wantsSetPosition = true; setPositionFlags = NodeSetPositionFlags.Grid; } }
 
         [JsonIgnore]
         public Vector2 Size => size;
@@ -421,6 +429,30 @@
             ObjectPool<HashSet<Node>>.Shared.Return(visited);
         }
 
+        private class LinkDirectionComparer : IComparer<Link>
+        {
+            public static readonly LinkDirectionComparer Instance = new();
+            public Node Parent;
+
+            public int Compare(Link? x, Link? y)
+            {
+                if (x == null || y == null) return 0;
+                bool isXParent = x.InputNode == Parent;
+                bool isYParent = y.InputNode == Parent;
+
+                if (isXParent && !isYParent)
+                {
+                    return -1;
+                }
+                else if (!isXParent && isYParent)
+                {
+                    return 1;
+                }
+
+                return 0;
+            }
+        }
+
         protected virtual void UpdateLinksCore(HashSet<Node> visited)
         {
             if (!visited.Add(this)) return;
@@ -435,6 +467,13 @@
                 if (link.OutputNode != this && visited.Contains(link.OutputNode)) continue;
                 copy[actualCount] = link;
                 actualCount++;
+            }
+
+            var instance = LinkDirectionComparer.Instance;
+            lock (instance)
+            {
+                instance.Parent = this;
+                Array.Sort(copy, instance);
             }
 
             for (int i = 0; i < actualCount; i++)

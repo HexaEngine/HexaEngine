@@ -9,6 +9,7 @@
     {
         public override void Analyze(IFuncOperatorNode node, GenerationContext context, StringBuilder builder)
         {
+            if (node.IsUnknown()) return;
             var left = context.GetVariableFirstLink(node, node.InLeft);
             var right = context.GetVariableFirstLink(node, node.InRight);
             context.BuildOperatorCall(left, right, node.Type, (Node)node, node.Op, builder);

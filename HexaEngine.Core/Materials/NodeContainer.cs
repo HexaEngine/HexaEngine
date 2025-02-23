@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Materials
 {
+    using HexaEngine.Core.Collections;
     using Newtonsoft.Json;
     using System.Collections.Generic;
 
@@ -46,7 +47,7 @@
             for (int i = 0; i < Nodes.Count; i++)
             {
                 var node = Nodes[i];
-                editor.Nodes.Add(node);
+                editor.AddNode(node);
                 var list = PinMap[i];
                 for (int j = 0; j < list.Count; j++)
                 {
@@ -54,10 +55,12 @@
                 }
             }
             editor.Initialize(false);
+            editor.BeginUpdate();
             for (int i = 0; i < Links.Count; i++)
             {
                 editor.CreateLinkFromId(Links[i]);
             }
+            editor.EndUpdate();
             editor.RestoreState(State);
             editor.CurrentId = CurrentId;
         }

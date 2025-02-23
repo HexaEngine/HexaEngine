@@ -1,5 +1,6 @@
 ﻿using Hexa.NET.ImNodes;
 using Newtonsoft.Json;
+using System.Net.NetworkInformation;
 
 namespace HexaEngine.Materials
 {
@@ -281,7 +282,20 @@ namespace HexaEngine.Materials
             }
 
             nodes.Add(node);
-            NodeAdded?.Invoke(this, node);
+
+            if (initialized)
+            {
+                NodeAdded?.Invoke(this, node);
+            }
+        }
+
+        public Link? TryCreateLink(Pin input, Pin output)
+        {
+            if (input.CanCreateLink(output) && output.CanCreateLink(input))
+            {
+                return CreateLink(input, output);
+            }
+            return null;
         }
 
         public Link CreateLink(Pin input, Pin output)
@@ -293,8 +307,8 @@ namespace HexaEngine.Materials
 
         public Link CreateLinkFromId(LinkId id)
         {
-            var output = GetNode(id.IdOutputNode).GetOutput(id.IdOutput);
-            var input = GetNode(id.IdInputNode).GetInput(id.IdInput);
+            var output = GetNode(id.IdOutputNode)!.GetOutput(id.IdOutput);
+            var input = GetNode(id.IdInputNode)!.GetInput(id.IdInput);
             Link link = new(id.Id, output.Parent, output, input.Parent, input);
             AddLink(link);
             return link;
@@ -327,7 +341,7 @@ namespace HexaEngine.Materials
         {
         }
 
-        public Link GetLink(int id)
+        public Link? GetLink(int id)
         {
             for (int i = 0; i < links.Count; i++)
             {
@@ -338,10 +352,10 @@ namespace HexaEngine.Materials
                 }
             }
 
-            throw new KeyNotFoundException();
+            return null;
         }
 
-        public Node GetNode(int id)
+        public Node? GetNode(int id)
         {
             for (int i = 0; i < nodes.Count; i++)
             {
@@ -351,10 +365,11 @@ namespace HexaEngine.Materials
                     return node;
                 }
             }
-            throw new KeyNotFoundException();
+
+            return null;
         }
 
-        public Pin GetPin(int id)
+        public Pin? GetPin(int id)
         {
             for (int i = 0; i < nodes.Count; i++)
             {
@@ -368,7 +383,8 @@ namespace HexaEngine.Materials
                     }
                 }
             }
-            throw new KeyNotFoundException();
+
+            return null;
         }
 
         public T GetNode<T>() where T : Node

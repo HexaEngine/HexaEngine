@@ -10,6 +10,7 @@
     {
         public override void Analyze(IFuncCallDeclarationNode node, GenerationContext context, StringBuilder builder)
         {
+            if (node.IsUnknown()) return;
             node.DefineMethod(context, context.Table);
             Definition[] definitions = new Definition[node.Params.Count];
             for (int i = 0; i < definitions.Length; i++)

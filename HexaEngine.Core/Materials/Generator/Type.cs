@@ -21,6 +21,17 @@
         Void = 1 << 11,
     }
 
+    public class UnknownSTypeException : Exception
+    {
+        public UnknownSTypeException()
+        {
+        }
+
+        public UnknownSTypeException(string? message) : base(message)
+        {
+        }
+    }
+
     public struct SType
     {
         private static readonly Dictionary<string, SType> map = new();
@@ -276,6 +287,8 @@
 
         public static SType Void => new() { _flags = TypeFlags.Void };
 
+        public static SType Unknown => new() { _flags = TypeFlags.Unknown };
+
         public List<Operator> Operators = [];
 
         public SType(string name)
@@ -353,7 +366,7 @@
             UavTextureType = uavTexture;
         }
 
-        public string GetTypeName()
+        public readonly string GetTypeName()
         {
             if (IsScalar)
             {
@@ -396,6 +409,10 @@
 #pragma warning disable CS8603 // Possible null reference return.
                 return structName;
 #pragma warning restore CS8603 // Possible null reference return.
+            }
+            if (IsUnknown)
+            {
+                throw new UnknownSTypeException();
             }
             throw new();
         }

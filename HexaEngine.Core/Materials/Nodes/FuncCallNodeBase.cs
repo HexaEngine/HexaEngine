@@ -5,13 +5,12 @@
     using Newtonsoft.Json;
     using System.Collections.Generic;
 
-    public abstract class FuncCallNodeBase : InferTypedNodeBase, IFuncCallNode
+    public abstract class FuncCallNodeBase : InferTypedNodeBase, IFuncCallNode, INodeDropConnector
     {
         private readonly List<PrimitivePin> pins = [];
 
         protected FuncCallNodeBase(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
-            DefaultMode = Mode = PinType.Float4OrFloat;
         }
 
         [JsonIgnore]
@@ -27,6 +26,8 @@
         {
             Out = AddOrGetPin(new UniversalPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, Mode));
             base.Initialize(editor);
+            UpdateInferState();
+            UpdateMode();
         }
 
         public override T AddPin<T>(T pin)
@@ -73,11 +74,16 @@
                 return;
             }
 
-            for (int i = 0; i < pins.Count; i++)
-            {
-                //pins[i].Type = Mode;
-            }
+            Out.Type = Mode;
             base.UpdateMode();
+        }
+
+        void INodeDropConnector.Connect(Pin outputPin)
+        {
+            if (pins.Count > 0)
+            {
+                editor?.TryCreateLink(pins[0], outputPin);
+            }
         }
     }
 }

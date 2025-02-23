@@ -14,7 +14,7 @@
         }
 
         [JsonIgnore]
-        public virtual PinType DefaultMode { get; set; } = PinType.AnyFloat;
+        public virtual PinType DefaultMode { get; set; } = PinType.Unknown;
 
         [JsonIgnore]
         public bool InferredType { get; set; }
@@ -123,13 +123,6 @@
             if (pin.Kind != PinKind.Input || (pin.Flags & PinFlags.InferType) == 0) return;
 
             var type = link.Output.Type;
-
-            if (!IsAllowedMode(type))
-            {
-                link.Destroy();
-                return;
-            }
-
             Mode = type;
             foreach (var input in inputPins)
             {

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.ImNodes;
     using Hexa.NET.Logging;
     using Hexa.NET.Mathematics;
     using HexaEngine.Core;
@@ -19,12 +20,14 @@
     using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Generator.Enums;
     using HexaEngine.Materials.Nodes;
+    using HexaEngine.Materials.Nodes.Buildin;
     using HexaEngine.Materials.Nodes.Functions;
     using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using System.Diagnostics;
+    using System.Numerics;
     using System.Reflection;
     using System.Text;
 
@@ -228,7 +231,7 @@
                 {
                     if (string.IsNullOrEmpty(json) || version != Version)
                     {
-                        editor = new(NodeEditorContextMenu);
+                        editor = new();
                         geometryNode = new(editor.GetUniqueId(), false, false);
                         outputNode = new(editor.GetUniqueId(), false, false);
                         editor.AddNode(geometryNode);
@@ -237,7 +240,7 @@
                     }
                     else
                     {
-                        editor = ImNodesNodeEditor.Deserialize(json, NodeEditorContextMenu);
+                        editor = ImNodesNodeEditor.Deserialize(json);
                     }
                 }
                 catch (Exception ex)
@@ -246,7 +249,7 @@
                     Logger.Error($"Failed to deserialize node material data: {value.Name}");
                     Logger.Log(ex);
 
-                    editor = new(NodeEditorContextMenu);
+                    editor = new();
                     geometryNode = new(editor.GetUniqueId(), false, false);
                     outputNode = new(editor.GetUniqueId(), false, false);
                     editor.AddNode(geometryNode);
@@ -256,6 +259,7 @@
 
                 MaterialNodeConverter.ExtractProperties(value, editor);
                 MaterialNodeConverter.ExtractTextures(value, editor);
+                editor.DrawContextMenuCallback = NodeEditorContextMenu;
                 editor.Minimap = true;
                 editor.Location = Hexa.NET.ImNodes.ImNodesMiniMapLocation.TopRight;
                 editor.NodePinValueChanged += NodePinValueChanged;
@@ -272,9 +276,18 @@
             }
         }
 
-        private void NodeEditorContextMenu()
+        private void NodeEditorContextMenu(ImNodesNodeEditor editor, Pin? droppedPin, Vector2 mousePos)
         {
-            throw new NotImplementedException();
+            var node = DrawNodesMenu();
+            if (node != null)
+            {
+                node.Position = mousePos;
+                node.setPositionFlags = NodeSetPositionFlags.Screen;
+            }
+            if (droppedPin != null && node is INodeDropConnector connector)
+            {
+                connector.Connect(droppedPin);
+            }
         }
 
         protected override string Name { get; } = $"{UwU.PenRuler} Material Editor";
@@ -587,26 +600,26 @@
             showCode = !showCode;
         }
 
-        private void DrawNodesMenu()
+        private Node? DrawNodesMenu()
         {
             if (editor == null)
             {
-                return;
+                return null;
             }
-
+            Node? createdNode = null;
             ImGui.InputTextWithHint("##Search", "Search...", ref searchNodeString, 1024);
 
             if (!string.IsNullOrEmpty(searchNodeString))
             {
-                DisplayNodes(MaterialNodeRegistry.GetAllFactories());
-                return;
+                DisplayNodes(MaterialNodeRegistry.GetAllFactories(), ref createdNode);
+                return createdNode;
             }
 
             if (ImGui.BeginMenu("Textures"))
             {
                 if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Texture, out var factories))
                 {
-                    DisplayNodes(factories);
+                    DisplayNodes(factories, ref createdNode);
                 }
                 ImGui.EndMenu();
             }
@@ -615,7 +628,7 @@
             {
                 if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Method, out var factories))
                 {
-                    DisplayNodes(factories);
+                    DisplayNodes(factories, ref createdNode);
                 }
                 ImGui.EndMenu();
             }
@@ -624,7 +637,7 @@
             {
                 if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Noise, out var factories))
                 {
-                    DisplayNodes(factories);
+                    DisplayNodes(factories, ref createdNode);
                 }
                 ImGui.EndMenu();
             }
@@ -633,7 +646,7 @@
             {
                 if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Constant, out var factories))
                 {
-                    DisplayNodes(factories);
+                    DisplayNodes(factories, ref createdNode);
                 }
                 ImGui.EndMenu();
             }
@@ -642,7 +655,7 @@
             {
                 if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Operator, out var factories))
                 {
-                    DisplayNodes(factories);
+                    DisplayNodes(factories, ref createdNode);
                 }
                 ImGui.EndMenu();
             }
@@ -651,7 +664,7 @@
             {
                 if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Intrinsic, out var factories))
                 {
-                    DisplayNodes(factories);
+                    DisplayNodes(factories, ref createdNode);
                 }
                 ImGui.EndMenu();
             }
@@ -660,13 +673,15 @@
             {
                 if (MaterialNodeRegistry.TryGetFactories(MaterialNodeType.Custom, out var factories))
                 {
-                    DisplayNodes(factories);
+                    DisplayNodes(factories, ref createdNode);
                 }
                 ImGui.EndMenu();
             }
+
+            return createdNode;
         }
 
-        private void DisplayNodes(IReadOnlyList<MaterialNodeFactory> factories)
+        private void DisplayNodes(IReadOnlyList<MaterialNodeFactory> factories, ref Node? createdNode)
         {
             bool search = !string.IsNullOrEmpty(searchNodeString);
             foreach (var factory in factories)
@@ -674,11 +689,11 @@
                 if (search && !factory.Name.Contains(searchNodeString, StringComparison.CurrentCultureIgnoreCase)) continue;
                 if (ImGui.MenuItem(factory.Name))
                 {
-                    Node node = factory.CreateInstance();
-                    node.Id = editor.GetUniqueId();
-                    node.Removable = true;
-                    node.IsStatic = false;
-                    editor.AddNode(node);
+                    createdNode = factory.CreateInstance();
+                    createdNode.Id = editor!.GetUniqueId();
+                    createdNode.Removable = true;
+                    createdNode.IsStatic = false;
+                    editor.AddNode(createdNode);
                 }
             }
         }

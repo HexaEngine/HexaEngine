@@ -1,17 +1,17 @@
 ﻿namespace HexaEngine.Materials.Nodes
 {
     using HexaEngine.Materials;
+    using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
-    public class SwizzleVectorNode : InferTypedNodeBase
+    public class SwizzleVectorNode : InferTypedNodeBase, INodeDropConnector
     {
-        private string mask = "xyzw";
+        private string mask = "";
 
         [JsonConstructor]
         public SwizzleVectorNode(int id, bool removable, bool isStatic) : base(id, "Swizzle Vector", removable, isStatic)
         {
-            Mode = PinType.AnyFloat;
             LockOutputType = true;
         }
 
@@ -56,6 +56,8 @@
 
         public virtual void UpdateMask()
         {
+            Out.Type = PinType.Unknown;
+            Type = SType.Unknown;
             if ((In?.Links.Count ?? 0) == 0) return;
             var scalar = Mode.ToScalar();
 
@@ -64,6 +66,11 @@
             var vector = scalar + (mask.Length - 1);
             Out.Type = vector;
             Type = vector.ToSType();
+        }
+
+        void INodeDropConnector.Connect(Pin outputPin)
+        {
+            editor?.TryCreateLink(In, outputPin);
         }
     }
 }

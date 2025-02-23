@@ -9,6 +9,7 @@
     {
         public override void Analyze(PackNode node, GenerationContext context, StringBuilder builder)
         {
+            if (node.IsUnknown()) return;
             var type = node.Type;
             if (type.IsScalar)
             {

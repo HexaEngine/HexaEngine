@@ -10,7 +10,7 @@
         static NodeAnalyzerRegistry()
         {
             AddAnalyzer<InputNodeAnalyzer>();
-            AddAnalyzer<ComponentMaskNodeAnalyzer>();
+            AddAnalyzer<SwizzleVectorNodeAnalyzer>();
             AddAnalyzer<ConstantNodeAnalyzer>();
             AddAnalyzer<FlipUVNodeAnalyzer>();
             AddAnalyzer<FuncCallDeclarationNodeAnalyzer>();

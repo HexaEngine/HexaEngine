@@ -2,6 +2,7 @@
 {
     public enum PinType
     {
+        Unknown,
         DontCare,
         Flow,
         Bool,
@@ -56,7 +57,6 @@
         Object,
         Function,
         Delegate,
-        TextureAny,
         Texture1D,
         Texture1DArray,
         Texture2D,
@@ -66,6 +66,7 @@
         TextureCube,
         TextureCubeArray,
         Texture3D,
+        TextureAny,
         ShaderResourceView,
         RenderTargetView,
         ConstantBuffer,
@@ -182,5 +183,6 @@
         Slider = 4,
         AllowOutput = 8,
         InferType = 16,
+        SameLine = 32,
     }
 }

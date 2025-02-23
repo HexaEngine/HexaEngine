@@ -10,9 +10,7 @@
         private readonly Pin input;
 
         private NodeEditor? editor;
-        private readonly int id;
-        private int outputId;
-        private int inputId;
+        private int id;
         private bool destroyed;
 
         public Link(int id, Node outputNode, Pin output, Node inputNode, Pin input)
@@ -20,14 +18,12 @@
             this.id = id;
             this.outputNode = outputNode;
             this.output = output;
-            outputId = output.Id;
             this.inputNode = inputNode;
             this.input = input;
-            inputId = input.Id;
         }
 
         [JsonIgnore]
-        public int Id => id;
+        public int Id { get => id; set => id = value; }
 
         [JsonIgnore]
         public Node OutputNode => outputNode;
@@ -42,10 +38,10 @@
         public Pin Input => input;
 
         [JsonIgnore]
-        public int OutputId => outputId;
+        public int OutputId => output.Id;
 
         [JsonIgnore]
-        public int InputId => inputId;
+        public int InputId => input.Id;
 
         public LinkId GetId()
         {
@@ -79,9 +75,6 @@
         {
             this.editor = editor;
 
-            outputId = output.Id;
-            inputId = input.Id;
-
             if (destroyed) return;
             OutputNode.AddLink(this);
             if (destroyed) return;
@@ -95,6 +88,11 @@
         public virtual void Recycle()
         {
             destroyed = false;
+        }
+
+        public override string ToString()
+        {
+            return $"{OutputNode} -> {InputNode}";
         }
     }
 }

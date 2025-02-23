@@ -5,10 +5,11 @@
     using HexaEngine.Materials.Nodes;
     using System.Text;
 
-    public class ComponentMaskNodeAnalyzer : NodeAnalyzer<SwizzleVectorNode>
+    public class SwizzleVectorNodeAnalyzer : NodeAnalyzer<SwizzleVectorNode>
     {
         public override void Analyze(SwizzleVectorNode node, GenerationContext context, StringBuilder builder)
         {
+            if (node.IsUnknown()) return;
             var def = context.GetVariableFirstLink(node.In);
 
             var type = node.Type;

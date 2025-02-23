@@ -5,7 +5,7 @@
     using Newtonsoft.Json;
     using System.Collections.Generic;
 
-    public abstract class FuncCallVoidNodeBase : InferTypedNodeBase, IFuncCallVoidNode
+    public abstract class FuncCallVoidNodeBase : InferTypedNodeBase, IFuncCallVoidNode, INodeDropConnector
     {
         private readonly List<PrimitivePin> pins = new();
 
@@ -63,11 +63,15 @@
                 return;
             }
 
-            for (int i = 0; i < pins.Count; i++)
-            {
-                //pins[i].Type = Mode;
-            }
             base.UpdateMode();
+        }
+
+        void INodeDropConnector.Connect(Pin outputPin)
+        {
+            if (pins.Count > 0)
+            {
+                editor?.TryCreateLink(pins[0], outputPin);
+            }
         }
     }
 }

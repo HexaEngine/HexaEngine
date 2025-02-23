@@ -6,7 +6,7 @@
     using HexaEngine.Materials.Pins;
     using Newtonsoft.Json;
 
-    public class SplitNode : InferTypedNodeBase, ITypedNode
+    public class SplitNode : InferTypedNodeBase, INodeDropConnector
     {
         [JsonConstructor]
         public SplitNode(int id, bool removable, bool isStatic) : base(id, "Split Vector", removable, isStatic)
@@ -14,7 +14,6 @@
             TitleColor = 0x5D3874FF.RGBAToVec4();
             TitleHoveredColor = 0x6F4C85FF.RGBAToVec4();
             TitleSelectedColor = 0x79578FFF.RGBAToVec4();
-            DefaultMode = Mode = PinType.Float4;
         }
 
         public SplitNode() : this(0, true, false)
@@ -53,6 +52,12 @@
                 DestroyPin(OutPins[i]);
             }
 
+            if (Mode == PinType.Unknown)
+            {
+                Type = SType.Unknown;
+                return;
+            }
+
             int componentCount = Mode.ComponentCount();
             var scalarType = Mode.ToScalar();
             for (int i = 0; i < componentCount; i++)
@@ -62,9 +67,13 @@
                 AddPin(pin);
             }
 
-            In.Type = Mode;
             SType type = Mode.ToSType();
             Type = new(type.Name);
+        }
+
+        void INodeDropConnector.Connect(Pin outputPin)
+        {
+            editor?.TryCreateLink(In, outputPin);
         }
     }
 }
