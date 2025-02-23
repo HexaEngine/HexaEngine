@@ -1,0 +1,2786 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class StreamExtensions </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class StreamExtensions ">
+      
+      <meta name="description" content="Provides extension methods for the  class.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_IO_StreamExtensions.md&amp;value=---%0Auid%3A%20HexaEngine.Core.IO.StreamExtensions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.IO.StreamExtensions">
+
+
+
+  <h1 id="HexaEngine_Core_IO_StreamExtensions" data-uid="HexaEngine.Core.IO.StreamExtensions" class="text-break">
+Class StreamExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.IO.html">IO</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Provides extension methods for the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> class.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class StreamExtensions</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">StreamExtensions</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_Compare_" data-uid="HexaEngine.Core.IO.StreamExtensions.Compare*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_Compare_System_IO_Stream_System_Byte___" data-uid="HexaEngine.Core.IO.StreamExtensions.Compare(System.IO.Stream,System.Byte[])">
+  Compare(Stream, byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L389"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares the data in the stream with the provided byte array.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool Compare(this Stream stream, byte[] compare)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to compare with.</p>
+</dd>
+    <dt><code>compare</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The byte array to compare with the stream data.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the stream data matches the provided byte array; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_CompareVersion_" data-uid="HexaEngine.Core.IO.StreamExtensions.CompareVersion*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_CompareVersion_System_IO_Stream_System_UInt64_System_UInt64_Hexa_NET_Mathematics_Endianness_HexaEngine_Core_IO_Version__" data-uid="HexaEngine.Core.IO.StreamExtensions.CompareVersion(System.IO.Stream,System.UInt64,System.UInt64,Hexa.NET.Mathematics.Endianness,HexaEngine.Core.IO.Version@)">
+  CompareVersion(Stream, ulong, ulong, Endianness, out Version)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L416"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares the version read from the stream with the specified minimum and latest versions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool CompareVersion(this Stream stream, ulong min, ulong latest, Endianness endianness, out Version version)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read the version from.</p>
+</dd>
+    <dt><code>min</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>The minimum version to compare against.</p>
+</dd>
+    <dt><code>latest</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>The latest version to compare against.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading the version.</p>
+</dd>
+    <dt><code>version</code> <a class="xref" href="HexaEngine.Core.IO.Version.html">Version</a></dt>
+    <dd><p>The version read from the stream.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the version is within the specified range; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_MoveBlock_" data-uid="HexaEngine.Core.IO.StreamExtensions.MoveBlock*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_MoveBlock_System_IO_Stream_System_Int64_System_Int64_System_Int64_" data-uid="HexaEngine.Core.IO.StreamExtensions.MoveBlock(System.IO.Stream,System.Int64,System.Int64,System.Int64)">
+  MoveBlock(Stream, long, long, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1231"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void MoveBlock(this Stream stream, long from, long to, long size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>from</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>to</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_Read_" data-uid="HexaEngine.Core.IO.StreamExtensions.Read*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_Read_System_IO_Stream_System_Int64_" data-uid="HexaEngine.Core.IO.StreamExtensions.Read(System.IO.Stream,System.Int64)">
+  Read(Stream, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L375"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a byte array of the specified length from the stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static byte[] Read(this Stream stream, long length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The length of the byte array to read.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The byte array read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayDouble_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayDouble*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayDouble_System_IO_Stream_System_Double___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayDouble(System.IO.Stream,System.Double[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayDouble(Stream, double[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L943"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayDouble(this Stream stream, double[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayFloat_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayFloat*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayFloat_System_IO_Stream_System_Single___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayFloat(System.IO.Stream,System.Single[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayFloat(Stream, float[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L863"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayFloat(this Stream stream, float[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayInt16_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayInt16*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayInt16_System_IO_Stream_System_Int16___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayInt16(System.IO.Stream,System.Int16[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayInt16(Stream, short[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L983"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayInt16(this Stream stream, short[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayInt32_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayInt32*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayInt32_System_IO_Stream_System_Int32___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayInt32(System.IO.Stream,System.Int32[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayInt32(Stream, int[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1023"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayInt32(this Stream stream, int[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayInt64_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayInt64*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayInt64_System_IO_Stream_System_Int64___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayInt64(System.IO.Stream,System.Int64[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayInt64(Stream, long[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1063"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayInt64(this Stream stream, long[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayUInt16_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayUInt16*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayUInt16_System_IO_Stream_System_UInt16___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayUInt16(System.IO.Stream,System.UInt16[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayUInt16(Stream, ushort[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L963"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayUInt16(this Stream stream, ushort[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayUInt32_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayUInt32*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayUInt32_System_IO_Stream_System_UInt32___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayUInt32(System.IO.Stream,System.UInt32[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayUInt32(Stream, uint[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1003"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayUInt32(this Stream stream, uint[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayUInt64_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayUInt64*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayUInt64_System_IO_Stream_System_UInt64___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayUInt64(System.IO.Stream,System.UInt64[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayUInt64(Stream, ulong[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1043"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayUInt64(this Stream stream, ulong[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayVector2_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayVector2*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayVector2_System_IO_Stream_System_Numerics_Vector2___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayVector2(System.IO.Stream,System.Numerics.Vector2[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayVector2(Stream, Vector2[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L883"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayVector2(this Stream stream, Vector2[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayVector3_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayVector3*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayVector3_System_IO_Stream_System_Numerics_Vector3___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayVector3(System.IO.Stream,System.Numerics.Vector3[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayVector3(Stream, Vector3[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L903"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayVector3(this Stream stream, Vector3[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadArrayVector4_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayVector4*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadArrayVector4_System_IO_Stream_System_Numerics_Vector4___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadArrayVector4(System.IO.Stream,System.Numerics.Vector4[],Hexa.NET.Mathematics.Endianness)">
+  ReadArrayVector4(Stream, Vector4[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L923"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadArrayVector4(this Stream stream, Vector4[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadBytes_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadBytes*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadBytes_System_IO_Stream_System_Int32_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadBytes(System.IO.Stream,System.Int32)">
+  ReadBytes(Stream, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L429"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a byte array of the specified length from the stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static byte[] ReadBytes(this Stream stream, int length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The length of the byte array to read.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The byte array read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadBytes_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadBytes*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadBytes_System_IO_Stream_System_UInt32_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadBytes(System.IO.Stream,System.UInt32)">
+  ReadBytes(Stream, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L443"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a byte array of the specified length from the stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static byte[] ReadBytes(this Stream stream, uint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The length of the byte array to read.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The byte array read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadDouble_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadDouble*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadDouble_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadDouble(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadDouble(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L684"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a double-precision floating-point value from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double ReadDouble(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The double-precision floating-point value read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadFloat_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadFloat*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadFloat_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadFloat(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadFloat(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L641"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a single-precision floating-point value from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static float ReadFloat(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The single-precision floating-point value read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadGuid_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadGuid*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadGuid_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadGuid(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadGuid(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a GUID from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Guid ReadGuid(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd><p>The GUID read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadInt16_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadInt16*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadInt16_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadInt16(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadInt16(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a 16-bit signed integer from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static short ReadInt16(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd><p>The 16-bit signed integer read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadInt32_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadInt32*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadInt32_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadInt32(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadInt32(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L225"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a 32-bit signed integer from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int ReadInt32(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The 32-bit signed integer read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadInt64_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadInt64*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadInt64_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadInt64(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadInt64(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L333"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a 64-bit signed integer from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long ReadInt64(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The 64-bit signed integer read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadMatrix4x4_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadMatrix4x4*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadMatrix4x4_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadMatrix4x4(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadMatrix4x4(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L757"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a 4x4 matrix from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Matrix4x4 ReadMatrix4x4(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>The 4x4 matrix read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadQuaternion_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadQuaternion*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadQuaternion_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadQuaternion(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadQuaternion(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L839"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a Quaternion from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Quaternion ReadQuaternion(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.quaternion">Quaternion</a></dt>
+    <dd><p>The Quaternion read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadString_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadString*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadString_System_IO_Stream_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadString(System.IO.Stream,System.Text.Encoding,Hexa.NET.Mathematics.Endianness)">
+  ReadString(Stream, Encoding, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a string from the stream using the specified decoder and endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string? ReadString(this Stream stream, Encoding decoder, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>decoder</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a></dt>
+    <dd><p>The encoding to use for reading the string.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string read from the stream, or null if the string length is 0.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadUInt16_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadUInt16*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadUInt16_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadUInt16(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadUInt16(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a 16-bit unsigned integer from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ushort ReadUInt16(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></dt>
+    <dd><p>The 16-bit unsigned integer read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadUInt32_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadUInt32*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadUInt32_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadUInt32(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadUInt32(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L246"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a 32-bit unsigned integer from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint ReadUInt32(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The 32-bit unsigned integer read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadUInt64_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadUInt64*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadUInt64_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadUInt64(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadUInt64(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L354"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a 64-bit unsigned integer from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ulong ReadUInt64(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>The 64-bit unsigned integer read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadVector2_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadVector2*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadVector2_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadVector2(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadVector2(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L593"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a Vector2 from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector2 ReadVector2(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd><p>The Vector2 read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadVector3_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadVector3*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadVector3_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadVector3(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadVector3(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L541"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a Vector3 from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector3 ReadVector3(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The Vector3 read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReadVector4_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadVector4*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReadVector4_System_IO_Stream_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReadVector4(System.IO.Stream,Hexa.NET.Mathematics.Endianness)">
+  ReadVector4(Stream, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L485"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a Vector4 from the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Vector4 ReadVector4(this Stream stream, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for reading.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The Vector4 read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_Double_System_Double__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.Double,System.Double*)">
+  ReverseEndianness(double, double*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(double target, double* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_Int16_System_Int16__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.Int16,System.Int16*)">
+  ReverseEndianness(short, short*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(short target, short* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_Int32_System_Int32__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.Int32,System.Int32*)">
+  ReverseEndianness(int, int*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1148"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(int target, int* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_Int64_System_Int64__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.Int64,System.Int64*)">
+  ReverseEndianness(long, long*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1172"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(long target, long* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_Numerics_Vector2_System_Numerics_Vector2__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.Numerics.Vector2,System.Numerics.Vector2*)">
+  ReverseEndianness(Vector2, Vector2*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1204"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(Vector2 target, Vector2* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_Numerics_Vector3_System_Numerics_Vector3__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.Numerics.Vector3,System.Numerics.Vector3*)">
+  ReverseEndianness(Vector3, Vector3*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1212"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(Vector3 target, Vector3* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_Numerics_Vector4_System_Numerics_Vector4__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.Numerics.Vector4,System.Numerics.Vector4*)">
+  ReverseEndianness(Vector4, Vector4*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1221"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(Vector4 target, Vector4* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_Single_System_Single__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.Single,System.Single*)">
+  ReverseEndianness(float, float*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1186"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(float target, float* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_UInt16_System_UInt16__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.UInt16,System.UInt16*)">
+  ReverseEndianness(ushort, ushort*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(ushort target, ushort* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_UInt32_System_UInt32__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.UInt32,System.UInt32*)">
+  ReverseEndianness(uint, uint*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1138"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(uint target, uint* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_ReverseEndianness_System_UInt64_System_UInt64__" data-uid="HexaEngine.Core.IO.StreamExtensions.ReverseEndianness(System.UInt64,System.UInt64*)">
+  ReverseEndianness(ulong, ulong*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1158"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReverseEndianness(ulong target, ulong* output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayDouble_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayDouble*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayDouble_System_IO_Stream_System_Double___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayDouble(System.IO.Stream,System.Double[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayDouble(Stream, double[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L953"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayDouble(this Stream stream, double[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayFloat_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayFloat*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayFloat_System_IO_Stream_System_Single___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayFloat(System.IO.Stream,System.Single[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayFloat(Stream, float[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L873"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayFloat(this Stream stream, float[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayInt16_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayInt16*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayInt16_System_IO_Stream_System_Span_System_Int16__Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayInt16(System.IO.Stream,System.Span{System.Int16},Hexa.NET.Mathematics.Endianness)">
+  WriteArrayInt16(Stream, Span&lt;short&gt;, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L993"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayInt16(this Stream stream, Span&lt;short&gt; array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayInt32_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayInt32*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayInt32_System_IO_Stream_System_Int32___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayInt32(System.IO.Stream,System.Int32[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayInt32(Stream, int[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1033"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayInt32(this Stream stream, int[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayInt64_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayInt64*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayInt64_System_IO_Stream_System_Int64___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayInt64(System.IO.Stream,System.Int64[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayInt64(Stream, long[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1073"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayInt64(this Stream stream, long[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayUInt16_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayUInt16*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayUInt16_System_IO_Stream_System_UInt16___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayUInt16(System.IO.Stream,System.UInt16[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayUInt16(Stream, ushort[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L973"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayUInt16(this Stream stream, ushort[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayUInt32_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayUInt32*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayUInt32_System_IO_Stream_System_UInt32___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayUInt32(System.IO.Stream,System.UInt32[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayUInt32(Stream, uint[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1013"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayUInt32(this Stream stream, uint[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayUInt64_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayUInt64*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayUInt64_System_IO_Stream_System_UInt64___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayUInt64(System.IO.Stream,System.UInt64[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayUInt64(Stream, ulong[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L1053"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayUInt64(this Stream stream, ulong[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayVector2_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayVector2*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayVector2_System_IO_Stream_System_Numerics_Vector2___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayVector2(System.IO.Stream,System.Numerics.Vector2[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayVector2(Stream, Vector2[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L893"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayVector2(this Stream stream, Vector2[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayVector3_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayVector3*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayVector3_System_IO_Stream_System_Numerics_Vector3___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayVector3(System.IO.Stream,System.Numerics.Vector3[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayVector3(Stream, Vector3[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L913"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayVector3(this Stream stream, Vector3[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteArrayVector4_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayVector4*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteArrayVector4_System_IO_Stream_System_Numerics_Vector4___Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteArrayVector4(System.IO.Stream,System.Numerics.Vector4[],Hexa.NET.Mathematics.Endianness)">
+  WriteArrayVector4(Stream, Vector4[], Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L933"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteArrayVector4(this Stream stream, Vector4[] array, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a>[]</dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteDouble_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteDouble*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteDouble_System_IO_Stream_System_Double_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteDouble(System.IO.Stream,System.Double,Hexa.NET.Mathematics.Endianness)">
+  WriteDouble(Stream, double, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L662"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a double-precision floating-point value to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteDouble(this Stream stream, double value, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The double-precision floating-point value to write.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteFloat_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteFloat*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteFloat_System_IO_Stream_System_Single_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteFloat(System.IO.Stream,System.Single,Hexa.NET.Mathematics.Endianness)">
+  WriteFloat(Stream, float, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L619"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a single-precision floating-point value to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteFloat(this Stream stream, float value, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The single-precision floating-point value to write.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteGuid_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteGuid*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteGuid_System_IO_Stream_System_Guid_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteGuid(System.IO.Stream,System.Guid,Hexa.NET.Mathematics.Endianness)">
+  WriteGuid(Stream, Guid, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a GUID to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteGuid(this Stream stream, Guid guid, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>guid</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd><p>The value to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteInt16_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteInt16*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteInt16_System_IO_Stream_System_Int16_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteInt16(System.IO.Stream,System.Int16,Hexa.NET.Mathematics.Endianness)">
+  WriteInt16(Stream, short, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a 16-bit signed integer to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteInt16(this Stream stream, short val, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>val</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd><p>The value to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteInt32_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteInt32*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteInt32_System_IO_Stream_System_Int32_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteInt32(System.IO.Stream,System.Int32,Hexa.NET.Mathematics.Endianness)">
+  WriteInt32(Stream, int, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a 32-bit signed integer to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteInt32(this Stream stream, int val, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>val</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteInt64_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteInt64*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteInt64_System_IO_Stream_System_Int64_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteInt64(System.IO.Stream,System.Int64,Hexa.NET.Mathematics.Endianness)">
+  WriteInt64(Stream, long, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L311"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a 64-bit signed integer to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteInt64(this Stream stream, long val, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>val</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The value to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteMatrix4x4_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteMatrix4x4*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteMatrix4x4_System_IO_Stream_System_Numerics_Matrix4x4_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteMatrix4x4(System.IO.Stream,System.Numerics.Matrix4x4,Hexa.NET.Mathematics.Endianness)">
+  WriteMatrix4x4(Stream, Matrix4x4, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L705"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a 4x4 matrix to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteMatrix4x4(this Stream stream, Matrix4x4 matrix, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>matrix</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>The 4x4 matrix to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteQuaternion_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteQuaternion*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteQuaternion_System_IO_Stream_System_Numerics_Quaternion_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteQuaternion(System.IO.Stream,System.Numerics.Quaternion,Hexa.NET.Mathematics.Endianness)">
+  WriteQuaternion(Stream, Quaternion, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L811"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a Quaternion to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteQuaternion(this Stream stream, Quaternion quaternion, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>quaternion</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.quaternion">Quaternion</a></dt>
+    <dd><p>The Quaternion to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteString_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteString*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteString_System_IO_Stream_System_String_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteString(System.IO.Stream,System.String,System.Text.Encoding,Hexa.NET.Mathematics.Endianness)">
+  WriteString(Stream, string?, Encoding, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a string to the stream using the specified encoder and endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteString(this Stream stream, string? str, Encoding encoder, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>str</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string to write to the stream.</p>
+</dd>
+    <dt><code>encoder</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a></dt>
+    <dd><p>The encoding to use for the string.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteUInt16_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteUInt16*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteUInt16_System_IO_Stream_System_UInt16_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteUInt16(System.IO.Stream,System.UInt16,Hexa.NET.Mathematics.Endianness)">
+  WriteUInt16(Stream, ushort, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a 16-bit unsigned integer to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteUInt16(this Stream stream, ushort val, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>val</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></dt>
+    <dd><p>The value to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteUInt32_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteUInt32*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteUInt32_System_IO_Stream_System_UInt32_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteUInt32(System.IO.Stream,System.UInt32,Hexa.NET.Mathematics.Endianness)">
+  WriteUInt32(Stream, uint, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L267"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a 32-bit unsigned integer to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteUInt32(this Stream stream, uint val, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>val</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The value to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteUInt64_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteUInt64*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteUInt64_System_IO_Stream_System_UInt64_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteUInt64(System.IO.Stream,System.UInt64,Hexa.NET.Mathematics.Endianness)">
+  WriteUInt64(Stream, ulong, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L289"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a 64-bit unsigned integer to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteUInt64(this Stream stream, ulong val, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>val</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>The value to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteVector2_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteVector2*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteVector2_System_IO_Stream_System_Numerics_Vector2_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteVector2(System.IO.Stream,System.Numerics.Vector2,Hexa.NET.Mathematics.Endianness)">
+  WriteVector2(Stream, Vector2, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L569"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a Vector2 to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteVector2(this Stream stream, Vector2 vector, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>vector</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd><p>The Vector2 to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteVector3_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteVector3*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteVector3_System_IO_Stream_System_Numerics_Vector3_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteVector3(System.IO.Stream,System.Numerics.Vector3,Hexa.NET.Mathematics.Endianness)">
+  WriteVector3(Stream, Vector3, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L515"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a Vector3 to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteVector3(this Stream stream, Vector3 vector, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>vector</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The Vector3 to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_StreamExtensions_WriteVector4_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteVector4*"></a>
+
+  <h3 id="HexaEngine_Core_IO_StreamExtensions_WriteVector4_System_IO_Stream_System_Numerics_Vector4_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.StreamExtensions.WriteVector4(System.IO.Stream,System.Numerics.Vector4,Hexa.NET.Mathematics.Endianness)">
+  WriteVector4(Stream, Vector4, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L457"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a Vector4 to the stream using the specified endianness.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteVector4(this Stream stream, Vector4 vector, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>vector</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The Vector4 to write to the stream.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness to use for writing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/StreamExtensions.cs/#L15" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

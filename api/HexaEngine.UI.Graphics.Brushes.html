@@ -1,0 +1,4719 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Brushes </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Brushes ">
+      
+      <meta name="description" content="defines standard brushes using colors from the  class.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_UI_Graphics_Brushes.md&amp;value=---%0Auid%3A%20HexaEngine.UI.Graphics.Brushes%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.UI.Graphics.Brushes">
+
+
+
+  <h1 id="HexaEngine_UI_Graphics_Brushes" data-uid="HexaEngine.UI.Graphics.Brushes" class="text-break">
+Class Brushes  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.UI.html">UI</a>.<a class="xref" href="HexaEngine.UI.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p><a class="xref" href="HexaEngine.UI.Graphics.Brushes.html">Brushes</a> defines standard brushes using colors from the <span class="xref">Hexa.NET.Mathematics.Colors</span> class.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class Brushes</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">Brushes</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_AliceBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.AliceBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_AliceBlue" data-uid="HexaEngine.UI.Graphics.Brushes.AliceBlue">
+  AliceBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>AliceBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush AliceBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Alpha_" data-uid="HexaEngine.UI.Graphics.Brushes.Alpha*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Alpha" data-uid="HexaEngine.UI.Graphics.Brushes.Alpha">
+  Alpha
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L433"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Alpha { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_AntiqueWhite_" data-uid="HexaEngine.UI.Graphics.Brushes.AntiqueWhite*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_AntiqueWhite" data-uid="HexaEngine.UI.Graphics.Brushes.AntiqueWhite">
+  AntiqueWhite
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>AntiqueWhite</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush AntiqueWhite { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Aqua_" data-uid="HexaEngine.UI.Graphics.Brushes.Aqua*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Aqua" data-uid="HexaEngine.UI.Graphics.Brushes.Aqua">
+  Aqua
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Aqua</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Aqua { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Aquamarine_" data-uid="HexaEngine.UI.Graphics.Brushes.Aquamarine*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Aquamarine" data-uid="HexaEngine.UI.Graphics.Brushes.Aquamarine">
+  Aquamarine
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Aquamarine</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Aquamarine { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Azure_" data-uid="HexaEngine.UI.Graphics.Brushes.Azure*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Azure" data-uid="HexaEngine.UI.Graphics.Brushes.Azure">
+  Azure
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Azure</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Azure { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Beige_" data-uid="HexaEngine.UI.Graphics.Brushes.Beige*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Beige" data-uid="HexaEngine.UI.Graphics.Brushes.Beige">
+  Beige
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Beige</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Beige { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Bisque_" data-uid="HexaEngine.UI.Graphics.Brushes.Bisque*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Bisque" data-uid="HexaEngine.UI.Graphics.Brushes.Bisque">
+  Bisque
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Bisque</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Bisque { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Black_" data-uid="HexaEngine.UI.Graphics.Brushes.Black*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Black" data-uid="HexaEngine.UI.Graphics.Brushes.Black">
+  Black
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Black</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Black { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_BlanchedAlmond_" data-uid="HexaEngine.UI.Graphics.Brushes.BlanchedAlmond*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_BlanchedAlmond" data-uid="HexaEngine.UI.Graphics.Brushes.BlanchedAlmond">
+  BlanchedAlmond
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>BlanchedAlmond</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush BlanchedAlmond { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Blue_" data-uid="HexaEngine.UI.Graphics.Brushes.Blue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Blue" data-uid="HexaEngine.UI.Graphics.Brushes.Blue">
+  Blue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Blue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Blue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_BlueViolet_" data-uid="HexaEngine.UI.Graphics.Brushes.BlueViolet*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_BlueViolet" data-uid="HexaEngine.UI.Graphics.Brushes.BlueViolet">
+  BlueViolet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>BlueViolet</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush BlueViolet { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Brown_" data-uid="HexaEngine.UI.Graphics.Brushes.Brown*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Brown" data-uid="HexaEngine.UI.Graphics.Brushes.Brown">
+  Brown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Brown</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Brown { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_BurlyWood_" data-uid="HexaEngine.UI.Graphics.Brushes.BurlyWood*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_BurlyWood" data-uid="HexaEngine.UI.Graphics.Brushes.BurlyWood">
+  BurlyWood
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>BurlyWood</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush BurlyWood { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_CadetBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.CadetBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_CadetBlue" data-uid="HexaEngine.UI.Graphics.Brushes.CadetBlue">
+  CadetBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>CadetBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush CadetBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Chartreuse_" data-uid="HexaEngine.UI.Graphics.Brushes.Chartreuse*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Chartreuse" data-uid="HexaEngine.UI.Graphics.Brushes.Chartreuse">
+  Chartreuse
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Chartreuse</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Chartreuse { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Chocolate_" data-uid="HexaEngine.UI.Graphics.Brushes.Chocolate*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Chocolate" data-uid="HexaEngine.UI.Graphics.Brushes.Chocolate">
+  Chocolate
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Chocolate</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Chocolate { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Coral_" data-uid="HexaEngine.UI.Graphics.Brushes.Coral*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Coral" data-uid="HexaEngine.UI.Graphics.Brushes.Coral">
+  Coral
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Coral</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Coral { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_CornflowerBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.CornflowerBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_CornflowerBlue" data-uid="HexaEngine.UI.Graphics.Brushes.CornflowerBlue">
+  CornflowerBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>CornflowerBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush CornflowerBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Cornsilk_" data-uid="HexaEngine.UI.Graphics.Brushes.Cornsilk*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Cornsilk" data-uid="HexaEngine.UI.Graphics.Brushes.Cornsilk">
+  Cornsilk
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Cornsilk</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Cornsilk { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Crimson_" data-uid="HexaEngine.UI.Graphics.Brushes.Crimson*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Crimson" data-uid="HexaEngine.UI.Graphics.Brushes.Crimson">
+  Crimson
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Crimson</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Crimson { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Cyan_" data-uid="HexaEngine.UI.Graphics.Brushes.Cyan*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Cyan" data-uid="HexaEngine.UI.Graphics.Brushes.Cyan">
+  Cyan
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Cyan</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Cyan { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkBlue" data-uid="HexaEngine.UI.Graphics.Brushes.DarkBlue">
+  DarkBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkCyan_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkCyan*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkCyan" data-uid="HexaEngine.UI.Graphics.Brushes.DarkCyan">
+  DarkCyan
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkCyan</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkCyan { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkGoldenrod_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkGoldenrod*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkGoldenrod" data-uid="HexaEngine.UI.Graphics.Brushes.DarkGoldenrod">
+  DarkGoldenrod
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkGoldenrod</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkGoldenrod { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkGray_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkGray*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkGray" data-uid="HexaEngine.UI.Graphics.Brushes.DarkGray">
+  DarkGray
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkGray</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkGray { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkGreen" data-uid="HexaEngine.UI.Graphics.Brushes.DarkGreen">
+  DarkGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkKhaki_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkKhaki*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkKhaki" data-uid="HexaEngine.UI.Graphics.Brushes.DarkKhaki">
+  DarkKhaki
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkKhaki</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkKhaki { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkMagenta_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkMagenta*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkMagenta" data-uid="HexaEngine.UI.Graphics.Brushes.DarkMagenta">
+  DarkMagenta
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkMagenta</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkMagenta { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkOliveGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkOliveGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkOliveGreen" data-uid="HexaEngine.UI.Graphics.Brushes.DarkOliveGreen">
+  DarkOliveGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkOliveGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkOliveGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkOrange_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkOrange*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkOrange" data-uid="HexaEngine.UI.Graphics.Brushes.DarkOrange">
+  DarkOrange
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkOrange</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkOrange { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkOrchid_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkOrchid*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkOrchid" data-uid="HexaEngine.UI.Graphics.Brushes.DarkOrchid">
+  DarkOrchid
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkOrchid</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkOrchid { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkRed_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkRed*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkRed" data-uid="HexaEngine.UI.Graphics.Brushes.DarkRed">
+  DarkRed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkRed</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkRed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkSalmon_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkSalmon*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkSalmon" data-uid="HexaEngine.UI.Graphics.Brushes.DarkSalmon">
+  DarkSalmon
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkSalmon</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkSalmon { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkSeaGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkSeaGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkSeaGreen" data-uid="HexaEngine.UI.Graphics.Brushes.DarkSeaGreen">
+  DarkSeaGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkSeaGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkSeaGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkSlateBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkSlateBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkSlateBlue" data-uid="HexaEngine.UI.Graphics.Brushes.DarkSlateBlue">
+  DarkSlateBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkSlateBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkSlateBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkSlateGray_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkSlateGray*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkSlateGray" data-uid="HexaEngine.UI.Graphics.Brushes.DarkSlateGray">
+  DarkSlateGray
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkSlateGray</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkSlateGray { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkTurquoise_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkTurquoise*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkTurquoise" data-uid="HexaEngine.UI.Graphics.Brushes.DarkTurquoise">
+  DarkTurquoise
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkTurquoise</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkTurquoise { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DarkViolet_" data-uid="HexaEngine.UI.Graphics.Brushes.DarkViolet*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DarkViolet" data-uid="HexaEngine.UI.Graphics.Brushes.DarkViolet">
+  DarkViolet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DarkViolet</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DarkViolet { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DeepPink_" data-uid="HexaEngine.UI.Graphics.Brushes.DeepPink*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DeepPink" data-uid="HexaEngine.UI.Graphics.Brushes.DeepPink">
+  DeepPink
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L125"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DeepPink</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DeepPink { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DeepSkyBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.DeepSkyBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DeepSkyBlue" data-uid="HexaEngine.UI.Graphics.Brushes.DeepSkyBlue">
+  DeepSkyBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DeepSkyBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DeepSkyBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DimGray_" data-uid="HexaEngine.UI.Graphics.Brushes.DimGray*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DimGray" data-uid="HexaEngine.UI.Graphics.Brushes.DimGray">
+  DimGray
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DimGray</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DimGray { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_DodgerBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.DodgerBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_DodgerBlue" data-uid="HexaEngine.UI.Graphics.Brushes.DodgerBlue">
+  DodgerBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>DodgerBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush DodgerBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Firebrick_" data-uid="HexaEngine.UI.Graphics.Brushes.Firebrick*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Firebrick" data-uid="HexaEngine.UI.Graphics.Brushes.Firebrick">
+  Firebrick
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Firebrick</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Firebrick { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_FloralWhite_" data-uid="HexaEngine.UI.Graphics.Brushes.FloralWhite*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_FloralWhite" data-uid="HexaEngine.UI.Graphics.Brushes.FloralWhite">
+  FloralWhite
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>FloralWhite</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush FloralWhite { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_ForestGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.ForestGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_ForestGreen" data-uid="HexaEngine.UI.Graphics.Brushes.ForestGreen">
+  ForestGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L143"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>ForestGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush ForestGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Fuchsia_" data-uid="HexaEngine.UI.Graphics.Brushes.Fuchsia*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Fuchsia" data-uid="HexaEngine.UI.Graphics.Brushes.Fuchsia">
+  Fuchsia
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Fuchsia</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Fuchsia { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Gainsboro_" data-uid="HexaEngine.UI.Graphics.Brushes.Gainsboro*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Gainsboro" data-uid="HexaEngine.UI.Graphics.Brushes.Gainsboro">
+  Gainsboro
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L149"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Gainsboro</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Gainsboro { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_GhostWhite_" data-uid="HexaEngine.UI.Graphics.Brushes.GhostWhite*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_GhostWhite" data-uid="HexaEngine.UI.Graphics.Brushes.GhostWhite">
+  GhostWhite
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>GhostWhite</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush GhostWhite { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Gold_" data-uid="HexaEngine.UI.Graphics.Brushes.Gold*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Gold" data-uid="HexaEngine.UI.Graphics.Brushes.Gold">
+  Gold
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Gold</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Gold { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Goldenrod_" data-uid="HexaEngine.UI.Graphics.Brushes.Goldenrod*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Goldenrod" data-uid="HexaEngine.UI.Graphics.Brushes.Goldenrod">
+  Goldenrod
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Goldenrod</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Goldenrod { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Gray_" data-uid="HexaEngine.UI.Graphics.Brushes.Gray*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Gray" data-uid="HexaEngine.UI.Graphics.Brushes.Gray">
+  Gray
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Gray</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Gray { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Green_" data-uid="HexaEngine.UI.Graphics.Brushes.Green*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Green" data-uid="HexaEngine.UI.Graphics.Brushes.Green">
+  Green
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Green</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Green { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_GreenYellow_" data-uid="HexaEngine.UI.Graphics.Brushes.GreenYellow*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_GreenYellow" data-uid="HexaEngine.UI.Graphics.Brushes.GreenYellow">
+  GreenYellow
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L167"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>GreenYellow</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush GreenYellow { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Honeydew_" data-uid="HexaEngine.UI.Graphics.Brushes.Honeydew*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Honeydew" data-uid="HexaEngine.UI.Graphics.Brushes.Honeydew">
+  Honeydew
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L170"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Honeydew</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Honeydew { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_HotPink_" data-uid="HexaEngine.UI.Graphics.Brushes.HotPink*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_HotPink" data-uid="HexaEngine.UI.Graphics.Brushes.HotPink">
+  HotPink
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L173"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>HotPink</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush HotPink { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_IndianRed_" data-uid="HexaEngine.UI.Graphics.Brushes.IndianRed*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_IndianRed" data-uid="HexaEngine.UI.Graphics.Brushes.IndianRed">
+  IndianRed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>IndianRed</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush IndianRed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Indigo_" data-uid="HexaEngine.UI.Graphics.Brushes.Indigo*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Indigo" data-uid="HexaEngine.UI.Graphics.Brushes.Indigo">
+  Indigo
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Indigo</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Indigo { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Ivory_" data-uid="HexaEngine.UI.Graphics.Brushes.Ivory*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Ivory" data-uid="HexaEngine.UI.Graphics.Brushes.Ivory">
+  Ivory
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Ivory</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Ivory { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Khaki_" data-uid="HexaEngine.UI.Graphics.Brushes.Khaki*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Khaki" data-uid="HexaEngine.UI.Graphics.Brushes.Khaki">
+  Khaki
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L185"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Khaki</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Khaki { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Lavender_" data-uid="HexaEngine.UI.Graphics.Brushes.Lavender*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Lavender" data-uid="HexaEngine.UI.Graphics.Brushes.Lavender">
+  Lavender
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L188"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Lavender</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Lavender { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LavenderBlush_" data-uid="HexaEngine.UI.Graphics.Brushes.LavenderBlush*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LavenderBlush" data-uid="HexaEngine.UI.Graphics.Brushes.LavenderBlush">
+  LavenderBlush
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L191"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LavenderBlush</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LavenderBlush { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LawnGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.LawnGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LawnGreen" data-uid="HexaEngine.UI.Graphics.Brushes.LawnGreen">
+  LawnGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L194"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LawnGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LawnGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LemonChiffon_" data-uid="HexaEngine.UI.Graphics.Brushes.LemonChiffon*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LemonChiffon" data-uid="HexaEngine.UI.Graphics.Brushes.LemonChiffon">
+  LemonChiffon
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L197"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LemonChiffon</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LemonChiffon { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.LightBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightBlue" data-uid="HexaEngine.UI.Graphics.Brushes.LightBlue">
+  LightBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightCoral_" data-uid="HexaEngine.UI.Graphics.Brushes.LightCoral*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightCoral" data-uid="HexaEngine.UI.Graphics.Brushes.LightCoral">
+  LightCoral
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightCoral</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightCoral { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightCyan_" data-uid="HexaEngine.UI.Graphics.Brushes.LightCyan*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightCyan" data-uid="HexaEngine.UI.Graphics.Brushes.LightCyan">
+  LightCyan
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L206"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightCyan</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightCyan { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightGoldenrodYellow_" data-uid="HexaEngine.UI.Graphics.Brushes.LightGoldenrodYellow*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightGoldenrodYellow" data-uid="HexaEngine.UI.Graphics.Brushes.LightGoldenrodYellow">
+  LightGoldenrodYellow
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L209"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightGoldenrodYellow</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightGoldenrodYellow { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightGray_" data-uid="HexaEngine.UI.Graphics.Brushes.LightGray*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightGray" data-uid="HexaEngine.UI.Graphics.Brushes.LightGray">
+  LightGray
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L212"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightGray</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightGray { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.LightGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightGreen" data-uid="HexaEngine.UI.Graphics.Brushes.LightGreen">
+  LightGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L215"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightPink_" data-uid="HexaEngine.UI.Graphics.Brushes.LightPink*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightPink" data-uid="HexaEngine.UI.Graphics.Brushes.LightPink">
+  LightPink
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L218"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightPink</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightPink { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightSalmon_" data-uid="HexaEngine.UI.Graphics.Brushes.LightSalmon*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightSalmon" data-uid="HexaEngine.UI.Graphics.Brushes.LightSalmon">
+  LightSalmon
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L221"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightSalmon</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightSalmon { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightSeaGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.LightSeaGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightSeaGreen" data-uid="HexaEngine.UI.Graphics.Brushes.LightSeaGreen">
+  LightSeaGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L224"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightSeaGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightSeaGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightSkyBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.LightSkyBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightSkyBlue" data-uid="HexaEngine.UI.Graphics.Brushes.LightSkyBlue">
+  LightSkyBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L227"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightSkyBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightSkyBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightSlateGray_" data-uid="HexaEngine.UI.Graphics.Brushes.LightSlateGray*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightSlateGray" data-uid="HexaEngine.UI.Graphics.Brushes.LightSlateGray">
+  LightSlateGray
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L230"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightSlateGray</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightSlateGray { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightSteelBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.LightSteelBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightSteelBlue" data-uid="HexaEngine.UI.Graphics.Brushes.LightSteelBlue">
+  LightSteelBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L233"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightSteelBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightSteelBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LightYellow_" data-uid="HexaEngine.UI.Graphics.Brushes.LightYellow*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LightYellow" data-uid="HexaEngine.UI.Graphics.Brushes.LightYellow">
+  LightYellow
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L236"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LightYellow</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LightYellow { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Lime_" data-uid="HexaEngine.UI.Graphics.Brushes.Lime*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Lime" data-uid="HexaEngine.UI.Graphics.Brushes.Lime">
+  Lime
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L239"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Lime</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Lime { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_LimeGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.LimeGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_LimeGreen" data-uid="HexaEngine.UI.Graphics.Brushes.LimeGreen">
+  LimeGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>LimeGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush LimeGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Linen_" data-uid="HexaEngine.UI.Graphics.Brushes.Linen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Linen" data-uid="HexaEngine.UI.Graphics.Brushes.Linen">
+  Linen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L245"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Linen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Linen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Magenta_" data-uid="HexaEngine.UI.Graphics.Brushes.Magenta*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Magenta" data-uid="HexaEngine.UI.Graphics.Brushes.Magenta">
+  Magenta
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L248"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Magenta</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Magenta { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Maroon_" data-uid="HexaEngine.UI.Graphics.Brushes.Maroon*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Maroon" data-uid="HexaEngine.UI.Graphics.Brushes.Maroon">
+  Maroon
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L251"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Maroon</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Maroon { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MediumAquamarine_" data-uid="HexaEngine.UI.Graphics.Brushes.MediumAquamarine*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MediumAquamarine" data-uid="HexaEngine.UI.Graphics.Brushes.MediumAquamarine">
+  MediumAquamarine
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MediumAquamarine</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MediumAquamarine { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MediumBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.MediumBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MediumBlue" data-uid="HexaEngine.UI.Graphics.Brushes.MediumBlue">
+  MediumBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L257"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MediumBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MediumBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MediumOrchid_" data-uid="HexaEngine.UI.Graphics.Brushes.MediumOrchid*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MediumOrchid" data-uid="HexaEngine.UI.Graphics.Brushes.MediumOrchid">
+  MediumOrchid
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L260"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MediumOrchid</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MediumOrchid { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MediumPurple_" data-uid="HexaEngine.UI.Graphics.Brushes.MediumPurple*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MediumPurple" data-uid="HexaEngine.UI.Graphics.Brushes.MediumPurple">
+  MediumPurple
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L263"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MediumPurple</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MediumPurple { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MediumSeaGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.MediumSeaGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MediumSeaGreen" data-uid="HexaEngine.UI.Graphics.Brushes.MediumSeaGreen">
+  MediumSeaGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L266"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MediumSeaGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MediumSeaGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MediumSlateBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.MediumSlateBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MediumSlateBlue" data-uid="HexaEngine.UI.Graphics.Brushes.MediumSlateBlue">
+  MediumSlateBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L269"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MediumSlateBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MediumSlateBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MediumSpringGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.MediumSpringGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MediumSpringGreen" data-uid="HexaEngine.UI.Graphics.Brushes.MediumSpringGreen">
+  MediumSpringGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L272"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MediumSpringGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MediumSpringGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MediumTurquoise_" data-uid="HexaEngine.UI.Graphics.Brushes.MediumTurquoise*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MediumTurquoise" data-uid="HexaEngine.UI.Graphics.Brushes.MediumTurquoise">
+  MediumTurquoise
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L275"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MediumTurquoise</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MediumTurquoise { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MediumVioletRed_" data-uid="HexaEngine.UI.Graphics.Brushes.MediumVioletRed*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MediumVioletRed" data-uid="HexaEngine.UI.Graphics.Brushes.MediumVioletRed">
+  MediumVioletRed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L278"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MediumVioletRed</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MediumVioletRed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MidnightBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.MidnightBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MidnightBlue" data-uid="HexaEngine.UI.Graphics.Brushes.MidnightBlue">
+  MidnightBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L281"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MidnightBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MidnightBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MintCream_" data-uid="HexaEngine.UI.Graphics.Brushes.MintCream*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MintCream" data-uid="HexaEngine.UI.Graphics.Brushes.MintCream">
+  MintCream
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L284"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MintCream</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MintCream { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_MistyRose_" data-uid="HexaEngine.UI.Graphics.Brushes.MistyRose*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_MistyRose" data-uid="HexaEngine.UI.Graphics.Brushes.MistyRose">
+  MistyRose
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L287"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>MistyRose</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush MistyRose { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Moccasin_" data-uid="HexaEngine.UI.Graphics.Brushes.Moccasin*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Moccasin" data-uid="HexaEngine.UI.Graphics.Brushes.Moccasin">
+  Moccasin
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L290"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Moccasin</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Moccasin { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_NavajoWhite_" data-uid="HexaEngine.UI.Graphics.Brushes.NavajoWhite*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_NavajoWhite" data-uid="HexaEngine.UI.Graphics.Brushes.NavajoWhite">
+  NavajoWhite
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L293"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>NavajoWhite</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush NavajoWhite { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Navy_" data-uid="HexaEngine.UI.Graphics.Brushes.Navy*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Navy" data-uid="HexaEngine.UI.Graphics.Brushes.Navy">
+  Navy
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L296"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Navy</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Navy { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_OldLace_" data-uid="HexaEngine.UI.Graphics.Brushes.OldLace*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_OldLace" data-uid="HexaEngine.UI.Graphics.Brushes.OldLace">
+  OldLace
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L299"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>OldLace</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush OldLace { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Olive_" data-uid="HexaEngine.UI.Graphics.Brushes.Olive*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Olive" data-uid="HexaEngine.UI.Graphics.Brushes.Olive">
+  Olive
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L302"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Olive</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Olive { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_OliveDrab_" data-uid="HexaEngine.UI.Graphics.Brushes.OliveDrab*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_OliveDrab" data-uid="HexaEngine.UI.Graphics.Brushes.OliveDrab">
+  OliveDrab
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L305"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>OliveDrab</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush OliveDrab { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Orange_" data-uid="HexaEngine.UI.Graphics.Brushes.Orange*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Orange" data-uid="HexaEngine.UI.Graphics.Brushes.Orange">
+  Orange
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Orange</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Orange { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_OrangeRed_" data-uid="HexaEngine.UI.Graphics.Brushes.OrangeRed*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_OrangeRed" data-uid="HexaEngine.UI.Graphics.Brushes.OrangeRed">
+  OrangeRed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L311"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>OrangeRed</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush OrangeRed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Orchid_" data-uid="HexaEngine.UI.Graphics.Brushes.Orchid*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Orchid" data-uid="HexaEngine.UI.Graphics.Brushes.Orchid">
+  Orchid
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Orchid</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Orchid { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_PaleGoldenrod_" data-uid="HexaEngine.UI.Graphics.Brushes.PaleGoldenrod*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_PaleGoldenrod" data-uid="HexaEngine.UI.Graphics.Brushes.PaleGoldenrod">
+  PaleGoldenrod
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L317"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>PaleGoldenrod</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush PaleGoldenrod { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_PaleGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.PaleGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_PaleGreen" data-uid="HexaEngine.UI.Graphics.Brushes.PaleGreen">
+  PaleGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L320"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>PaleGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush PaleGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_PaleTurquoise_" data-uid="HexaEngine.UI.Graphics.Brushes.PaleTurquoise*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_PaleTurquoise" data-uid="HexaEngine.UI.Graphics.Brushes.PaleTurquoise">
+  PaleTurquoise
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L323"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>PaleTurquoise</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush PaleTurquoise { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_PaleVioletRed_" data-uid="HexaEngine.UI.Graphics.Brushes.PaleVioletRed*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_PaleVioletRed" data-uid="HexaEngine.UI.Graphics.Brushes.PaleVioletRed">
+  PaleVioletRed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L326"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>PaleVioletRed</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush PaleVioletRed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_PapayaWhip_" data-uid="HexaEngine.UI.Graphics.Brushes.PapayaWhip*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_PapayaWhip" data-uid="HexaEngine.UI.Graphics.Brushes.PapayaWhip">
+  PapayaWhip
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L329"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>PapayaWhip</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush PapayaWhip { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_PeachPuff_" data-uid="HexaEngine.UI.Graphics.Brushes.PeachPuff*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_PeachPuff" data-uid="HexaEngine.UI.Graphics.Brushes.PeachPuff">
+  PeachPuff
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L332"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>PeachPuff</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush PeachPuff { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Peru_" data-uid="HexaEngine.UI.Graphics.Brushes.Peru*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Peru" data-uid="HexaEngine.UI.Graphics.Brushes.Peru">
+  Peru
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L335"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Peru</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Peru { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Pink_" data-uid="HexaEngine.UI.Graphics.Brushes.Pink*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Pink" data-uid="HexaEngine.UI.Graphics.Brushes.Pink">
+  Pink
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L338"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Pink</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Pink { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Plum_" data-uid="HexaEngine.UI.Graphics.Brushes.Plum*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Plum" data-uid="HexaEngine.UI.Graphics.Brushes.Plum">
+  Plum
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L341"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Plum</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Plum { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_PowderBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.PowderBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_PowderBlue" data-uid="HexaEngine.UI.Graphics.Brushes.PowderBlue">
+  PowderBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L344"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>PowderBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush PowderBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Purple_" data-uid="HexaEngine.UI.Graphics.Brushes.Purple*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Purple" data-uid="HexaEngine.UI.Graphics.Brushes.Purple">
+  Purple
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L347"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Purple</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Purple { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Red_" data-uid="HexaEngine.UI.Graphics.Brushes.Red*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Red" data-uid="HexaEngine.UI.Graphics.Brushes.Red">
+  Red
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L350"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Red</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Red { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_RosyBrown_" data-uid="HexaEngine.UI.Graphics.Brushes.RosyBrown*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_RosyBrown" data-uid="HexaEngine.UI.Graphics.Brushes.RosyBrown">
+  RosyBrown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L353"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>RosyBrown</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush RosyBrown { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_RoyalBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.RoyalBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_RoyalBlue" data-uid="HexaEngine.UI.Graphics.Brushes.RoyalBlue">
+  RoyalBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L356"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>RoyalBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush RoyalBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_SaddleBrown_" data-uid="HexaEngine.UI.Graphics.Brushes.SaddleBrown*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_SaddleBrown" data-uid="HexaEngine.UI.Graphics.Brushes.SaddleBrown">
+  SaddleBrown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L359"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>SaddleBrown</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush SaddleBrown { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Salmon_" data-uid="HexaEngine.UI.Graphics.Brushes.Salmon*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Salmon" data-uid="HexaEngine.UI.Graphics.Brushes.Salmon">
+  Salmon
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L362"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Salmon</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Salmon { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_SandyBrown_" data-uid="HexaEngine.UI.Graphics.Brushes.SandyBrown*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_SandyBrown" data-uid="HexaEngine.UI.Graphics.Brushes.SandyBrown">
+  SandyBrown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L365"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>SandyBrown</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush SandyBrown { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_SeaGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.SeaGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_SeaGreen" data-uid="HexaEngine.UI.Graphics.Brushes.SeaGreen">
+  SeaGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L368"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>SeaGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush SeaGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_SeaShell_" data-uid="HexaEngine.UI.Graphics.Brushes.SeaShell*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_SeaShell" data-uid="HexaEngine.UI.Graphics.Brushes.SeaShell">
+  SeaShell
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L371"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>SeaShell</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush SeaShell { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Sienna_" data-uid="HexaEngine.UI.Graphics.Brushes.Sienna*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Sienna" data-uid="HexaEngine.UI.Graphics.Brushes.Sienna">
+  Sienna
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L374"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Sienna</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Sienna { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Silver_" data-uid="HexaEngine.UI.Graphics.Brushes.Silver*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Silver" data-uid="HexaEngine.UI.Graphics.Brushes.Silver">
+  Silver
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L377"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Silver</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Silver { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_SkyBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.SkyBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_SkyBlue" data-uid="HexaEngine.UI.Graphics.Brushes.SkyBlue">
+  SkyBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L380"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>SkyBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush SkyBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_SlateBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.SlateBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_SlateBlue" data-uid="HexaEngine.UI.Graphics.Brushes.SlateBlue">
+  SlateBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L383"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>SlateBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush SlateBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_SlateGray_" data-uid="HexaEngine.UI.Graphics.Brushes.SlateGray*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_SlateGray" data-uid="HexaEngine.UI.Graphics.Brushes.SlateGray">
+  SlateGray
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L386"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>SlateGray</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush SlateGray { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Snow_" data-uid="HexaEngine.UI.Graphics.Brushes.Snow*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Snow" data-uid="HexaEngine.UI.Graphics.Brushes.Snow">
+  Snow
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L389"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Snow</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Snow { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_SpringGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.SpringGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_SpringGreen" data-uid="HexaEngine.UI.Graphics.Brushes.SpringGreen">
+  SpringGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L392"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>SpringGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush SpringGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_SteelBlue_" data-uid="HexaEngine.UI.Graphics.Brushes.SteelBlue*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_SteelBlue" data-uid="HexaEngine.UI.Graphics.Brushes.SteelBlue">
+  SteelBlue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L395"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>SteelBlue</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush SteelBlue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Tan_" data-uid="HexaEngine.UI.Graphics.Brushes.Tan*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Tan" data-uid="HexaEngine.UI.Graphics.Brushes.Tan">
+  Tan
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L398"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Tan</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Tan { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Teal_" data-uid="HexaEngine.UI.Graphics.Brushes.Teal*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Teal" data-uid="HexaEngine.UI.Graphics.Brushes.Teal">
+  Teal
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L401"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Teal</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Teal { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Thistle_" data-uid="HexaEngine.UI.Graphics.Brushes.Thistle*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Thistle" data-uid="HexaEngine.UI.Graphics.Brushes.Thistle">
+  Thistle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L404"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Thistle</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Thistle { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Tomato_" data-uid="HexaEngine.UI.Graphics.Brushes.Tomato*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Tomato" data-uid="HexaEngine.UI.Graphics.Brushes.Tomato">
+  Tomato
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L407"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Tomato</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Tomato { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Transparent_" data-uid="HexaEngine.UI.Graphics.Brushes.Transparent*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Transparent" data-uid="HexaEngine.UI.Graphics.Brushes.Transparent">
+  Transparent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L410"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Transparent</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Transparent { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Turquoise_" data-uid="HexaEngine.UI.Graphics.Brushes.Turquoise*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Turquoise" data-uid="HexaEngine.UI.Graphics.Brushes.Turquoise">
+  Turquoise
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L413"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Turquoise</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Turquoise { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Violet_" data-uid="HexaEngine.UI.Graphics.Brushes.Violet*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Violet" data-uid="HexaEngine.UI.Graphics.Brushes.Violet">
+  Violet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L416"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Violet</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Violet { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Wheat_" data-uid="HexaEngine.UI.Graphics.Brushes.Wheat*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Wheat" data-uid="HexaEngine.UI.Graphics.Brushes.Wheat">
+  Wheat
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L419"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Wheat</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Wheat { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_White_" data-uid="HexaEngine.UI.Graphics.Brushes.White*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_White" data-uid="HexaEngine.UI.Graphics.Brushes.White">
+  White
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L422"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>White</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush White { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_WhiteSmoke_" data-uid="HexaEngine.UI.Graphics.Brushes.WhiteSmoke*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_WhiteSmoke" data-uid="HexaEngine.UI.Graphics.Brushes.WhiteSmoke">
+  WhiteSmoke
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L425"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>WhiteSmoke</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush WhiteSmoke { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_Yellow_" data-uid="HexaEngine.UI.Graphics.Brushes.Yellow*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_Yellow" data-uid="HexaEngine.UI.Graphics.Brushes.Yellow">
+  Yellow
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L428"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>Yellow</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush Yellow { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_Brushes_YellowGreen_" data-uid="HexaEngine.UI.Graphics.Brushes.YellowGreen*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_Brushes_YellowGreen" data-uid="HexaEngine.UI.Graphics.Brushes.YellowGreen">
+  YellowGreen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L431"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a solid brush with a color representing <code>YellowGreen</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SolidColorBrush YellowGreen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.SolidColorBrush.html">SolidColorBrush</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/Brushes.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
