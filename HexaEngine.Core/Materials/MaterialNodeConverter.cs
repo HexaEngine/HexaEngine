@@ -24,7 +24,7 @@
         public static void Convert(MaterialData material, ILogger logger)
         {
             NodeEditor editor = new();
-            InputNode geometryNode = new(editor.GetUniqueId(), false, false);
+            GeometryNode geometryNode = new(editor.GetUniqueId(), false, false);
             BRDFShadingModelNode outputNode = new(editor.GetUniqueId(), false, false);
             editor.AddNode(geometryNode);
             editor.AddNode(outputNode);

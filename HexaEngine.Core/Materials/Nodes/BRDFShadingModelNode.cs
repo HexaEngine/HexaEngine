@@ -1,21 +1,12 @@
 ﻿namespace HexaEngine.Materials.Nodes
 {
     using HexaEngine.Materials;
-    using HexaEngine.Materials.Generator;
-    using HexaEngine.Materials.Nodes.Textures;
-    using Newtonsoft.Json;
 
-    public class BRDFShadingModelNode : Node, ITypedNode
+    public class BRDFShadingModelNode : OutputNode
     {
         public BRDFShadingModelNode(int id, bool removable, bool isStatic) : base(id, "BRDF", removable, isStatic)
         {
-            TitleColor = 0x31762CFF.RGBAToVec4();
-            TitleHoveredColor = 0x4D9648FF.RGBAToVec4();
-            TitleSelectedColor = 0x6FB269FF.RGBAToVec4();
         }
-
-        [JsonIgnore]
-        public SType Type { get; }
 
         public override void Initialize(NodeEditor editor)
         {

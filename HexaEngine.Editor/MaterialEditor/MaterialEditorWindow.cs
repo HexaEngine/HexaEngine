@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
     using Hexa.NET.ImGui;
-    using Hexa.NET.ImNodes;
     using Hexa.NET.Logging;
     using Hexa.NET.Mathematics;
     using HexaEngine.Core;
@@ -12,7 +11,6 @@
     using HexaEngine.Core.Logging;
     using HexaEngine.Core.Materials;
     using HexaEngine.Core.Materials.Nodes.Functions;
-    using HexaEngine.Core.Materials.Nodes.Noise;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.MaterialEditor.Nodes;
@@ -20,15 +18,12 @@
     using HexaEngine.Materials.Generator;
     using HexaEngine.Materials.Generator.Enums;
     using HexaEngine.Materials.Nodes;
-    using HexaEngine.Materials.Nodes.Buildin;
     using HexaEngine.Materials.Nodes.Functions;
     using HexaEngine.Materials.Nodes.Textures;
     using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
-    using System.Diagnostics;
     using System.Numerics;
-    using System.Reflection;
     using System.Text;
 
     [EditorWindowCategory("Tools")]
@@ -47,8 +42,8 @@
         private IGraphicsDevice device = null!;
 
         private ImNodesNodeEditor? editor;
-        private InputNode geometryNode = null!;
-        private BRDFShadingModelNode outputNode = null!;
+        private InputNode inputNode = null!;
+        private OutputNode outputNode = null!;
 
         private readonly ShaderGenerator generator = new();
         private bool autoGenerate = true;
@@ -232,9 +227,9 @@
                     if (string.IsNullOrEmpty(json) || version != Version)
                     {
                         editor = new();
-                        geometryNode = new(editor.GetUniqueId(), false, false);
-                        outputNode = new(editor.GetUniqueId(), false, false);
-                        editor.AddNode(geometryNode);
+                        inputNode = new GeometryNode(editor.GetUniqueId(), false, false);
+                        outputNode = new BRDFShadingModelNode(editor.GetUniqueId(), false, false);
+                        editor.AddNode(inputNode);
                         editor.AddNode(outputNode);
                         editor.Initialize();
                     }
@@ -250,9 +245,9 @@
                     Logger.Log(ex);
 
                     editor = new();
-                    geometryNode = new(editor.GetUniqueId(), false, false);
-                    outputNode = new(editor.GetUniqueId(), false, false);
-                    editor.AddNode(geometryNode);
+                    inputNode = new GeometryNode(editor.GetUniqueId(), false, false);
+                    outputNode = new BRDFShadingModelNode(editor.GetUniqueId(), false, false);
+                    editor.AddNode(inputNode);
                     editor.AddNode(outputNode);
                     editor.Initialize();
                 }
@@ -265,7 +260,7 @@
                 editor.NodePinValueChanged += NodePinValueChanged;
                 editor.LinkAdded += LinkAdded;
                 editor.LinkRemoved += LinkRemoved;
-                geometryNode = editor.GetNode<InputNode>();
+                inputNode = editor.GetNode<GeometryNode>();
                 outputNode = editor.GetNode<BRDFShadingModelNode>();
 
                 foreach (var tex in editor.GetNodes<TextureFileNode>())
@@ -438,7 +433,7 @@
                 Flags &= ~ImGuiWindowFlags.UnsavedDocument;
             }
 
-            DrawMenuBar(context);
+            DrawMenuBar();
 
             if (showCode && material != null)
             {
@@ -538,7 +533,7 @@
             }
         }
 
-        private void DrawMenuBar(IGraphicsContext context)
+        private void DrawMenuBar()
         {
             if (ImGui.BeginMenuBar())
             {
