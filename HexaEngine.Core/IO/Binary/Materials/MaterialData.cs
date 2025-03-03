@@ -14,6 +14,8 @@
     /// </summary>
     public class MaterialData
     {
+        protected readonly EventHandlers<MaterialData> updatedEventHandlers = new();
+
         /// <summary>
         /// An empty instance of <see cref="MaterialData"/> with default properties.
         /// </summary>
@@ -103,6 +105,12 @@
             Shaders = new(shaders);
             Passes = new(passes);
             Metadata = metadata ?? new();
+        }
+
+        public event EventHandler<MaterialData> Updated
+        {
+            add => updatedEventHandlers.AddHandler(value);
+            remove => updatedEventHandlers.RemoveHandler(value);
         }
 
         /// <summary>
@@ -491,13 +499,9 @@
                     return Empty;
                 }
 
-                Stream? stream = null;
-
                 try
                 {
-                    stream = artifact.OpenRead();
-                    MaterialFile materialFile = MaterialFile.Read(stream);
-                    return materialFile;
+                    return MaterialFile.ReadFrom(artifact);
                 }
                 catch (Exception e)
                 {
@@ -505,11 +509,12 @@
                     logger.Warn($"Failed to load material {assetRef}");
                     return Empty;
                 }
-                finally
-                {
-                    stream?.Dispose();
-                }
             }
+        }
+
+        public void Dispose()
+        {
+            updatedEventHandlers.Clear();
         }
     }
 }

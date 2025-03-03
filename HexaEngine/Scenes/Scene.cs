@@ -183,16 +183,10 @@ namespace HexaEngine.Scenes
         public RenderSystem RenderManager => GetRequiredService<RenderSystem>();
 
         [JsonIgnore]
-        public MaterialManager MaterialManager => GetRequiredService<MaterialManager>();
-
-        [JsonIgnore]
         public WeatherSystem WeatherManager => GetRequiredService<WeatherSystem>();
 
         [JsonIgnore]
         public FlaggedList<SystemFlags, ISceneSystem> Systems => systems;
-
-        [JsonIgnore]
-        public ModelManager ModelManager => GetRequiredService<ModelManager>();
 
         [JsonIgnore]
         public AnimationManager AnimationManager => GetRequiredService<AnimationManager>();

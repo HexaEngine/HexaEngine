@@ -40,10 +40,6 @@
 
         bool Loaded { get; }
 
-        MaterialManager MaterialManager { get; }
-
-        ModelManager ModelManager { get; }
-
         string Name { get; }
 
         string? Path { get; set; }

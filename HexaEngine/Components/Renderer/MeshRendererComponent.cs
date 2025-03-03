@@ -20,8 +20,6 @@
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer", Icon = "\xf158")]
     public class MeshRendererComponent : BaseDrawableComponent, ILODRendererComponent, ISelectableRayTest
     {
-        private ModelManager modelManager = null!;
-        private MaterialManager materialManager = null!;
         private Model? model;
         private AssetRef modelAsset;
         private int maxLODLevel;
@@ -102,9 +100,6 @@
 
         protected override void LoadCore(IGraphicsDevice device)
         {
-            modelManager = GameObject.GetScene().ModelManager;
-            materialManager = GameObject.GetScene().MaterialManager;
-
             if (Interlocked.Increment(ref instances) == 1)
             {
                 meshRenderer1 = new();
@@ -249,11 +244,6 @@
                 }
 
                 if (component.GameObject == null)
-                {
-                    return;
-                }
-
-                if (component.modelManager == null)
                 {
                     return;
                 }

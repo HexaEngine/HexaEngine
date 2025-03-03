@@ -22,8 +22,6 @@
     {
         private AssetRef modelAsset;
 
-        private ModelManager modelManager = null!;
-        private MaterialManager materialManager = null!;
         private SkinnedMeshRenderer renderer = null!;
         private SkinnedModel? model;
         private readonly MaterialAssetMapper materials = new();
@@ -125,9 +123,6 @@
 
         protected override void LoadCore(IGraphicsDevice device)
         {
-            modelManager = GameObject.GetScene().ModelManager;
-            materialManager = GameObject.GetScene().MaterialManager;
-
             renderer = new();
 
             UpdateModel();
@@ -196,11 +191,6 @@
                 }
 
                 if (component.GameObject == null)
-                {
-                    return;
-                }
-
-                if (component.modelManager == null)
                 {
                     return;
                 }

@@ -5,10 +5,56 @@
     using HexaEngine.Core.IO;
     using System.IO;
 
+    public enum ArtifactChangeType
+    {
+        Added,
+        Removed,
+        Updated,
+    }
+
+    public readonly struct ArtifactChangedArgs : IEquatable<ArtifactChangedArgs>
+    {
+        public ArtifactChangedArgs(Artifact artifact, ArtifactChangeType type)
+        {
+            Artifact = artifact;
+            Type = type;
+        }
+
+        public Artifact Artifact { get; }
+
+        public ArtifactChangeType Type { get; }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is ArtifactChangedArgs args && Equals(args);
+        }
+
+        public readonly bool Equals(ArtifactChangedArgs other)
+        {
+            return EqualityComparer<Artifact>.Default.Equals(Artifact, other.Artifact) &&
+                   Type == other.Type;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Artifact, Type);
+        }
+
+        public static bool operator ==(ArtifactChangedArgs left, ArtifactChangedArgs right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ArtifactChangedArgs left, ArtifactChangedArgs right)
+        {
+            return !(left == right);
+        }
+    }
+
     public static class ArtifactDatabase
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ArtifactDatabase));
-        private static readonly object _lock = new();
+        private static readonly Lock _lock = new();
         private static readonly HashSet<Guid> importedSourceAssets = [];
         private static List<Artifact> artifacts = [];
         private static readonly Dictionary<Guid, Artifact> guidToArtifact = [];
@@ -18,10 +64,32 @@
         private static string dbPath;
 #nullable restore
         private static readonly ManualResetEventSlim initLock = new(false);
+        private static readonly EventHandlers<ArtifactChangedArgs> changedHandlers = new();
 
         public static IReadOnlyList<Artifact> Artifacts => artifacts;
 
-        public static object SyncObject => _lock;
+        public static Lock SyncObject => _lock;
+
+        public static event EventHandler<ArtifactChangedArgs> ArtifactChanged
+        {
+            add => changedHandlers.AddHandler(value);
+            remove => changedHandlers.RemoveHandler(value);
+        }
+
+        private static void OnArtifactChanged(Artifact artifact, ArtifactChangeType changeType)
+        {
+            changedHandlers.Invoke(null, new(artifact, changeType));
+            switch (changeType)
+            {
+                case ArtifactChangeType.Updated:
+                    artifact.OnUpdate();
+                    break;
+
+                case ArtifactChangeType.Removed:
+                    artifact.OnRemoved();
+                    break;
+            }
+        }
 
         internal static void Init(string path)
         {
@@ -241,7 +309,7 @@
         public static IEnumerable<Artifact> GetArtifactsForSource(Guid guid)
         {
             initLock.Wait();
-            lock (_lock)
+            lock (initLock)
             {
                 foreach (Artifact artifact in artifacts)
                 {
@@ -272,7 +340,7 @@
         public static IEnumerable<Artifact> GetArtifactsFromType(AssetType type)
         {
             initLock.Wait();
-            lock (_lock)
+            lock (initLock)
             {
                 foreach (Artifact artifact in artifacts)
                 {
@@ -298,6 +366,7 @@
             initLock.Reset();
             lock (_lock)
             {
+                changedHandlers.Clear();
                 importedSourceAssets.Clear();
                 artifacts.Clear();
                 guidToArtifact.Clear();
@@ -320,6 +389,7 @@
                 artifacts.Add(artifact);
                 guidToArtifact.Add(artifact.Guid, artifact);
                 Save();
+                OnArtifactChanged(artifact, ArtifactChangeType.Added);
             }
         }
 
@@ -333,6 +403,7 @@
                 guidToArtifact.Remove(artifact.Guid);
                 File.Delete(artifact.Path);
                 Save();
+                OnArtifactChanged(artifact, ArtifactChangeType.Removed);
             }
         }
 
@@ -347,6 +418,7 @@
                     artifacts.Remove(artifact);
                     guidToArtifact.Remove(guid);
                     Save();
+                    OnArtifactChanged(artifact, ArtifactChangeType.Removed);
                     return;
                 }
             }
@@ -364,6 +436,7 @@
                     {
                         File.Delete(artifact.Path);
                         artifacts.RemoveAt(i);
+                        OnArtifactChanged(artifact, ArtifactChangeType.Removed);
                         i--;
                     }
                 }
@@ -384,8 +457,19 @@
                         File.Delete(artifact.Path);
                         artifacts.Remove(artifact);
                         guidToArtifact.Remove(guid);
+                        OnArtifactChanged(artifact, ArtifactChangeType.Removed);
                     }
                 }
+                Save();
+            }
+        }
+
+        public static void UpdateArtifact(Artifact artifact)
+        {
+            initLock.Wait();
+            lock (_lock)
+            {
+                OnArtifactChanged(artifact, ArtifactChangeType.Updated);
                 Save();
             }
         }

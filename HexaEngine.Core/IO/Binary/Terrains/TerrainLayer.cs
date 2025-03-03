@@ -29,6 +29,7 @@
             get => material;
             set
             {
+                data?.Dispose();
                 data = MaterialData.GetMaterial(value, Logger);
                 material = value;
             }

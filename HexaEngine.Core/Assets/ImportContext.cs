@@ -122,7 +122,8 @@
                             break;
 
                         case DatabaseOperationMode.Update:
-                            // do nothing here.
+                            ArtifactDatabase.UpdateArtifact(operation.Artifact);
+                            LogMessage(LogSeverity.Info, $"Updated: {operation.Artifact.Name}");
                             break;
 
                         case DatabaseOperationMode.Delete:

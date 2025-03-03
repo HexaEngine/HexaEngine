@@ -75,23 +75,15 @@
                     return MaterialData.Empty;
                 }
 
-                Stream? stream = null;
-
                 try
                 {
-                    stream = artifact.OpenRead();
-                    MaterialFile materialFile = MaterialFile.Read(stream);
-                    return materialFile;
+                    return MaterialFile.ReadFrom(artifact);
                 }
                 catch (Exception e)
                 {
                     logger.Log(e);
                     logger.Warn($"Failed to load material {mapping.Material}");
                     return MaterialData.Empty;
-                }
-                finally
-                {
-                    stream?.Dispose();
                 }
             }
         }

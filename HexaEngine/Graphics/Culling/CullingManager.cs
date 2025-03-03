@@ -171,18 +171,14 @@
             };
             occlusionParamBuffer.Update(context);
 
-            if (resized)
-            {
-                var bindings = culling.Bindings;
+            var bindings = culling.Bindings;
 
-                bindings.SetSRV("instanceDataIn", instanceDataBuffer.SRV);
+            bindings.SetSRV("instanceDataIn", instanceDataBuffer.SRV);
 
-                bindings.SetUAV("instanceDataOut", instanceDataOutBuffer.UAV);
-                bindings.SetUAV("instanceOffsets", instanceOffsets.UAV);
-                bindings.SetUAV("drawArgs", swapBuffer.UAV);
-                bindings.SetUAV("visibleListOut", visibleListBuffer.UAV);
-                resized = false;
-            }
+            bindings.SetUAV("instanceDataOut", instanceDataOutBuffer.UAV);
+            bindings.SetUAV("instanceOffsets", instanceOffsets.UAV);
+            bindings.SetUAV("drawArgs", swapBuffer.UAV);
+            bindings.SetUAV("visibleListOut", visibleListBuffer.UAV);
 
             culling.Bindings.SetSRV("inputRT", mipChain.SRV);
             context.SetComputePipelineState(culling);

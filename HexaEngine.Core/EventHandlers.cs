@@ -3,44 +3,61 @@
     using HexaEngine.Core.Windows.Events;
     using System;
     using System.Collections.Generic;
+    using System.Threading;
 
     public delegate void EventHandler<TSender, TEventArgs>(TSender sender, TEventArgs e);
 
     public class EventHandlers<TEventArgs>
     {
         private readonly List<EventHandler<TEventArgs>> handlers = new();
+        private readonly Lock _lock = new();
 
         public void AddHandler(EventHandler<TEventArgs> handler)
         {
-            handlers.Add(handler);
+            lock (_lock)
+            {
+                handlers.Add(handler);
+            }
         }
 
         public void RemoveHandler(EventHandler<TEventArgs> handler)
         {
-            handlers.Remove(handler);
+            lock (_lock)
+            {
+                handlers.Remove(handler);
+            }
         }
 
         public void Clear()
         {
-            handlers.Clear();
+            lock (_lock)
+            {
+                handlers.Clear();
+            }
         }
 
         public void Invoke(object? sender, TEventArgs args)
         {
-            for (int i = 0; i < handlers.Count; i++)
+            lock (_lock)
             {
-                handlers[i](sender, args);
+                for (int i = 0; i < handlers.Count; i++)
+                {
+                    handlers[i](sender, args);
+                }
             }
         }
 
         public void InvokeRouted<TRoutedEventArgs>(object? sender, TRoutedEventArgs args) where TRoutedEventArgs : RoutedEventArgs, TEventArgs
         {
-            for (int i = 0; i < handlers.Count; i++)
+            lock (_lock)
             {
-                handlers[i](sender, args);
-                if (args.Handled)
+                for (int i = 0; i < handlers.Count; i++)
                 {
-                    return;
+                    handlers[i](sender, args);
+                    if (args.Handled)
+                    {
+                        return;
+                    }
                 }
             }
         }
@@ -49,7 +66,7 @@
     public class EventHandlers<TSender, TEventArgs>
     {
         private EventHandler<TSender, TEventArgs>[]? handlers = null;
-        private readonly object _lock = new();
+        private readonly Lock _lock = new();
 
         public void AddHandler(EventHandler<TSender, TEventArgs> handler)
         {

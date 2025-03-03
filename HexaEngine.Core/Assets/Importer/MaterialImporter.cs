@@ -26,7 +26,7 @@
             try
             {
                 inputStream = File.OpenRead(context.SourcePath);
-                MaterialFile materialFile = MaterialFile.Read(inputStream);
+                MaterialFile materialFile = MaterialFile.ReadFrom(inputStream);
 
                 context.EmitArtifact(materialFile.Name, AssetType.Material, out outputStream);
 

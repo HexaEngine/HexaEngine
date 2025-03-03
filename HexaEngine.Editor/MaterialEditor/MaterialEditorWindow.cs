@@ -175,7 +175,7 @@
                 try
                 {
                     stream = File.OpenRead(path);
-                    MaterialFile materialFile = MaterialFile.Read(stream);
+                    MaterialFile materialFile = MaterialFile.ReadFrom(stream);
                     this.path = path;
                     MaterialFile = materialFile;
                     assetRef = value;

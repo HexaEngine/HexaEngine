@@ -5,6 +5,7 @@
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Terrains;
     using HexaEngine.Resources.Factories;
+    using System;
     using System.Numerics;
 
     public class TerrainMaterial
@@ -50,7 +51,7 @@
                 guid = Combine(guid, layer.Material.Guid);
 
                 var material = layer.Data;
-
+                material.Updated += OnMaterialUpdated;
                 var macros = material.GetShaderMacros();
                 for (int j = 0; j < macros.Length; j++)
                 {
@@ -98,6 +99,8 @@
                 guid = Combine(guid, layer.Material.Guid);
 
                 var material = layer.Data;
+                material.Updated -= OnMaterialUpdated;
+                material.Updated += OnMaterialUpdated;
                 var macros = material.GetShaderMacros();
 
                 for (int j = 0; j < macros.Length; j++)
@@ -134,6 +137,11 @@
             Id = guid;
 
             textureList.Update(shader);
+        }
+
+        protected virtual void OnMaterialUpdated(object? sender, MaterialData e)
+        {
+            Update();
         }
 
         private static MaterialShaderPassDesc[] GetMaterialShaderPasses(bool alphaBlend, bool tessellate)
@@ -368,6 +376,18 @@
 
         public void Dispose()
         {
+            for (int i = 0; i < group.Count; i++)
+            {
+                var layer = group[i];
+                if (layer == null || layer.Data == null)
+                {
+                    continue;
+                }
+
+                var material = layer.Data;
+                material.Updated -= OnMaterialUpdated;
+            }
+
             for (int i = 0; i < textureList.Count; i++)
             {
                 textureList[i]?.Dispose();

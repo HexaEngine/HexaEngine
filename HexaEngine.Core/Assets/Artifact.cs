@@ -10,6 +10,7 @@
         private string name;
         private string? path;
         private ArtifactFlags flags;
+        private readonly EventHandlers<ArtifactChangedArgs> changedHandlers = new();
 
         public Artifact(string name, Guid parentGuid, Guid sourceGuid, Guid guid, AssetType type)
         {
@@ -41,6 +42,12 @@
 
         [JsonIgnore]
         public string Path => path ??= System.IO.Path.Combine(ArtifactDatabase.CacheFolder, Guid.ToString());
+
+        public event EventHandler<ArtifactChangedArgs> Changed
+        {
+            add => changedHandlers.AddHandler(value);
+            remove => changedHandlers.RemoveHandler(value);
+        }
 
         public void Write(Stream stream)
         {
@@ -101,6 +108,17 @@
         public override string ToString()
         {
             return $"GUID: {Guid}, Source GUID {SourceGuid}, Type {Type}, Path {Path}";
+        }
+
+        internal void OnUpdate()
+        {
+            changedHandlers.Invoke(this, new(this, ArtifactChangeType.Updated));
+        }
+
+        internal void OnRemoved()
+        {
+            changedHandlers.Invoke(this, new(this, ArtifactChangeType.Removed));
+            changedHandlers.Clear();
         }
     }
 }

@@ -27,8 +27,6 @@
             bool graphicsDisabled = Application.GraphicsDisabled;
             if (!graphicsDisabled)
                 descriptors.AddSingleton(Application.GraphicsDevice);
-            descriptors.AddSingleton<ModelManager>();
-            descriptors.AddSingleton<MaterialManager>();
             descriptors.AddSingleton<DrawLayerManager>();
             descriptors.AddSingleton<AnimationManager>();
 
