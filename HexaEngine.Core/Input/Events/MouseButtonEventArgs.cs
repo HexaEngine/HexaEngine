@@ -2,6 +2,7 @@
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Input;
+    using System.Numerics;
 
     /// <summary>
     /// Provides data for mouse button input events.
@@ -22,7 +23,7 @@
         /// <param name="state">The state of the mouse button (Up or Down).</param>
         /// <param name="clicks">The number of clicks associated with the event.</param>
         /// <param name="position">The mouse position on the window.</param>
-        public MouseButtonEventArgs(MouseButton button, MouseButtonState state, int clicks, Point2 position)
+        public MouseButtonEventArgs(MouseButton button, MouseButtonState state, int clicks, Vector2 position)
         {
             Button = button;
             State = state;
@@ -48,6 +49,6 @@
         /// <summary>
         /// Gets the mouse position on the window.
         /// </summary>
-        public Point2 Position { get; set; }
+        public Vector2 Position { get; set; }
     }
 }

@@ -363,7 +363,7 @@
                     sb.AppendLine($"\t\t\tHas LED: {joystick.HasLED}");
                     sb.AppendLine($"\t\t\tType: {joystick.Type}");
                     sb.AppendLine($"\t\t\tPlayer Index: {joystick.PlayerIndex}");
-                    sb.AppendLine($"\t\t\tPower Level: {joystick.PowerLevel}");
+                    sb.AppendLine($"\t\t\tPower Level: {joystick.ConnectionState}");
                 }
 
                 sb.AppendLine($"\tTouch Devices:");

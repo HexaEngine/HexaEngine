@@ -89,8 +89,8 @@
                 if (ImGui.Begin(Name, ref shown, Flags))
                 {
                     DrawContent();
-                    ImGui.End();
                 }
+                ImGui.End();
                 ImGui.PopStyleColor(2);
                 ImGui.PopStyleVar();
             }

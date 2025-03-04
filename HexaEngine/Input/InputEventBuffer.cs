@@ -14,7 +14,7 @@
         private uint maxDelay = 15;
         private int maxEvents = 10000;
         private InputEventType filter = InputEventType.None;
-        private uint lastTimestamp;
+        private ulong lastTimestamp;
         private bool disposedValue;
 
         public InputEventBuffer()

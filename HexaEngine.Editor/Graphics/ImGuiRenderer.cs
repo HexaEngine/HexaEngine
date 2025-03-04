@@ -5,7 +5,7 @@ namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.Mathematics;
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using System.Collections.Generic;
@@ -461,7 +461,7 @@ namespace HexaEngine.Graphics.Renderers
 
             // PlatformHandleRaw should always be a HWND, whereas PlatformHandle might be a higher-level handle (e.g. GLFWWindow*, SDL_Window*).
             // Some backends will leave PlatformHandleRaw == 0, in which case we assume PlatformHandle will contain the HWND.
-            SDLWindow* window = (SDLWindow*)viewport->PlatformHandle;
+            SDLWindow* window = (SDLWindow*)SDL.GetWindowFromID((uint)viewport->PlatformHandle);
             int w, h;
             SDL.GetWindowSize(window, &w, &h);
 

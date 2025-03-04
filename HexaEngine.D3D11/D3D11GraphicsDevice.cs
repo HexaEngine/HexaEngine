@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using Hexa.NET.SDL2;
     using Hexa.NET.D3D11;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;

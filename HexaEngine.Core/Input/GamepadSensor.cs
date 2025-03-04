@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Input.Events;
     using System.Numerics;
     using static Extensions.SdlErrorHandlingExtensions;
@@ -18,7 +18,7 @@
     /// </summary>
     public unsafe class GamepadSensor : IDisposable
     {
-        private readonly SDLGameController* controller;
+        private readonly SDLGamepad* controller;
         private readonly GamepadSensorType type;
         private readonly float* buffer;
         private readonly int length = 3;
@@ -32,12 +32,12 @@
         /// </summary>
         /// <param name="controller">The game controller associated with the sensor.</param>
         /// <param name="sensorType">The type of sensor.</param>
-        public GamepadSensor(SDLGameController* controller, GamepadSensorType sensorType)
+        public GamepadSensor(SDLGamepad* controller, GamepadSensorType sensorType)
         {
             this.controller = controller;
             this.type = sensorType;
             buffer = AllocT<float>(3);
-            SDL.GameControllerGetSensorData(controller, Helper.ConvertBack(sensorType), buffer, length).SdlThrowIfNeg();
+            SDL.GetGamepadSensorData(controller, Helper.ConvertBack(sensorType), buffer, length);
         }
 
         /// <summary>
@@ -45,8 +45,8 @@
         /// </summary>
         public bool Enabled
         {
-            get => SDL.GameControllerIsSensorEnabled(controller, Helper.ConvertBack(type)) == SDLBool.True;
-            set => SDL.GameControllerSetSensorEnabled(controller, Helper.ConvertBack(type), value ? SDLBool.True : SDLBool.False).SdlThrowIfNeg();
+            get => SDL.GamepadSensorEnabled(controller, Helper.ConvertBack(type));
+            set => SDL.SetGamepadSensorEnabled(controller, Helper.ConvertBack(type), value);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@
         /// </summary>
         public event GamepadSensorEventHandler<GamepadSensorUpdateEventArgs>? SensorUpdate;
 
-        internal (GamepadSensor Sensor, GamepadSensorUpdateEventArgs EventArgs) OnSensorUpdate(SDLControllerSensorEvent even)
+        internal (GamepadSensor Sensor, GamepadSensorUpdateEventArgs EventArgs) OnSensorUpdate(SDLGamepadSensorEvent even)
         {
             MemcpyT(&even.Data_0, buffer, length);
             sensorUpdateEventArgs.Timestamp = even.Timestamp;
@@ -87,7 +87,7 @@
         /// </summary>
         public void Flush()
         {
-            SDL.GameControllerGetSensorData(controller, Helper.ConvertBack(type), buffer, length).SdlThrowIfNeg();
+            SDL.GetGamepadSensorData(controller, Helper.ConvertBack(type), buffer, length);
             sensorUpdateEventArgs.Data = buffer;
             sensorUpdateEventArgs.Length = length;
             sensorUpdateEventArgs.Type = type;

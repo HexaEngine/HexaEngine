@@ -2,7 +2,7 @@
 {
     using Hexa.NET.D3DCommon;
     using Hexa.NET.DXGI;
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using System;

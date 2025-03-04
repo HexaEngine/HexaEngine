@@ -5,109 +5,108 @@
     /// </summary>
     public enum GamepadButton
     {
-        /// <summary>
-        /// Button A.
-        /// </summary>
-        A = 0,
+        Invalid = -1,
 
-        /// <summary>
-        /// Button B.
-        /// </summary>
-        B = 1,
+        //
+        // Summary:
+        //     Bottom face button (e.g. Xbox A button)
+        South = 0,
 
-        /// <summary>
-        /// Button X.
-        /// </summary>
-        X = 2,
+        //
+        // Summary:
+        //     Right face button (e.g. Xbox B button)
+        East = 1,
 
-        /// <summary>
-        /// Button Y.
-        /// </summary>
-        Y = 3,
+        //
+        // Summary:
+        //     Left face button (e.g. Xbox X button)
+        West = 2,
 
-        /// <summary>
-        /// Back button.
-        /// </summary>
+        //
+        // Summary:
+        //     Top face button (e.g. Xbox Y button)
+        North = 3,
+
         Back = 4,
 
-        /// <summary>
-        /// Guide button.
-        /// </summary>
         Guide = 5,
 
-        /// <summary>
-        /// Start button.
-        /// </summary>
         Start = 6,
 
-        /// <summary>
-        /// Left stick button.
-        /// </summary>
-        Leftstick = 7,
+        LeftStick = 7,
 
-        /// <summary>
-        /// Right stick button.
-        /// </summary>
-        Rightstick = 8,
+        RightStick = 8,
 
-        /// <summary>
-        /// Left shoulder button.
-        /// </summary>
-        Leftshoulder = 9,
+        LeftShoulder = 9,
 
-        /// <summary>
-        /// Right shoulder button.
-        /// </summary>
-        Rightshoulder = 10,
+        RightShoulder = 0xA,
 
-        /// <summary>
-        /// D-pad up button.
-        /// </summary>
-        DpadUp = 11,
+        DpadUp = 0xB,
 
-        /// <summary>
-        /// D-pad down button.
-        /// </summary>
-        DpadDown = 12,
+        DpadDown = 0xC,
 
-        /// <summary>
-        /// D-pad left button.
-        /// </summary>
-        DpadLeft = 13,
+        DpadLeft = 0xD,
 
-        /// <summary>
-        /// D-pad right button.
-        /// </summary>
-        DpadRight = 14,
+        DpadRight = 0xE,
 
-        /// <summary>
-        /// Miscellaneous button 1.
-        /// </summary>
+        //
+        // Summary:
+        //     Additional button (e.g. Xbox Series X share button, PS5 microphone button, Nintendo
+        //     Switch Pro capture button, Amazon Luna microphone button, Google Stadia capture
+        //     button)
         Misc1 = 0xF,
 
-        /// <summary>
-        /// Paddle 1 button.
-        /// </summary>
-        Paddle1 = 0x10,
+        //
+        // Summary:
+        //     Upper or primary paddle, under your right hand (e.g. Xbox Elite paddle P1)
+        RightPaddle1 = 0x10,
 
-        /// <summary>
-        /// Paddle 2 button.
-        /// </summary>
-        Paddle2 = 17,
+        //
+        // Summary:
+        //     Upper or primary paddle, under your left hand (e.g. Xbox Elite paddle P3)
+        LeftPaddle1 = 0x11,
 
-        /// <summary>
-        /// Paddle 3 button.
-        /// </summary>
-        Paddle3 = 18,
+        //
+        // Summary:
+        //     Lower or secondary paddle, under your right hand (e.g. Xbox Elite paddle P2)
+        RightPaddle2 = 0x12,
 
-        /// <summary>
-        /// Paddle 4 button.
-        /// </summary>
-        Paddle4 = 19,
+        //
+        // Summary:
+        //     Lower or secondary paddle, under your left hand (e.g. Xbox Elite paddle P4)
+        LeftPaddle2 = 0x13,
 
-        /// <summary>
-        /// Touchpad button.
-        /// </summary>
-        Touchpad = 20,
+        //
+        // Summary:
+        //     PS4/PS5 touchpad button
+        Touchpad = 0x14,
+
+        //
+        // Summary:
+        //     Additional button
+        Misc2 = 0x15,
+
+        //
+        // Summary:
+        //     Additional button
+
+        Misc3 = 0x16,
+
+        //
+        // Summary:
+        //     Additional button
+        Misc4 = 0x17,
+
+        //
+        // Summary:
+        //     Additional button
+        Misc5 = 0x18,
+
+        //
+        // Summary:
+        //     Additional button
+        Misc6 = 0x19,
+
+        Count = 0x1A
     }
 }

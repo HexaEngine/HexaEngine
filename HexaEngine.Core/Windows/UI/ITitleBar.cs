@@ -1,6 +1,6 @@
 namespace HexaEngine.Core.Windows.UI
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Windows;
 
     public interface ITitleBar

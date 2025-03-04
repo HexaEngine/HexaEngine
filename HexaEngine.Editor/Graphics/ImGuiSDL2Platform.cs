@@ -1,4 +1,5 @@
-﻿namespace HexaEngine.Graphics.Renderers
+﻿#if false
+namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.SDL2;
@@ -1100,3 +1101,4 @@
         }
     }
 }
+#endif

@@ -1,13 +1,16 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.ImGui.Backends.SDL3;
     using Hexa.NET.ImGuizmo;
     using Hexa.NET.ImNodes;
     using Hexa.NET.ImPlot;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Numerics;
 
@@ -41,6 +44,10 @@
             io.ConfigViewportsNoAutoMerge = false;
             io.ConfigViewportsNoTaskBarIcon = false;
             io.ConfigDragClickToInputText = true;
+            io.ConfigDebugIsDebuggerPresent = Debugger.IsAttached;
+            io.ConfigErrorRecoveryEnableDebugLog = true;
+            io.ConfigErrorRecovery = true;
+            io.ConfigErrorRecoveryEnableAssert = false;
 
             var fonts = io.Fonts;
             fonts.FontBuilderFlags = (uint)ImFontAtlasFlags.NoPowerOfTwoHeight;
@@ -179,8 +186,15 @@
                 style.Colors[(int)ImGuiCol.WindowBg].W = 1.0f;
             }
 
-            ImGuiSDL2Platform.Init(window.GetWindow(), null, null);
+            ImGuiImplSDL3.SetCurrentContext(guiContext);
+            ImGuiImplSDL3.SDL3InitForD3D((Hexa.NET.ImGui.Backends.SDL3.SDLWindow*)window.GetWindow());
             ImGuiRenderer.Init(device, context);
+            Application.RegisterHook(EventHook);
+        }
+
+        private unsafe bool EventHook(Hexa.NET.SDL3.SDLEvent @event)
+        {
+            return ImGuiImplSDL3.SDL3ProcessEvent((Hexa.NET.ImGui.Backends.SDL3.SDLEvent*)&@event);
         }
 
         public unsafe void NewFrame()
@@ -195,7 +209,7 @@
 
             LayoutManager.NewFrame();
 
-            ImGuiSDL2Platform.NewFrame();
+            ImGuiImplSDL3.SDL3NewFrame();
             ImGui.NewFrame();
             ImGuizmo.BeginFrame();
 
@@ -249,7 +263,6 @@
         {
             var io = ImGui.GetIO();
             ImGui.Render();
-            ImGui.EndFrame();
             ImGuiRenderer.RenderDrawData(ImGui.GetDrawData());
 
             if ((io.ConfigFlags & ImGuiConfigFlags.ViewportsEnable) != 0)
@@ -261,8 +274,10 @@
 
         public void Dispose()
         {
+            Application.UnregisterHook(EventHook);
             ImGuiRenderer.Shutdown();
-            ImGuiSDL2Platform.Shutdown();
+            ImGuiImplSDL3.SDL3Shutdown();
+            ImGuiImplSDL3.SetCurrentContext(null);
 
             ImGui.SetCurrentContext(null);
             ImGuizmo.SetImGuiContext(null);

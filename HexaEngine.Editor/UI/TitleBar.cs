@@ -4,7 +4,7 @@
     using Hexa.NET.KittyUI.Native.Windows;
     using Hexa.NET.KittyUI.Native.X11;
     using Hexa.NET.Mathematics;
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Windows;
