@@ -10,6 +10,7 @@
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Numerics;
 
@@ -43,6 +44,10 @@
             io.ConfigViewportsNoAutoMerge = false;
             io.ConfigViewportsNoTaskBarIcon = false;
             io.ConfigDragClickToInputText = true;
+            io.ConfigDebugIsDebuggerPresent = Debugger.IsAttached;
+            io.ConfigErrorRecoveryEnableDebugLog = true;
+            io.ConfigErrorRecovery = true;
+            io.ConfigErrorRecoveryEnableAssert = false;
 
             var fonts = io.Fonts;
             fonts.FontBuilderFlags = (uint)ImFontAtlasFlags.NoPowerOfTwoHeight;
@@ -258,7 +263,6 @@
         {
             var io = ImGui.GetIO();
             ImGui.Render();
-            ImGui.EndFrame();
             ImGuiRenderer.RenderDrawData(ImGui.GetDrawData());
 
             if ((io.ConfigFlags & ImGuiConfigFlags.ViewportsEnable) != 0)
@@ -273,6 +277,7 @@
             Application.UnregisterHook(EventHook);
             ImGuiRenderer.Shutdown();
             ImGuiImplSDL3.SDL3Shutdown();
+            ImGuiImplSDL3.SetCurrentContext(null);
 
             ImGui.SetCurrentContext(null);
             ImGuizmo.SetImGuiContext(null);

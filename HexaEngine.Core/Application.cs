@@ -515,14 +515,14 @@
                 case SDLEventType.LocaleChanged:
                     break;
 
-                case > SDLEventType.DisplayFirst and <= SDLEventType.DisplayLast:
+                case >= SDLEventType.DisplayFirst and <= SDLEventType.DisplayLast:
                     {
                         var even = evnt.Display;
                         Displays.ProcessEvent(even);
                     }
                     break;
 
-                case > SDLEventType.WindowFirst and <= SDLEventType.WindowLast:
+                case >= SDLEventType.WindowFirst and <= SDLEventType.WindowLast:
                     {
                         var even = evnt.Window;
                         if (even.WindowID == mainWindow.WindowID)
