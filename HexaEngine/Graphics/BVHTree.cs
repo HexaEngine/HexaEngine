@@ -499,7 +499,10 @@
             {
                 if (selector(nodes[0], userdata) == BVHFilterResult.Keep)
                 {
-                    yield return nodes[0];
+                    if (nodes[0].IsLeaf)
+                    {
+                        yield return nodes[0];
+                    }
                 }
 
                 readWriteLock.EndRead();
