@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.ImGui.Backends.SDL3;
     using Hexa.NET.ImGuizmo;
     using Hexa.NET.ImNodes;
     using Hexa.NET.ImPlot;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
@@ -179,8 +181,15 @@
                 style.Colors[(int)ImGuiCol.WindowBg].W = 1.0f;
             }
 
-            ImGuiSDL2Platform.Init(window.GetWindow(), null, null);
+            ImGuiImplSDL3.SetCurrentContext(guiContext);
+            ImGuiImplSDL3.SDL3InitForD3D((Hexa.NET.ImGui.Backends.SDL3.SDLWindow*)window.GetWindow());
             ImGuiRenderer.Init(device, context);
+            Application.RegisterHook(EventHook);
+        }
+
+        private unsafe bool EventHook(Hexa.NET.SDL3.SDLEvent @event)
+        {
+            return ImGuiImplSDL3.SDL3ProcessEvent((Hexa.NET.ImGui.Backends.SDL3.SDLEvent*)&@event);
         }
 
         public unsafe void NewFrame()
@@ -195,7 +204,7 @@
 
             LayoutManager.NewFrame();
 
-            ImGuiSDL2Platform.NewFrame();
+            ImGuiImplSDL3.SDL3NewFrame();
             ImGui.NewFrame();
             ImGuizmo.BeginFrame();
 
@@ -261,8 +270,9 @@
 
         public void Dispose()
         {
+            Application.UnregisterHook(EventHook);
             ImGuiRenderer.Shutdown();
-            ImGuiSDL2Platform.Shutdown();
+            ImGuiImplSDL3.SDL3Shutdown();
 
             ImGui.SetCurrentContext(null);
             ImGuizmo.SetImGuiContext(null);

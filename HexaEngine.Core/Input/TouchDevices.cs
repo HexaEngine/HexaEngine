@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Input.Events;
 
     /// <summary>
@@ -46,13 +46,14 @@
         /// <summary>
         /// Initializes the touch device management system.
         /// </summary>
-        internal static void Init()
+        internal static unsafe void Init()
         {
-            var touchDeviceCount = SDL.GetNumTouchDevices();
+            int touchDeviceCount;
+            long* devices = SDL.GetTouchDevices(&touchDeviceCount);
 
             for (int i = 0; i < touchDeviceCount; i++)
             {
-                AddTouchDevice(i);
+                AddTouchDevice(devices[i]);
             }
         }
 
@@ -110,19 +111,19 @@
 
         internal static void FingerUp(SDLTouchFingerEvent evnt)
         {
-            var result = AddOrGetTouch(evnt.TouchId).OnFingerUp(evnt);
+            var result = AddOrGetTouch(evnt.TouchID).OnFingerUp(evnt);
             TouchUp?.Invoke(result.Item1, result.Item2);
         }
 
         internal static void FingerDown(SDLTouchFingerEvent evnt)
         {
-            var result = AddOrGetTouch(evnt.TouchId).OnFingerDown(evnt);
+            var result = AddOrGetTouch(evnt.TouchID).OnFingerDown(evnt);
             TouchDown?.Invoke(result.Item1, result.Item2);
         }
 
         internal static void FingerMotion(SDLTouchFingerEvent evnt)
         {
-            var result = AddOrGetTouch(evnt.TouchId).OnFingerMotion(evnt);
+            var result = AddOrGetTouch(evnt.TouchID).OnFingerMotion(evnt);
             TouchMotion?.Invoke(result.Item1, result.Item2);
         }
     }

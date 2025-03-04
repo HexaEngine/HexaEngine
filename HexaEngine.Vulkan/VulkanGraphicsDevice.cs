@@ -1,12 +1,13 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using Hexa.NET.Vulkan;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using System;
     using System.Runtime.CompilerServices;
     using Format = Core.Graphics.Format;
+    using VkPhysicalDevice = Hexa.NET.Vulkan.VkPhysicalDevice;
 
     public unsafe class VulkanGraphicsDevice : DeviceChildBase, IGraphicsDevice
     {

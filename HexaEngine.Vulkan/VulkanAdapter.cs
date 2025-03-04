@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using Hexa.NET.Utilities;
     using Hexa.NET.Vulkan;
     using HexaEngine.Core.Debugging.Device;
@@ -12,6 +12,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using VkInstance = Hexa.NET.Vulkan.VkInstance;
+    using VkPhysicalDevice = Hexa.NET.Vulkan.VkPhysicalDevice;
     using VkSurfaceKHR = Hexa.NET.Vulkan.VkSurfaceKHR;
 
     public unsafe class VulkanAdapter : IGraphicsAdapter, IDisposable
@@ -73,10 +74,8 @@
         private byte** GetRequiredInstanceExtensions(out uint count)
         {
             uint rcount = 0;
-            SDL.VulkanGetInstanceExtensions(null, &rcount, (byte**)null);
 
-            byte** extensions = (byte**)AllocArray(rcount);
-            SDL.VulkanGetInstanceExtensions(null, &rcount, extensions);
+            byte** extensions = SDL.VulkanGetInstanceExtensions(&rcount);
 
             Trace.WriteLine("#### Required Extensions ####");
             for (int i = 0; i < rcount; i++)
@@ -457,7 +456,7 @@
         private VkSurfaceKHR CreateSurface(SDLWindow* window)
         {
             VkSurfaceKHR surface;
-            SDL.VulkanCreateSurface(window, Instance.Handle, (Hexa.NET.SDL2.VkSurfaceKHR*)&surface);
+            SDL.VulkanCreateSurface(window, Instance.Handle, null, (Hexa.NET.SDL3.VkSurfaceKHR*)&surface);
             return surface;
         }
 

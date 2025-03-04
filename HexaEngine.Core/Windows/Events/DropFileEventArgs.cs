@@ -10,12 +10,12 @@
         /// <summary>
         /// Gets the mouse X position of the drop event.
         /// </summary>
-        public int X { get; set; }
+        public float X { get; set; }
 
         /// <summary>
         /// Gets the mouse Y position of the drop event.
         /// </summary>
-        public int Y { get; set; }
+        public float Y { get; set; }
 
         public string? GetString()
         {

@@ -5,6 +5,6 @@
         /// <summary>
         /// Gets the timestamp of an event.
         /// </summary>
-        public uint Timestamp { get; set; }
+        public ulong Timestamp { get; set; }
     }
 }

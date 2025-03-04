@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Input.Events;
     using System.Runtime.CompilerServices;
 

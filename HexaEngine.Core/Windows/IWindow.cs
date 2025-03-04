@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Windows
 {
     using Hexa.NET.Mathematics;
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.Core.Contexts;
@@ -199,11 +199,6 @@
         event EventHandler<SizeChangedEventArgs> SizeChanged;
 
         /// <summary>
-        /// Event triggered when the window requests to take focus.
-        /// </summary>
-        event EventHandler<TakeFocusEventArgs> TakeFocus;
-
-        /// <summary>
         /// Event triggered when the user drops a file/text onto the window.
         /// </summary>
         event EventHandler<DropEventArgs> DropBegin;
@@ -248,13 +243,20 @@
         /// </summary>
         void ReleaseCapture();
 
+        void SetTextInputRect(Rectangle rect, CursorType type);
+
+        void StopTextInput();
+
+        void StartTextInput();
+
         /// <summary>
         /// Creates a Vulkan surface for the window.
         /// </summary>
         /// <param name="vkHandle">The Vulkan handle.</param>
+        /// <param name="allocationCallbacks"></param>
         /// <param name="vkNonDispatchableHandle">The Vulkan non-dispatchable handle.</param>
         /// <returns><c>true</c> if the surface creation was successful; otherwise, <c>false</c>.</returns>
-        unsafe bool VulkanCreateSurface(VkHandle vkHandle, VkNonDispatchableHandle* vkNonDispatchableHandle);
+        unsafe bool VulkanCreateSurface(VkHandle vkHandle, VkAllocationCallbacks* allocationCallbacks, VkNonDispatchableHandle* vkNonDispatchableHandle);
 
         /// <summary>
         /// Creates an OpenGL context for the window.

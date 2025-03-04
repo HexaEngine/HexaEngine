@@ -131,108 +131,108 @@
         /// The timestamp of the event in milliseconds since app start.
         /// </summary>
         [FieldOffset(0)]
-        public uint Timestamp;
+        public ulong Timestamp;
 
         /// <summary>
         /// The event type.
         /// </summary>
-        [FieldOffset(4)]
+        [FieldOffset(8)]
         public InputEventType Type;
 
         /// <summary>
         /// The device id that issued the event.
         /// </summary>
-        [FieldOffset(8)]
+        [FieldOffset(12)]
         public long DeviceId;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.MouseMoved"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public MouseMovedEvent MouseMovedEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.MouseDown"/> <see cref="InputEventType.MouseUp"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public MouseEvent MouseEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.MouseWheel"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public MouseWheelEvent MouseWheelEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.KeyboardKeyDown"/> <see cref="InputEventType.KeyboardKeyUp"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public KeyboardEvent KeyboardEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.JoystickAxisMotion"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public JoystickAxisMotionEvent JoystickAxisMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.JoystickBallMotion"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public JoystickBallMotionEvent JoystickBallMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.JoystickButtonDown"/> <see cref="InputEventType.JoystickButtonUp"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public JoystickButtonEvent JoystickButtonEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.JoystickHatMotion"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public JoystickHatMotionEvent JoystickHatMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadAxisMotion"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public GamepadAxisMotionEvent GamepadAxisMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadButtonDown"/> <see cref="InputEventType.GamepadButtonUp"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public GamepadButtonEvent GamepadButtonEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadSensorUpdate"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public GamepadSensorUpdateEvent GamepadSensorUpdateEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadTouchPadDown"/> <see cref="InputEventType.GamepadTouchPadUp"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public GamepadTouchPadEvent GamepadTouchPadEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.GamepadTouchPadMotion"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public GamepadTouchPadMotionEvent GamepadTouchPadMotionEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.TouchDeviceTouchDown"/> <see cref="InputEventType.TouchDeviceTouchUp"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public TouchDeviceTouchEvent TouchDeviceTouchEvent;
 
         /// <summary>
         /// Event data for event type <see cref="InputEventType.TouchDeviceTouchMotion"/>.
         /// </summary>
-        [FieldOffset(16)]
+        [FieldOffset(20)]
         public TouchDeviceTouchMotionEvent TouchDeviceTouchMotionEvent;
     }
 }

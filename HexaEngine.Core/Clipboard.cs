@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using System.Runtime.CompilerServices;
 
     /// <summary>

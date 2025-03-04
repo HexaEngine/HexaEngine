@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Input.Events;
     using System;
     using System.Collections.Generic;
@@ -39,42 +39,42 @@
         internal static unsafe void Init()
         {
             int numkeys;
-            byte* pKeys = SDL.GetKeyboardState(&numkeys);
+            bool* pKeys = SDL.GetKeyboardState(&numkeys);
 
             for (int i = 0; i < keys.Length; i++)
             {
                 Key key = keys[i];
                 keyNames[i] = SDL.GetKeyNameS((int)key);
-                var scancode = (Key)SDL.GetScancodeFromKey((int)key);
-                states.Add(key, (KeyState)pKeys[(int)scancode]);
+                var scancode = (Key)SDL.GetScancodeFromKey((int)key, null);
+                states.Add(key, pKeys[(int)scancode] ? KeyState.Down : KeyState.Up);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void OnKeyDown(SDLKeyboardEvent keyboardEvent)
         {
-            Key keyCode = (Key)SDL.GetKeyFromScancode(keyboardEvent.Keysym.Scancode);
+            Key keyCode = (Key)SDL.GetKeyFromScancode(keyboardEvent.Scancode, keyboardEvent.Mod, true);
             states[keyCode] = KeyState.Down;
             keyboardEventArgs.Timestamp = keyboardEvent.Timestamp;
             keyboardEventArgs.Handled = false;
             keyboardEventArgs.State = KeyState.Down;
             keyboardEventArgs.KeyCode = keyCode;
-            keyboardEventArgs.ScanCode = (ScanCode)keyboardEvent.Keysym.Scancode;
-            keyboardEventArgs.Modifier = (KeyMod)keyboardEvent.Keysym.Mod;
+            keyboardEventArgs.ScanCode = (ScanCode)keyboardEvent.Scancode;
+            keyboardEventArgs.Modifier = (KeyMod)keyboardEvent.Mod;
             KeyDown?.Invoke(null, keyboardEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void OnKeyUp(SDLKeyboardEvent keyboardEvent)
         {
-            Key keyCode = (Key)SDL.GetKeyFromScancode(keyboardEvent.Keysym.Scancode);
+            Key keyCode = (Key)SDL.GetKeyFromScancode(keyboardEvent.Scancode, keyboardEvent.Mod, true);
             states[keyCode] = KeyState.Up;
             keyboardEventArgs.Timestamp = keyboardEvent.Timestamp;
             keyboardEventArgs.Handled = false;
             keyboardEventArgs.State = KeyState.Up;
             keyboardEventArgs.KeyCode = keyCode;
-            keyboardEventArgs.ScanCode = (ScanCode)keyboardEvent.Keysym.Scancode;
-            keyboardEventArgs.Modifier = (KeyMod)keyboardEvent.Keysym.Mod;
+            keyboardEventArgs.ScanCode = (ScanCode)keyboardEvent.Scancode;
+            keyboardEventArgs.Modifier = (KeyMod)keyboardEvent.Mod;
             KeyUp?.Invoke(null, keyboardEventArgs);
         }
 
@@ -83,23 +83,12 @@
         {
             keyboardTextInputEventArgs.Timestamp = textInputEvent.Timestamp;
             keyboardTextInputEventArgs.Handled = false;
-            keyboardTextInputEventArgs.Text = &textInputEvent.Text_0;
+            keyboardTextInputEventArgs.Text = textInputEvent.Text;
             TextInput?.Invoke(null, keyboardTextInputEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe void OnTextEditing(SDLTextEditingEvent textInputEvent)
-        {
-            keyboardTextEditingEventArgs.Timestamp = textInputEvent.Timestamp;
-            keyboardTextEditingEventArgs.Handled = false;
-            keyboardTextEditingEventArgs.Text = &textInputEvent.Text_0;
-            keyboardTextEditingEventArgs.Start = textInputEvent.Start;
-            keyboardTextEditingEventArgs.Length = textInputEvent.Length;
-            TextEditing?.Invoke(null, keyboardTextEditingEventArgs);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static unsafe void OnTextEditing(SDLTextEditingExtEvent textInputEvent)
         {
             keyboardTextEditingEventArgs.Timestamp = textInputEvent.Timestamp;
             keyboardTextEditingEventArgs.Handled = false;

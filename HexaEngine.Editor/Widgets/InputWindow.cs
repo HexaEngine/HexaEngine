@@ -375,7 +375,7 @@
                     }
                 }
                 ImGui.SameLine();
-                if (gamepad.AxisStates.TryGetValue(GamepadAxis.TriggerLeft, out var leftTrigger))
+                if (gamepad.AxisStates.TryGetValue(GamepadAxis.LeftTrigger, out var leftTrigger))
                 {
                     ImPlot.SetNextAxesLimits(-1, 1, 0, short.MaxValue);
                     if (ImPlot.BeginPlot("Left Trigger"u8, new Vector2(128, 256), ImPlotFlags.NoInputs))
@@ -386,7 +386,7 @@
                     }
                 }
                 ImGui.SameLine();
-                if (gamepad.AxisStates.TryGetValue(GamepadAxis.TriggerRight, out var rightTrigger))
+                if (gamepad.AxisStates.TryGetValue(GamepadAxis.RightTrigger, out var rightTrigger))
                 {
                     ImPlot.SetNextAxesLimits(-1, 1, 0, short.MaxValue);
                     if (ImPlot.BeginPlot("Right Trigger"u8, new Vector2(128, 256), ImPlotFlags.NoInputs))

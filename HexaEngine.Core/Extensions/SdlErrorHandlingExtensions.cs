@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Extensions
 {
     using Hexa.NET.Logging;
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -17,8 +17,8 @@
             {
                 return null;
             }
-
-            return new Exception(ToStringFromUTF8(ex));
+            var mes = ToStringFromUTF8(ex);
+            return new Exception(mes);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@
 #if DEBUG
             if (result == 0)
             {
-                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).LogIfNotNull(GetErrorAsException());
             }
             return result;
 #else
@@ -51,7 +51,7 @@
 #if DEBUG
             if (result < 0)
             {
-                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).LogIfNotNull(GetErrorAsException());
             }
             return result;
 #else
@@ -69,7 +69,7 @@
         {
             if (result == 0)
             {
-                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).LogIfNotNull(GetErrorAsException());
             }
             return result;
         }
@@ -80,7 +80,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SdlCheckError()
         {
-            LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
+            LoggerFactory.GetLogger(nameof(SDL)).LogIfNotNull(GetErrorAsException());
         }
 
         /// <summary>
@@ -93,7 +93,7 @@
         {
             if (ptr == null)
             {
-                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).LogIfNotNull(GetErrorAsException());
             }
             return ptr;
         }
@@ -110,7 +110,7 @@
 #if DEBUG
             if (ptr == null)
             {
-                LoggerFactory.GetLogger(nameof(SDL)).ThrowIfNotNull(GetErrorAsException());
+                LoggerFactory.GetLogger(nameof(SDL)).LogIfNotNull(GetErrorAsException());
             }
             return ptr;
 #else

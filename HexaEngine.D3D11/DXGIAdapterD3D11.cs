@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
     using Hexa.NET.Logging;
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
@@ -243,16 +243,13 @@
 
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SDLWindow* window)
         {
-            SDLSysWMInfo info;
-            SDL.GetVersion(&info.Version);
-            SDL.GetWindowWMInfo(window, &info);
+            uint props = SDL.GetWindowProperties(window);
+            var hwnd = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_WIN32_HWND_POINTER, null);
 
             int width = 0;
             int height = 0;
 
             SDL.GetWindowSize(window, &width, &height);
-
-            var Hwnd = info.Info.Win.Window;
 
             SwapChainDesc1 desc = new()
             {
@@ -275,24 +272,22 @@
                 ScanlineOrdering = Hexa.NET.DXGI.ModeScanlineOrder.Unspecified,
             };
 
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), Hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
 
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
-            SDLSysWMInfo info;
-            SDL.GetVersion(&info.Version);
-            SDL.GetWindowWMInfo(window, &info);
-            var Hwnd = info.Info.Win.Window;
+            uint props = SDL.GetWindowProperties(window);
+            var hwnd = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_WIN32_HWND_POINTER, null);
 
             SwapChainDesc1 desc = Helper.Convert(swapChainDescription);
             desc.Format = ChooseSwapChainFormat(device.Device, desc.Format);
 
             SwapChainFullscreenDesc fullscreenDesc = Helper.Convert(fullscreenDescription);
 
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), Hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }

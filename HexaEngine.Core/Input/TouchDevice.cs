@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Input.Events;
 
     /// <summary>
@@ -26,40 +26,21 @@
         private readonly TouchMoveEventArgs touchMotionEventArgs = new();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TouchDevice"/> class using the specified index.
-        /// </summary>
-        /// <param name="index">The index of the touch device.</param>
-        public TouchDevice(int index)
-        {
-            id = SDL.GetTouchDevice(index);
-            name = SDL.GetTouchNameS(index);
-            type = (TouchDeviceType)SDL.GetTouchDeviceType(id);
-
-            var fingerCount = SDL.GetNumTouchFingers(id);
-            fingers = new Finger[fingerCount];
-            for (int i = 0; i < fingerCount; i++)
-            {
-                var finger = SDL.GetTouchFinger(id, i);
-                fingers[i] = new(finger);
-                fingerIdToIndex.Add(finger->Id, i);
-            }
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="TouchDevice"/> class using the specified device ID.
         /// </summary>
         /// <param name="id">The ID of the touch device.</param>
         public TouchDevice(long id)
         {
             this.id = id;
-            name = "Unknown";
+            name = SDL.GetTouchDeviceNameS(id);
             type = (TouchDeviceType)SDL.GetTouchDeviceType(id);
 
-            var fingerCount = SDL.GetNumTouchFingers(id);
+            int fingerCount;
+            var sdlFingers = SDL.GetTouchFingers(id, &fingerCount);
             fingers = new Finger[fingerCount];
             for (int i = 0; i < fingerCount; i++)
             {
-                var finger = SDL.GetTouchFinger(id, i);
+                var finger = sdlFingers[i];
                 fingers[i] = new(finger);
                 fingerIdToIndex.Add(finger->Id, i);
             }
@@ -104,13 +85,13 @@
         {
             touchEventArgs.Timestamp = evnt.Timestamp;
             touchEventArgs.TouchDeviceId = id;
-            touchEventArgs.FingerId = evnt.FingerId;
+            touchEventArgs.FingerId = evnt.FingerID;
             touchEventArgs.Pressure = evnt.Pressure;
             touchEventArgs.X = evnt.X;
             touchEventArgs.Y = evnt.Y;
             touchEventArgs.State = FingerState.Up;
 
-            var idx = fingerIdToIndex[evnt.FingerId];
+            var idx = fingerIdToIndex[evnt.FingerID];
             var finger = fingers[idx];
             finger.OnFingerUp(touchEventArgs);
 
@@ -122,13 +103,13 @@
         {
             touchEventArgs.Timestamp = evnt.Timestamp;
             touchEventArgs.TouchDeviceId = id;
-            touchEventArgs.FingerId = evnt.FingerId;
+            touchEventArgs.FingerId = evnt.FingerID;
             touchEventArgs.Pressure = evnt.Pressure;
             touchEventArgs.X = evnt.X;
             touchEventArgs.Y = evnt.Y;
             touchEventArgs.State = FingerState.Down;
 
-            var idx = fingerIdToIndex[evnt.FingerId];
+            var idx = fingerIdToIndex[evnt.FingerID];
             var finger = fingers[idx];
             finger.OnFingerDown(touchEventArgs);
 
@@ -140,14 +121,14 @@
         {
             touchMotionEventArgs.Timestamp = evnt.Timestamp;
             touchMotionEventArgs.TouchDeviceId = id;
-            touchMotionEventArgs.FingerId = evnt.FingerId;
+            touchMotionEventArgs.FingerId = evnt.FingerID;
             touchMotionEventArgs.Pressure = evnt.Pressure;
             touchMotionEventArgs.X = evnt.X;
             touchMotionEventArgs.Y = evnt.Y;
             touchMotionEventArgs.Dx = evnt.Dx;
             touchMotionEventArgs.Dy = evnt.Dy;
 
-            var idx = fingerIdToIndex[evnt.FingerId];
+            var idx = fingerIdToIndex[evnt.FingerID];
             var finger = fingers[idx];
             finger.OnFingerMotion(touchMotionEventArgs);
 

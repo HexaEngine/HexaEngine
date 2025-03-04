@@ -1,143 +1,38 @@
 ﻿namespace HexaEngine.Core
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.Mathematics;
+    using Hexa.NET.SDL3;
+    using System.Collections.Concurrent;
 
-    /// <summary>
-    /// A static class for retrieving information about displays and display modes.
-    /// </summary>
-    public static unsafe class Display
+    public static unsafe class Displays
     {
-        /// <summary>
-        /// Gets the number of video displays available.
-        /// </summary>
-        public static int NumVideoDisplays => SDL.GetNumVideoDisplays();
+        private static readonly ConcurrentDictionary<uint, Display> idToDisplay = new();
+        private static readonly List<Display> displays = [];
 
-        /// <summary>
-        /// Gets the closest display mode to the specified mode for a given display.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <param name="mode">The desired display mode.</param>
-        /// <returns>The closest display mode available.</returns>
-        public static DisplayMode GetClosestDisplayMode(int displayIndex, DisplayMode mode)
+        internal static void Init()
         {
-            DisplayMode closest;
-            SDL.GetClosestDisplayMode(displayIndex, (SDLDisplayMode*)&mode, (SDLDisplayMode*)&closest);
-            return closest;
+            int displayCount;
+            uint* sdlDisplays = SDL.GetDisplays(&displayCount);
+            for (int i = 0; i < displayCount; i++)
+            {
+                uint id = sdlDisplays[i];
+                AddDisplay(id);
+            }
         }
 
-        /// <summary>
-        /// Gets the current display mode for a given display.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <returns>The current display mode.</returns>
-        public static DisplayMode GetCurrentDisplayMode(int displayIndex)
+        private static void AddDisplay(uint id)
         {
-            DisplayMode mode;
-            SDL.GetCurrentDisplayMode(displayIndex, (SDLDisplayMode*)&mode);
-            return mode;
+            Display display = new(id);
+            displays.Add(display);
+            idToDisplay[id] = display;
         }
 
-        /// <summary>
-        /// Gets the desktop display mode for a given display.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <returns>The desktop display mode.</returns>
-        public static DisplayMode GetDesktopDisplayMode(int displayIndex)
+        private static void RemoveDisplay(uint id)
         {
-            DisplayMode mode;
-            SDL.GetDesktopDisplayMode(displayIndex, (SDLDisplayMode*)&mode);
-            return mode;
-        }
-
-        /// <summary>
-        /// Gets the name of a display.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <returns>The name of the display.</returns>
-        public static string GetDisplayName(int displayIndex)
-        {
-            return SDL.GetDisplayNameS(displayIndex);
-        }
-
-        /// <summary>
-        /// Gets the orientation of a display.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <returns>The orientation of the display.</returns>
-        public static DisplayOrientation GetDisplayOrientation(int displayIndex)
-        {
-            return (DisplayOrientation)SDL.GetDisplayOrientation(displayIndex);
-        }
-
-        /// <summary>
-        /// Gets the DPI (dots per inch) of a display.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <param name="ddpi">The horizontal DPI.</param>
-        /// <param name="hdpi">The diagonal DPI.</param>
-        /// <param name="vdpi">The vertical DPI.</param>
-        public static void GetDisplayDPI(int displayIndex, ref float ddpi, ref float hdpi, ref float vdpi)
-        {
-            SDL.GetDisplayDPI(displayIndex, ref ddpi, ref hdpi, ref vdpi);
-        }
-
-        /// <summary>
-        /// Gets the bounds of a display in screen coordinates.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <param name="x">The x-coordinate of the display's top-left corner.</param>
-        /// <param name="y">The y-coordinate of the display's top-left corner.</param>
-        /// <param name="width">The width of the display.</param>
-        /// <param name="height">The height of the display.</param>
-        public static void GetDisplayBounds(int displayIndex, ref int x, ref int y, ref int width, ref int height)
-        {
-            SDLRect rectangle;
-            SDL.GetDisplayBounds(displayIndex, &rectangle);
-            x = rectangle.X;
-            y = rectangle.Y;
-            width = rectangle.W;
-            height = rectangle.H;
-        }
-
-        /// <summary>
-        /// Gets the usable bounds of a display in screen coordinates.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <param name="x">The x-coordinate of the display's top-left corner.</param>
-        /// <param name="y">The y-coordinate of the display's top-left corner.</param>
-        /// <param name="width">The width of the display.</param>
-        /// <param name="height">The height of the display.</param>
-        public static void GetDisplayUsableBounds(int displayIndex, ref int x, ref int y, ref int width, ref int height)
-        {
-            SDLRect rectangle;
-            SDL.GetDisplayUsableBounds(displayIndex, &rectangle);
-            x = rectangle.X;
-            y = rectangle.Y;
-            width = rectangle.W;
-            height = rectangle.H;
-        }
-
-        /// <summary>
-        /// Gets a specific display mode for a given display.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <param name="modeIndex">The index of the display mode.</param>
-        /// <returns>The display mode at the specified index.</returns>
-        public static DisplayMode GetDisplayMode(int displayIndex, int modeIndex)
-        {
-            DisplayMode mode;
-            SDL.GetDisplayMode(displayIndex, modeIndex, (SDLDisplayMode*)&mode);
-            return mode;
-        }
-
-        /// <summary>
-        /// Gets the number of display modes available for a given display.
-        /// </summary>
-        /// <param name="displayIndex">The index of the display.</param>
-        /// <returns>The number of display modes.</returns>
-        public static int GetNumDisplayModes(int displayIndex)
-        {
-            return SDL.GetNumDisplayModes(displayIndex);
+            if (idToDisplay.TryRemove(id, out var display))
+            {
+                displays.Remove(display);
+            }
         }
 
         /// <summary>
@@ -146,10 +41,10 @@
         /// <param name="x">The x-coordinate of the point.</param>
         /// <param name="y">The y-coordinate of the point.</param>
         /// <returns>The index of the display containing the point.</returns>
-        public static int GetPointDisplayIndex(int x, int y)
+        public static Display GetDisplayForPoint(int x, int y)
         {
             var point = new SDLPoint(x, y);
-            return SDL.GetPointDisplayIndex(&point);
+            return idToDisplay[SDL.GetDisplayForPoint(&point)];
         }
 
         /// <summary>
@@ -160,10 +55,10 @@
         /// <param name="width">The width of the rectangle.</param>
         /// <param name="height">The height of the rectangle.</param>
         /// <returns>The index of the display containing the rectangle.</returns>
-        public static int GetRectDisplayIndex(int x, int y, int width, int height)
+        public static Display GetDisplayForRect(int x, int y, int width, int height)
         {
             var rect = new SDLRect(x, y, width, height);
-            return SDL.GetRectDisplayIndex(&rect);
+            return idToDisplay[SDL.GetDisplayForRect(&rect)];
         }
 
         /// <summary>
@@ -171,21 +66,142 @@
         /// </summary>
         /// <param name="window">The window.</param>
         /// <returns>The index of the display containing the window.</returns>
-        public static int GetWindowDisplayIndex(Windows.SdlWindow window)
+        public static Display GetDisplayForWindow(Windows.SdlWindow window)
         {
-            return SDL.GetWindowDisplayIndex(window.GetWindow());
+            return idToDisplay[SDL.GetDisplayForWindow(window.GetWindow())];
+        }
+
+        internal static void ProcessEvent(SDLDisplayEvent evnt)
+        {
+            switch (evnt.Type)
+            {
+                case SDLEventType.DisplayOrientation:
+                    break;
+
+                case SDLEventType.DisplayAdded:
+                    AddDisplay(evnt.DisplayID);
+                    break;
+
+                case SDLEventType.DisplayRemoved:
+                    RemoveDisplay(evnt.DisplayID);
+                    break;
+
+                case SDLEventType.DisplayMoved:
+                    break;
+
+                case SDLEventType.DisplayDesktopModeChanged:
+                    break;
+
+                case SDLEventType.DisplayCurrentModeChanged:
+                    break;
+
+                case SDLEventType.DisplayContentScaleChanged:
+                    break;
+            }
+        }
+    }
+
+    public unsafe class Display
+    {
+        private readonly uint id;
+
+        public Display(uint id)
+        {
+            this.id = id;
+        }
+
+        protected uint Props => SDL.GetDisplayProperties(id);
+
+        public uint Id => id;
+
+        /// <summary>
+        /// Gets the name of a display.
+        /// </summary>
+        public string Name => SDL.GetDisplayNameS(id);
+
+        /// <summary>
+        /// Gets the current display mode.
+        /// </summary>
+        public DisplayMode CurrentDisplayMode => *SDL.GetCurrentDisplayMode(id);
+
+        /// <summary>
+        /// Gets the desktop display mode for a given display.
+        /// </summary>
+        public DisplayMode DesktopDisplayMode => *SDL.GetDesktopDisplayMode(id);
+
+        /// <summary>
+        /// Gets the current orientation of a display.
+        /// </summary>
+        public DisplayOrientation CurrentOrientation => (DisplayOrientation)SDL.GetCurrentDisplayOrientation(id);
+
+        /// <summary>
+        /// Gets the natural orientation of a display.
+        /// </summary>
+        public DisplayOrientation NaturalOrientation => (DisplayOrientation)SDL.GetNaturalDisplayOrientation(id);
+
+        public bool IsHDREnabled => SDL.HasProperty(Props, SDL.SDL_PROP_DISPLAY_HDR_ENABLED_BOOLEAN);
+
+        /// <summary>
+        /// Gets the bounds of a display in screen coordinates.
+        /// </summary>
+        public Rectangle Bounds
+        {
+            get
+            {
+                SDLRect rectangle;
+                SDL.GetDisplayBounds(id, &rectangle);
+                Rectangle rect;
+                rect.Left = rectangle.X;
+                rect.Top = rectangle.Y;
+                rect.Right = rectangle.X + rectangle.W;
+                rect.Bottom = rectangle.Y + rectangle.H;
+                return rect;
+            }
         }
 
         /// <summary>
-        /// Gets the current display mode of a window.
+        /// Gets the bounds of a display in screen coordinates.
         /// </summary>
-        /// <param name="window">The window.</param>
-        /// <returns>The current display mode of the window.</returns>
-        public static DisplayMode GetWindowDisplayMode(Windows.SdlWindow window)
+        public Rectangle UsableBounds
         {
-            DisplayMode mode;
-            SDL.GetWindowDisplayMode(window.GetWindow(), (SDLDisplayMode*)&mode);
-            return mode;
+            get
+            {
+                SDLRect rectangle;
+                SDL.GetDisplayUsableBounds(id, &rectangle);
+                Rectangle rect;
+                rect.Left = rectangle.X;
+                rect.Top = rectangle.Y;
+                rect.Right = rectangle.X + rectangle.W;
+                rect.Bottom = rectangle.Y + rectangle.H;
+                return rect;
+            }
+        }
+
+        /// <summary>
+        /// Gets the closest display mode to the specified mode for a given display.
+        /// </summary>
+        /// <param name="w"></param>
+        /// <param name="h"></param>
+        /// <param name="refreshRate"></param>
+        /// <param name="includeHighDensityModes"></param>
+        /// <returns>The closest display mode available.</returns>
+        public DisplayMode GetClosestDisplayMode(int w, int h, float refreshRate, bool includeHighDensityModes)
+        {
+            SDLDisplayMode closest;
+            SDL.GetClosestFullscreenDisplayMode(id, w, h, refreshRate, includeHighDensityModes, &closest);
+            return closest;
+        }
+
+        public DisplayMode[] GetFullscreenDisplayModes()
+        {
+            int modeCount;
+            SDLDisplayMode** modes = SDL.GetFullscreenDisplayModes(id, &modeCount);
+            DisplayMode[] result = new DisplayMode[modeCount];
+            for (int i = 0; i < modeCount; i++)
+            {
+                result[i] = *modes[i];
+            }
+            return result;
         }
     }
 }

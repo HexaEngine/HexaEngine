@@ -1,11 +1,12 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using Hexa.NET.Utilities;
     using Hexa.NET.Vulkan;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows.Events;
     using System;
+    using VkPhysicalDevice = Hexa.NET.Vulkan.VkPhysicalDevice;
     using VkSurfaceKHR = Hexa.NET.Vulkan.VkSurfaceKHR;
 
     public unsafe class VulkanSwapChain : ISwapChain

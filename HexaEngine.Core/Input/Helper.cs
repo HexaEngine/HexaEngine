@@ -6,33 +6,13 @@
     public static class Helper
     {
         /// <summary>
-        /// Converts an SDL key code to its corresponding Key enum value.
-        /// </summary>
-        /// <param name="code">The SDL key code to convert.</param>
-        /// <returns>The corresponding Key enum value.</returns>
-        public static Key Convert(Hexa.NET.SDL2.SDLKeyCode code)
-        {
-            return (Key)code;
-        }
-
-        /// <summary>
-        /// Converts a Key enum value to its corresponding SDL key code.
-        /// </summary>
-        /// <param name="code">The Key enum value to convert.</param>
-        /// <returns>The corresponding SDL key code.</returns>
-        public static Hexa.NET.SDL2.SDLKeyCode ConvertBack(Key code)
-        {
-            return (Hexa.NET.SDL2.SDLKeyCode)code;
-        }
-
-        /// <summary>
         /// Converts a GamepadAxis enum value to its corresponding SDL GameControllerAxis.
         /// </summary>
         /// <param name="gamepadAxis">The GamepadAxis enum value to convert.</param>
         /// <returns>The corresponding SDL GameControllerAxis.</returns>
-        public static Hexa.NET.SDL2.SDLGameControllerAxis ConvertBack(GamepadAxis gamepadAxis)
+        public static Hexa.NET.SDL3.SDLGamepadAxis ConvertBack(GamepadAxis gamepadAxis)
         {
-            return (Hexa.NET.SDL2.SDLGameControllerAxis)gamepadAxis;
+            return (Hexa.NET.SDL3.SDLGamepadAxis)gamepadAxis;
         }
 
         /// <summary>
@@ -40,7 +20,7 @@
         /// </summary>
         /// <param name="axis">The SDL GameControllerAxis to convert.</param>
         /// <returns>The corresponding GamepadAxis enum value.</returns>
-        public static GamepadAxis Convert(Hexa.NET.SDL2.SDLGameControllerAxis axis)
+        public static GamepadAxis Convert(Hexa.NET.SDL3.SDLGamepadAxis axis)
         {
             return (GamepadAxis)axis;
         }
@@ -50,9 +30,9 @@
         /// </summary>
         /// <param name="gamepadButton">The GamepadButton enum value to convert.</param>
         /// <returns>The corresponding SDL GameControllerButton.</returns>
-        public static Hexa.NET.SDL2.SDLGameControllerButton ConvertBack(GamepadButton gamepadButton)
+        public static Hexa.NET.SDL3.SDLGamepadButton ConvertBack(GamepadButton gamepadButton)
         {
-            return (Hexa.NET.SDL2.SDLGameControllerButton)gamepadButton;
+            return (Hexa.NET.SDL3.SDLGamepadButton)gamepadButton;
         }
 
         /// <summary>
@@ -60,7 +40,7 @@
         /// </summary>
         /// <param name="button">The SDL GameControllerButton to convert.</param>
         /// <returns>The corresponding GamepadButton enum value.</returns>
-        public static GamepadButton Convert(Hexa.NET.SDL2.SDLGameControllerButton button)
+        public static GamepadButton Convert(Hexa.NET.SDL3.SDLGamepadButton button)
         {
             return (GamepadButton)button;
         }
@@ -70,7 +50,7 @@
         /// </summary>
         /// <param name="gameControllerType">The SDL GameControllerType to convert.</param>
         /// <returns>The corresponding GamepadType enum value.</returns>
-        public static GamepadType Convert(Hexa.NET.SDL2.SDLGameControllerType gameControllerType)
+        public static GamepadType Convert(Hexa.NET.SDL3.SDLGamepadType gameControllerType)
         {
             return (GamepadType)gameControllerType;
         }
@@ -80,9 +60,9 @@
         /// </summary>
         /// <param name="gamepadSensorType">The GamepadSensorType enum value to convert.</param>
         /// <returns>The corresponding SDL SensorType.</returns>
-        public static Hexa.NET.SDL2.SDLSensorType ConvertBack(GamepadSensorType gamepadSensorType)
+        public static Hexa.NET.SDL3.SDLSensorType ConvertBack(GamepadSensorType gamepadSensorType)
         {
-            return (Hexa.NET.SDL2.SDLSensorType)gamepadSensorType;
+            return (Hexa.NET.SDL3.SDLSensorType)gamepadSensorType;
         }
 
         /// <summary>
@@ -90,7 +70,7 @@
         /// </summary>
         /// <param name="sensorType">The SDL SensorType to convert.</param>
         /// <returns>The corresponding GamepadSensorType enum value.</returns>
-        public static GamepadSensorType Convert(Hexa.NET.SDL2.SDLSensorType sensorType)
+        public static GamepadSensorType Convert(Hexa.NET.SDL3.SDLSensorType sensorType)
         {
             return (GamepadSensorType)sensorType;
         }
@@ -100,7 +80,7 @@
         /// </summary>
         /// <param name="joystickType">The SDL JoystickType to convert.</param>
         /// <returns>The corresponding JoystickType enum value.</returns>
-        public static JoystickType Convert(Hexa.NET.SDL2.SDLJoystickType joystickType)
+        public static JoystickType Convert(Hexa.NET.SDL3.SDLJoystickType joystickType)
         {
             return (JoystickType)joystickType;
         }
@@ -110,9 +90,19 @@
         /// </summary>
         /// <param name="joystickPowerLevel">The SDL JoystickPowerLevel to convert.</param>
         /// <returns>The corresponding JoystickPowerLevel enum value.</returns>
-        public static JoystickPowerLevel Convert(Hexa.NET.SDL2.SDLJoystickPowerLevel joystickPowerLevel)
+        public static JoystickConnectionState Convert(Hexa.NET.SDL3.SDLJoystickConnectionState joystickPowerLevel)
         {
-            return (JoystickPowerLevel)joystickPowerLevel;
+            return (JoystickConnectionState)joystickPowerLevel;
+        }
+
+        /// <summary>
+        /// Converts an SDL PowerState to its corresponding PowerState enum value.
+        /// </summary>
+        /// <param name="powerState">The SDL PowerState to convert.</param>
+        /// <returns>The corresponding PowerState enum value.</returns>
+        public static PowerState Convert(Hexa.NET.SDL3.SDLPowerState powerState)
+        {
+            return (PowerState)powerState;
         }
     }
 }

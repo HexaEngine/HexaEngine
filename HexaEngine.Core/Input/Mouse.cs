@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Input
 {
     using Hexa.NET.Mathematics;
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Input.Events;
     using System.Collections.Generic;
     using System.Numerics;
@@ -21,7 +21,7 @@
         private static readonly MouseButtonEventArgs buttonEventArgs = new();
         private static readonly MouseWheelEventArgs wheelEventArgs = new();
 
-        private static Point2 pos;
+        private static Vector2 pos;
         private static Vector2 delta;
         private static Vector2 deltaWheel;
 
@@ -33,7 +33,7 @@
             pos = default;
             SDL.GetMouseState(ref pos.X, ref pos.Y);
 
-            uint state = SDL.GetMouseState(null, null);
+            uint state = (uint)SDL.GetMouseState(null, null);
             uint maskLeft = unchecked(1 << ((int)MouseButton.Left - 1));
             uint maskMiddle = unchecked(1 << ((int)MouseButton.Middle - 1));
             uint maskRight = unchecked(1 << ((int)MouseButton.Right - 1));
@@ -53,7 +53,7 @@
         {
             get
             {
-                int x, y;
+                float x, y;
                 SDL.GetGlobalMouseState(&x, &y);
                 return new Vector2(x, y);
             }
@@ -195,19 +195,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Poll()
         {
-            if (SDL.GetRelativeMouseMode() == SDLBool.True)
-            {
-                Point2 relative;
-                SDL.GetGlobalMouseState(ref pos.X, ref pos.Y);
-                SDL.GetRelativeMouseState(&relative.X, &relative.Y);
-                delta = (Vector2)relative;
-            }
-            else
-            {
-                var old = pos;
-                SDL.GetGlobalMouseState(ref pos.X, ref pos.Y);
-                delta = (Vector2)(pos - old);
-            }
+            var old = pos;
+            SDL.GetGlobalMouseState(ref pos.X, ref pos.Y);
+            delta = (Vector2)(pos - old);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

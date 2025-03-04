@@ -5,6 +5,8 @@
     /// </summary>
     public enum GamepadAxis
     {
+        Invalid = -1,
+
         /// <summary>
         /// The left stick's X-axis.
         /// </summary>
@@ -28,11 +30,13 @@
         /// <summary>
         /// The left trigger button.
         /// </summary>
-        TriggerLeft = 4,
+        LeftTrigger = 4,
 
         /// <summary>
         /// The right trigger button.
         /// </summary>
-        TriggerRight = 5,
+        RightTrigger = 5,
+
+        Count = 6
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Windows
 {
     using Hexa.NET.Mathematics;
-    using Hexa.NET.SDL2;
+    using Hexa.NET.SDL3;
     using Hexa.NET.Utilities.Threading;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;

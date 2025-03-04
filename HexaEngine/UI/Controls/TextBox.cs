@@ -75,13 +75,13 @@
         protected override void OnGotFocus(FocusGainedEventArgs args)
         {
             base.OnGotFocus(args);
-            Application.StartTextInput();
-            Application.SetTextInputRect((Rectangle)VisualClip);
+            Application.MainWindow.StartTextInput();
+            Application.MainWindow.SetTextInputRect((Rectangle)VisualClip, Core.Windows.CursorType.IBeam);
         }
 
         protected override void OnLostFocus(FocusLostEventArgs args)
         {
-            Application.StopTextInput();
+            Application.MainWindow.StopTextInput();
             base.OnLostFocus(args);
         }
 
