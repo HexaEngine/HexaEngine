@@ -17,7 +17,7 @@
     using System.Text;
 
     [EditorCategory("Renderer")]
-    [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, true)]
+    [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, true, Icon = "\xf5ee")]
     public class TerrainRendererComponent : BaseDrawableComponent, ISelectableRayTest
     {
         private TerrainGrid? terrain;

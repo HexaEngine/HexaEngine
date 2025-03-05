@@ -21,7 +21,7 @@
 
         public override void Initialize(NodeEditor editor)
         {
-            In = CreateOrGetPin(editor, "in", PinKind.Input, PinType.DontCare, PinShape.CircleFilled, 1);
+            In = CreateOrGetPin(editor, "in", PinKind.Input, PinType.DontCare, PinShape.CircleFilled, 1, PinFlags.InferType);
             Out = CreateOrGetPin(editor, "out", PinKind.Output, PinType.Float4, PinShape.CircleFilled);
             base.Initialize(editor);
             UpdateMode();

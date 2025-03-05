@@ -39,7 +39,7 @@
         public IBLRoughnessPrefilter(IGraphicsDevice device)
         {
             Cameras = new CubeFaceCamera[6];
-            cube = new();
+            cube = new(new());
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "filter/prefilter/vs.hlsl",

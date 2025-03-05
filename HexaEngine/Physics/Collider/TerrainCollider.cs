@@ -13,7 +13,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.TerrainCollider")]
     [EditorCategory("Collider", "Physics")]
-    [EditorComponent<TerrainCollider>("Terrain Collider", false, true)]
+    [EditorComponent<TerrainCollider>("Terrain Collider", false, true, Icon = "\xf61f")]
     public unsafe class TerrainCollider : ColliderShape
     {
         private readonly List<Pointer<PxHeightField>> pxHeightFields = [];

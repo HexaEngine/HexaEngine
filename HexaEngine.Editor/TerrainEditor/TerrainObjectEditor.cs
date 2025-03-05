@@ -109,7 +109,7 @@ namespace HexaEngine.Editor.TerrainEditor
 
         public bool NoTable { get; set; }
 
-        public string Symbol { get; } = "?";
+        public string Symbol { get; } = "\xf5ee";
 
         public bool Draw(IGraphicsContext context)
         {

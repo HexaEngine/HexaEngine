@@ -61,7 +61,7 @@ struct PixelParams
 	float PerceptualRoughness;
 	float Roughness;
 	float3 DFG;
-	float EnergyCompensation;
+	float3 EnergyCompensation;
 };
 
 struct ShadowData

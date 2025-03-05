@@ -54,9 +54,9 @@ PixelParams ComputeSurfaceProps(float3 pos, float3 V, Material material)
 	pixel.Pos = pos;
 	pixel.N = material.normal;
 	pixel.V = V;
-	pixel.F0 = ComputeF0(material.baseColor, material.metallic, reflectance0);
+	pixel.F0 = ComputeF0(material.baseColor.rgb, material.metallic, reflectance0);
 	pixel.NdotV = dot(material.normal, V);
-	pixel.DiffuseColor = ComputeDiffuseColor(material.baseColor, material.metallic);
+	pixel.DiffuseColor = ComputeDiffuseColor(material.baseColor.rgb, material.metallic);
 	float perceptualRoughness = material.roughness;
 	pixel.PerceptualRoughnessUnclamped = perceptualRoughness;
 	pixel.PerceptualRoughness = clamp(perceptualRoughness, MIN_PERCEPTUAL_ROUGHNESS, 1);
@@ -160,7 +160,7 @@ float3 BRDF_IBL(PixelParams surface, float ao)
 	specular *= ao * surface.EnergyCompensation;
 
 	return diffuse + specular;
-	
+
 	/*
 	float3 E = lerp(surface.DFG.xxx, surface.DFG.yyy, surface.F0);
 	float3 irradiance = globalDiffuse.Sample(linearClampSampler, surface.N).rgb;
@@ -296,29 +296,29 @@ float3 ComputeDirectLightning(float depth, PixelParams surface)
 	uint lightOffset = lightGrid[tileIndex].lightOffset;
 
 	[loop]
-		for (uint i = 0; i < lightCount; i++)
+	for (uint i = 0; i < lightCount; i++)
+	{
+		float3 L = 0;
+
+		uint lightIndex = lightIndexList[lightOffset + i];
+		Light light = lights[lightIndex];
+
+		[branch]
+		switch (light.type)
 		{
-			float3 L = 0;
-
-			uint lightIndex = lightIndexList[lightOffset + i];
-			Light light = lights[lightIndex];
-
-			[branch]
-				switch (light.type)
-				{
-				case POINT_LIGHT:
-					L += PointLightBRDF(light, surface);
-					break;
-				case SPOT_LIGHT:
-					L += SpotlightBRDF(light, surface);
-					break;
-				case DIRECTIONAL_LIGHT:
-					L += DirectionalLightBRDF(light, surface);
-					break;
-				}
-
-			Lo += L;
+		case POINT_LIGHT:
+			L += PointLightBRDF(light, surface);
+			break;
+		case SPOT_LIGHT:
+			L += SpotlightBRDF(light, surface);
+			break;
+		case DIRECTIONAL_LIGHT:
+			L += DirectionalLightBRDF(light, surface);
+			break;
 		}
+
+		Lo += L;
+	}
 
 	return Lo;
 }

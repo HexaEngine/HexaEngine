@@ -10,7 +10,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.CharacterController")]
     [EditorCategory("Physics")]
-    [EditorComponent<CharacterController>("Character Controller")]
+    [EditorComponent<CharacterController>("Character Controller", Icon = "\xf192")]
     public sealed unsafe class CharacterController : ICharacterControllerComponent
     {
         private PxMaterial* material;

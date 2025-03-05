@@ -2,19 +2,35 @@
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.IO;
-    using System;
     using System.Numerics;
+
+    public struct ConeDesc
+    {
+        public float Height = 1;
+        public float Diameter = 1;
+        public uint Tesselation = 32;
+
+        public ConeDesc()
+        {
+        }
+
+        public ConeDesc(float height, float diameter, uint tesselation = 32)
+        {
+            Height = height;
+            Diameter = diameter;
+            Tesselation = tesselation;
+        }
+    }
 
     /// <summary>
     /// Represents a cone primitive in 3D space.
     /// </summary>
-    public sealed class Cone : Primitive<MeshVertex, uint>
+    public sealed class Cone : Primitive<ConeDesc, uint>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Cone"/> class.
         /// </summary>
-        public Cone() : base()
+        public Cone(ConeDesc desc) : base(desc)
         {
         }
 
@@ -24,9 +40,9 @@
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the cone mesh.
         /// </returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
+        protected override (VertexBuffer<PrimVertex>, IndexBuffer<uint>?) InitializeMesh(ConeDesc desc)
         {
-            CreateCone(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateCone(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, desc.Height, desc.Diameter, desc.Tesselation);
             return (vertexBuffer, indexBuffer);
         }
 
@@ -39,7 +55,7 @@
         /// <param name="height">The height of the cone.</param>
         /// <param name="diameter">The diameter of the cone.</param>
         /// <param name="tessellation">The level of tessellation for the cone.</param>
-        public static void CreateCone(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float height = 1, float diameter = 1, uint tessellation = 32)
+        public static void CreateCone(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float height = 1, float diameter = 1, uint tessellation = 32)
         {
             if (tessellation < 3)
             {
@@ -53,7 +69,7 @@
             float radius = diameter / 2;
             uint stride = tessellation + 1;
 
-            MeshVertex[] vertices = new MeshVertex[stride * 2 + tessellation];
+            PrimVertex[] vertices = new PrimVertex[stride * 2 + tessellation];
             uint[] indices = new uint[stride * 3 + (tessellation - 2) * 3];
 
             uint vcounter = 0;
@@ -84,7 +100,7 @@
 
             CreateCylinderCap(vertices, indices, ref vcounter, ref icounter, tessellation, height, radius, false);
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(vertices, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<PrimVertex>(vertices, CpuAccessFlags.None);
             indexBuffer = new IndexBuffer<uint>(indices, CpuAccessFlags.None);
         }
 
@@ -104,7 +120,7 @@
             return new(dx, 0, dz);
         }
 
-        private static void CreateCylinderCap(MeshVertex[] vertices, uint[] indices, ref uint vcounter, ref uint icounter, uint tessellation, float height, float radius, bool isTop)
+        private static void CreateCylinderCap(PrimVertex[] vertices, uint[] indices, ref uint vcounter, ref uint icounter, uint tessellation, float height, float radius, bool isTop)
         {
             // Create cap indices.
             for (uint i = 0; i < tessellation - 2; i++)
@@ -126,12 +142,12 @@
             // Which end of the cylinder is this?
             Vector3 normal = new(0, 1, 0);
             Vector3 tangent = Vector3.UnitX;
-            Vector3 textureScale = new(-0.5f, -0.5f, -0.5f);
+            Vector2 textureScale = new(-0.5f, -0.5f);
 
             if (!isTop)
             {
                 normal = -normal;
-                textureScale *= new Vector3(-1, 1, 1);
+                textureScale *= new Vector2(-1, 1);
             }
 
             // Create cap vertices.
@@ -141,7 +157,7 @@
 
                 Vector3 position = circleVector * radius + normal * height;
 
-                Vector3 textureCoordinate = new Vector3(circleVector.X, circleVector.Z, 0) * textureScale + new Vector3(0.5f);
+                Vector2 textureCoordinate = new Vector2(circleVector.X, circleVector.Z) * textureScale + new Vector2(0.5f);
 
                 vertices[vcounter++] = new(position, textureCoordinate, normal, tangent);
             }

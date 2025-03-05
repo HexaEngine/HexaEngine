@@ -42,7 +42,8 @@
 
         public static void Serialize(Scene scene, string path)
         {
-            BsonDataWriter writer = new(File.Create(path));
+            using var fs = File.Create(path);
+            BsonDataWriter writer = new(fs);
             try
             {
                 serializer.Serialize(writer, scene);
@@ -70,7 +71,8 @@
 
         public static Scene Deserialize(string path)
         {
-            BsonDataReader reader = new(File.OpenRead(path));
+            using var fs = File.OpenRead(path);
+            BsonDataReader reader = new(fs);
 
             Scene scene;
             try

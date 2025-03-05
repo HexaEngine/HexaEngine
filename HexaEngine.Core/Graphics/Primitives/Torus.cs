@@ -2,19 +2,36 @@
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.IO;
     using System;
     using System.Numerics;
+
+    public struct TorusDesc
+    {
+        public float Diameter = 1;
+        public float Thickness = 0.333f;
+        public uint Tesselation = 32;
+
+        public TorusDesc()
+        {
+        }
+
+        public TorusDesc(float diameter, float thickness, uint tesselation = 32)
+        {
+            Diameter = diameter;
+            Thickness = thickness;
+            Tesselation = tesselation;
+        }
+    }
 
     /// <summary>
     /// Represents a 3D torus primitive.
     /// </summary>
-    public sealed class Torus : Primitive<MeshVertex, uint>
+    public sealed class Torus : Primitive<TorusDesc, uint>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Torus"/> class.
         /// </summary>
-        public Torus() : base()
+        public Torus(TorusDesc desc) : base(desc)
         {
         }
 
@@ -22,9 +39,9 @@
         /// Initializes the torus mesh by creating vertex and index buffers.
         /// </summary>
         /// <returns>A tuple containing the vertex buffer and an optional index buffer.</returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
+        protected override (VertexBuffer<PrimVertex>, IndexBuffer<uint>?) InitializeMesh(TorusDesc desc)
         {
-            CreateTorus(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateTorus(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, desc.Diameter, desc.Thickness, desc.Tesselation);
             return (vertexBuffer, indexBuffer);
         }
 
@@ -36,7 +53,7 @@
         /// <param name="diameter">The diameter of the torus.</param>
         /// <param name="thickness">The thickness of the torus.</param>
         /// <param name="tessellation">The tessellation level of the torus.</param>
-        public static void CreateTorus(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, float thickness = 0.333f, uint tessellation = 32)
+        public static void CreateTorus(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, float thickness = 0.333f, uint tessellation = 32)
         {
             if (tessellation < 3)
             {
@@ -45,7 +62,7 @@
 
             uint stride = tessellation + 1;
 
-            MeshVertex[] vertices = new MeshVertex[stride * stride];
+            PrimVertex[] vertices = new PrimVertex[stride * stride];
             uint[] indices = new uint[stride * stride * 6];
 
             uint vcounter = 0;
@@ -72,7 +89,7 @@
                     normal = Vector3.TransformNormal(normal, transform);
                     tangent = Vector3.TransformNormal(tangent, transform);
 
-                    vertices[vcounter++] = new(position, new Vector3(u, v, 0), normal, tangent);
+                    vertices[vcounter++] = new(position, new Vector2(u, v), normal, tangent);
 
                     // And create indices for two triangles.
                     uint nextI = (i + 1) % stride;
@@ -89,7 +106,7 @@
                 }
             }
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(vertices, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<PrimVertex>(vertices, CpuAccessFlags.None);
             indexBuffer = new IndexBuffer<uint>(indices, CpuAccessFlags.None);
         }
     }

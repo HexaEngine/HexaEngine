@@ -227,15 +227,15 @@
             return null;
         }
 
-        public virtual Pin CreatePin(NodeEditor editor, string name, PinKind kind, PinType type, PinShape shape, uint maxLinks = uint.MaxValue)
+        public virtual Pin CreatePin(NodeEditor editor, string name, PinKind kind, PinType type, PinShape shape, uint maxLinks = uint.MaxValue, PinFlags flags = PinFlags.None)
         {
-            Pin pin = new(editor.GetUniqueId(), name, shape, kind, type, maxLinks);
+            Pin pin = new(editor.GetUniqueId(), name, shape, kind, type, maxLinks, flags);
             return AddPin(pin);
         }
 
-        public virtual Pin CreateOrGetPin(NodeEditor editor, string name, PinKind kind, PinType type, PinShape shape, uint maxLinks = uint.MaxValue)
+        public virtual Pin CreateOrGetPin(NodeEditor editor, string name, PinKind kind, PinType type, PinShape shape, uint maxLinks = uint.MaxValue, PinFlags flags = PinFlags.None)
         {
-            Pin pin = new(editor.GetUniqueId(), name, shape, kind, type, maxLinks);
+            Pin pin = new(editor.GetUniqueId(), name, shape, kind, type, maxLinks, flags);
             return AddOrGetPin(pin);
         }
 

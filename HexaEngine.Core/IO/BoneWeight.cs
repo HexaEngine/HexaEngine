@@ -4,9 +4,6 @@
     using System.IO;
     using System.Numerics;
 
-    /// <summary>
-    /// Represents bone weight for a <see cref="SkinnedMeshVertex"/>.
-    /// </summary>
     public struct BoneWeight
     {
         /// <summary>

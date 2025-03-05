@@ -1,25 +1,38 @@
 ﻿namespace HexaEngine.Core.Graphics.Primitives
 {
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.IO;
     using System.Numerics;
+
+    public struct OctahedronDesc
+    {
+        public float Size = 1;
+
+        public OctahedronDesc()
+        {
+        }
+
+        public OctahedronDesc(float size)
+        {
+            Size = size;
+        }
+    }
 
     /// <summary>
     /// Represents an octahedron in 3D space.
     /// </summary>
-    public sealed class Octahedron : Primitive<MeshVertex, uint>
+    public sealed class Octahedron : Primitive<OctahedronDesc, uint>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Octahedron"/> class.
         /// </summary>
-        public Octahedron() : base()
+        public Octahedron(OctahedronDesc desc) : base(desc)
         {
         }
 
         /// <inheritdoc/>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
+        protected override (VertexBuffer<PrimVertex>, IndexBuffer<uint>?) InitializeMesh(OctahedronDesc desc)
         {
-            CreateOctahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateOctahedron(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, desc.Size);
             return (vertexBuffer, indexBuffer);
         }
 
@@ -51,9 +64,9 @@
         /// <param name="vertexBuffer">The vertex buffer.</param>
         /// <param name="indexBuffer">The index buffer.</param>
         /// <param name="size">The size of the octahedron.</param>
-        public static void CreateOctahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
+        public static void CreateOctahedron(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
-            MeshVertex[] vertices = new MeshVertex[8 * 3];
+            PrimVertex[] vertices = new PrimVertex[8 * 3];
             uint[] indices = new uint[8 * 3];
 
             uint vcounter = 0;
@@ -89,7 +102,7 @@
                 vcounter += 3;
             }
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(vertices, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<PrimVertex>(vertices, CpuAccessFlags.None);
             indexBuffer = new IndexBuffer<uint>(indices, CpuAccessFlags.None);
         }
     }

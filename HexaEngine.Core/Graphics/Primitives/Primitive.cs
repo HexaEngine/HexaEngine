@@ -2,40 +2,46 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using System;
 
     /// <summary>
     /// Represents an abstract base class for 3D primitives.
     /// </summary>
-    /// <typeparam name="Tvertex">The type of vertices in the primitive.</typeparam>
-    /// <typeparam name="Tindex">The type of indices in the primitive.</typeparam>
-    public abstract class Primitive<Tvertex, Tindex> : IPrimitive where Tvertex : unmanaged where Tindex : unmanaged
+    /// <typeparam name="TDescriptor">The type of the descriptor/config of primitive.</typeparam>
+    /// <typeparam name="TIndex">The type of indices in the primitive.</typeparam>
+    public abstract class Primitive<TDescriptor, TIndex> : DisposableRefBase, IPrimitive where TIndex : unmanaged
     {
+        private readonly TDescriptor descriptor;
+
         /// <summary>
         /// The vertex buffer of the primitive.
         /// </summary>
-        protected VertexBuffer<Tvertex> vertexBuffer;
+        protected VertexBuffer<PrimVertex> vertexBuffer;
 
         /// <summary>
         /// The index buffer of the primitive.
         /// </summary>
-        protected IndexBuffer<Tindex>? indexBuffer;
-
-        private bool disposedValue;
+        protected IndexBuffer<TIndex>? indexBuffer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Primitive{Tvertex, Tindex}"/> class.
+        /// Initializes a new instance of the <see cref="Primitive{TDescriptor, TIndex}"/> class.
         /// </summary>
-        public Primitive()
+        protected Primitive(TDescriptor descriptor)
         {
-            (vertexBuffer, indexBuffer) = InitializeMesh();
+            this.descriptor = descriptor;
+            (vertexBuffer, indexBuffer) = InitializeMesh(descriptor);
         }
+
+        public TDescriptor Description => descriptor;
+
+        public uint VertexCount => vertexBuffer.Count;
+
+        public uint IndexCount => indexBuffer?.Count ?? 0;
 
         /// <summary>
         /// Initializes the mesh by creating vertex and index buffers.
         /// </summary>
         /// <returns>A tuple containing the vertex buffer and an optional index buffer.</returns>
-        protected abstract (VertexBuffer<Tvertex>, IndexBuffer<Tindex>?) InitializeMesh();
+        protected abstract (VertexBuffer<PrimVertex>, IndexBuffer<TIndex>?) InitializeMesh(TDescriptor descriptor);
 
         /// <inheritdoc/>
         public void DrawAuto(IGraphicsContext context, IGraphicsPipelineState pipeline)
@@ -111,26 +117,10 @@
             context.SetIndexBuffer(null, 0, 0);
         }
 
-        /// <summary>
-        /// Cleans up resources used by the primitive.
-        /// </summary>
-        /// <param name="disposing">True if called from Dispose; false if called from the finalizer.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                vertexBuffer?.Dispose();
-                indexBuffer?.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            vertexBuffer?.Dispose();
+            indexBuffer?.Dispose();
         }
     }
 }

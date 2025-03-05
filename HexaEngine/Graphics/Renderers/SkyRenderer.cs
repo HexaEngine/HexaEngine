@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Graphics.Graph;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Weather;
@@ -12,7 +11,7 @@
 
     public class SkyRenderer : IDisposable
     {
-        private readonly Sphere cube = null!;
+        private readonly UVSphere cube = null!;
         private readonly IGraphicsPipelineState skybox = null!;
         private readonly IGraphicsPipelineState uniformColorSky = null!;
         private readonly IGraphicsPipelineState hoseWilkieSky = null!;
@@ -26,7 +25,7 @@
 
         public SkyRenderer(IGraphicsDevice device)
         {
-            cube = new();
+            cube = new(new());
             worldBuffer = new(CpuAccessFlags.Write);
 
             skybox = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
@@ -94,6 +93,9 @@
             }
 
             environment = skybox.Environment;
+
+            this.skybox.Bindings.SetCBV("WorldBuffer", worldBuffer);
+            this.skybox.Bindings.SetSRV("cubeMap", environment);
 
             initialized = true;
         }

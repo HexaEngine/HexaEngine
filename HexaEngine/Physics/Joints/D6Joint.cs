@@ -11,7 +11,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.D6Joint")]
     [EditorCategory("Joints", "Physics")]
-    [EditorComponent<D6Joint>("D6 Joint")]
+    [EditorComponent<D6Joint>("D6 Joint", Icon = "\xf0c1")]
     public sealed unsafe class D6Joint : Joint
     {
         private PxD6Joint* joint;

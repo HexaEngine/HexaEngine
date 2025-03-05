@@ -10,7 +10,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.HingeJoint")]
     [EditorCategory("Joints", "Physics")]
-    [EditorComponent<HingeJoint>("Hinge Joint")]
+    [EditorComponent<HingeJoint>("Hinge Joint", Icon = "\xf0c1")]
     public sealed unsafe class HingeJoint : Joint
     {
         private PxRevoluteJoint* joint;

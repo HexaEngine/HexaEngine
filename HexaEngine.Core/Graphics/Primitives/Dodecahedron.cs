@@ -2,18 +2,31 @@
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.IO;
     using System.Numerics;
+
+    public struct DodecahedronDesc
+    {
+        public float Size = 1;
+
+        public DodecahedronDesc()
+        {
+        }
+
+        public DodecahedronDesc(float size)
+        {
+            Size = size;
+        }
+    }
 
     /// <summary>
     /// Represents a dodecahedron primitive in 3D space.
     /// </summary>
-    public sealed class Dodecahedron : Primitive<MeshVertex, uint>
+    public sealed class Dodecahedron : Primitive<DodecahedronDesc, uint>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Dodecahedron"/> class.
         /// </summary>
-        public Dodecahedron() : base()
+        public Dodecahedron(DodecahedronDesc desc) : base(desc)
         {
         }
 
@@ -23,9 +36,9 @@
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the dodecahedron mesh.
         /// </returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
+        protected override (VertexBuffer<PrimVertex>, IndexBuffer<uint>?) InitializeMesh(DodecahedronDesc desc)
         {
-            CreateDodecahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateDodecahedron(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, desc.Size);
             return (vertexBuffer, indexBuffer);
         }
 
@@ -104,9 +117,9 @@
         /// <param name="vertexBuffer">The vertex buffer of the dodecahedron mesh.</param>
         /// <param name="indexBuffer">The optional index buffer of the dodecahedron mesh.</param>
         /// <param name="size">The size of the dodecahedron.</param>
-        public static void CreateDodecahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
+        public static void CreateDodecahedron(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
-            MeshVertex[] vertices = new MeshVertex[5 * 12];
+            PrimVertex[] vertices = new PrimVertex[5 * 12];
             uint[] indices = new uint[9 * 12];
 
             uint vcounter = 0;

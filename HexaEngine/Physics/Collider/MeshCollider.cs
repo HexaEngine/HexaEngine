@@ -14,7 +14,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.MeshCollider")]
     [EditorCategory("Collider", "Physics")]
-    [EditorComponent<MeshCollider>("Mesh Collider")]
+    [EditorComponent<MeshCollider>("Mesh Collider", Icon = "\xf61f")]
     public unsafe class MeshCollider : ColliderShape
     {
         private AssetRef model;

@@ -9,7 +9,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.FixedJoint")]
     [EditorCategory("Joints", "Physics")]
-    [EditorComponent<FixedJoint>("Fixed Joint")]
+    [EditorComponent<FixedJoint>("Fixed Joint", Icon = "\xf0c1")]
     public sealed unsafe class FixedJoint : Joint
     {
         private PxFixedJoint* joint;

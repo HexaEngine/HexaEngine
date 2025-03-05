@@ -8,7 +8,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.CapsuleCollider")]
     [EditorCategory("Collider", "Physics")]
-    [EditorComponent<CapsuleCollider>("Capsule Collider")]
+    [EditorComponent<CapsuleCollider>("Capsule Collider", Icon = "\xf61f")]
     public unsafe class CapsuleCollider : ColliderShape
     {
         private float radius = 1;

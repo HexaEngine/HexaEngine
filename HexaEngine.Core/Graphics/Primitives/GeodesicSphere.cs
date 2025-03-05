@@ -3,21 +3,36 @@
     using Hexa.NET.Mathematics;
     using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.IO;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Numerics;
 
+    public struct GeodesicSphereDesc
+    {
+        public float Diameter = 1;
+        public uint Tessellation = 3;
+
+        public GeodesicSphereDesc()
+        {
+        }
+
+        public GeodesicSphereDesc(float diameter, uint tessellation = 3)
+        {
+            Diameter = diameter;
+            Tessellation = tessellation;
+        }
+    }
+
     /// <summary>
     /// Represents a geodesic sphere primitive in 3D space.
     /// </summary>
-    public sealed class GeodesicSphere : Primitive<MeshVertex, uint>
+    public sealed class GeodesicSphere : Primitive<GeodesicSphereDesc, uint>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GeodesicSphere"/> class.
         /// </summary>
-        public GeodesicSphere() : base()
+        public GeodesicSphere(GeodesicSphereDesc desc) : base(desc)
         {
         }
 
@@ -27,9 +42,9 @@
         /// <returns>
         /// A tuple containing the vertex buffer and optional index buffer of the geodesic sphere mesh.
         /// </returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
+        protected override (VertexBuffer<PrimVertex>, IndexBuffer<uint>?) InitializeMesh(GeodesicSphereDesc desc)
         {
-            CreateGeodesicSphere(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateGeodesicSphere(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, desc.Diameter, desc.Tessellation);
             return (vertexBuffer, indexBuffer);
         }
 
@@ -63,7 +78,7 @@
         /// <param name="indexBuffer">The optional index buffer of the geodesic sphere mesh.</param>
         /// <param name="diameter">The diameter of the geodesic sphere.</param>
         /// <param name="tessellation">The level of tessellation for the geodesic sphere.</param>
-        public static unsafe void CreateGeodesicSphere(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 3)
+        public static unsafe void CreateGeodesicSphere(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 3)
         {
             float radius = diameter / 2.0f;
 
@@ -160,7 +175,7 @@
             }
 
             // Now that we've completed subdivision, fill in the final vertex collection
-            UnsafeList<MeshVertex> vertices = new(vertexPositions.Size);
+            UnsafeList<PrimVertex> vertices = new(vertexPositions.Size);
             for (int i = 0; i < vertexPositions.Size; i++)
             {
                 Vector3 p = vertexPositions[i];
@@ -185,7 +200,7 @@
                 float u = longitude / MathUtil.PI2 + 0.5f;
                 float v = latitude / MathUtil.PI;
 
-                Vector3 uv = new(1 - u, v, 0);
+                Vector2 uv = new(1 - u, v);
                 vertices.PushBack(new(pos, uv, normal, tangent));
             }
 
@@ -215,7 +230,7 @@
                     CheckIndexOverflow(newIndex);
 
                     // copy this vertex, correct the texture coordinate, and add the vertex
-                    MeshVertex v = vertices[i];
+                    PrimVertex v = vertices[i];
                     v.UV.X = 1;
                     vertices.PushBack(v);
 
@@ -248,9 +263,9 @@
                         Trace.Assert(*triIndex0 == i);
                         Trace.Assert(*triIndex1 != i && *triIndex2 != i); // assume no degenerate triangles
 
-                        MeshVertex* v0 = vertices.GetPointer((int)*triIndex0);
-                        MeshVertex* v1 = vertices.GetPointer((int)*triIndex1);
-                        MeshVertex* v2 = vertices.GetPointer((int)*triIndex2);
+                        PrimVertex* v0 = vertices.GetPointer((int)*triIndex0);
+                        PrimVertex* v1 = vertices.GetPointer((int)*triIndex1);
+                        PrimVertex* v2 = vertices.GetPointer((int)*triIndex2);
 
                         // check the other two vertices to see if we might need to fix this triangle
 
@@ -272,7 +287,7 @@
 
             void fixPole(uint poleIndex)
             {
-                MeshVertex* poleVertex = vertices.GetPointer((int)poleIndex);
+                PrimVertex* poleVertex = vertices.GetPointer((int)poleIndex);
                 bool overwrittenPoleVertex = false; // overwriting the original pole vertex saves us one vertex
 
                 for (int i = 0; i < indices.Size; i += 3)
@@ -306,11 +321,11 @@
                         continue;
                     }
 
-                    MeshVertex* otherVertex0 = vertices.GetPointer((int)*pOtherIndex0);
-                    MeshVertex* otherVertex1 = vertices.GetPointer((int)*pOtherIndex1);
+                    PrimVertex* otherVertex0 = vertices.GetPointer((int)*pOtherIndex0);
+                    PrimVertex* otherVertex1 = vertices.GetPointer((int)*pOtherIndex1);
 
                     // Calculate the texcoords for the new pole vertex, add it to the vertices and update the index
-                    MeshVertex newPoleVertex = *poleVertex;
+                    PrimVertex newPoleVertex = *poleVertex;
                     newPoleVertex.UV.X = (otherVertex0->UV.X + otherVertex1->UV.X) / 2;
                     newPoleVertex.UV.Y = poleVertex->UV.Y;
 
@@ -332,11 +347,18 @@
             fixPole(northPoleIndex);
             fixPole(southPoleIndex);
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(vertices.Data, (uint)vertices.Size, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<PrimVertex>(vertices.Data, (uint)vertices.Size, CpuAccessFlags.None);
             indexBuffer = new IndexBuffer<uint>(indices.Data, (uint)indices.Size, CpuAccessFlags.None);
 
             vertices.Release();
             indices.Release();
+        }
+
+        private static unsafe void Swap<T>(T* a, T* b) where T : unmanaged
+        {
+            var tmp = a;
+            a = b;
+            b = tmp;
         }
 
         private static void CheckIndexOverflow(uint value)

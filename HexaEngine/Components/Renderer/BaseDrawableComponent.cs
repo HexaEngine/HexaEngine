@@ -7,7 +7,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Scenes;
 
-    public abstract class BaseDrawableComponent : IDrawable
+    public abstract class BaseDrawableComponent : EntityNotifyBase, IDrawable
     {
         private volatile bool loaded = false;
         private uint queueIndex = (uint)RenderQueueIndex.Geometry;

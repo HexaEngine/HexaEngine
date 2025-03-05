@@ -7,7 +7,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.BoxCollider")]
     [EditorCategory("Collider", "Physics")]
-    [EditorComponent<BoxCollider>("Box Collider")]
+    [EditorComponent<BoxCollider>("Box Collider", Icon = "\xf61f")]
     public unsafe class BoxCollider : ColliderShape
     {
         private float height = 1;

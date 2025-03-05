@@ -3,60 +3,45 @@
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.IO;
+    using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Core.Utilities;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
+    using HexaEngine.Meshes;
+    using HexaEngine.Objects;
     using HexaEngine.Resources;
     using System.Numerics;
 
-    public class PrimitiveRenderer : IRenderer, IDisposable
+    public class PrimitiveRenderer : BaseRenderer<PrimitiveModel>
     {
-        private readonly ConstantBuffer<UPoint4> offsetBuffer = null!;
-        private readonly StructuredBuffer<Matrix4x4> transformBuffer = null!;
-        private readonly StructuredBuffer<uint> transformOffsetBuffer = null!;
-        private Material material = null!;
-        private IPrimitive primitive = null!;
-        private BoundingBox boundingBox;
-        private bool initialized;
-
-        private bool disposedValue;
+#nullable disable
+        private ConstantBuffer<UPoint4> offsetBuffer;
+        private DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
+        private StructuredBuffer<Matrix4x4> transformNoBuffer;
+        private StructuredBuffer<uint> transformNoOffsetBuffer;
+        private StructuredUavBuffer<Matrix4x4> transformBuffer;
+        private StructuredUavBuffer<uint> transformOffsetBuffer;
+#nullable restore
 
         public PrimitiveRenderer()
         {
-            transformBuffer = new(CpuAccessFlags.Write);
-            transformOffsetBuffer = new(CpuAccessFlags.Write);
+        }
+
+        protected override void Initialize(IGraphicsDevice device, CullingContext cullingContext)
+        {
             offsetBuffer = new(CpuAccessFlags.Write);
-        }
-
-        public void Initialize(Primitive<MeshVertex, ushort> primitive, Material material)
-        {
-            this.primitive = primitive;
-            this.material = material;
-
-            initialized = true;
-        }
-
-        public void Initialize(Primitive<MeshVertex, uint> primitive, Material material)
-        {
-            this.primitive = primitive;
-            this.material = material;
-
-            initialized = true;
-        }
-
-        public void Uninitialize()
-        {
-            primitive = null!;
-            material = null!;
-            initialized = false;
+            drawIndirectArgs = cullingContext.DrawIndirectArgs;
+            transformNoBuffer = cullingContext.InstanceDataNoCull;
+            transformNoOffsetBuffer = cullingContext.InstanceOffsetsNoCull;
+            transformBuffer = cullingContext.InstanceDataOutBuffer;
+            transformOffsetBuffer = cullingContext.InstanceOffsets;
         }
 
         public void Prepare(Material material)
         {
-            foreach (var pass in material.Shader.Passes)
+            for (int i = 0; i < material.Shader.Passes.Count; i++)
             {
+                MaterialShaderPass pass = material.Shader.Passes[i];
                 var bindings = pass.Bindings;
                 bindings.SetCBV("offsetBuffer", offsetBuffer);
                 if (pass.Name == "Deferred" || pass.Name == "Forward")
@@ -66,90 +51,78 @@
                 }
                 else
                 {
-                    bindings.SetSRV("worldMatrices", transformBuffer.SRV!);
-                    bindings.SetSRV("worldMatrixOffsets", transformOffsetBuffer.SRV!);
-                    //bindings.SetSRV("worldMatrices", transformNoBuffer.SRV);
-                    //bindings.SetSRV("worldMatrixOffsets", transformNoOffsetBuffer.SRV);
+                    bindings.SetSRV("worldMatrices", transformNoBuffer.SRV);
+                    bindings.SetSRV("worldMatrixOffsets", transformNoOffsetBuffer.SRV);
                 }
             }
         }
 
-        public void Update(IGraphicsContext context, Matrix4x4 transform)
+        public override void Update(IGraphicsContext context, Matrix4x4 transform, PrimitiveModel model)
         {
-            if (!initialized)
+            DrawType drawType = model.DrawType;
+            Matrix4x4[] transforms = model.InstanceTransforms;
+
+            BoundingSphere sphere = BoundingSphere.CreateFromBoundingBox(model.BoundingBox);
+            for (int j = 0; j < drawType.Instances.Count; j++)
             {
-                return;
-            }
-
-            transformOffsetBuffer.ResetCounter();
-            transformBuffer.ResetCounter();
-
-            transformBuffer.Add(Matrix4x4.Transpose(transform));
-            transformOffsetBuffer.Add(0);
-
-            boundingBox = BoundingBox.Transform(BoundingBox.Empty, transform);
-
-            transformOffsetBuffer.Update(context);
-            transformBuffer.Update(context);
-        }
-
-        public void VisibilityTest(CullingContext context)
-        {
-            if (!initialized)
-            {
-                return;
+                DrawInstance instance = drawType.Instances[j];
+                Matrix4x4 global = transforms[instance.NodeId] * transform;
+                instance.BoundingSphere = sphere;
+                instance.Transform = Matrix4x4.Transpose(global);
             }
         }
 
-        public void DrawDeferred(IGraphicsContext context)
+        public override void VisibilityTest(CullingContext context, PrimitiveModel model)
         {
-            if (!initialized)
+            DrawType drawType = model.DrawType;
+
+            context.AppendType(model.Prim.IndexCount);
+            drawType.TypeId = context.CurrentType;
+            drawType.DrawIndirectOffset = context.GetDrawArgsOffset();
+            for (int j = 0; j < drawType.Instances.Count; j++)
             {
-                return;
+                DrawInstance instance = drawType.Instances[j];
+                context.AppendInstance(instance.Transform, instance.BoundingSphere);
             }
+        }
+
+        public override void DrawDeferred(IGraphicsContext context, PrimitiveModel model)
+        {
+            var primitive = model.Prim;
+            var material = model.Material;
+            var drawType = model.DrawType;
+
+            offsetBuffer.Update(context, new(drawType.TypeId));
 
             Prepare(material);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
-            material.DrawIndexedInstanced(context, "Deferred", indexCount, 1);
+            material.DrawIndexedInstancedIndirect(context, "Deferred", drawIndirectArgs, drawType.DrawIndirectOffset);
             primitive.EndDraw(context);
         }
 
-        public void DrawForward(IGraphicsContext context)
+        public override void DrawForward(IGraphicsContext context, PrimitiveModel model)
         {
-            if (!initialized)
-            {
-                return;
-            }
+            var primitive = model.Prim;
+            var material = model.Material;
+            var drawType = model.DrawType;
+
+            offsetBuffer.Update(context, new(drawType.TypeId));
 
             Prepare(material);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
-            material.DrawIndexedInstanced(context, "Forward", indexCount, 1);
+            material.DrawIndexedInstancedIndirect(context, "Forward", drawIndirectArgs, drawType.DrawIndirectOffset);
             primitive.EndDraw(context);
         }
 
-        public void DrawDepth(IGraphicsContext context)
+        public override void DrawDepth(IGraphicsContext context, PrimitiveModel model)
         {
-            if (!initialized)
-            {
-                return;
-            }
+            var primitive = model.Prim;
+            var material = model.Material;
+            var drawType = model.DrawType;
 
-            Prepare(material);
-
-            primitive.BeginDraw(context, out _, out var indexCount, out _);
-            material.DrawIndexedInstanced(context, "DepthOnly", indexCount, 1);
-            primitive.EndDraw(context);
-        }
-
-        public void DrawDepth(IGraphicsContext context, IBuffer camera)
-        {
-            if (!initialized)
-            {
-                return;
-            }
-
+            offsetBuffer.Update(context, new(drawType.TypeId));
             Prepare(material);
 
             primitive.BeginDraw(context, out _, out var indexCount, out _);
@@ -157,13 +130,27 @@
             primitive.EndDraw(context);
         }
 
-        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
+        public override void DrawDepth(IGraphicsContext context, PrimitiveModel model, IBuffer camera)
         {
-            if (!initialized)
-            {
-                return;
-            }
+            var primitive = model.Prim;
+            var material = model.Material;
+            var drawType = model.DrawType;
 
+            offsetBuffer.Update(context, new(drawType.TypeId));
+            Prepare(material);
+
+            primitive.BeginDraw(context, out _, out var indexCount, out _);
+            material.DrawIndexedInstanced(context, "DepthOnly", indexCount, 1);
+            primitive.EndDraw(context);
+        }
+
+        public override void DrawShadowMap(IGraphicsContext context, PrimitiveModel model, IBuffer light, ShadowType type)
+        {
+            var primitive = model.Prim;
+            var material = model.Material;
+            var drawType = model.DrawType;
+
+            offsetBuffer.Update(context, new(drawType.TypeId));
             Prepare(material);
 
             string name = EnumHelper<ShadowType>.GetName(type);
@@ -184,24 +171,16 @@
             primitive.EndDraw(context);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                transformBuffer.Dispose();
-                transformOffsetBuffer.Dispose();
-
-                offsetBuffer.Dispose();
-                Uninitialize();
-                disposedValue = true;
-            }
+            transformBuffer.Dispose();
+            transformOffsetBuffer.Dispose();
+            offsetBuffer.Dispose();
         }
 
-        public void Dispose()
+        public override void Bake(IGraphicsContext context, PrimitiveModel instance)
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            throw new NotSupportedException();
         }
     }
 }

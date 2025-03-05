@@ -7,7 +7,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.PlaneCollider")]
     [EditorCategory("Collider", "Physics")]
-    [EditorComponent<PlaneCollider>("Plane Collider")]
+    [EditorComponent<PlaneCollider>("Plane Collider", Icon = "\xf61f")]
     public unsafe class PlaneCollider : ColliderShape
     {
         public override unsafe void AddShapes(PxPhysics* physics, PxScene* scene, PxRigidActor* actor, PxTransform localPose, Vector3 scale)

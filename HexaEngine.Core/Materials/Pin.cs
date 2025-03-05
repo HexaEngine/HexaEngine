@@ -30,7 +30,7 @@
 
         private readonly List<Link> links = [];
 
-        public Pin(int id, string name, PinShape shape, PinKind kind, PinType type, uint maxLinks = uint.MaxValue)
+        public Pin(int id, string name, PinShape shape, PinKind kind, PinType type, uint maxLinks = uint.MaxValue, PinFlags flags = PinFlags.None)
         {
             this.id = id;
             Name = name;
@@ -38,6 +38,7 @@
             Kind = kind;
             Type = type;
             MaxLinks = maxLinks;
+            Flags = flags;
         }
 
         public event EventHandler<Pin>? ValueChanging;

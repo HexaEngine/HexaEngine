@@ -6,6 +6,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Objects;
     using HexaEngine.Scenes;
     using System.Threading;
     using System.Threading.Tasks;

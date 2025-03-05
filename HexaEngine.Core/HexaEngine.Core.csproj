@@ -31,13 +31,6 @@
 		<None Remove="Graphics\Passes\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Fody" Version="6.9.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="FodyHelpers" Version="6.9.1" />
-		
-		<PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
 		<PackageReference Include="Hardware.Info" Version="101.0.0" />
 		<PackageReference Include="Hexa.NET.FreeType" Version="1.1.1" />
 		<PackageReference Include="Hexa.NET.ImGui" Version="2.2.6" />

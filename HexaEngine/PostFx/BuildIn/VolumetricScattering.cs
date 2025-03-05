@@ -175,7 +175,7 @@
 
             paramsBuffer = new(CpuAccessFlags.Write);
 
-            quad = new(sunSize);
+            quad = new(new(sunSize));
 
             sun = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {

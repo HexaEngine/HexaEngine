@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Resources.Factories
 {
+    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO.Binary.Materials;
+    using HexaEngine.Meshes;
 
     public static class MaterialResourceFactoryExtensions
     {
@@ -66,6 +68,13 @@
             }
 
             modelMaterial.EndUpdate();
+        }
+
+        public static void UpdateMaterial(this ResourceManager manager, MaterialData? material)
+        {
+            // TODO: Make a automatic solution.
+            manager.UpdateMaterial<Model>(material);
+            manager.UpdateMaterial<IPrimitive>(material);
         }
 
         public static void UpdateMaterial<T>(this ResourceManager manager, MaterialData? desc)

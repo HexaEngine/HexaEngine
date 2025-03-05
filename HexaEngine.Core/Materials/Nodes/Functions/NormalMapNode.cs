@@ -21,7 +21,7 @@
         public override void Initialize(NodeEditor editor)
         {
             Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, PinType.Float3));
-            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "sample", PinShape.QuadFilled, PinKind.Input, PinType.Float3, 1, defaultExpression: "0"));
+            AddOrGetPin(new FloatPin(editor.GetUniqueId(), "sample", PinShape.QuadFilled, PinKind.Input, PinType.Float4, 1, defaultExpression: "0"));
             AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Normal", PinShape.QuadFilled, PinKind.Input, PinType.Float3, 1, defaultExpression: "pixel.normal"));
             AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Tangent", PinShape.QuadFilled, PinKind.Input, PinType.Float3, 1, defaultExpression: "pixel.tangent"));
             AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Binormal", PinShape.QuadFilled, PinKind.Input, PinType.Float3, 1, defaultExpression: "pixel.binormal"));

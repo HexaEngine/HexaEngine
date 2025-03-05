@@ -19,7 +19,7 @@
         /// <summary>
         /// An empty instance of <see cref="MaterialData"/> with default properties.
         /// </summary>
-        public static readonly MaterialData Empty = new() { Properties = [new MaterialProperty("BaseColor", MaterialPropertyType.BaseColor, Endianness.LittleEndian, new Vector4(1, 0, 1, 1))], Textures = [], Shaders = [], Metadata = Metadata.Empty };
+        public static readonly MaterialData Empty = new() { Properties = [new MaterialProperty("BaseColor", MaterialPropertyType.BaseColor, Endianness.LittleEndian, new Vector4(0.8f, 0.8f, 0.8f, 1))], Textures = [], Shaders = [], Metadata = Metadata.Empty };
 
         /// <summary>
         /// Gets or sets the name of the material.

@@ -17,7 +17,7 @@
     using System.Numerics;
 
     [EditorCategory("Renderer")]
-    [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer", Icon = "\xf158")]
+    [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer", Icon = "\xf5ee")]
     public class MeshRendererComponent : BaseDrawableComponent, ILODRendererComponent, ISelectableRayTest
     {
         private Model? model;
@@ -26,8 +26,8 @@
         private int minLODLevel;
         private int currentLODLevel;
 
-        private static MeshRenderer meshRenderer1 = null!;
-        private static int instances;
+        private static MeshRenderer meshRenderer = null!;
+        private static Lock rendererLock = new();
 
         static MeshRendererComponent()
         {
@@ -100,10 +100,17 @@
 
         protected override void LoadCore(IGraphicsDevice device)
         {
-            if (Interlocked.Increment(ref instances) == 1)
+            lock (rendererLock)
             {
-                meshRenderer1 = new();
-                ((IRenderer1)meshRenderer1).Initialize(device, CullingManager.Current.Context);
+                if (meshRenderer == null)
+                {
+                    meshRenderer = new();
+                    ((IRenderer1)meshRenderer).Initialize(device, CullingManager.Current.Context);
+                }
+                else
+                {
+                    meshRenderer.AddRef();
+                }
             }
 
             UpdateModel();
@@ -111,10 +118,7 @@
 
         protected override void UnloadCore()
         {
-            if (Interlocked.Decrement(ref instances) == 0)
-            {
-                meshRenderer1.Dispose();
-            }
+            meshRenderer.Dispose();
 
             model?.Dispose();
         }
@@ -126,7 +130,7 @@
                 return;
             }
 
-            meshRenderer1.Update(context, GameObject.Transform.Global, model);
+            meshRenderer.Update(context, GameObject.Transform.Global, model);
         }
 
         public void DrawDepth(IGraphicsContext context, IBuffer cam)
@@ -136,7 +140,7 @@
                 return;
             }
 
-            meshRenderer1.DrawDepth(context, model, cam);
+            meshRenderer.DrawDepth(context, model, cam);
         }
 
         public override void DrawDepth(IGraphicsContext context)
@@ -146,7 +150,7 @@
                 return;
             }
 
-            meshRenderer1.DrawDepth(context, model);
+            meshRenderer.DrawDepth(context, model);
         }
 
         public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
@@ -156,7 +160,7 @@
                 return;
             }
 
-            meshRenderer1.DrawShadowMap(context, model, light, type);
+            meshRenderer.DrawShadowMap(context, model, light, type);
         }
 
         public override void VisibilityTest(CullingContext context)
@@ -166,7 +170,7 @@
                 return;
             }
 
-            meshRenderer1.VisibilityTest(context, model);
+            meshRenderer.VisibilityTest(context, model);
         }
 
         public override void Draw(IGraphicsContext context, RenderPath path)
@@ -178,11 +182,11 @@
 
             if (path == RenderPath.Deferred)
             {
-                meshRenderer1.DrawDeferred(context, model);
+                meshRenderer.DrawDeferred(context, model);
             }
             else
             {
-                meshRenderer1.DrawForward(context, model);
+                meshRenderer.DrawForward(context, model);
             }
         }
 
@@ -193,7 +197,7 @@
                 return;
             }
 
-            meshRenderer1.Bake(context, model);
+            meshRenderer.Bake(context, model);
         }
 
         public bool SelectRayTest(Ray ray, ref float depth)

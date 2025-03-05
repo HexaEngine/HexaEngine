@@ -1,14 +1,13 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using System.Numerics;
 
-    public abstract class BaseRenderer<T> : IRenderer1<T>, IRenderer1
+    public abstract class BaseRenderer<T> : DisposableRefBase, IRenderer1<T>, IRenderer1
     {
-        private bool disposedValue;
-
         void IRenderer1.Initialize(IGraphicsDevice device, CullingContext cullingContext)
         {
             Initialize(device, cullingContext);
@@ -103,24 +102,6 @@
             {
                 VisibilityTest(context, t);
             }
-        }
-
-        protected abstract void DisposeCore();
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                DisposeCore();
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

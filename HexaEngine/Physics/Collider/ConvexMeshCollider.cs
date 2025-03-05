@@ -16,7 +16,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.ConvexMeshCollider")]
     [EditorCategory("Collider", "Physics")]
-    [EditorComponent<ConvexMeshCollider>("Convex Mesh Collider")]
+    [EditorComponent<ConvexMeshCollider>("Convex Mesh Collider", Icon = "\xf61f")]
     public unsafe class ConvexMeshCollider : ColliderShape
     {
         private AssetRef model = default;

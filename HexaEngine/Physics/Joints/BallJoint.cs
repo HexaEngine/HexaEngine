@@ -9,7 +9,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.BallJoint")]
     [EditorCategory("Joints", "Physics")]
-    [EditorComponent<BallJoint>("Ball Joint")]
+    [EditorComponent<BallJoint>("Ball Joint", Icon = "\xf0c1")]
     public sealed unsafe class BallJoint : Joint
     {
         private PxSphericalJoint* joint;

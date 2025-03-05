@@ -7,7 +7,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.SphereCollider")]
     [EditorCategory("Collider", "Physics")]
-    [EditorComponent<SphereCollider>("Sphere Collider")]
+    [EditorComponent<SphereCollider>("Sphere Collider", Icon = "\xf61f")]
     public unsafe class SphereCollider : ColliderShape
     {
         private float radius = 1;

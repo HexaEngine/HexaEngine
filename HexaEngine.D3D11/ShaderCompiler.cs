@@ -1,9 +1,10 @@
 ﻿//#define SHADER_FORCE_OPTIMIZE
 
-using Silk.NET.Core.Native;
-
 namespace HexaEngine.D3D11
 {
+    using Hexa.NET.D3D11;
+    using Hexa.NET.D3DCommon;
+    using Hexa.NET.D3DCompiler;
     using Hexa.NET.Logging;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
@@ -11,20 +12,17 @@ namespace HexaEngine.D3D11
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Security.Cryptography;
+    using HexaGen.Runtime.COM;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
-    using Hexa.NET.D3DCompiler;
-    using Hexa.NET.D3DCommon;
-    using ShaderMacro = Core.Graphics.ShaderMacro;
-    using D3DShaderMacro = Hexa.NET.D3DCommon.ShaderMacro;
     using D3DRegisterComponentType = Hexa.NET.D3DCommon.RegisterComponentType;
-    using HexaGen.Runtime.COM;
-    using Hexa.NET.D3D11;
+    using D3DShaderMacro = Hexa.NET.D3DCommon.ShaderMacro;
+    using ShaderMacro = Core.Graphics.ShaderMacro;
 
     public class ShaderCompiler
     {
-        private static readonly ILogger Logger = LoggerFactory.General;
+        private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(ShaderCompiler));
 
         public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string basePath, string profile, out Blob? shaderBlob, out string? error)
         {

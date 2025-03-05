@@ -6,6 +6,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.IO.Binary.Metadata;
     using HexaEngine.Core.Logging;
@@ -442,7 +443,7 @@
                     if (ImGui.Button("Apply"))
                     {
                         ResourceManager.Shared.BeginNoGCRegion();
-                        ResourceManager.Shared.UpdateMaterial<Model>(material);
+                        ResourceManager.Shared.UpdateMaterial(material);
                         ResourceManager.Shared.EndNoGCRegion();
                     }
                     var code = material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceKey).Value ?? string.Empty;
@@ -752,7 +753,7 @@
             }
 
             ResourceManager.Shared.BeginNoGCRegion();
-            ResourceManager.Shared.UpdateMaterial<Model>(material);
+            ResourceManager.Shared.UpdateMaterial(material);
             ResourceManager.Shared.EndNoGCRegion();
 
             semaphore.Release();

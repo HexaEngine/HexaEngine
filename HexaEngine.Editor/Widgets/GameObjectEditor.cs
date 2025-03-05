@@ -338,7 +338,7 @@
                 var flags = (int)transform.Flags;
                 var oldFlags = flags;
 
-                if (ImGui.SmallButton(transform.LockPosition ? "\xE72E##LockPosition"u8 : "\xE785##LockPosition"u8))
+                if (ImGui.SmallButton(transform.LockPosition ? "\xf023##LockPosition"u8 : "\xf3c1##LockPosition"u8))
                 {
                     if (!transform.LockPosition)
                     {
@@ -355,19 +355,19 @@
 
                 if (ImGui.BeginPopupContextItem("##LockPosition"u8))
                 {
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-X Position"u8, ref flags, (int)TransformFlags.LockPositionX))
+                    if (ImGuiP.CheckboxFlags("\xf023 Axis-X Position"u8, ref flags, (int)TransformFlags.LockPositionX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Y Position"u8, ref flags, (int)TransformFlags.LockPositionY))
+                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Y Position"u8, ref flags, (int)TransformFlags.LockPositionY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Z Position"u8, ref flags, (int)TransformFlags.LockPositionZ))
+                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Z Position"u8, ref flags, (int)TransformFlags.LockPositionZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
@@ -394,7 +394,7 @@
                 ImGui.Text("Rotation"u8);
                 ImGui.TableSetColumnIndex(1);
 
-                if (ImGui.SmallButton(transform.LockRotation ? "\xE72E##LockRotation"u8 : "\xE785##LockRotation"u8))
+                if (ImGui.SmallButton(transform.LockRotation ? "\xf023##LockRotation"u8 : "\xf3c1##LockRotation"u8))
                 {
                     if (!transform.LockRotation)
                     {
@@ -411,19 +411,19 @@
 
                 if (ImGui.BeginPopupContextItem("##LockRotation"u8))
                 {
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-X Rotation", ref flags, (int)TransformFlags.LockRotationX))
+                    if (ImGuiP.CheckboxFlags("\xf023 Axis-X Rotation", ref flags, (int)TransformFlags.LockRotationX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Y Rotation"u8, ref flags, (int)TransformFlags.LockRotationY))
+                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Y Rotation"u8, ref flags, (int)TransformFlags.LockRotationY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Z Rotation"u8, ref flags, (int)TransformFlags.LockRotationZ))
+                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Z Rotation"u8, ref flags, (int)TransformFlags.LockRotationZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
@@ -449,7 +449,7 @@
                 ImGui.Text("Scale"u8);
                 ImGui.TableSetColumnIndex(1);
 
-                if (ImGui.SmallButton(transform.LockScale ? "\xE72E##LockScale"u8 : "\xE785##LockScale"u8))
+                if (ImGui.SmallButton(transform.LockScale ? "\xf023##LockScale"u8 : "\xf3c1##LockScale"u8))
                 {
                     if (!transform.LockScale)
                     {
@@ -466,19 +466,19 @@
 
                 if (ImGui.BeginPopupContextItem("##LockScale"u8))
                 {
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-X Scale"u8, ref flags, (int)TransformFlags.LockScaleX))
+                    if (ImGuiP.CheckboxFlags("\xf023 Axis-X Scale"u8, ref flags, (int)TransformFlags.LockScaleX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Y Scale"u8, ref flags, (int)TransformFlags.LockScaleY))
+                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Y Scale"u8, ref flags, (int)TransformFlags.LockScaleY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xE72E Axis-Z Scale"u8, ref flags, (int)TransformFlags.LockScaleZ))
+                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Z Scale"u8, ref flags, (int)TransformFlags.LockScaleZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
@@ -505,7 +505,7 @@
 
                 ImGui.SameLine();
 
-                if (ImGui.SmallButton(transform.UniformScale ? "\xF19F##UniformScale"u8 : "\xF19E##UniformScale"u8))
+                if (ImGui.SmallButton(transform.UniformScale ? "\xf205##UniformScale"u8 : "\xf204##UniformScale"u8))
                 {
                     if (!transform.UniformScale)
                     {

@@ -8,6 +8,9 @@
     /// </summary>
     public interface IPrimitive : IDisposable
     {
+        uint VertexCount { get; }
+        uint IndexCount { get; }
+
         /// <summary>
         /// Draws the primitive automatically using the specified graphics context and graphics pipeline.
         /// </summary>

@@ -2,18 +2,31 @@
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.IO;
     using System.Numerics;
+
+    public struct TetrahedronDesc
+    {
+        public float Size = 1;
+
+        public TetrahedronDesc()
+        {
+        }
+
+        public TetrahedronDesc(float size)
+        {
+            Size = size;
+        }
+    }
 
     /// <summary>
     /// Represents a 3D tetrahedron primitive.
     /// </summary>
-    public sealed class Tetrahedron : Primitive<MeshVertex, uint>
+    public sealed class Tetrahedron : Primitive<TetrahedronDesc, uint>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Tetrahedron"/> class.
         /// </summary>
-        public Tetrahedron() : base()
+        public Tetrahedron(TetrahedronDesc desc) : base(desc)
         {
         }
 
@@ -21,9 +34,9 @@
         /// Initializes the tetrahedron mesh by creating vertex and index buffers.
         /// </summary>
         /// <returns>A tuple containing the vertex buffer and an optional index buffer.</returns>
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh()
+        protected override (VertexBuffer<PrimVertex>, IndexBuffer<uint>?) InitializeMesh(TetrahedronDesc desc)
         {
-            CreateTetrahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
+            CreateTetrahedron(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, desc.Size);
             return (vertexBuffer, indexBuffer);
         }
 
@@ -49,9 +62,9 @@
         /// <param name="vertexBuffer">The vertex buffer of the tetrahedron.</param>
         /// <param name="indexBuffer">The index buffer of the tetrahedron.</param>
         /// <param name="size">The size of the tetrahedron.</param>
-        public static void CreateTetrahedron(out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
+        public static void CreateTetrahedron(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float size = 1)
         {
-            MeshVertex[] vertices = new MeshVertex[4 * 3];
+            PrimVertex[] vertices = new PrimVertex[4 * 3];
             uint[] indices = new uint[4 * 3];
 
             uint vcounter = 0;
@@ -88,7 +101,7 @@
                 vcounter += 3;
             }
 
-            vertexBuffer = new VertexBuffer<MeshVertex>(vertices, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<PrimVertex>(vertices, CpuAccessFlags.None);
             indexBuffer = new IndexBuffer<uint>(indices, CpuAccessFlags.None);
         }
     }

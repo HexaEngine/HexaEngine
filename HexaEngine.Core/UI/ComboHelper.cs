@@ -155,33 +155,15 @@
             bool changed = false;
             if (isOpen)
             {
+                changed |= DrawAssetRefSelectable(ref assetRef, Artifact.Empty);
                 foreach (var asset in ArtifactDatabase.GetArtifactsFromType(type))
                 {
-                    bool isSelected = assetRef.Guid == asset.Guid;
-                    if (ImGui.Selectable(asset.DisplayName, isSelected))
-                    {
-                        assetRef.Guid = asset.Guid;
-                        changed = true;
-                    }
-
-                    if (isSelected)
-                    {
-                        ImGui.SetItemDefaultFocus();
-                    }
-
-                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayShort) && ImGui.BeginTooltip())
-                    {
-                        SourceAssetMetadata? sourceAssetMetadata = asset?.GetSourceMetadata();
-                        ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
-                        ImGui.TextUnformatted($"{asset?.Name} -> {sourceAssetMetadata?.FilePath}");
-                        ImGui.PopTextWrapPos();
-                        ImGui.EndTooltip();
-                    }
+                    changed |= DrawAssetRefSelectable(ref assetRef, asset);
                 }
 
                 ImGui.EndCombo();
             }
-            else if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayShort) && ImGui.BeginTooltip())
+            else if (assetRef.Guid != Guid.Empty && ImGui.IsItemHovered(ImGuiHoveredFlags.DelayShort) && ImGui.BeginTooltip())
             {
                 SourceAssetMetadata? sourceAssetMetadata = meta?.GetSourceMetadata();
                 ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
@@ -190,6 +172,32 @@
                 ImGui.EndTooltip();
             }
 
+            return changed;
+        }
+
+        public static unsafe bool DrawAssetRefSelectable(ref AssetRef assetRef, Artifact asset)
+        {
+            bool changed = false;
+            bool isSelected = assetRef.Guid == asset.Guid;
+            if (ImGui.Selectable(asset.DisplayName, isSelected))
+            {
+                assetRef.Guid = asset.Guid;
+                changed = true;
+            }
+
+            if (isSelected)
+            {
+                ImGui.SetItemDefaultFocus();
+            }
+
+            if (asset.Guid != Guid.Empty && ImGui.IsItemHovered(ImGuiHoveredFlags.DelayShort) && ImGui.BeginTooltip())
+            {
+                SourceAssetMetadata? sourceAssetMetadata = asset?.GetSourceMetadata();
+                ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
+                ImGui.TextUnformatted($"{asset?.Name} -> {sourceAssetMetadata?.FilePath}");
+                ImGui.PopTextWrapPos();
+                ImGui.EndTooltip();
+            }
             return changed;
         }
     }

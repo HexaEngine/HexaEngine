@@ -9,7 +9,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.RigidBody")]
     [EditorCategory("Physics")]
-    [EditorComponent<RigidBody>("Rigid Body")]
+    [EditorComponent<RigidBody>("Rigid Body", Icon = "\xf192")]
     public unsafe class RigidBody : Actor, IRigidBodyComponent
     {
         protected PxRigidActor* actor;

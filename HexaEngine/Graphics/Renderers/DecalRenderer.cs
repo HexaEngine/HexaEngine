@@ -33,7 +33,7 @@
 
         public DecalRenderer(IGraphicsDevice device)
         {
-            cube = new Cube();
+            cube = new Cube(new());
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "deferred/decal/vs.hlsl",

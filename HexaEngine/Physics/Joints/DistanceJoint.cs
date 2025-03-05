@@ -9,7 +9,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.DistanceJoint")]
     [EditorCategory("Joints", "Physics")]
-    [EditorComponent<DistanceJoint>("Distance Joint")]
+    [EditorComponent<DistanceJoint>("Distance Joint", Icon = "\xf0c1")]
     public sealed unsafe class DistanceJoint : Joint
     {
         private PxDistanceJoint* joint;

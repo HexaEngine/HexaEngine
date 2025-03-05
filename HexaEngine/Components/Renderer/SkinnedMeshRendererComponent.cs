@@ -17,7 +17,7 @@
     using System.Numerics;
 
     [EditorCategory("Renderer")]
-    [EditorComponent(typeof(SkinnedMeshRendererComponent), "Skinned Mesh Renderer")]
+    [EditorComponent(typeof(SkinnedMeshRendererComponent), "Skinned Mesh Renderer", Icon = "\xf5ee")]
     public class SkinnedMeshRendererComponent : BaseDrawableComponent
     {
         private AssetRef modelAsset;

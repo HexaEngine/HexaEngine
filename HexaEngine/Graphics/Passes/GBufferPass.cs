@@ -28,8 +28,8 @@
             var viewport = creator.Viewport;
             gbuffer = creator.CreateGBuffer("GBuffer", new((int)viewport.Width, (int)viewport.Height, 4,
                 Format.R16G16B16A16Float,   // BaseColor(RGB)   Material ID(A)
-                Format.R16G16B16A16UNorm,   // Normal(XYZ)      Roughness(W)
-                Format.R8G8B8A8UNorm,       // Metallic         Reflectance             AO      Material Data
+                Format.R16G16B16A16Float,   // Normal(XYZ)      Roughness(W)
+                Format.R16G16B16A16Float,   // Metallic         Reflectance             AO      Material Data
                 Format.R8G8B8A8UNorm        // Emission(XYZ)    Emission Strength(W)
                 ));
             lightBuffer = creator.GetTexture2D("LightBuffer");

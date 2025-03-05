@@ -23,6 +23,8 @@
             flags = ArtifactFlags.None;
         }
 
+        public static readonly Artifact Empty = new("", Guid.Empty, Guid.Empty, Guid.Empty, AssetType.Unknown);
+
         [JsonIgnore]
         public string DisplayName { get; private set; }
 

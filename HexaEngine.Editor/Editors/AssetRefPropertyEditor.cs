@@ -4,6 +4,7 @@
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.Properties;
     using System.Reflection;
 
@@ -36,6 +37,20 @@
             if (changed)
             {
                 value = val;
+            }
+
+            if (assetType == AssetType.Material)
+            {
+                ImGui.SameLine();
+
+                if (ImGui.SmallButton($"\xf304{guiName.Id}"))
+                {
+                    if (WindowManager.TryGetWindow<MaterialEditorWindow>(out var materialEditor))
+                    {
+                        materialEditor.Material = val;
+                        materialEditor.Focus();
+                    }
+                }
             }
 
             return changed;

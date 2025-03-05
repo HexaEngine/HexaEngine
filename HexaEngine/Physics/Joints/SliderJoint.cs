@@ -9,7 +9,7 @@
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.SliderJoint")]
     [EditorCategory("Joints", "Physics")]
-    [EditorComponent<SliderJoint>("Slider Joint")]
+    [EditorComponent<SliderJoint>("Slider Joint", Icon = "\xf0c1")]
     public sealed unsafe class SliderJoint : Joint
     {
         private PxPrismaticJoint* joint;

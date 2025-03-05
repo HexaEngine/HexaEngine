@@ -282,7 +282,7 @@
             loaded = true;
         }
 
-        private static void Setup(MeshData mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags, out ShaderMacro[] macros, out ShaderMacro[] shadowMacros, out MaterialFlags matflags, out bool custom, out bool twoSided, out bool alphaTest, out bool blendFunc, out bool tessellation)
+        private static void Setup(VertexFlags vertexFlags, MaterialData material, bool debone, out ModelMaterialShaderFlags flags, out ShaderMacro[] macros, out ShaderMacro[] shadowMacros, out MaterialFlags matflags, out bool custom, out bool twoSided, out bool alphaTest, out bool blendFunc, out bool tessellation)
         {
             flags = ModelMaterialShaderFlags.Deferred | ModelMaterialShaderFlags.Shadow | ModelMaterialShaderFlags.Bake;
             macros = [];
@@ -298,7 +298,7 @@
                 flags |= ModelMaterialShaderFlags.DepthAlways;
             }
 
-            if (debone! && (mesh.Flags & VertexFlags.Skinned) != 0)
+            if (debone! && (vertexFlags & VertexFlags.Skinned) != 0)
             {
                 flags &= ~ModelMaterialShaderFlags.Bake;
                 macros = [.. macros, new ShaderMacro("VtxSkinned", "1")];
@@ -367,9 +367,9 @@
         private const string MetadataSurfaceVersionKey = "MatSurface.Version";
         private const string MetadataSurfaceKey = "MatSurface.Data";
 
-        private static List<MaterialShaderPassDesc> GetMaterialShaderPasses(MeshData mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags)
+        private static List<MaterialShaderPassDesc> GetMaterialShaderPasses(VertexFlags vertexFlags, MaterialData material, bool debone, out ModelMaterialShaderFlags flags)
         {
-            Setup(mesh, material, debone, out flags, out ShaderMacro[] macros, out ShaderMacro[] shadowMacros, out MaterialFlags matflags, out bool custom, out bool twoSided, out bool alphaTest, out bool blendFunc, out bool tessellation);
+            Setup(vertexFlags, material, debone, out flags, out ShaderMacro[] macros, out ShaderMacro[] shadowMacros, out MaterialFlags matflags, out bool custom, out bool twoSided, out bool alphaTest, out bool blendFunc, out bool tessellation);
 
             bool hasSurfaceShader = true;
             hasSurfaceShader &= material.Metadata.TryGet<MetadataStringEntry>(MetadataSurfaceVersionKey, out var surfaceVersion);
@@ -565,8 +565,14 @@
 
         public static MaterialShaderDesc GetMaterialShaderDesc(Mesh mesh, MaterialData material, bool debone, out ModelMaterialShaderFlags flags)
         {
-            List<MaterialShaderPassDesc> passes = GetMaterialShaderPasses((MeshData)mesh.Data, material, debone, out flags);
+            List<MaterialShaderPassDesc> passes = GetMaterialShaderPasses(((MeshData)mesh.Data).Flags, material, debone, out flags);
             return new(material, mesh.Data.GetShaderMacros(), mesh.InputElements, [.. passes]);
+        }
+
+        public static MaterialShaderDesc GetMaterialShaderDesc(VertexFlags vertexFlags, ShaderMacro[] macros, InputElementDescription[] inputElements, MaterialData material, bool debone, out ModelMaterialShaderFlags flags)
+        {
+            List<MaterialShaderPassDesc> passes = GetMaterialShaderPasses(vertexFlags, material, debone, out flags);
+            return new(material, macros, inputElements, [.. passes]);
         }
 
         public void Unload()

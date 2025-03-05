@@ -43,7 +43,7 @@ namespace HexaEngine.Graphics.Filters
 
         public EquiRectangularToCubeFilter(IGraphicsDevice device)
         {
-            cube = new();
+            cube = new(new());
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "filter/equirectangularToCube/vs.hlsl",

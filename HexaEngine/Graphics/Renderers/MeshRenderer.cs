@@ -41,8 +41,9 @@
 
         public override void Prepare(Model instance)
         {
-            foreach (Material material in instance.Materials)
+            for (int i = 0; i < instance.Materials.Length; i++)
             {
+                Material material = instance.Materials[i];
                 Prepare(material);
             }
         }
@@ -54,8 +55,9 @@
                 return;
             }
 
-            foreach (var pass in material.Shader.Passes)
+            for (int i = 0; i < material.Shader.Passes.Count; i++)
             {
+                MaterialShaderPass pass = material.Shader.Passes[i];
                 var bindings = pass.Bindings;
                 bindings.SetCBV("offsetBuffer", offsetBuffer);
                 if (pass.Name == "Deferred" || pass.Name == "Forward")
