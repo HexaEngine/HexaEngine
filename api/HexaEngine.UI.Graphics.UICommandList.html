@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class UICommandList </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class UICommandList ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_UI_Graphics_UICommandList.md&amp;value=---%0Auid%3A%20HexaEngine.UI.Graphics.UICommandList%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.UI.Graphics.UICommandList">
+
+
+
+  <h1 id="HexaEngine_UI_Graphics_UICommandList" data-uid="HexaEngine.UI.Graphics.UICommandList" class="text-break">
+Class UICommandList  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L232"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.UI.html">UI</a>.<a class="xref" href="HexaEngine.UI.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class UICommandList</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">UICommandList</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_DrawArc_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_System_Single_System_Single_HexaEngine_UI_Graphics_Brush_System_Single_System_UInt32_">DrawHelper.DrawArc(UICommandList, Vector2, Vector2, float, float, Brush, float, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_DrawEllipse_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_HexaEngine_UI_Graphics_Brush_System_Single_System_UInt32_">DrawHelper.DrawEllipse(UICommandList, Vector2, Vector2, Brush, float, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_DrawLine_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_HexaEngine_UI_Graphics_Brush_System_Single_System_UInt32_">DrawHelper.DrawLine(UICommandList, Vector2, Vector2, Brush, float, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_DrawPath_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2__System_Int32_HexaEngine_UI_Graphics_Brush_System_Single_System_UInt32_System_Boolean_">DrawHelper.DrawPath(UICommandList, Vector2*, int, Brush, float, uint, bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_DrawRect_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_HexaEngine_UI_Graphics_Brush_System_Single_System_UInt32_">DrawHelper.DrawRect(UICommandList, Vector2, Vector2, Brush, float, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_DrawRect_HexaEngine_UI_Graphics_UICommandList_System_Single_System_Single_System_Single_System_Single_HexaEngine_UI_Graphics_Brush_System_Single_System_UInt32_">DrawHelper.DrawRect(UICommandList, float, float, float, float, Brush, float, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_DrawRoundedRect_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_HexaEngine_UI_Graphics_Brush_System_Single_System_UInt32_">DrawHelper.DrawRoundedRect(UICommandList, Vector2, Vector2, Vector2, Brush, float, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_DrawRoundedRect_HexaEngine_UI_Graphics_UICommandList_System_Single_System_Single_System_Single_System_Single_System_Numerics_Vector2_HexaEngine_UI_Graphics_Brush_System_Single_System_UInt32_">DrawHelper.DrawRoundedRect(UICommandList, float, float, float, float, Vector2, Brush, float, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillArc_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_System_Single_System_Single_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillArc(UICommandList, Vector2, Vector2, float, float, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillConvexPath_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2__System_Int32_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillConvexPath(UICommandList, Vector2*, int, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillEllipse_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillEllipse(UICommandList, Vector2, Vector2, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillRect_HexaEngine_UI_Graphics_UICommandList_Hexa_NET_Mathematics_RectangleF_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillRect(UICommandList, RectangleF, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillRect_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillRect(UICommandList, Vector2, Vector2, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillRect_HexaEngine_UI_Graphics_UICommandList_System_Single_System_Single_System_Single_System_Single_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillRect(UICommandList, float, float, float, float, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillRoundedRect_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_HexaEngine_UI_CornerRadius_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillRoundedRect(UICommandList, Vector2, Vector2, CornerRadius, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillRoundedRect_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillRoundedRect(UICommandList, Vector2, Vector2, Vector2, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillRoundedRect_HexaEngine_UI_Graphics_UICommandList_System_Single_System_Single_System_Single_System_Single_HexaEngine_UI_CornerRadius_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillRoundedRect(UICommandList, float, float, float, float, CornerRadius, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_FillRoundedRect_HexaEngine_UI_Graphics_UICommandList_System_Single_System_Single_System_Single_System_Single_System_Numerics_Vector2_HexaEngine_UI_Graphics_Brush_System_UInt32_">DrawHelper.FillRoundedRect(UICommandList, float, float, float, float, Vector2, Brush, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_PrimQuad_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_System_UInt32_">DrawHelper.PrimQuad(UICommandList, Vector2, Vector2, Vector2, Vector2, Vector2, Vector2, Vector2, Vector2, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_PrimRect_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_System_Numerics_Vector2_System_UInt32_">DrawHelper.PrimRect(UICommandList, Vector2, Vector2, Vector2, Vector2, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.UI.Graphics.DrawHelper.html#HexaEngine_UI_Graphics_DrawHelper_PrimRect_HexaEngine_UI_Graphics_UICommandList_System_Numerics_Vector2_System_Numerics_Vector2_System_UInt32_">DrawHelper.PrimRect(UICommandList, Vector2, Vector2, uint)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList__ctor_" data-uid="HexaEngine.UI.Graphics.UICommandList.#ctor*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList__ctor" data-uid="HexaEngine.UI.Graphics.UICommandList.#ctor">
+  UICommandList()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L253"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public UICommandList()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_ClipRect_" data-uid="HexaEngine.UI.Graphics.UICommandList.ClipRect*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_ClipRect" data-uid="HexaEngine.UI.Graphics.UICommandList.ClipRect">
+  ClipRect
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L281"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ClipRectangle ClipRect { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.ClipRectangle.html">ClipRectangle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_CmdBuffer_" data-uid="HexaEngine.UI.Graphics.UICommandList.CmdBuffer*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_CmdBuffer" data-uid="HexaEngine.UI.Graphics.UICommandList.CmdBuffer">
+  CmdBuffer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L265"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;UIDrawCommand&gt; CmdBuffer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.UI.Graphics.UIDrawCommand.html">UIDrawCommand</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_IdxBuffer_" data-uid="HexaEngine.UI.Graphics.UICommandList.IdxBuffer*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_IdxBuffer" data-uid="HexaEngine.UI.Graphics.UICommandList.IdxBuffer">
+  IdxBuffer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L263"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public UnsafeList&lt;uint&gt; IdxBuffer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">UnsafeList</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_IdxWritePtr_" data-uid="HexaEngine.UI.Graphics.UICommandList.IdxWritePtr*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_IdxWritePtr" data-uid="HexaEngine.UI.Graphics.UICommandList.IdxWritePtr">
+  IdxWritePtr
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L269"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint* IdxWritePtr { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_TotalIdxCount_" data-uid="HexaEngine.UI.Graphics.UICommandList.TotalIdxCount*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_TotalIdxCount" data-uid="HexaEngine.UI.Graphics.UICommandList.TotalIdxCount">
+  TotalIdxCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L259"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int TotalIdxCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_TotalVtxCount_" data-uid="HexaEngine.UI.Graphics.UICommandList.TotalVtxCount*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_TotalVtxCount" data-uid="HexaEngine.UI.Graphics.UICommandList.TotalVtxCount">
+  TotalVtxCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L257"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int TotalVtxCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_Transform_" data-uid="HexaEngine.UI.Graphics.UICommandList.Transform*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_Transform" data-uid="HexaEngine.UI.Graphics.UICommandList.Transform">
+  Transform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L271"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix3x2 Transform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix3x2">Matrix3x2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_VtxBuffer_" data-uid="HexaEngine.UI.Graphics.UICommandList.VtxBuffer*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_VtxBuffer" data-uid="HexaEngine.UI.Graphics.UICommandList.VtxBuffer">
+  VtxBuffer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L261"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public UnsafeList&lt;UIVertex&gt; VtxBuffer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">UnsafeList</span>&lt;<a class="xref" href="HexaEngine.UI.Graphics.UIVertex.html">UIVertex</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_VtxWritePtr_" data-uid="HexaEngine.UI.Graphics.UICommandList.VtxWritePtr*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_VtxWritePtr" data-uid="HexaEngine.UI.Graphics.UICommandList.VtxWritePtr">
+  VtxWritePtr
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L267"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public UIVertex* VtxWritePtr { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.UIVertex.html">UIVertex</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_ZIndex_" data-uid="HexaEngine.UI.Graphics.UICommandList.ZIndex*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_ZIndex" data-uid="HexaEngine.UI.Graphics.UICommandList.ZIndex">
+  ZIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L283"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ZIndex { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_AddFace_" data-uid="HexaEngine.UI.Graphics.UICommandList.AddFace*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_AddFace_System_Int32_System_Int32_System_Int32_" data-uid="HexaEngine.UI.Graphics.UICommandList.AddFace(System.Int32,System.Int32,System.Int32)">
+  AddFace(int, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L332"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddFace(int i0, int i1, int i2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>i0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>i1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>i2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_AddFace_" data-uid="HexaEngine.UI.Graphics.UICommandList.AddFace*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_AddFace_System_UInt32_System_UInt32_System_UInt32_" data-uid="HexaEngine.UI.Graphics.UICommandList.AddFace(System.UInt32,System.UInt32,System.UInt32)">
+  AddFace(uint, uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L324"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddFace(uint i0, uint i1, uint i2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>i0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>i1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>i2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_AddIndex_" data-uid="HexaEngine.UI.Graphics.UICommandList.AddIndex*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_AddIndex_System_UInt32_" data-uid="HexaEngine.UI.Graphics.UICommandList.AddIndex(System.UInt32)">
+  AddIndex(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L318"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddIndex(uint index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_AddVertex_" data-uid="HexaEngine.UI.Graphics.UICommandList.AddVertex*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_AddVertex_HexaEngine_UI_Graphics_UIVertex_" data-uid="HexaEngine.UI.Graphics.UICommandList.AddVertex(HexaEngine.UI.Graphics.UIVertex)">
+  AddVertex(UIVertex)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L310"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint AddVertex(UIVertex vertex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertex</code> <a class="xref" href="HexaEngine.UI.Graphics.UIVertex.html">UIVertex</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_BeginDraw_" data-uid="HexaEngine.UI.Graphics.UICommandList.BeginDraw*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_BeginDraw" data-uid="HexaEngine.UI.Graphics.UICommandList.BeginDraw">
+  BeginDraw()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L422"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void BeginDraw()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_Dispose_" data-uid="HexaEngine.UI.Graphics.UICommandList.Dispose*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_Dispose" data-uid="HexaEngine.UI.Graphics.UICommandList.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L474"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_EndDraw_" data-uid="HexaEngine.UI.Graphics.UICommandList.EndDraw*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_EndDraw" data-uid="HexaEngine.UI.Graphics.UICommandList.EndDraw">
+  EndDraw()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L434"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EndDraw()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_ExecuteCommandList_" data-uid="HexaEngine.UI.Graphics.UICommandList.ExecuteCommandList*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_ExecuteCommandList_HexaEngine_UI_Graphics_UICommandList_" data-uid="HexaEngine.UI.Graphics.UICommandList.ExecuteCommandList(HexaEngine.UI.Graphics.UICommandList)">
+  ExecuteCommandList(UICommandList)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L394"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ExecuteCommandList(UICommandList commandList)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandList</code> <a class="xref" href="HexaEngine.UI.Graphics.UICommandList.html">UICommandList</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_PopClipRect_" data-uid="HexaEngine.UI.Graphics.UICommandList.PopClipRect*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_PopClipRect" data-uid="HexaEngine.UI.Graphics.UICommandList.PopClipRect">
+  PopClipRect()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L291"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PopClipRect()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_PopTransform_" data-uid="HexaEngine.UI.Graphics.UICommandList.PopTransform*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_PopTransform" data-uid="HexaEngine.UI.Graphics.UICommandList.PopTransform">
+  PopTransform()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L303"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PopTransform()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_PrimReserve_" data-uid="HexaEngine.UI.Graphics.UICommandList.PrimReserve*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_PrimReserve_System_Int32_System_Int32_" data-uid="HexaEngine.UI.Graphics.UICommandList.PrimReserve(System.Int32,System.Int32)">
+  PrimReserve(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L364"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PrimReserve(int idxCount, int vtxCount)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>idxCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>vtxCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_PushClipRect_" data-uid="HexaEngine.UI.Graphics.UICommandList.PushClipRect*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_PushClipRect_HexaEngine_UI_Graphics_ClipRectangle_" data-uid="HexaEngine.UI.Graphics.UICommandList.PushClipRect(HexaEngine.UI.Graphics.ClipRectangle)">
+  PushClipRect(ClipRectangle)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L285"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PushClipRect(ClipRectangle clipRect)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>clipRect</code> <a class="xref" href="HexaEngine.UI.Graphics.ClipRectangle.html">ClipRectangle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_PushTransform_" data-uid="HexaEngine.UI.Graphics.UICommandList.PushTransform*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_PushTransform_System_Numerics_Matrix3x2_" data-uid="HexaEngine.UI.Graphics.UICommandList.PushTransform(System.Numerics.Matrix3x2)">
+  PushTransform(Matrix3x2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L296"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PushTransform(Matrix3x2 transform)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>transform</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix3x2">Matrix3x2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_RecordDraw_" data-uid="HexaEngine.UI.Graphics.UICommandList.RecordDraw*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_RecordDraw_HexaEngine_UI_Graphics_UICommandType_HexaEngine_UI_Graphics_Brush_System_IntPtr_System_IntPtr_" data-uid="HexaEngine.UI.Graphics.UICommandList.RecordDraw(HexaEngine.UI.Graphics.UICommandType,HexaEngine.UI.Graphics.Brush,System.IntPtr,System.IntPtr)">
+  RecordDraw(UICommandType, Brush?, nint, nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L370"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RecordDraw(UICommandType commandType = UICommandType.DrawPrimitive, Brush? brush = null, nint textureId0 = 0, nint textureId1 = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandType</code> <a class="xref" href="HexaEngine.UI.Graphics.UICommandType.html">UICommandType</a></dt>
+    <dd></dd>
+    <dt><code>brush</code> <a class="xref" href="HexaEngine.UI.Graphics.Brush.html">Brush</a></dt>
+    <dd></dd>
+    <dt><code>textureId0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd></dd>
+    <dt><code>textureId1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_Reserve_" data-uid="HexaEngine.UI.Graphics.UICommandList.Reserve*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_Reserve_System_UInt32_System_UInt32_" data-uid="HexaEngine.UI.Graphics.UICommandList.Reserve(System.UInt32,System.UInt32)">
+  Reserve(uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L356"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reserve(uint idxCount, uint vtxCount)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>idxCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>vtxCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_ReserveIndices_" data-uid="HexaEngine.UI.Graphics.UICommandList.ReserveIndices*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_ReserveIndices_System_UInt32_" data-uid="HexaEngine.UI.Graphics.UICommandList.ReserveIndices(System.UInt32)">
+  ReserveIndices(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L348"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint* ReserveIndices(uint count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Graphics_UICommandList_ReserveVertices_" data-uid="HexaEngine.UI.Graphics.UICommandList.ReserveVertices*"></a>
+
+  <h3 id="HexaEngine_UI_Graphics_UICommandList_ReserveVertices_System_UInt32_" data-uid="HexaEngine.UI.Graphics.UICommandList.ReserveVertices(System.UInt32)">
+  ReserveVertices(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L340"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public UIVertex* ReserveVertices(uint count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Graphics.UIVertex.html">UIVertex</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Graphics/UICommandList.cs/#L232" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

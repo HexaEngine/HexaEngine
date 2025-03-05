@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title> </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content=" ">
+      
+      
+      <link rel="icon" href="favicon.ico">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/blob/main/docfx_project/architechture.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+
+<h4 id="designing-a-robust-multithreaded-architecture-for-game-development">Designing a Robust Multithreaded Architecture for Game Development</h4>
+<p>Multithreading is a powerful tool in game development, allowing for improved performance and responsiveness by utilizing multiple threads of execution. However, designing a robust multithreaded architecture requires careful consideration of thread safety, synchronization, and concurrency management.</p>
+<p>In this article, we'll explore best practices for creating a robust multithreaded architecture specifically tailored to game development, focusing on common pitfalls to avoid and essential principles to follow.</p>
+<h4 id="1-separate-threads-for-scene-update-and-rendering">1. Separate Threads for Scene Update and Rendering</h4>
+<p>In game development, it's common to have two primary threads: the scene update thread and the rendering thread.</p>
+<h3 id="scene-update-thread">Scene Update Thread:</h3>
+<p>This thread is responsible for updating game logic, simulation, and scene data. It should handle tasks such as updating object positions, processing user input, and executing game rules.</p>
+<h3 id="rendering-thread">Rendering Thread:</h3>
+<p>The rendering thread is dedicated to rendering graphics, issuing draw calls, and managing rendering resources. It should handle tasks like updating render data, rendering the scene to the screen, and managing graphics state.</p>
+<h4 id="2-ensure-thread-safe-data-modification">2. Ensure Thread-Safe Data Modification</h4>
+<p>To maintain the integrity of game data and prevent concurrency issues, it's crucial to enforce thread safety when modifying scene and render data.</p>
+<p>Scene Data: Modify scene data exclusively from the scene update thread. Use synchronization mechanisms such as locks or semaphores to prevent concurrent access and modification of scene data, ensuring consistency and avoiding race conditions.</p>
+<p>Render Data: Similarly, modify render data and issue draw calls exclusively from the rendering thread. Avoid modifying render data from the scene update thread without proper synchronization to prevent rendering artifacts and synchronization issues.</p>
+<h4 id="3-utilize-dispatcher-classes-for-synchronization">3. Utilize Dispatcher Classes for Synchronization</h4>
+<p>Dispatcher classes or similar constructs can be invaluable tools for managing thread safety and synchronization in game development.</p>
+<p>Dispatcher Classes: Dispatcher classes facilitate communication and coordination between threads while ensuring proper synchronization. They can help with tasks like queuing actions to be executed on specific threads, handling inter-thread communication, and coordinating resource access.</p>
+<h4 id="conclusion">Conclusion</h4>
+<p>Designing a robust multithreaded architecture for game development requires careful consideration of thread safety, synchronization, and concurrency management. By separating concerns between scene update and rendering threads, enforcing thread-safe data modification, and utilizing tools like dispatcher classes for synchronization, game developers can create scalable and efficient architectures that maximize performance and minimize concurrency-related issues.</p>
+<p>By following these best practices, game developers can create immersive and responsive gaming experiences while leveraging the full potential of multithreading in their games.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/docfx_project/architechture.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

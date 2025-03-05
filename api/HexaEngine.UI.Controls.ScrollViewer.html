@@ -1,0 +1,2284 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ScrollViewer </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ScrollViewer ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_UI_Controls_ScrollViewer.md&amp;value=---%0Auid%3A%20HexaEngine.UI.Controls.ScrollViewer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.UI.Controls.ScrollViewer">
+
+
+
+  <h1 id="HexaEngine_UI_Controls_ScrollViewer" data-uid="HexaEngine.UI.Controls.ScrollViewer" class="text-break">
+Class ScrollViewer  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.UI.html">UI</a>.<a class="xref" href="HexaEngine.UI.Controls.html">Controls</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ScrollViewer : ContentControl, IDependencyElement, IInputElement, IAddChild</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.UI.DispatcherObject.html">DispatcherObject</a></div>
+      <div><a class="xref" href="HexaEngine.UI.DependencyObject.html">DependencyObject</a></div>
+      <div><a class="xref" href="HexaEngine.UI.Visual.html">Visual</a></div>
+      <div><a class="xref" href="HexaEngine.UI.UIElement.html">UIElement</a></div>
+      <div><a class="xref" href="HexaEngine.UI.FrameworkElement.html">FrameworkElement</a></div>
+      <div><a class="xref" href="HexaEngine.UI.Controls.Control.html">Control</a></div>
+      <div><a class="xref" href="HexaEngine.UI.Controls.ContentControl.html">ContentControl</a></div>
+      <div><span class="xref">ScrollViewer</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.UI.IDependencyElement.html">IDependencyElement</a></div>
+      <div><a class="xref" href="HexaEngine.UI.IInputElement.html">IInputElement</a></div>
+      <div><a class="xref" href="HexaEngine.UI.Markup.IAddChild.html">IAddChild</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.ContentControl.html#HexaEngine_UI_Controls_ContentControl_Content">ContentControl.Content</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.ContentControl.html#HexaEngine_UI_Controls_ContentControl_ContentString">ContentControl.ContentString</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.ContentControl.html#HexaEngine_UI_Controls_ContentControl_Initialize">ContentControl.Initialize()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_Format">Control.Format</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_ForegroundProperty">Control.ForegroundProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_Foreground">Control.Foreground</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_BackgroundProperty">Control.BackgroundProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_Background">Control.Background</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_BorderProperty">Control.BorderProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_Border">Control.Border</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_BorderThicknessProperty">Control.BorderThicknessProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_BorderThickness">Control.BorderThickness</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_PaddingProperty">Control.PaddingProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_Padding">Control.Padding</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_MouseDoubleClickEvent">Control.MouseDoubleClickEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_MouseDoubleClick">Control.MouseDoubleClick</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FontFamilyNameProperty">Control.FontFamilyNameProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FontFamilyName">Control.FontFamilyName</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FontStyleProperty">Control.FontStyleProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FontStyle">Control.FontStyle</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FontWeightProperty">Control.FontWeightProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FontWeight">Control.FontWeight</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_IncrementalTabStopProperty">Control.IncrementalTabStopProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_IncrementalTabStop">Control.IncrementalTabStop</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FlowDirectionProperty">Control.FlowDirectionProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FlowDirection">Control.FlowDirection</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_ReadingDirectionProperty">Control.ReadingDirectionProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_ReadingDirection">Control.ReadingDirection</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_WordWrappingProperty">Control.WordWrappingProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_WordWrapping">Control.WordWrapping</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_ParagraphAlignmentProperty">Control.ParagraphAlignmentProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_ParagraphAlignment">Control.ParagraphAlignment</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_TextAlignmentProperty">Control.TextAlignmentProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_TextAlignment">Control.TextAlignment</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FontSizeProperty">Control.FontSizeProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_FontSize">Control.FontSize</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_Render_HexaEngine_UI_Graphics_UICommandList_">Control.Render(UICommandList)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_CreateTextLayout_System_String_System_Single_System_Single_">Control.CreateTextLayout(string, float, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Controls.Control.html#HexaEngine_UI_Controls_Control_OnDoubleClick_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">Control.OnDoubleClick(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ActualWidthProperty">FrameworkElement.ActualWidthProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ActualHeightProperty">FrameworkElement.ActualHeightProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ActualWidth">FrameworkElement.ActualWidth</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ActualHeight">FrameworkElement.ActualHeight</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_DataContextProperty">FrameworkElement.DataContextProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_DataContext">FrameworkElement.DataContext</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_StyleProperty">FrameworkElement.StyleProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_Style">FrameworkElement.Style</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_MeasureCore_System_Numerics_Vector2_">FrameworkElement.MeasureCore(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.FrameworkElement.html#HexaEngine_UI_FrameworkElement_ArrangeCore_Hexa_NET_Mathematics_RectangleF_">FrameworkElement.ArrangeCore(RectangleF)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Initialized">UIElement.Initialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Uninitialized">UIElement.Uninitialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsInitialized">UIElement.IsInitialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_VisibilityProperty">UIElement.VisibilityProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Visibility">UIElement.Visibility</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsEnabledProperty">UIElement.IsEnabledProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsEnabled">UIElement.IsEnabled</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_FocusableProperty">UIElement.FocusableProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Focusable">UIElement.Focusable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_RenderSize">UIElement.RenderSize</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnInitialized">UIElement.OnInitialized()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnUninitialized">UIElement.OnUninitialized()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_AddToEventRoute_HexaEngine_Core_Windows_Events_EventRoute_">UIElement.AddToEventRoute(EventRoute)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_InitializeComponent">UIElement.InitializeComponent()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_UninitializeComponent">UIElement.UninitializeComponent()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_AddHandler__1_HexaEngine_Core_Windows_Events_RoutedEvent___0__HexaEngine_Core_Windows_Events_RoutedEventHandler___0__">UIElement.AddHandler&lt;T&gt;(RoutedEvent&lt;T&gt;, RoutedEventHandler&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_RemoveHandler__1_HexaEngine_Core_Windows_Events_RoutedEvent___0__HexaEngine_Core_Windows_Events_RoutedEventHandler___0__">UIElement.RemoveHandler&lt;T&gt;(RoutedEvent&lt;T&gt;, RoutedEventHandler&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_RaiseEvent_HexaEngine_Core_Windows_Events_RoutedEventArgs_">UIElement.RaiseEvent(RoutedEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_RouteEvent_HexaEngine_Core_Windows_Events_RoutedEventArgs_System_Object_">UIElement.RouteEvent(RoutedEventArgs, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TextInputEvent">UIElement.TextInputEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TextInput">UIElement.TextInput</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_KeyUpEvent">UIElement.KeyUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_KeyUp">UIElement.KeyUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_KeyDownEvent">UIElement.KeyDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_KeyDown">UIElement.KeyDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseUpEvent">UIElement.MouseUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseUp">UIElement.MouseUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseDownEvent">UIElement.MouseDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseDown">UIElement.MouseDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeftButtonUpEvent">UIElement.MouseLeftButtonUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeftButtonUp">UIElement.MouseLeftButtonUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseRightButtonDownEvent">UIElement.MouseRightButtonDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseRightButtonDown">UIElement.MouseRightButtonDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseRightButtonUpEvent">UIElement.MouseRightButtonUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseRightButtonUp">UIElement.MouseRightButtonUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeftButtonDownEvent">UIElement.MouseLeftButtonDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeftButtonDown">UIElement.MouseLeftButtonDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseEnterEvent">UIElement.MouseEnterEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseEnter">UIElement.MouseEnter</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeaveEvent">UIElement.MouseLeaveEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseLeave">UIElement.MouseLeave</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseMoveEvent">UIElement.MouseMoveEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseMove">UIElement.MouseMove</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseWheelEvent">UIElement.MouseWheelEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MouseWheel">UIElement.MouseWheel</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_GotFocusEvent">UIElement.GotFocusEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_GotFocus">UIElement.GotFocus</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_LostFocusEvent">UIElement.LostFocusEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_LostFocus">UIElement.LostFocus</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchEnterEvent">UIElement.TouchEnterEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchEnter">UIElement.TouchEnter</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchLeaveEvent">UIElement.TouchLeaveEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchLeave">UIElement.TouchLeave</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchMoveEvent">UIElement.TouchMoveEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchMove">UIElement.TouchMove</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchDownEvent">UIElement.TouchDownEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchDown">UIElement.TouchDown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchUpEvent">UIElement.TouchUpEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_TouchUp">UIElement.TouchUp</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Focused">UIElement.Focused</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Captured">UIElement.Captured</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsKeyboardFocused">UIElement.IsKeyboardFocused</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsMouseCaptured">UIElement.IsMouseCaptured</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_IsMouseOver">UIElement.IsMouseOver</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnGotFocus_HexaEngine_Core_Windows_Events_FocusGainedEventArgs_">UIElement.OnGotFocus(FocusGainedEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnLostFocus_HexaEngine_Core_Windows_Events_FocusLostEventArgs_">UIElement.OnLostFocus(FocusLostEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTextInput_HexaEngine_Core_Input_Events_TextInputEventArgs_">UIElement.OnTextInput(TextInputEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnKeyDown_HexaEngine_Core_Input_Events_KeyboardEventArgs_">UIElement.OnKeyDown(KeyboardEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnKeyUp_HexaEngine_Core_Input_Events_KeyboardEventArgs_">UIElement.OnKeyUp(KeyboardEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseLeftButtonDown_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseLeftButtonDown(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseLeftButtonUp_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseLeftButtonUp(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseRightButtonDown_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseRightButtonDown(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseRightButtonUp_HexaEngine_Core_Input_Events_MouseButtonEventArgs_">UIElement.OnMouseRightButtonUp(MouseButtonEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseEnter_HexaEngine_Core_Input_Events_MouseEventArgs_">UIElement.OnMouseEnter(MouseEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnMouseLeave_HexaEngine_Core_Input_Events_MouseEventArgs_">UIElement.OnMouseLeave(MouseEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchEnter_HexaEngine_Core_Input_Events_TouchEventArgs_">UIElement.OnTouchEnter(TouchEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchLeave_HexaEngine_Core_Input_Events_TouchEventArgs_">UIElement.OnTouchLeave(TouchEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchMove_HexaEngine_Core_Input_Events_TouchMoveEventArgs_">UIElement.OnTouchMove(TouchMoveEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchDown_HexaEngine_Core_Input_Events_TouchEventArgs_">UIElement.OnTouchDown(TouchEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_OnTouchUp_HexaEngine_Core_Input_Events_TouchEventArgs_">UIElement.OnTouchUp(TouchEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Focus">UIElement.Focus()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_HorizontalAlignmentProperty">UIElement.HorizontalAlignmentProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_HorizontalAlignment">UIElement.HorizontalAlignment</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_VerticalAlignmentProperty">UIElement.VerticalAlignmentProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_VerticalAlignment">UIElement.VerticalAlignment</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MarginProperty">UIElement.MarginProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Margin">UIElement.Margin</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_WidthProperty">UIElement.WidthProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Width">UIElement.Width</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_HeightProperty">UIElement.HeightProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Height">UIElement.Height</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MinWidthProperty">UIElement.MinWidthProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MinWidth">UIElement.MinWidth</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MinHeightProperty">UIElement.MinHeightProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MinHeight">UIElement.MinHeight</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MaxWidthProperty">UIElement.MaxWidthProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MaxWidth">UIElement.MaxWidth</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MaxHeightProperty">UIElement.MaxHeightProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_MaxHeight">UIElement.MaxHeight</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_DesiredSize">UIElement.DesiredSize</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_InvalidateArrange">UIElement.InvalidateArrange()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_InvalidateMeasure">UIElement.InvalidateMeasure()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_InvalidateVisual">UIElement.InvalidateVisual()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Measure_System_Numerics_Vector2_">UIElement.Measure(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.UIElement.html#HexaEngine_UI_UIElement_Arrange_Hexa_NET_Mathematics_RectangleF_">UIElement.Arrange(RectangleF)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualParent">Visual.VisualParent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualChildren">Visual.VisualChildren</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_DependencyObjectType">Visual.DependencyObjectType</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_BaseOffset">Visual.BaseOffset</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_ContentOffset">Visual.ContentOffset</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualOffset">Visual.VisualOffset</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_BoundingBox">Visual.BoundingBox</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_InnerContentBounds">Visual.InnerContentBounds</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualClip">Visual.VisualClip</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_PointFromScreen_System_Numerics_Vector2_">Visual.PointFromScreen(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_PointToScreen_System_Numerics_Vector2_">Visual.PointToScreen(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_AddVisualChild_HexaEngine_UI_Visual_">Visual.AddVisualChild(Visual)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_RemoveVisualChild_HexaEngine_UI_Visual_">Visual.RemoveVisualChild(Visual)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_IsDescendantOf_HexaEngine_UI_DependencyObject_">Visual.IsDescendantOf(DependencyObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_IsAncestorOf_HexaEngine_UI_DependencyObject_">Visual.IsAncestorOf(DependencyObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_FindCommonVisualAncestor_HexaEngine_UI_DependencyObject_">Visual.FindCommonVisualAncestor(DependencyObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_Name">DependencyObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_Parent">DependencyObject.Parent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_FindFirstObject__1">DependencyObject.FindFirstObject&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_ResolveObject__1">DependencyObject.ResolveObject&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_ResolveObject_System_String_">DependencyObject.ResolveObject(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_OnPropertyChanged_HexaEngine_UI_DependencyPropertyChangedEventArgs_">DependencyObject.OnPropertyChanged(DependencyPropertyChangedEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_GetValue_HexaEngine_UI_DependencyProperty_">DependencyObject.GetValue(DependencyProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_SetValue_HexaEngine_UI_DependencyProperty_System_Object_">DependencyObject.SetValue(DependencyProperty, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_GetValue__1_HexaEngine_UI_DependencyProperty___0__">DependencyObject.GetValue&lt;TType&gt;(DependencyProperty&lt;TType&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_SetValue__1_HexaEngine_UI_DependencyProperty___0____0_">DependencyObject.SetValue&lt;TType&gt;(DependencyProperty&lt;TType&gt;, TType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_ClearValue_HexaEngine_UI_DependencyProperty_">DependencyObject.ClearValue(DependencyProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_CoerceValue_HexaEngine_UI_DependencyProperty_">DependencyObject.CoerceValue(DependencyProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DispatcherObject.html#HexaEngine_UI_DispatcherObject_Dispatcher">DispatcherObject.Dispatcher</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_CanContentScrollProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.CanContentScrollProperty">
+  CanContentScrollProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;bool&gt; CanContentScrollProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ComputedHorizontalScrollBarVisibilityProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ComputedHorizontalScrollBarVisibilityProperty">
+  ComputedHorizontalScrollBarVisibilityProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;Visibility&gt; ComputedHorizontalScrollBarVisibilityProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="HexaEngine.UI.Visibility.html">Visibility</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ComputedVerticalScrollBarVisibilityProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ComputedVerticalScrollBarVisibilityProperty">
+  ComputedVerticalScrollBarVisibilityProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;Visibility&gt; ComputedVerticalScrollBarVisibilityProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="HexaEngine.UI.Visibility.html">Visibility</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ContentHorizontalOffsetProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ContentHorizontalOffsetProperty">
+  ContentHorizontalOffsetProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; ContentHorizontalOffsetProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ContentVerticalOffsetProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ContentVerticalOffsetProperty">
+  ContentVerticalOffsetProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; ContentVerticalOffsetProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ExtentHeightProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ExtentHeightProperty">
+  ExtentHeightProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; ExtentHeightProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ExtentWidthProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ExtentWidthProperty">
+  ExtentWidthProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; ExtentWidthProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_HorizontalOffsetProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.HorizontalOffsetProperty">
+  HorizontalOffsetProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; HorizontalOffsetProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_HorizontalScrollBarVisibilityProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.HorizontalScrollBarVisibilityProperty">
+  HorizontalScrollBarVisibilityProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;ScrollBarVisibility&gt; HorizontalScrollBarVisibilityProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="HexaEngine.UI.Controls.ScrollBarVisibility.html">ScrollBarVisibility</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_IsDeferredScrollingEnabledProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.IsDeferredScrollingEnabledProperty">
+  IsDeferredScrollingEnabledProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;bool&gt; IsDeferredScrollingEnabledProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_IsSmoothScrollingEnabledProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.IsSmoothScrollingEnabledProperty">
+  IsSmoothScrollingEnabledProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;bool&gt; IsSmoothScrollingEnabledProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_PanningDecelerationProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.PanningDecelerationProperty">
+  PanningDecelerationProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; PanningDecelerationProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_PanningModeProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.PanningModeProperty">
+  PanningModeProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;PanningMode&gt; PanningModeProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="HexaEngine.UI.Controls.PanningMode.html">PanningMode</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_PanningRatioProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.PanningRatioProperty">
+  PanningRatioProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; PanningRatioProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ScrollChangedEvent" data-uid="HexaEngine.UI.Controls.ScrollViewer.ScrollChangedEvent">
+  ScrollChangedEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;ScrollChangedEventArgs&gt; ScrollChangedEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.UI.Controls.ScrollChangedEventArgs.html">ScrollChangedEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ScrollableHeightProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ScrollableHeightProperty">
+  ScrollableHeightProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; ScrollableHeightProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ScrollableWidthProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ScrollableWidthProperty">
+  ScrollableWidthProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; ScrollableWidthProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_VerticalOffsetProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.VerticalOffsetProperty">
+  VerticalOffsetProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; VerticalOffsetProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_VerticalScrollBarVisibilityProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.VerticalScrollBarVisibilityProperty">
+  VerticalScrollBarVisibilityProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;ScrollBarVisibility&gt; VerticalScrollBarVisibilityProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="HexaEngine.UI.Controls.ScrollBarVisibility.html">ScrollBarVisibility</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ViewportHeightProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ViewportHeightProperty">
+  ViewportHeightProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; ViewportHeightProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ViewportWidthProperty" data-uid="HexaEngine.UI.Controls.ScrollViewer.ViewportWidthProperty">
+  ViewportWidthProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; ViewportWidthProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_CanContentScroll_" data-uid="HexaEngine.UI.Controls.ScrollViewer.CanContentScroll*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_CanContentScroll" data-uid="HexaEngine.UI.Controls.ScrollViewer.CanContentScroll">
+  CanContentScroll
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool CanContentScroll { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ComputedHorizontalScrollBarVisibility_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ComputedHorizontalScrollBarVisibility*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ComputedHorizontalScrollBarVisibility" data-uid="HexaEngine.UI.Controls.ScrollViewer.ComputedHorizontalScrollBarVisibility">
+  ComputedHorizontalScrollBarVisibility
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Visibility ComputedHorizontalScrollBarVisibility { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Visibility.html">Visibility</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ComputedVerticalScrollBarVisibility_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ComputedVerticalScrollBarVisibility*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ComputedVerticalScrollBarVisibility" data-uid="HexaEngine.UI.Controls.ScrollViewer.ComputedVerticalScrollBarVisibility">
+  ComputedVerticalScrollBarVisibility
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Visibility ComputedVerticalScrollBarVisibility { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Visibility.html">Visibility</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ContentHorizontalOffset_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ContentHorizontalOffset*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ContentHorizontalOffset" data-uid="HexaEngine.UI.Controls.ScrollViewer.ContentHorizontalOffset">
+  ContentHorizontalOffset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ContentHorizontalOffset { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ContentVerticalOffset_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ContentVerticalOffset*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ContentVerticalOffset" data-uid="HexaEngine.UI.Controls.ScrollViewer.ContentVerticalOffset">
+  ContentVerticalOffset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ContentVerticalOffset { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ExtentHeight_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ExtentHeight*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ExtentHeight" data-uid="HexaEngine.UI.Controls.ScrollViewer.ExtentHeight">
+  ExtentHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ExtentHeight { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ExtentWidth_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ExtentWidth*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ExtentWidth" data-uid="HexaEngine.UI.Controls.ScrollViewer.ExtentWidth">
+  ExtentWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ExtentWidth { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_HorizontalOffset_" data-uid="HexaEngine.UI.Controls.ScrollViewer.HorizontalOffset*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_HorizontalOffset" data-uid="HexaEngine.UI.Controls.ScrollViewer.HorizontalOffset">
+  HorizontalOffset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float HorizontalOffset { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_HorizontalScrollBarVisibility_" data-uid="HexaEngine.UI.Controls.ScrollViewer.HorizontalScrollBarVisibility*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_HorizontalScrollBarVisibility" data-uid="HexaEngine.UI.Controls.ScrollViewer.HorizontalScrollBarVisibility">
+  HorizontalScrollBarVisibility
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScrollBarVisibility HorizontalScrollBarVisibility { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Controls.ScrollBarVisibility.html">ScrollBarVisibility</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_IsDeferredScrollingEnabled_" data-uid="HexaEngine.UI.Controls.ScrollViewer.IsDeferredScrollingEnabled*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_IsDeferredScrollingEnabled" data-uid="HexaEngine.UI.Controls.ScrollViewer.IsDeferredScrollingEnabled">
+  IsDeferredScrollingEnabled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsDeferredScrollingEnabled { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_IsSmoothScrollingEnabled_" data-uid="HexaEngine.UI.Controls.ScrollViewer.IsSmoothScrollingEnabled*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_IsSmoothScrollingEnabled" data-uid="HexaEngine.UI.Controls.ScrollViewer.IsSmoothScrollingEnabled">
+  IsSmoothScrollingEnabled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsSmoothScrollingEnabled { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_PanningDeceleration_" data-uid="HexaEngine.UI.Controls.ScrollViewer.PanningDeceleration*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_PanningDeceleration" data-uid="HexaEngine.UI.Controls.ScrollViewer.PanningDeceleration">
+  PanningDeceleration
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float PanningDeceleration { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_PanningMode_" data-uid="HexaEngine.UI.Controls.ScrollViewer.PanningMode*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_PanningMode" data-uid="HexaEngine.UI.Controls.ScrollViewer.PanningMode">
+  PanningMode
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PanningMode PanningMode { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Controls.PanningMode.html">PanningMode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_PanningRatio_" data-uid="HexaEngine.UI.Controls.ScrollViewer.PanningRatio*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_PanningRatio" data-uid="HexaEngine.UI.Controls.ScrollViewer.PanningRatio">
+  PanningRatio
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float PanningRatio { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ScrollableHeight_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ScrollableHeight*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ScrollableHeight" data-uid="HexaEngine.UI.Controls.ScrollViewer.ScrollableHeight">
+  ScrollableHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ScrollableHeight { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ScrollableWidth_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ScrollableWidth*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ScrollableWidth" data-uid="HexaEngine.UI.Controls.ScrollViewer.ScrollableWidth">
+  ScrollableWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ScrollableWidth { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_VerticalOffset_" data-uid="HexaEngine.UI.Controls.ScrollViewer.VerticalOffset*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_VerticalOffset" data-uid="HexaEngine.UI.Controls.ScrollViewer.VerticalOffset">
+  VerticalOffset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float VerticalOffset { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_VerticalScrollBarVisibility_" data-uid="HexaEngine.UI.Controls.ScrollViewer.VerticalScrollBarVisibility*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_VerticalScrollBarVisibility" data-uid="HexaEngine.UI.Controls.ScrollViewer.VerticalScrollBarVisibility">
+  VerticalScrollBarVisibility
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScrollBarVisibility VerticalScrollBarVisibility { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Controls.ScrollBarVisibility.html">ScrollBarVisibility</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ViewportHeight_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ViewportHeight*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ViewportHeight" data-uid="HexaEngine.UI.Controls.ScrollViewer.ViewportHeight">
+  ViewportHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ViewportHeight { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ViewportWidth_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ViewportWidth*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ViewportWidth" data-uid="HexaEngine.UI.Controls.ScrollViewer.ViewportWidth">
+  ViewportWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ViewportWidth { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_ArrangeOverwrite_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ArrangeOverwrite*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ArrangeOverwrite_System_Numerics_Vector2_" data-uid="HexaEngine.UI.Controls.ScrollViewer.ArrangeOverwrite(System.Numerics.Vector2)">
+  ArrangeOverwrite(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Vector2 ArrangeOverwrite(Vector2 size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_IsMouseOverThumb_" data-uid="HexaEngine.UI.Controls.ScrollViewer.IsMouseOverThumb*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_IsMouseOverThumb" data-uid="HexaEngine.UI.Controls.ScrollViewer.IsMouseOverThumb">
+  IsMouseOverThumb()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void IsMouseOverThumb()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_MeasureOverride_" data-uid="HexaEngine.UI.Controls.ScrollViewer.MeasureOverride*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_MeasureOverride_System_Numerics_Vector2_" data-uid="HexaEngine.UI.Controls.ScrollViewer.MeasureOverride(System.Numerics.Vector2)">
+  MeasureOverride(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Vector2 MeasureOverride(Vector2 availableSize)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>availableSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_OnMouseDown_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnMouseDown*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_OnMouseDown_HexaEngine_Core_Input_Events_MouseButtonEventArgs_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnMouseDown(HexaEngine.Core.Input.Events.MouseButtonEventArgs)">
+  OnMouseDown(MouseButtonEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnMouseDown(MouseButtonEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_OnMouseMove_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnMouseMove*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_OnMouseMove_HexaEngine_Core_Input_Events_MouseMoveEventArgs_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnMouseMove(HexaEngine.Core.Input.Events.MouseMoveEventArgs)">
+  OnMouseMove(MouseMoveEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnMouseMove(MouseMoveEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseMoveEventArgs.html">MouseMoveEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_OnMouseUp_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnMouseUp*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_OnMouseUp_HexaEngine_Core_Input_Events_MouseButtonEventArgs_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnMouseUp(HexaEngine.Core.Input.Events.MouseButtonEventArgs)">
+  OnMouseUp(MouseButtonEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnMouseUp(MouseButtonEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_OnMouseWheel_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnMouseWheel*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_OnMouseWheel_HexaEngine_Core_Input_Events_MouseWheelEventArgs_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnMouseWheel(HexaEngine.Core.Input.Events.MouseWheelEventArgs)">
+  OnMouseWheel(MouseWheelEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnMouseWheel(MouseWheelEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseWheelEventArgs.html">MouseWheelEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_Controls_ScrollViewer_OnRender_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnRender*"></a>
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_OnRender_HexaEngine_UI_Graphics_UICommandList_" data-uid="HexaEngine.UI.Controls.ScrollViewer.OnRender(HexaEngine.UI.Graphics.UICommandList)">
+  OnRender(UICommandList)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnRender(UICommandList commandList)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandList</code> <a class="xref" href="HexaEngine.UI.Graphics.UICommandList.html">UICommandList</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_UI_Controls_ScrollViewer_ScrollChanged" data-uid="HexaEngine.UI.Controls.ScrollViewer.ScrollChanged">
+  ScrollChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;ScrollChangedEventArgs&gt; ScrollChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.UI.Controls.ScrollChangedEventArgs.html">ScrollChangedEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/Controls/ScrollViewer.cs/#L9" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

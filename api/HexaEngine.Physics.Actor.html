@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Actor </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Actor ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Physics_Actor.md&amp;value=---%0Auid%3A%20HexaEngine.Physics.Actor%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Physics.Actor">
+
+
+
+  <h1 id="HexaEngine_Physics_Actor" data-uid="HexaEngine.Physics.Actor" class="text-break">
+Class Actor  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Physics.html">Physics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OldName(&quot;HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null&quot;, &quot;HexaEngine.Components.Physics.Actor&quot;)]
+public abstract class Actor : Component, INotifyPropertyChanged, INotifyPropertyChanging, IActorComponent, IComponent</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html">EntityNotifyBase</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.Component.html">Component</a></div>
+      <div><span class="xref">Actor</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanging">INotifyPropertyChanging</a></div>
+      <div><a class="xref" href="HexaEngine.Physics.IActorComponent.html">IActorComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.IComponent.html">IComponent</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Physics.RigidBody.html">RigidBody</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.Component.html#HexaEngine_Scenes_Component_Guid">Component.Guid</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.Component.html#HexaEngine_Scenes_Component_GameObject">Component.GameObject</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.Component.html#HexaEngine_Scenes_Component_IsSerializable">Component.IsSerializable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanging">EntityNotifyBase.PropertyChanging</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanged">EntityNotifyBase.PropertyChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanging_System_String_">EntityNotifyBase.OnPropertyChanging(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanged_System_String_">EntityNotifyBase.OnPropertyChanged(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotify__1___0____0_System_String_">EntityNotifyBase.SetAndNotify&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithRefEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithRefEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Physics_Actor_isUpdating" data-uid="HexaEngine.Physics.Actor.isUpdating">
+  isUpdating
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool isUpdating</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Physics_Actor_scene" data-uid="HexaEngine.Physics.Actor.scene">
+  scene
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected PxScene* scene</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">PxScene</span>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Physics_Actor_type" data-uid="HexaEngine.Physics.Actor.type">
+  type
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected ActorType type</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Physics.ActorType.html">ActorType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Physics_Actor_DisableGravity_" data-uid="HexaEngine.Physics.Actor.DisableGravity*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_DisableGravity" data-uid="HexaEngine.Physics.Actor.DisableGravity">
+  DisableGravity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Disable Gravity&quot;, EditorPropertyMode.Default)]
+public bool DisableGravity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_DominanceGroup_" data-uid="HexaEngine.Physics.Actor.DominanceGroup*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_DominanceGroup" data-uid="HexaEngine.Physics.Actor.DominanceGroup">
+  DominanceGroup
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Dominance Group&quot;, EditorPropertyMode.Default)]
+public byte DominanceGroup { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_Flags_" data-uid="HexaEngine.Physics.Actor.Flags*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_Flags" data-uid="HexaEngine.Physics.Actor.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public ActorFlags Flags { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Physics.ActorFlags.html">ActorFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_SendSleepNotifies_" data-uid="HexaEngine.Physics.Actor.SendSleepNotifies*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_SendSleepNotifies" data-uid="HexaEngine.Physics.Actor.SendSleepNotifies">
+  SendSleepNotifies
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Send Sleep Notifies&quot;, EditorPropertyMode.Default)]
+public bool SendSleepNotifies { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_Type_" data-uid="HexaEngine.Physics.Actor.Type*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_Type" data-uid="HexaEngine.Physics.Actor.Type">
+  Type
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty&lt;ActorType&gt;(&quot;Type&quot;)]
+public ActorType Type { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Physics.ActorType.html">ActorType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Physics_Actor_Awake_" data-uid="HexaEngine.Physics.Actor.Awake*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_Awake" data-uid="HexaEngine.Physics.Actor.Awake">
+  Awake()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override sealed void Awake()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_AwakeCore_" data-uid="HexaEngine.Physics.Actor.AwakeCore*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_AwakeCore" data-uid="HexaEngine.Physics.Actor.AwakeCore">
+  AwakeCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L206"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void AwakeCore()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_BeginUpdate_" data-uid="HexaEngine.Physics.Actor.BeginUpdate*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_BeginUpdate" data-uid="HexaEngine.Physics.Actor.BeginUpdate">
+  BeginUpdate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L185"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void BeginUpdate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_CreateActor_" data-uid="HexaEngine.Physics.Actor.CreateActor*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_CreateActor_MagicPhysX_PxPhysics__MagicPhysX_PxScene__" data-uid="HexaEngine.Physics.Actor.CreateActor(MagicPhysX.PxPhysics*,MagicPhysX.PxScene*)">
+  CreateActor(PxPhysics*, PxScene*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract PxActor* CreateActor(PxPhysics* physics, PxScene* scene)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>physics</code> <span class="xref">PxPhysics</span>*</dt>
+    <dd></dd>
+    <dt><code>scene</code> <span class="xref">PxScene</span>*</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">PxActor</span>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_Destroy_" data-uid="HexaEngine.Physics.Actor.Destroy*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_Destroy" data-uid="HexaEngine.Physics.Actor.Destroy">
+  Destroy()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override sealed void Destroy()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_DestroyActor_" data-uid="HexaEngine.Physics.Actor.DestroyActor*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_DestroyActor" data-uid="HexaEngine.Physics.Actor.DestroyActor">
+  DestroyActor()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void DestroyActor()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_DestroyCore_" data-uid="HexaEngine.Physics.Actor.DestroyCore*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_DestroyCore" data-uid="HexaEngine.Physics.Actor.DestroyCore">
+  DestroyCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L217"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void DestroyCore()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_EndUpdate_" data-uid="HexaEngine.Physics.Actor.EndUpdate*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_EndUpdate" data-uid="HexaEngine.Physics.Actor.EndUpdate">
+  EndUpdate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void EndUpdate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_GetWorldBounds_" data-uid="HexaEngine.Physics.Actor.GetWorldBounds*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_GetWorldBounds_System_Single_" data-uid="HexaEngine.Physics.Actor.GetWorldBounds(System.Single)">
+  GetWorldBounds(float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L240"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox GetWorldBounds(float inflation = 1.01)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inflation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">BoundingBox</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_IsDynamic_" data-uid="HexaEngine.Physics.Actor.IsDynamic*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_IsDynamic_HexaEngine_Physics_RigidBody_" data-uid="HexaEngine.Physics.Actor.IsDynamic(HexaEngine.Physics.RigidBody)">
+  IsDynamic(RigidBody)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected static bool IsDynamic(RigidBody rigidBody)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rigidBody</code> <a class="xref" href="HexaEngine.Physics.RigidBody.html">RigidBody</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_IsStatic_" data-uid="HexaEngine.Physics.Actor.IsStatic*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_IsStatic_HexaEngine_Physics_RigidBody_" data-uid="HexaEngine.Physics.Actor.IsStatic(HexaEngine.Physics.RigidBody)">
+  IsStatic(RigidBody)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected static bool IsStatic(RigidBody rigidBody)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rigidBody</code> <a class="xref" href="HexaEngine.Physics.RigidBody.html">RigidBody</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_Actor_NotifyOnRecreate_" data-uid="HexaEngine.Physics.Actor.NotifyOnRecreate*"></a>
+
+  <h3 id="HexaEngine_Physics_Actor_NotifyOnRecreate" data-uid="HexaEngine.Physics.Actor.NotifyOnRecreate">
+  NotifyOnRecreate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void NotifyOnRecreate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Physics_Actor_OnRecreate" data-uid="HexaEngine.Physics.Actor.OnRecreate">
+  OnRecreate
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action&lt;IActorComponent&gt;? OnRecreate</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="HexaEngine.Physics.IActorComponent.html">IActorComponent</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/Actor.cs/#L13" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
