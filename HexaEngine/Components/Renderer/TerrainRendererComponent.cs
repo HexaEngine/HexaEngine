@@ -18,7 +18,7 @@
 
     [EditorCategory("Renderer")]
     [EditorComponent<TerrainRendererComponent>("Terrain Renderer", false, true, Icon = "\xf5ee")]
-    public class TerrainRendererComponent : BaseDrawableComponent, ISelectableRayTest
+    public class TerrainRendererComponent : BaseDrawableComponent, ISelectableHitTest
     {
         private TerrainGrid? terrain;
         private AssetRef terrainAsset;
@@ -240,7 +240,7 @@
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
 
-        public bool SelectRayTest(Ray ray, ref float depth)
+        public override bool SelectRayTest(Ray ray, ref float depth)
         {
             if (terrain == null)
             {

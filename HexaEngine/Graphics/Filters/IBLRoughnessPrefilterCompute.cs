@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Filters
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using System;
@@ -29,8 +30,9 @@
 
         private const int ThreadCount = 32;
 
-        public IBLRoughnessPrefilterCompute(IGraphicsDevice device)
+        public IBLRoughnessPrefilterCompute()
         {
+            var device = Application.GraphicsDevice;
             pipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "filter/prefilter/cs.hlsl",

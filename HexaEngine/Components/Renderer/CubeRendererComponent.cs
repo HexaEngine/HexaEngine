@@ -3,7 +3,6 @@
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Meshes;
     using System.Numerics;
 
     [EditorCategory("Primitives")]

@@ -5,6 +5,11 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class InstantiatorIgnore : Attribute
+    {
+    }
+
     public static class Instantiator
     {
         private static readonly ConcurrentDictionary<Type, CacheEntry> cache = new();
@@ -34,8 +39,8 @@
 
             public CacheEntry([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicConstructors)] Type type)
             {
-                Fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetField | BindingFlags.SetField).Where(x => x.GetCustomAttribute<JsonIgnoreAttribute>() == null).ToArray();
-                Properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty).Where(x => x.GetCustomAttribute<JsonIgnoreAttribute>() == null && x.CanRead).ToArray();
+                Fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetField | BindingFlags.SetField).Where(x => x.GetCustomAttribute<JsonIgnoreAttribute>() == null && x.GetCustomAttribute<InstantiatorIgnore>() == null).ToArray();
+                Properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty).Where(x => x.GetCustomAttribute<JsonIgnoreAttribute>() == null && x.GetCustomAttribute<InstantiatorIgnore>() == null && x.CanRead).ToArray();
             }
 
             public CacheEntry(FieldInfo[] fields, PropertyInfo[] properties)

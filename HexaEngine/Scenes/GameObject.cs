@@ -95,6 +95,7 @@
         /// <value>
         /// The unique identifier.
         /// </value>
+        [InstantiatorIgnore]
         public Guid Guid
         {
             get => guid;

@@ -18,7 +18,7 @@
 
         private IBLDiffuseIrradianceCompute irradiance;
 
-        public MeshBaker2(IGraphicsDevice device)
+        public MeshBaker2()
         {
             Texture = new(Format.R16G16B16A16UNorm, RTWidth, RTWidth, 6, 1, CpuAccessFlags.None, GpuAccessFlags.All, miscFlag: ResourceMiscFlag.TextureCube);
             Texture.CreateArraySlices();
@@ -26,7 +26,7 @@
             TextureFinal = new(Format.R16G16B16A16UNorm, 256, 256, 6, 1, CpuAccessFlags.None, GpuAccessFlags.All, miscFlag: ResourceMiscFlag.TextureCube);
             TextureFinal.CreateArraySlices();
 
-            irradiance = new(device);
+            irradiance = new();
 
             irradiance.Target = TextureFinal;
             irradiance.Source = Texture;

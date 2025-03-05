@@ -43,16 +43,14 @@
 
         internal PxRigidActor* Actor => actor;
 
-        protected override void Awake()
+        protected override void AwakeCore()
         {
-            base.Awake();
             GameObject.Transform.FlagsChanged += GameObjectTransformFlagsChanged;
         }
 
-        protected override void Destroy()
+        protected override void DestroyCore()
         {
             GameObject.Transform.FlagsChanged -= GameObjectTransformFlagsChanged;
-            base.Destroy();
         }
 
         private void GameObjectTransformFlagsChanged(Transform transform, TransformFlags flags)

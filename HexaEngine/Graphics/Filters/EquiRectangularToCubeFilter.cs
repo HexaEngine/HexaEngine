@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Graphics.Filters
 {
+    using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
@@ -22,7 +23,7 @@ namespace HexaEngine.Graphics.Filters
         }
     }
 
-    public class EquiRectangularToCubeFilter : IFilter
+    public class EquiRectangularToCubeFilter
     {
         private Cube cube;
         private IGraphicsPipelineState pipeline;
@@ -30,7 +31,6 @@ namespace HexaEngine.Graphics.Filters
         private ISamplerState sampler;
 
         public IShaderResourceView Source;
-        public RenderTargetViewArray Targets;
 
         public struct CubeFaceCamera
         {
@@ -96,36 +96,18 @@ namespace HexaEngine.Graphics.Filters
             }
         }
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, IRenderTargetView[] rtvs, Viewport viewport)
         {
-            if (Targets == null)
-            {
-                return;
-            }
-
             for (int i = 0; i < 6; i++)
             {
+                var rtv = rtvs[i];
                 context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
                 pipeline.Bindings.SetSRV("cubemap", Source);
-                Targets.ClearAndSetTarget(context, i);
-                context.SetViewport(Targets.Viewport);
+                context.ClearRenderTargetView(rtv, default);
+                context.SetRenderTarget(rtv, null);
+                context.SetViewport(viewport);
                 cube.DrawAuto(context, pipeline);
             }
-        }
-
-        public void DrawSlice(IGraphicsContext context, int i, int x, int y, int xsize, int ysize)
-        {
-            if (Targets == null)
-            {
-                return;
-            }
-
-            context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
-            context.SetScissorRect(x, y, xsize + x, ysize + y);
-            Targets.SetTarget(context, i);
-            context.SetViewport(Targets.Viewport);
-            pipeline.Bindings.SetSRV("cubemap", Source);
-            cube.DrawAuto(context, pipeline);
         }
 
         protected virtual void Dispose(bool disposing)

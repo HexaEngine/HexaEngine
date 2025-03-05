@@ -36,6 +36,8 @@
 
         public bool CompletedSynchronously => state == JobState.CompletedSynchronously;
 
+        public static readonly Job JobCompleted = Run(() => { }, JobPriority.Highest, JobFlags.None);
+
         public Job(string? name, Action action, JobPriority priority, JobFlags flags)
         {
             Name = name;

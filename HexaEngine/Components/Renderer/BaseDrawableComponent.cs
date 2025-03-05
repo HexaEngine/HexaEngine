@@ -6,20 +6,12 @@
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
 
-    public abstract class BaseDrawableComponent : EntityNotifyBase, IDrawable
+    public abstract class BaseDrawableComponent : Component, IDrawable, ISelectableHitTest
     {
         private volatile bool loaded = false;
         private uint queueIndex = (uint)RenderQueueIndex.Geometry;
-
-        /// <summary>
-        /// The GUID of the <see cref="BaseDrawableComponent"/>.
-        /// </summary>
-        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
-        public Guid Guid { get; set; } = Guid.NewGuid();
-
-        [JsonIgnore]
-        public bool IsSerializable { get; } = true;
 
         [JsonIgnore]
         public uint QueueIndex
@@ -69,12 +61,12 @@
 
         protected abstract void UnloadCore();
 
-        public void Awake()
+        public override void Awake()
         {
             DebugName = GameObject.Name + DebugName;
         }
 
-        public void Destroy()
+        public override void Destroy()
         {
         }
 
@@ -181,6 +173,17 @@
                     DrawDepth(context);
                     break;
             }
+        }
+
+        public virtual bool SelectRayTest(Ray ray, ref float depth)
+        {
+            var result = BoundingBox.Intersects(ray);
+            if (result == null)
+            {
+                return false;
+            }
+            depth = result.Value;
+            return true;
         }
     }
 }

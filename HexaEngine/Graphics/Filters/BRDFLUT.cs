@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Graphics.Filters
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
 
     public class BRDFLUT
@@ -11,8 +12,9 @@ namespace HexaEngine.Graphics.Filters
         public IRenderTargetView Target;
         private bool disposedValue;
 
-        public BRDFLUT(IGraphicsDevice device, bool multiscatter, bool cloth)
+        public BRDFLUT(bool multiscatter, bool cloth)
         {
+            var device = Application.GraphicsDevice;
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",

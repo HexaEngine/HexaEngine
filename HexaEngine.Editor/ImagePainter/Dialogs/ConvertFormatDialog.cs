@@ -10,13 +10,11 @@
     public class ConvertFormatDialog : Modal
     {
         private readonly ImagePainterWindow imagePainter;
-        private readonly IGraphicsDevice device;
         private Format format;
 
-        public ConvertFormatDialog(ImagePainterWindow imagePainter, IGraphicsDevice device)
+        public ConvertFormatDialog(ImagePainterWindow imagePainter)
         {
             this.imagePainter = imagePainter;
-            this.device = device;
         }
 
         public override string Name => "Convert Format";
@@ -53,7 +51,7 @@
                     return;
                 }
 
-                var image = imagePainter.Source.ToScratchImage(device);
+                var image = imagePainter.Source.ToScratchImage();
 
                 var converted = image.Convert(format, TexFilterFlags.Default);
 

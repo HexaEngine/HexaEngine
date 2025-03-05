@@ -782,8 +782,6 @@
                         {
                             ((SdlWindow)mainWindow).ProcessDropFile(even);
                         }
-
-                        SDL.Free(evnt.Drop.Data);
                     }
                     break;
 
@@ -794,8 +792,6 @@
                         {
                             ((SdlWindow)mainWindow).ProcessDropText(even);
                         }
-
-                        SDL.Free(evnt.Drop.Data);
                     }
                     break;
 

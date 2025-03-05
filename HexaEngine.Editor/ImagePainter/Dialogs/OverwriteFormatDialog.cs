@@ -9,13 +9,11 @@
     public class OverwriteFormatDialog : Modal
     {
         private readonly ImagePainterWindow imagePainter;
-        private readonly IGraphicsDevice device;
         private Format format;
 
-        public OverwriteFormatDialog(ImagePainterWindow imagePainter, IGraphicsDevice device)
+        public OverwriteFormatDialog(ImagePainterWindow imagePainter)
         {
             this.imagePainter = imagePainter;
-            this.device = device;
         }
 
         public override string Name => "Overwrite Format";
@@ -53,7 +51,7 @@
                     return;
                 }
 
-                IScratchImage image = imagePainter.Source.ToScratchImage(device);
+                IScratchImage image = imagePainter.Source.ToScratchImage();
 
                 if (image.OverwriteFormat(format))
                 {

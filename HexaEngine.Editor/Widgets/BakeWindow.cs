@@ -23,7 +23,7 @@
         protected override void InitWindow(IGraphicsDevice device)
         {
             base.InitWindow(device);
-            baker = new(device);
+            baker = new();
         }
 
         public override void DrawContent(IGraphicsContext context)

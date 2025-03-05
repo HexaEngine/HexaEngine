@@ -8,12 +8,10 @@
     public class GenerateMipMapsDialog : Modal
     {
         private readonly ImagePainterWindow imagePainter;
-        private readonly IGraphicsDevice device;
 
-        public GenerateMipMapsDialog(ImagePainterWindow imagePainter, IGraphicsDevice device)
+        public GenerateMipMapsDialog(ImagePainterWindow imagePainter)
         {
             this.imagePainter = imagePainter;
-            this.device = device;
         }
 
         public override string Name => "Generate MipMaps";
@@ -38,7 +36,7 @@
                     return;
                 }
 
-                var image = imagePainter.Source.ToScratchImage(device);
+                var image = imagePainter.Source.ToScratchImage();
 
                 var converted = image.GenerateMipMaps(TexFilterFlags.Default);
 

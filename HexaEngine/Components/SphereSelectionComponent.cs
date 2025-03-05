@@ -6,37 +6,24 @@
     using HexaEngine.Scenes.Managers;
 
     [EditorComponent<SphereSelectionComponent>("Sphere Selection", true, true)]
-    public class SphereSelectionComponent : ISelectableRayTest
+    public class SphereSelectionComponent : Component, ISelectableHitTest
     {
-        private GameObject gameObject = null!;
         private float radius = 0.5f;
 
-        /// <summary>
-        /// The GUID of the <see cref="SphereSelectionComponent"/>.
-        /// </summary>
-        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
-        public Guid Guid { get; set; } = Guid.NewGuid();
-
         [JsonIgnore]
-        public bool IsSerializable { get; }
+        public float HitTestRadius { get => radius; set => radius = value; }
 
-        [JsonIgnore]
-        public GameObject GameObject { get => gameObject; set => gameObject = value; }
-
-        [JsonIgnore]
-        public float Radius { get => radius; set => radius = value; }
-
-        public void Awake()
+        public override void Awake()
         {
         }
 
-        public void Destroy()
+        public override void Destroy()
         {
         }
 
         public bool SelectRayTest(Ray ray, ref float depth)
         {
-            BoundingSphere sphere = new(gameObject.Transform.GlobalPosition, radius);
+            BoundingSphere sphere = new(GameObject.Transform.GlobalPosition, radius);
             var result = sphere.Intersects(ray);
             if (result == null)
             {

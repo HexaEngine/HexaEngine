@@ -18,7 +18,7 @@
 
     [EditorCategory("Particles")]
     [EditorComponent<ParticleSystemComponent>("GPU Particle System", false, false)]
-    public class ParticleSystemComponent : BaseDrawableComponent, ISelectableRayTest
+    public class ParticleSystemComponent : BaseDrawableComponent, ISelectableHitTest
     {
         private GPUParticleSystem renderer = null!;
         private readonly ParticleEmitter emitter = new();

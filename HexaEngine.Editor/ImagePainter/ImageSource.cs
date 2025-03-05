@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using System.Numerics;
@@ -86,8 +87,9 @@
 
         public int ImageCount => textures.Length;
 
-        public unsafe IScratchImage ToScratchImage(IGraphicsDevice device)
+        public unsafe IScratchImage ToScratchImage()
         {
+            var device = Application.GraphicsDevice;
             IScratchImage scratchImage;
 
             if (metadata.IsCubemap())

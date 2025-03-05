@@ -154,7 +154,7 @@
                     {
                         if (source != null)
                         {
-                            exporter.Image = source.ToScratchImage(device);
+                            exporter.Image = source.ToScratchImage();
                             exporter.Show();
                         }
                     }
@@ -204,46 +204,46 @@
                 {
                     if (ImGui.MenuItem("Convert Format"))
                     {
-                        modals.GetOrCreate<ConvertFormatDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<ConvertFormatDialog>(() => new(this)).Show();
                     }
                     if (ImGui.MenuItem("Overwrite Format"))
                     {
-                        modals.GetOrCreate<OverwriteFormatDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<OverwriteFormatDialog>(() => new(this)).Show();
                     }
                     if (ImGui.MenuItem("Resize"))
                     {
-                        modals.GetOrCreate<ResizeDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<ResizeDialog>(() => new(this)).Show();
                     }
 
                     ImGui.Separator();
 
                     if (ImGui.MenuItem("Generate MipMaps"))
                     {
-                        modals.GetOrCreate<GenerateMipMapsDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<GenerateMipMapsDialog>(() => new(this)).Show();
                     }
 
                     ImGui.Separator();
 
                     if (ImGui.MenuItem("Convert to cube"))
                     {
-                        modals.GetOrCreate<ConvertCubeDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<ConvertCubeDialog>(() => new(this)).Show();
                     }
 
                     ImGui.Separator();
 
                     if (ImGui.MenuItem("IBL Diffuse Irradiance"))
                     {
-                        modals.GetOrCreate<DiffuseIrradianceDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<DiffuseIrradianceDialog>(() => new(this)).Show();
                     }
 
                     if (ImGui.MenuItem("IBL Roughness Prefilter"))
                     {
-                        modals.GetOrCreate<RoughnessPrefilterDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<RoughnessPrefilterDialog>(() => new(this)).Show();
                     }
 
                     if (ImGui.MenuItem("IBL LUT Generator"))
                     {
-                        modals.GetOrCreate<IBLBRDFLUTDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<IBLBRDFLUTDialog>(() => new(this)).Show();
                     }
 
                     ImGui.EndMenu();
@@ -424,7 +424,7 @@
             {
                 try
                 {
-                    var image = source.ToScratchImage(device);
+                    var image = source.ToScratchImage();
                     var originalMetadata = source.OriginalMetadata;
                     var metadata = image.Metadata;
 

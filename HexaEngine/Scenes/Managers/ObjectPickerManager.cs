@@ -4,14 +4,14 @@
     using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
 
-    public interface ISelectableRayTest : IComponent
+    public interface ISelectableHitTest : IComponent
     {
         public bool SelectRayTest(Ray ray, ref float depth);
     }
 
     public class ObjectPickerManager : ISceneSystem
     {
-        private readonly ComponentTypeQuery<ISelectableRayTest> pickables = new();
+        private readonly ComponentTypeQuery<ISelectableHitTest> pickables = new();
 
         public string Name { get; } = "Object Picker";
 

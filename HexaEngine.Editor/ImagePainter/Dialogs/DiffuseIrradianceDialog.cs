@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Dialogs
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
@@ -9,17 +10,11 @@
     public class DiffuseIrradianceDialog : Modal
     {
         private readonly ImagePainterWindow imagePainter;
-        private readonly IGraphicsDevice device;
 
         private uint size = 256;
 
-        private ITexture2D? srcTex;
-        private IShaderResourceView? srcSrv;
-        private ITexture2D? dstTex;
-        private IShaderResourceView? dstSrv;
-        private IUnorderedAccessView? dstUav;
-        private RenderTargetViewArray? dstRTVs;
-        private ShaderResourceViewArray? dstSRVs;
+        private Texture2D? srcTex;
+        private Texture2D? dstTex;
 
         private IBLDiffuseIrradianceCompute? diffuseIrradianceCompute;
 
@@ -29,29 +24,17 @@
 
         protected override ImGuiWindowFlags Flags => ImGuiWindowFlags.AlwaysAutoResize;
 
-        public DiffuseIrradianceDialog(ImagePainterWindow imagePainter, IGraphicsDevice device)
+        public DiffuseIrradianceDialog(ImagePainterWindow imagePainter)
         {
             this.imagePainter = imagePainter;
-            this.device = device;
         }
 
         private void Discard()
         {
-            dstRTVs?.Dispose();
-            dstRTVs = null;
-            dstSRVs?.Dispose();
-            dstSRVs = null;
-
             srcTex?.Dispose();
             srcTex = null;
-            srcSrv?.Dispose();
-            srcSrv = null;
             dstTex?.Dispose();
             dstTex = null;
-            dstSrv?.Dispose();
-            dstSrv = null;
-            dstUav?.Dispose();
-            dstUav = null;
 
             diffuseIrradianceCompute?.Dispose();
             diffuseIrradianceCompute = null;
@@ -59,7 +42,7 @@
 
         protected override unsafe void DrawContent()
         {
-            var context = device.Context;
+            var context = Application.GraphicsContext;
             if (compute)
             {
                 ImGui.BeginDisabled(true);
@@ -77,14 +60,13 @@
                     {
                         Discard();
 
-                        diffuseIrradianceCompute = new(device);
+                        diffuseIrradianceCompute = new();
 
-                        var image = imagePainter.Source.ToScratchImage(device);
+                        var image = imagePainter.Source.ToScratchImage();
 
-                        srcTex = image.CreateTexture2D(device, Usage.Default, BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags.None, ResourceMiscFlag.TextureCube | ResourceMiscFlag.GenerateMips);
-                        srcSrv = device.CreateShaderResourceView(srcTex);
-
-                        device.Context.GenerateMips(srcSrv);
+                        srcTex = new(new(Format.R16G16B16A16Float, 1, 1, 6, 0, GpuAccessFlags.RW, miscFlags: ResourceMiscFlag.GenerateMips | ResourceMiscFlag.TextureCube), image);
+                        srcTex.CreateArraySlices();
+                        context.GenerateMips(srcTex.SRV!);
 
                         var desc = srcTex.Description;
                         desc.Width = desc.Height = (int)size;
@@ -92,15 +74,11 @@
                         desc.BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource | BindFlags.UnorderedAccess;
                         desc.MipLevels = 1;
 
-                        dstTex = device.CreateTexture2D(desc);
-                        dstSrv = device.CreateShaderResourceView(dstTex);
-                        dstUav = device.CreateUnorderedAccessView(dstTex, new(dstTex, UnorderedAccessViewDimension.Texture2DArray));
+                        dstTex = new(desc);
+                        dstTex.CreateArraySlices();
 
-                        dstRTVs = new(device, dstTex, 6, new(desc.Width, desc.Height));
-                        dstSRVs = new(device, dstTex, 6);
-
-                        diffuseIrradianceCompute.Target = dstUav;
-                        diffuseIrradianceCompute.Source = srcSrv;
+                        diffuseIrradianceCompute.Target = dstTex.UAV;
+                        diffuseIrradianceCompute.Source = srcTex.SRV;
 
                         compute = true;
                         ImGui.BeginDisabled(true);
@@ -112,14 +90,14 @@
                 }
             }
 
-            if (dstTex != null && dstRTVs != null && dstSRVs != null)
+            if (dstTex != null)
             {
                 ImGui.SameLine();
 
                 if (ImGui.Button("Apply"))
                 {
-                    var loader = device.TextureLoader;
-                    var image = loader.CaptureTexture(device.Context, dstTex);
+                    var loader = Application.GraphicsDevice.TextureLoader;
+                    var image = loader.CaptureTexture(context, dstTex);
                     imagePainter.Load(image);
                     image.Dispose();
                     Discard();
@@ -155,7 +133,7 @@
 
                 for (int i = 0; i < 6; i++)
                 {
-                    ImGui.Image((ulong)dstSRVs.Views[i].NativePointer, new(128, 128));
+                    ImGui.Image((ulong)dstTex.SRVArraySlices![i].NativePointer, new(128, 128));
                     if (i != 5)
                     {
                         ImGui.SameLine();
@@ -170,8 +148,6 @@
                 compute = false;
                 srcTex?.Dispose();
                 srcTex = null;
-                srcSrv?.Dispose();
-                srcSrv = null;
             }
         }
 

@@ -11,7 +11,7 @@
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.CharacterController")]
     [EditorCategory("Physics")]
     [EditorComponent<CharacterController>("Character Controller", Icon = "\xf192")]
-    public sealed unsafe class CharacterController : ICharacterControllerComponent
+    public sealed unsafe class CharacterController : Component, ICharacterControllerComponent
     {
         private PxMaterial* material;
         private CharacterControllerShape shape;
@@ -40,15 +40,6 @@
         private PxRigidDynamic* actor;
         private RigidBody rigidBody = null!;
         private bool isGrounded;
-
-        /// <summary>
-        /// The GUID of the <see cref="CharacterController"/>.
-        /// </summary>
-        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
-        public Guid Guid { get; set; } = Guid.NewGuid();
-
-        [JsonIgnore]
-        public bool IsSerializable { get; } = true;
 
         [EditorProperty<CharacterControllerShape>("Shape")]
         public CharacterControllerShape Shape { get => shape; set => shape = value; }
@@ -254,9 +245,6 @@
         public CapsuleClimbingMode CapsuleClimbingMode { get => capsuleClimbingMode; set => capsuleClimbingMode = value; }
 
         [JsonIgnore]
-        public GameObject GameObject { get; set; } = null!;
-
-        [JsonIgnore]
         public Vector3D Position
         {
             get
@@ -371,11 +359,11 @@
             return controller.shape == CharacterControllerShape.Box;
         }
 
-        void IComponent.Awake()
+        public override void Awake()
         {
         }
 
-        void IComponent.Destroy()
+        public override void Destroy()
         {
         }
 

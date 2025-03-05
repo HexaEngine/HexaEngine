@@ -18,7 +18,7 @@
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer", Icon = "\xf5ee")]
-    public class MeshRendererComponent : BaseDrawableComponent, ILODRendererComponent, ISelectableRayTest
+    public class MeshRendererComponent : BaseDrawableComponent, ILODRendererComponent, ISelectableHitTest
     {
         private Model? model;
         private AssetRef modelAsset;
@@ -200,7 +200,7 @@
             meshRenderer.Bake(context, model);
         }
 
-        public bool SelectRayTest(Ray ray, ref float depth)
+        public override bool SelectRayTest(Ray ray, ref float depth)
         {
             if (model == null)
             {

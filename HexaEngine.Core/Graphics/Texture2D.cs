@@ -409,20 +409,5 @@
         {
             return new(new TextureFileDescription(assetRef.GetPath()!, forceDim));
         }
-
-        /// <summary>
-        /// Asynchronously creates a new instance of the <see cref="Texture2D"/> class using the provided <see cref="TextureFileDescription"/>.
-        /// </summary>
-        /// <param name="description">The <see cref="TextureFileDescription"/> used to create the texture.</param>
-        /// <returns>A task that represents the asynchronous operation and contains the created <see cref="Texture2D"/>.</returns>
-        [Obsolete("For legacy code, don't use.")]
-        public static Task<Texture2D> CreateTextureAsync(TextureFileDescription description)
-        {
-            return Task.Factory.StartNew((object? state) =>
-            {
-                var data = (TextureFileDescription)state!;
-                return new Texture2D(data);
-            }, description);
-        }
     }
 }

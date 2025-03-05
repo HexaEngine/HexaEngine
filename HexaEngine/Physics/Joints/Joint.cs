@@ -10,7 +10,7 @@
     using System.Numerics;
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Joint")]
-    public abstract unsafe class Joint : IJointComponent
+    public abstract unsafe class Joint : Component, IJointComponent
     {
         private PxJoint* joint;
         private byte* name;
@@ -18,17 +18,6 @@
         private bool collisionEnabled;
         private float breakForce = float.PositiveInfinity;
         private float breakTorque = float.PositiveInfinity;
-
-        /// <summary>
-        /// The GUID of the <see cref="Joint"/>.
-        /// </summary>
-        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
-        public Guid Guid { get; set; } = Guid.NewGuid();
-
-        [JsonIgnore]
-        public bool IsSerializable { get; } = true;
-
-        public GameObject GameObject { get; set; } = null!;
 
         public event Action<IJointComponent>? OnRecreate;
 
@@ -135,22 +124,12 @@
             }
         }
 
-        protected virtual void Awake()
+        public override void Awake()
         {
         }
 
-        protected virtual void Destroy()
+        public override void Destroy()
         {
-        }
-
-        void IComponent.Awake()
-        {
-            Awake();
-        }
-
-        void IComponent.Destroy()
-        {
-            Destroy();
         }
 
         private void NotifyOnRecreate()

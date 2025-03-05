@@ -17,7 +17,6 @@
         private readonly ConstantBuffer<RoughnessParams> roughnessBuffer;
         private readonly ISamplerState sampler;
 
-        public RenderTargetViewArray? Targets;
         public IShaderResourceView? Source;
 
         public struct CubeFaceCamera
@@ -91,13 +90,8 @@
             }
         }
 
-        public void Draw(IGraphicsContext context, uint width, uint height)
+        public void Draw(IGraphicsContext context, IRenderTargetView[] rtvs, uint width, uint height)
         {
-            if (Targets == null)
-            {
-                return;
-            }
-
             context.Write(roughnessBuffer, new RoughnessParams() { Roughness = Roughness });
 
             context.SetViewport(new(width, height));
@@ -106,7 +100,7 @@
             for (int i = 0; i < 6; i++)
             {
                 viewBuffer.Update(context, Cameras[i].ViewProjection);
-                Targets.SetTarget(context, i);
+                context.SetRenderTarget(rtvs[i], null);
                 cube.DrawAuto(context, pipeline);
             }
 

@@ -10,7 +10,7 @@
     using System.Numerics;
 
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Collider.ColliderShape")]
-    public abstract unsafe class ColliderShape : IColliderComponent
+    public abstract unsafe class ColliderShape : Component, IColliderComponent
     {
         protected PxMaterial* material;
 
@@ -21,15 +21,6 @@
         private PxTransform localPose;
 
         private readonly List<Pointer<PxShape>> shapes = new();
-
-        /// <summary>
-        /// The GUID of the <see cref="ColliderShape"/>.
-        /// </summary>
-        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
-        public Guid Guid { get; set; } = Guid.NewGuid();
-
-        [JsonIgnore]
-        public bool IsSerializable { get; } = true;
 
         [JsonIgnore]
         internal static readonly ConcurrentNativeToManagedMapper mapper = new();
@@ -50,14 +41,11 @@
         public float Restitution
         { get => restitution; set { restitution = value; } }
 
-        [JsonIgnore]
-        public GameObject GameObject { get; set; } = null!;
-
-        public void Awake()
+        public override void Awake()
         {
         }
 
-        public void Destroy()
+        public override void Destroy()
         {
         }
 

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Dialogs
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.UI;
@@ -11,13 +12,11 @@
     public class ConvertCubeDialog : Modal
     {
         private readonly ImagePainterWindow imagePainter;
-        private readonly IGraphicsDevice device;
         private CubemapType type;
 
-        public ConvertCubeDialog(ImagePainterWindow imagePainter, IGraphicsDevice device)
+        public ConvertCubeDialog(ImagePainterWindow imagePainter)
         {
             this.imagePainter = imagePainter;
-            this.device = device;
         }
 
         public override string Name => "Convert to cube";
@@ -28,7 +27,7 @@
         {
         }
 
-        protected override void DrawContent()
+        protected override unsafe void DrawContent()
         {
             ComboEnumHelper<CubemapType>.Combo("Type", ref type);
             if (ImGui.Button("Cancel"))
@@ -43,10 +42,11 @@
                     return;
                 }
 
-                var image = imagePainter.Source.ToScratchImage(device);
+                var image = imagePainter.Source.ToScratchImage();
                 var meta = image.Metadata;
                 IScratchImage converted;
-
+                var device = Application.GraphicsDevice;
+                var context = device.Context;
                 switch (type)
                 {
                     case CubemapType.Cube:
@@ -60,22 +60,19 @@
 
                     case CubemapType.Panorama:
                         {
-                            var srcTex = image.CreateTexture2D(device, Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, ResourceMiscFlag.None);
-                            var srv = device.CreateShaderResourceView(srcTex);
+                            Texture2D srcTex = new(new Texture2DDescription(Format.R32Float, 1, 1, 1, 1, GpuAccessFlags.Read), image);
 
-                            var dstTex = device.CreateTexture2D(meta.Format, meta.Width / 4, meta.Width / 4, 6, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, misc: ResourceMiscFlag.TextureCube);
-                            var rtv = new RenderTargetViewArray(device, dstTex, 6, new(meta.Width / 4, meta.Width / 4));
+                            Texture2D dstTex = new(new Texture2DDescription(meta.Format, meta.Width / 4, meta.Width / 4, 6, 1, GpuAccessFlags.RW, miscFlags: ResourceMiscFlag.TextureCube), image);
+                            dstTex.CreateArraySlices();
 
                             EquiRectangularToCubeFilter filter = new(device);
-                            filter.Source = srv;
-                            filter.Targets = rtv;
-                            filter.Draw(device.Context);
+                            filter.Source = srcTex.SRV;
+
+                            filter.Draw(device.Context, dstTex.RTVArraySlices!, dstTex.Viewport);
 
                             converted = device.TextureLoader.CaptureTexture(device.Context, dstTex);
                             srcTex.Dispose();
-                            srv.Dispose();
                             dstTex.Dispose();
-                            rtv.Dispose();
                             filter.Dispose();
                             image.Dispose();
                         }

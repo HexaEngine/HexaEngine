@@ -1244,7 +1244,9 @@
                 return;
             }
 
-            ImportFileAsync(e.GetString());
+            var file = e.GetString();
+
+            ImportFileAsync(file);
         }
 
         private void ImportFileAsync(string? file)

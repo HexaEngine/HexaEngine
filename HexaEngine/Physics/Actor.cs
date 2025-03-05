@@ -11,7 +11,7 @@
     // TODO: Constraints.
     // TODO: Dominance Group Editor.
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.Actor")]
-    public abstract unsafe class Actor : IActorComponent
+    public abstract unsafe class Actor : Component, IActorComponent
     {
         protected PxScene* scene;
         private PxActor* actor;
@@ -24,18 +24,6 @@
 
         [JsonIgnore]
         internal static readonly ConcurrentNativeToManagedMapper mapper = new();
-
-        /// <summary>
-        /// The GUID of the <see cref="Actor"/>.
-        /// </summary>
-        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
-        public Guid Guid { get; set; } = Guid.NewGuid();
-
-        [JsonIgnore]
-        public GameObject GameObject { get; set; } = null!;
-
-        [JsonIgnore]
-        public bool IsSerializable { get; } = true;
 
         [EditorProperty<ActorType>("Type")]
         public ActorType Type
@@ -208,26 +196,26 @@
             EndUpdate();
         }
 
-        protected virtual void Awake()
-        {
-        }
-
-        protected virtual void Destroy()
-        {
-        }
-
-        void IComponent.Awake()
+        public override sealed void Awake()
         {
             GameObject.EnabledChanged += OnEnabledChanged;
             GameObject.NameChanged += OnNameChanged;
-            Awake();
+            AwakeCore();
         }
 
-        void IComponent.Destroy()
+        protected virtual void AwakeCore()
+        {
+        }
+
+        public override sealed void Destroy()
         {
             GameObject.EnabledChanged -= OnEnabledChanged;
             GameObject.NameChanged -= OnNameChanged;
-            Destroy();
+            DestroyCore();
+        }
+
+        protected virtual void DestroyCore()
+        {
         }
 
         private void OnEnabledChanged(GameObject gameObject, bool enabled)

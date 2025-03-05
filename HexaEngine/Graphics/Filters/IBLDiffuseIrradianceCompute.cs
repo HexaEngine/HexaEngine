@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Filters
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using System;
 
@@ -19,8 +20,9 @@
 
         private const uint ThreadCount = 32;
 
-        public IBLDiffuseIrradianceCompute(IGraphicsDevice device)
+        public IBLDiffuseIrradianceCompute()
         {
+            var device = Application.GraphicsDevice;
             pipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "filter/irradiance/cs.hlsl"

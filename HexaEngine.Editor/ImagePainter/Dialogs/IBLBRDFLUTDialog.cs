@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Dialogs
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Graphics.Filters;
@@ -8,15 +9,12 @@
     public class IBLBRDFLUTDialog : Modal
     {
         private readonly ImagePainterWindow imagePainter;
-        private readonly IGraphicsDevice device;
 
         private uint size = 512;
         private bool multiscatter = false;
         private bool cloth = true;
 
-        private ITexture2D? dstTex;
-        private IShaderResourceView? dstSrv;
-        private IRenderTargetView? dstRtv;
+        private Texture2D? dstTex;
         private BRDFLUT? brdfLut;
 
         private bool useComputeShader = true;
@@ -26,18 +24,15 @@
 
         protected override ImGuiWindowFlags Flags => ImGuiWindowFlags.AlwaysAutoResize;
 
-        public IBLBRDFLUTDialog(ImagePainterWindow imagePainter, IGraphicsDevice device)
+        public IBLBRDFLUTDialog(ImagePainterWindow imagePainter)
         {
             this.imagePainter = imagePainter;
-            this.device = device;
         }
 
         private void Discard()
         {
             dstTex?.Dispose();
             dstTex = null;
-            dstSrv?.Dispose();
-            dstSrv = null;
 
             brdfLut?.Dispose();
             brdfLut = null;
@@ -45,7 +40,7 @@
 
         protected override unsafe void DrawContent()
         {
-            var context = device.Context;
+            var context = Application.GraphicsContext;
             if (compute)
             {
                 ImGui.BeginDisabled(true);
@@ -65,15 +60,13 @@
                 {
                     Discard();
 
-                    brdfLut = new(device, multiscatter, cloth);
+                    brdfLut = new(multiscatter, cloth);
 
                     Texture2DDescription desc = new(Format.R32G32B32A32Float, (int)size, (int)size, 1, 1, GpuAccessFlags.RW);
 
-                    dstTex = device.CreateTexture2D(desc);
-                    dstSrv = device.CreateShaderResourceView(dstTex);
-                    dstRtv = device.CreateRenderTargetView(dstTex);
+                    dstTex = new(desc);
 
-                    brdfLut.Target = dstRtv;
+                    brdfLut.Target = dstTex.RTV;
 
                     compute = true;
                     ImGui.BeginDisabled(true);
@@ -84,14 +77,14 @@
                 }
             }
 
-            if (dstTex != null && dstRtv != null && dstSrv != null)
+            if (dstTex != null)
             {
                 ImGui.SameLine();
 
                 if (ImGui.Button("Apply"))
                 {
-                    var loader = device.TextureLoader;
-                    var image = loader.CaptureTexture(device.Context, dstTex);
+                    var loader = Application.GraphicsDevice.TextureLoader;
+                    var image = loader.CaptureTexture(context, dstTex);
                     imagePainter.Load(image);
                     image.Dispose();
                     Discard();
@@ -125,7 +118,7 @@
                     ImGui.TextColored(new(0, 1, 0, 1), $"Filtering...");
                 }
 
-                ImGui.Image((ulong)dstSrv.NativePointer, new(128, 128));
+                ImGui.Image((ulong)dstTex.SRV!.NativePointer, new(128, 128));
             }
 
             if (compute)

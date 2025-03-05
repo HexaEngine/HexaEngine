@@ -8,7 +8,7 @@
     using System.Numerics;
 
     [EditorComponent(typeof(Animator), "Animator")]
-    public class Animator : IComponent
+    public class Animator : Component
     {
         private bool playing;
         private bool isDirty = true;
@@ -24,18 +24,6 @@
         private readonly AnimatorStateMachine stateMachine = new();
 
         private SkinnedMeshRendererComponent? renderer;
-
-        /// <summary>
-        /// The GUID of the <see cref="Animator"/>.
-        /// </summary>
-        /// <remarks>DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. (THIS CAN BREAK REFERENCES)</remarks>
-        public Guid Guid { get; set; } = Guid.NewGuid();
-
-        [JsonIgnore]
-        public GameObject GameObject { get; set; } = null!;
-
-        [JsonIgnore]
-        public bool IsSerializable { get; } = true;
 
         [JsonIgnore]
         public AnimatorStateMachine StateMachine => stateMachine;
@@ -222,14 +210,14 @@
             return renderer.GetLocal((uint)nodeId);
         }
 
-        public void Awake()
+        public override void Awake()
         {
             renderer = GameObject.GetComponent<SkinnedMeshRendererComponent>();
             stateMachine.Transition += Transition;
             stateMachine.StateChanged += StateChanged;
         }
 
-        public void Destroy()
+        public override void Destroy()
         {
             Stop();
         }

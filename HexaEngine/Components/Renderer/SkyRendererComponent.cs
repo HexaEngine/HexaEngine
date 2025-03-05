@@ -47,6 +47,7 @@
             set
             {
                 environmentPath = value;
+                if (!Loaded) return;
                 UpdateEnvAsync();
             }
         }
@@ -98,7 +99,6 @@
 
         private Job UpdateEnvAsync()
         {
-            Loaded = false;
             renderer?.Uninitialize();
             var tmpSkybox = skybox;
             skybox = null!;
@@ -118,7 +118,6 @@
                     component.skybox = new();
                     component.skybox.LoadAsync(component.environmentPath).Wait();
                     component.renderer.Initialize(component.skybox);
-                    component.Loaded = true;
                 }
             }, JobPriority.Normal, JobFlags.BlockOnSceneLoad);
         }
