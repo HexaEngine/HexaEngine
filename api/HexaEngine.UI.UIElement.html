@@ -1,0 +1,3690 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class UIElement </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class UIElement ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_UI_UIElement.md&amp;value=---%0Auid%3A%20HexaEngine.UI.UIElement%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.UI.UIElement">
+
+
+
+  <h1 id="HexaEngine_UI_UIElement" data-uid="HexaEngine.UI.UIElement" class="text-break">
+Class UIElement  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L6"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.UI.html">UI</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class UIElement : Visual, IDependencyElement, IInputElement</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.UI.DispatcherObject.html">DispatcherObject</a></div>
+      <div><a class="xref" href="HexaEngine.UI.DependencyObject.html">DependencyObject</a></div>
+      <div><a class="xref" href="HexaEngine.UI.Visual.html">Visual</a></div>
+      <div><span class="xref">UIElement</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.UI.IDependencyElement.html">IDependencyElement</a></div>
+      <div><a class="xref" href="HexaEngine.UI.IInputElement.html">IInputElement</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.UI.FrameworkElement.html">FrameworkElement</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualParent">Visual.VisualParent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualChildren">Visual.VisualChildren</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_DependencyObjectType">Visual.DependencyObjectType</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_BaseOffset">Visual.BaseOffset</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_ContentOffset">Visual.ContentOffset</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualOffset">Visual.VisualOffset</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_BoundingBox">Visual.BoundingBox</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_InnerContentBounds">Visual.InnerContentBounds</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_VisualClip">Visual.VisualClip</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_PointFromScreen_System_Numerics_Vector2_">Visual.PointFromScreen(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_PointToScreen_System_Numerics_Vector2_">Visual.PointToScreen(Vector2)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_AddVisualChild_HexaEngine_UI_Visual_">Visual.AddVisualChild(Visual)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_RemoveVisualChild_HexaEngine_UI_Visual_">Visual.RemoveVisualChild(Visual)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_Render_HexaEngine_UI_Graphics_UICommandList_">Visual.Render(UICommandList)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_OnRender_HexaEngine_UI_Graphics_UICommandList_">Visual.OnRender(UICommandList)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_IsDescendantOf_HexaEngine_UI_DependencyObject_">Visual.IsDescendantOf(DependencyObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_IsAncestorOf_HexaEngine_UI_DependencyObject_">Visual.IsAncestorOf(DependencyObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.Visual.html#HexaEngine_UI_Visual_FindCommonVisualAncestor_HexaEngine_UI_DependencyObject_">Visual.FindCommonVisualAncestor(DependencyObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_Name">DependencyObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_Parent">DependencyObject.Parent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_FindFirstObject__1">DependencyObject.FindFirstObject&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_ResolveObject__1">DependencyObject.ResolveObject&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_ResolveObject_System_String_">DependencyObject.ResolveObject(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_OnPropertyChanged_HexaEngine_UI_DependencyPropertyChangedEventArgs_">DependencyObject.OnPropertyChanged(DependencyPropertyChangedEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_GetValue_HexaEngine_UI_DependencyProperty_">DependencyObject.GetValue(DependencyProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_SetValue_HexaEngine_UI_DependencyProperty_System_Object_">DependencyObject.SetValue(DependencyProperty, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_GetValue__1_HexaEngine_UI_DependencyProperty___0__">DependencyObject.GetValue&lt;TType&gt;(DependencyProperty&lt;TType&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_SetValue__1_HexaEngine_UI_DependencyProperty___0____0_">DependencyObject.SetValue&lt;TType&gt;(DependencyProperty&lt;TType&gt;, TType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_ClearValue_HexaEngine_UI_DependencyProperty_">DependencyObject.ClearValue(DependencyProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DependencyObject.html#HexaEngine_UI_DependencyObject_CoerceValue_HexaEngine_UI_DependencyProperty_">DependencyObject.CoerceValue(DependencyProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.UI.DispatcherObject.html#HexaEngine_UI_DispatcherObject_Dispatcher">DispatcherObject.Dispatcher</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_FocusableProperty" data-uid="HexaEngine.UI.UIElement.FocusableProperty">
+  FocusableProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;bool&gt; FocusableProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_GotFocusEvent" data-uid="HexaEngine.UI.UIElement.GotFocusEvent">
+  GotFocusEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;FocusGainedEventArgs&gt; GotFocusEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Windows.Events.FocusGainedEventArgs.html">FocusGainedEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_HeightProperty" data-uid="HexaEngine.UI.UIElement.HeightProperty">
+  HeightProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; HeightProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_HorizontalAlignmentProperty" data-uid="HexaEngine.UI.UIElement.HorizontalAlignmentProperty">
+  HorizontalAlignmentProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;HorizontalAlignment&gt; HorizontalAlignmentProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="HexaEngine.UI.HorizontalAlignment.html">HorizontalAlignment</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_IsEnabledProperty" data-uid="HexaEngine.UI.UIElement.IsEnabledProperty">
+  IsEnabledProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;bool&gt; IsEnabledProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_KeyDownEvent" data-uid="HexaEngine.UI.UIElement.KeyDownEvent">
+  KeyDownEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;KeyboardEventArgs&gt; KeyDownEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.KeyboardEventArgs.html">KeyboardEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_KeyUpEvent" data-uid="HexaEngine.UI.UIElement.KeyUpEvent">
+  KeyUpEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;KeyboardEventArgs&gt; KeyUpEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.KeyboardEventArgs.html">KeyboardEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_LostFocusEvent" data-uid="HexaEngine.UI.UIElement.LostFocusEvent">
+  LostFocusEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;FocusLostEventArgs&gt; LostFocusEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Windows.Events.FocusLostEventArgs.html">FocusLostEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MarginProperty" data-uid="HexaEngine.UI.UIElement.MarginProperty">
+  MarginProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;Thickness&gt; MarginProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="HexaEngine.UI.Thickness.html">Thickness</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MaxHeightProperty" data-uid="HexaEngine.UI.UIElement.MaxHeightProperty">
+  MaxHeightProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; MaxHeightProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MaxWidthProperty" data-uid="HexaEngine.UI.UIElement.MaxWidthProperty">
+  MaxWidthProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; MaxWidthProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MinHeightProperty" data-uid="HexaEngine.UI.UIElement.MinHeightProperty">
+  MinHeightProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; MinHeightProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MinWidthProperty" data-uid="HexaEngine.UI.UIElement.MinWidthProperty">
+  MinWidthProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; MinWidthProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseDownEvent" data-uid="HexaEngine.UI.UIElement.MouseDownEvent">
+  MouseDownEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseButtonEventArgs&gt; MouseDownEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseEnterEvent" data-uid="HexaEngine.UI.UIElement.MouseEnterEvent">
+  MouseEnterEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseEventArgs&gt; MouseEnterEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseEventArgs.html">MouseEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseLeaveEvent" data-uid="HexaEngine.UI.UIElement.MouseLeaveEvent">
+  MouseLeaveEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseEventArgs&gt; MouseLeaveEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseEventArgs.html">MouseEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseLeftButtonDownEvent" data-uid="HexaEngine.UI.UIElement.MouseLeftButtonDownEvent">
+  MouseLeftButtonDownEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseButtonEventArgs&gt; MouseLeftButtonDownEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseLeftButtonUpEvent" data-uid="HexaEngine.UI.UIElement.MouseLeftButtonUpEvent">
+  MouseLeftButtonUpEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseButtonEventArgs&gt; MouseLeftButtonUpEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseMoveEvent" data-uid="HexaEngine.UI.UIElement.MouseMoveEvent">
+  MouseMoveEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseMoveEventArgs&gt; MouseMoveEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseMoveEventArgs.html">MouseMoveEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseRightButtonDownEvent" data-uid="HexaEngine.UI.UIElement.MouseRightButtonDownEvent">
+  MouseRightButtonDownEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseButtonEventArgs&gt; MouseRightButtonDownEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseRightButtonUpEvent" data-uid="HexaEngine.UI.UIElement.MouseRightButtonUpEvent">
+  MouseRightButtonUpEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseButtonEventArgs&gt; MouseRightButtonUpEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseUpEvent" data-uid="HexaEngine.UI.UIElement.MouseUpEvent">
+  MouseUpEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseButtonEventArgs&gt; MouseUpEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseWheelEvent" data-uid="HexaEngine.UI.UIElement.MouseWheelEvent">
+  MouseWheelEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;MouseWheelEventArgs&gt; MouseWheelEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseWheelEventArgs.html">MouseWheelEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TextInputEvent" data-uid="HexaEngine.UI.UIElement.TextInputEvent">
+  TextInputEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;TextInputEventArgs&gt; TextInputEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TextInputEventArgs.html">TextInputEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchDownEvent" data-uid="HexaEngine.UI.UIElement.TouchDownEvent">
+  TouchDownEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;TouchEventArgs&gt; TouchDownEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchEnterEvent" data-uid="HexaEngine.UI.UIElement.TouchEnterEvent">
+  TouchEnterEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;TouchEventArgs&gt; TouchEnterEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchLeaveEvent" data-uid="HexaEngine.UI.UIElement.TouchLeaveEvent">
+  TouchLeaveEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;TouchEventArgs&gt; TouchLeaveEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchMoveEvent" data-uid="HexaEngine.UI.UIElement.TouchMoveEvent">
+  TouchMoveEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;TouchMoveEventArgs&gt; TouchMoveEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchMoveEventArgs.html">TouchMoveEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchUpEvent" data-uid="HexaEngine.UI.UIElement.TouchUpEvent">
+  TouchUpEvent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly RoutedEvent&lt;TouchEventArgs&gt; TouchUpEvent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_VerticalAlignmentProperty" data-uid="HexaEngine.UI.UIElement.VerticalAlignmentProperty">
+  VerticalAlignmentProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;VerticalAlignment&gt; VerticalAlignmentProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="HexaEngine.UI.VerticalAlignment.html">VerticalAlignment</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_VisibilityProperty" data-uid="HexaEngine.UI.UIElement.VisibilityProperty">
+  VisibilityProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;Visibility&gt; VisibilityProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="HexaEngine.UI.Visibility.html">Visibility</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_WidthProperty" data-uid="HexaEngine.UI.UIElement.WidthProperty">
+  WidthProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly DependencyProperty&lt;float&gt; WidthProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.DependencyProperty-1.html">DependencyProperty</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_UI_UIElement_Captured_" data-uid="HexaEngine.UI.UIElement.Captured*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Captured" data-uid="HexaEngine.UI.UIElement.Captured">
+  Captured
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L197"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IInputElement? Captured { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.IInputElement.html">IInputElement</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_DesiredSize_" data-uid="HexaEngine.UI.UIElement.DesiredSize*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_DesiredSize" data-uid="HexaEngine.UI.UIElement.DesiredSize">
+  DesiredSize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2 DesiredSize { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Focusable_" data-uid="HexaEngine.UI.UIElement.Focusable*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Focusable" data-uid="HexaEngine.UI.UIElement.Focusable">
+  Focusable
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Focusable { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Focused_" data-uid="HexaEngine.UI.UIElement.Focused*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Focused" data-uid="HexaEngine.UI.UIElement.Focused">
+  Focused
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IInputElement? Focused { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.IInputElement.html">IInputElement</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Height_" data-uid="HexaEngine.UI.UIElement.Height*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Height" data-uid="HexaEngine.UI.UIElement.Height">
+  Height
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Height { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_HorizontalAlignment_" data-uid="HexaEngine.UI.UIElement.HorizontalAlignment*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_HorizontalAlignment" data-uid="HexaEngine.UI.UIElement.HorizontalAlignment">
+  HorizontalAlignment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HorizontalAlignment HorizontalAlignment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.HorizontalAlignment.html">HorizontalAlignment</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_IsEnabled_" data-uid="HexaEngine.UI.UIElement.IsEnabled*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_IsEnabled" data-uid="HexaEngine.UI.UIElement.IsEnabled">
+  IsEnabled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsEnabled { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_IsInitialized_" data-uid="HexaEngine.UI.UIElement.IsInitialized*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_IsInitialized" data-uid="HexaEngine.UI.UIElement.IsInitialized">
+  IsInitialized
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsInitialized { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_IsKeyboardFocused_" data-uid="HexaEngine.UI.UIElement.IsKeyboardFocused*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_IsKeyboardFocused" data-uid="HexaEngine.UI.UIElement.IsKeyboardFocused">
+  IsKeyboardFocused
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsKeyboardFocused { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_IsMouseCaptured_" data-uid="HexaEngine.UI.UIElement.IsMouseCaptured*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_IsMouseCaptured" data-uid="HexaEngine.UI.UIElement.IsMouseCaptured">
+  IsMouseCaptured
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L204"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsMouseCaptured { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_IsMouseOver_" data-uid="HexaEngine.UI.UIElement.IsMouseOver*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_IsMouseOver" data-uid="HexaEngine.UI.UIElement.IsMouseOver">
+  IsMouseOver
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L209"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsMouseOver { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Margin_" data-uid="HexaEngine.UI.UIElement.Margin*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Margin" data-uid="HexaEngine.UI.UIElement.Margin">
+  Margin
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Thickness Margin { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Thickness.html">Thickness</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_MaxHeight_" data-uid="HexaEngine.UI.UIElement.MaxHeight*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_MaxHeight" data-uid="HexaEngine.UI.UIElement.MaxHeight">
+  MaxHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float MaxHeight { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_MaxWidth_" data-uid="HexaEngine.UI.UIElement.MaxWidth*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_MaxWidth" data-uid="HexaEngine.UI.UIElement.MaxWidth">
+  MaxWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float MaxWidth { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_MinHeight_" data-uid="HexaEngine.UI.UIElement.MinHeight*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_MinHeight" data-uid="HexaEngine.UI.UIElement.MinHeight">
+  MinHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float MinHeight { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_MinWidth_" data-uid="HexaEngine.UI.UIElement.MinWidth*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_MinWidth" data-uid="HexaEngine.UI.UIElement.MinWidth">
+  MinWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float MinWidth { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_RenderSize_" data-uid="HexaEngine.UI.UIElement.RenderSize*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_RenderSize" data-uid="HexaEngine.UI.UIElement.RenderSize">
+  RenderSize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2 RenderSize { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_VerticalAlignment_" data-uid="HexaEngine.UI.UIElement.VerticalAlignment*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_VerticalAlignment" data-uid="HexaEngine.UI.UIElement.VerticalAlignment">
+  VerticalAlignment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public VerticalAlignment VerticalAlignment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.VerticalAlignment.html">VerticalAlignment</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Visibility_" data-uid="HexaEngine.UI.UIElement.Visibility*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Visibility" data-uid="HexaEngine.UI.UIElement.Visibility">
+  Visibility
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Visibility Visibility { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.UI.Visibility.html">Visibility</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Width_" data-uid="HexaEngine.UI.UIElement.Width*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Width" data-uid="HexaEngine.UI.UIElement.Width">
+  Width
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Width { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_UI_UIElement_AddHandler_" data-uid="HexaEngine.UI.UIElement.AddHandler*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_AddHandler__1_HexaEngine_Core_Windows_Events_RoutedEvent___0__HexaEngine_Core_Windows_Events_RoutedEventHandler___0__" data-uid="HexaEngine.UI.UIElement.AddHandler``1(HexaEngine.Core.Windows.Events.RoutedEvent{``0},HexaEngine.Core.Windows.Events.RoutedEventHandler{``0})">
+  AddHandler&lt;T&gt;(RoutedEvent&lt;T&gt;, RoutedEventHandler&lt;T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddHandler&lt;T&gt;(RoutedEvent&lt;T&gt; routedEvent, RoutedEventHandler&lt;T&gt; value) where T : RoutedEventArgs</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>routedEvent</code> <a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;T&gt;</dt>
+    <dd></dd>
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_AddToEventRoute_" data-uid="HexaEngine.UI.UIElement.AddToEventRoute*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_AddToEventRoute_HexaEngine_Core_Windows_Events_EventRoute_" data-uid="HexaEngine.UI.UIElement.AddToEventRoute(HexaEngine.Core.Windows.Events.EventRoute)">
+  AddToEventRoute(EventRoute)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddToEventRoute(EventRoute route)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>route</code> <a class="xref" href="HexaEngine.Core.Windows.Events.EventRoute.html">EventRoute</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Arrange_" data-uid="HexaEngine.UI.UIElement.Arrange*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Arrange_Hexa_NET_Mathematics_RectangleF_" data-uid="HexaEngine.UI.UIElement.Arrange(Hexa.NET.Mathematics.RectangleF)">
+  Arrange(RectangleF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Arrange(RectangleF finalRect)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>finalRect</code> <span class="xref">RectangleF</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_ArrangeCore_" data-uid="HexaEngine.UI.UIElement.ArrangeCore*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_ArrangeCore_Hexa_NET_Mathematics_RectangleF_" data-uid="HexaEngine.UI.UIElement.ArrangeCore(Hexa.NET.Mathematics.RectangleF)">
+  ArrangeCore(RectangleF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void ArrangeCore(RectangleF finalRect)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>finalRect</code> <span class="xref">RectangleF</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Focus_" data-uid="HexaEngine.UI.UIElement.Focus*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Focus" data-uid="HexaEngine.UI.UIElement.Focus">
+  Focus()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L374"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Focus()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Initialize_" data-uid="HexaEngine.UI.UIElement.Initialize*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Initialize" data-uid="HexaEngine.UI.UIElement.Initialize">
+  Initialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Initialize()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_InitializeComponent_" data-uid="HexaEngine.UI.UIElement.InitializeComponent*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_InitializeComponent" data-uid="HexaEngine.UI.UIElement.InitializeComponent">
+  InitializeComponent()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void InitializeComponent()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_InvalidateArrange_" data-uid="HexaEngine.UI.UIElement.InvalidateArrange*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_InvalidateArrange" data-uid="HexaEngine.UI.UIElement.InvalidateArrange">
+  InvalidateArrange()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void InvalidateArrange()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_InvalidateMeasure_" data-uid="HexaEngine.UI.UIElement.InvalidateMeasure*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_InvalidateMeasure" data-uid="HexaEngine.UI.UIElement.InvalidateMeasure">
+  InvalidateMeasure()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void InvalidateMeasure()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_InvalidateVisual_" data-uid="HexaEngine.UI.UIElement.InvalidateVisual*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_InvalidateVisual" data-uid="HexaEngine.UI.UIElement.InvalidateVisual">
+  InvalidateVisual()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void InvalidateVisual()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_Measure_" data-uid="HexaEngine.UI.UIElement.Measure*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_Measure_System_Numerics_Vector2_" data-uid="HexaEngine.UI.UIElement.Measure(System.Numerics.Vector2)">
+  Measure(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Measure(Vector2 availableSize)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>availableSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_MeasureCore_" data-uid="HexaEngine.UI.UIElement.MeasureCore*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_MeasureCore_System_Numerics_Vector2_" data-uid="HexaEngine.UI.UIElement.MeasureCore(System.Numerics.Vector2)">
+  MeasureCore(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Vector2 MeasureCore(Vector2 availableSize)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>availableSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnGotFocus_" data-uid="HexaEngine.UI.UIElement.OnGotFocus*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnGotFocus_HexaEngine_Core_Windows_Events_FocusGainedEventArgs_" data-uid="HexaEngine.UI.UIElement.OnGotFocus(HexaEngine.Core.Windows.Events.FocusGainedEventArgs)">
+  OnGotFocus(FocusGainedEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L294"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnGotFocus(FocusGainedEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Windows.Events.FocusGainedEventArgs.html">FocusGainedEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnInitialized_" data-uid="HexaEngine.UI.UIElement.OnInitialized*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnInitialized" data-uid="HexaEngine.UI.UIElement.OnInitialized">
+  OnInitialized()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnInitialized()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnKeyDown_" data-uid="HexaEngine.UI.UIElement.OnKeyDown*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnKeyDown_HexaEngine_Core_Input_Events_KeyboardEventArgs_" data-uid="HexaEngine.UI.UIElement.OnKeyDown(HexaEngine.Core.Input.Events.KeyboardEventArgs)">
+  OnKeyDown(KeyboardEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L306"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnKeyDown(KeyboardEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.KeyboardEventArgs.html">KeyboardEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnKeyUp_" data-uid="HexaEngine.UI.UIElement.OnKeyUp*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnKeyUp_HexaEngine_Core_Input_Events_KeyboardEventArgs_" data-uid="HexaEngine.UI.UIElement.OnKeyUp(HexaEngine.Core.Input.Events.KeyboardEventArgs)">
+  OnKeyUp(KeyboardEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L310"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnKeyUp(KeyboardEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.KeyboardEventArgs.html">KeyboardEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnLostFocus_" data-uid="HexaEngine.UI.UIElement.OnLostFocus*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnLostFocus_HexaEngine_Core_Windows_Events_FocusLostEventArgs_" data-uid="HexaEngine.UI.UIElement.OnLostFocus(HexaEngine.Core.Windows.Events.FocusLostEventArgs)">
+  OnLostFocus(FocusLostEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L298"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnLostFocus(FocusLostEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Windows.Events.FocusLostEventArgs.html">FocusLostEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseDown_" data-uid="HexaEngine.UI.UIElement.OnMouseDown*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseDown_HexaEngine_Core_Input_Events_MouseButtonEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseDown(HexaEngine.Core.Input.Events.MouseButtonEventArgs)">
+  OnMouseDown(MouseButtonEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseDown(MouseButtonEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseEnter_" data-uid="HexaEngine.UI.UIElement.OnMouseEnter*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseEnter_HexaEngine_Core_Input_Events_MouseEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseEnter(HexaEngine.Core.Input.Events.MouseEventArgs)">
+  OnMouseEnter(MouseEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L338"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseEnter(MouseEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseEventArgs.html">MouseEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseLeave_" data-uid="HexaEngine.UI.UIElement.OnMouseLeave*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseLeave_HexaEngine_Core_Input_Events_MouseEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseLeave(HexaEngine.Core.Input.Events.MouseEventArgs)">
+  OnMouseLeave(MouseEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L342"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseLeave(MouseEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseEventArgs.html">MouseEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseLeftButtonDown_" data-uid="HexaEngine.UI.UIElement.OnMouseLeftButtonDown*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseLeftButtonDown_HexaEngine_Core_Input_Events_MouseButtonEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseLeftButtonDown(HexaEngine.Core.Input.Events.MouseButtonEventArgs)">
+  OnMouseLeftButtonDown(MouseButtonEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L322"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseLeftButtonDown(MouseButtonEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseLeftButtonUp_" data-uid="HexaEngine.UI.UIElement.OnMouseLeftButtonUp*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseLeftButtonUp_HexaEngine_Core_Input_Events_MouseButtonEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseLeftButtonUp(HexaEngine.Core.Input.Events.MouseButtonEventArgs)">
+  OnMouseLeftButtonUp(MouseButtonEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L326"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseLeftButtonUp(MouseButtonEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseMove_" data-uid="HexaEngine.UI.UIElement.OnMouseMove*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseMove_HexaEngine_Core_Input_Events_MouseMoveEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseMove(HexaEngine.Core.Input.Events.MouseMoveEventArgs)">
+  OnMouseMove(MouseMoveEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L346"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseMove(MouseMoveEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseMoveEventArgs.html">MouseMoveEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseRightButtonDown_" data-uid="HexaEngine.UI.UIElement.OnMouseRightButtonDown*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseRightButtonDown_HexaEngine_Core_Input_Events_MouseButtonEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseRightButtonDown(HexaEngine.Core.Input.Events.MouseButtonEventArgs)">
+  OnMouseRightButtonDown(MouseButtonEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L330"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseRightButtonDown(MouseButtonEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseRightButtonUp_" data-uid="HexaEngine.UI.UIElement.OnMouseRightButtonUp*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseRightButtonUp_HexaEngine_Core_Input_Events_MouseButtonEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseRightButtonUp(HexaEngine.Core.Input.Events.MouseButtonEventArgs)">
+  OnMouseRightButtonUp(MouseButtonEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L334"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseRightButtonUp(MouseButtonEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseUp_" data-uid="HexaEngine.UI.UIElement.OnMouseUp*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseUp_HexaEngine_Core_Input_Events_MouseButtonEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseUp(HexaEngine.Core.Input.Events.MouseButtonEventArgs)">
+  OnMouseUp(MouseButtonEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L318"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseUp(MouseButtonEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnMouseWheel_" data-uid="HexaEngine.UI.UIElement.OnMouseWheel*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnMouseWheel_HexaEngine_Core_Input_Events_MouseWheelEventArgs_" data-uid="HexaEngine.UI.UIElement.OnMouseWheel(HexaEngine.Core.Input.Events.MouseWheelEventArgs)">
+  OnMouseWheel(MouseWheelEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L350"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnMouseWheel(MouseWheelEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.MouseWheelEventArgs.html">MouseWheelEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnTextInput_" data-uid="HexaEngine.UI.UIElement.OnTextInput*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnTextInput_HexaEngine_Core_Input_Events_TextInputEventArgs_" data-uid="HexaEngine.UI.UIElement.OnTextInput(HexaEngine.Core.Input.Events.TextInputEventArgs)">
+  OnTextInput(TextInputEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L302"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnTextInput(TextInputEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.TextInputEventArgs.html">TextInputEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnTouchDown_" data-uid="HexaEngine.UI.UIElement.OnTouchDown*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnTouchDown_HexaEngine_Core_Input_Events_TouchEventArgs_" data-uid="HexaEngine.UI.UIElement.OnTouchDown(HexaEngine.Core.Input.Events.TouchEventArgs)">
+  OnTouchDown(TouchEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L366"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnTouchDown(TouchEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnTouchEnter_" data-uid="HexaEngine.UI.UIElement.OnTouchEnter*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnTouchEnter_HexaEngine_Core_Input_Events_TouchEventArgs_" data-uid="HexaEngine.UI.UIElement.OnTouchEnter(HexaEngine.Core.Input.Events.TouchEventArgs)">
+  OnTouchEnter(TouchEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L354"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnTouchEnter(TouchEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnTouchLeave_" data-uid="HexaEngine.UI.UIElement.OnTouchLeave*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnTouchLeave_HexaEngine_Core_Input_Events_TouchEventArgs_" data-uid="HexaEngine.UI.UIElement.OnTouchLeave(HexaEngine.Core.Input.Events.TouchEventArgs)">
+  OnTouchLeave(TouchEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L358"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnTouchLeave(TouchEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnTouchMove_" data-uid="HexaEngine.UI.UIElement.OnTouchMove*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnTouchMove_HexaEngine_Core_Input_Events_TouchMoveEventArgs_" data-uid="HexaEngine.UI.UIElement.OnTouchMove(HexaEngine.Core.Input.Events.TouchMoveEventArgs)">
+  OnTouchMove(TouchMoveEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L362"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnTouchMove(TouchMoveEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.TouchMoveEventArgs.html">TouchMoveEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnTouchUp_" data-uid="HexaEngine.UI.UIElement.OnTouchUp*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnTouchUp_HexaEngine_Core_Input_Events_TouchEventArgs_" data-uid="HexaEngine.UI.UIElement.OnTouchUp(HexaEngine.Core.Input.Events.TouchEventArgs)">
+  OnTouchUp(TouchEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L370"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnTouchUp(TouchEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_OnUninitialized_" data-uid="HexaEngine.UI.UIElement.OnUninitialized*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_OnUninitialized" data-uid="HexaEngine.UI.UIElement.OnUninitialized">
+  OnUninitialized()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnUninitialized()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_RaiseEvent_" data-uid="HexaEngine.UI.UIElement.RaiseEvent*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_RaiseEvent_HexaEngine_Core_Windows_Events_RoutedEventArgs_" data-uid="HexaEngine.UI.UIElement.RaiseEvent(HexaEngine.Core.Windows.Events.RoutedEventArgs)">
+  RaiseEvent(RoutedEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L143"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RaiseEvent(RoutedEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventArgs.html">RoutedEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_RemoveHandler_" data-uid="HexaEngine.UI.UIElement.RemoveHandler*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_RemoveHandler__1_HexaEngine_Core_Windows_Events_RoutedEvent___0__HexaEngine_Core_Windows_Events_RoutedEventHandler___0__" data-uid="HexaEngine.UI.UIElement.RemoveHandler``1(HexaEngine.Core.Windows.Events.RoutedEvent{``0},HexaEngine.Core.Windows.Events.RoutedEventHandler{``0})">
+  RemoveHandler&lt;T&gt;(RoutedEvent&lt;T&gt;, RoutedEventHandler&lt;T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveHandler&lt;T&gt;(RoutedEvent&lt;T&gt; routedEvent, RoutedEventHandler&lt;T&gt; value) where T : RoutedEventArgs</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>routedEvent</code> <a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEvent-1.html">RoutedEvent</a>&lt;T&gt;</dt>
+    <dd></dd>
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_RouteEvent_" data-uid="HexaEngine.UI.UIElement.RouteEvent*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_RouteEvent_HexaEngine_Core_Windows_Events_RoutedEventArgs_System_Object_" data-uid="HexaEngine.UI.UIElement.RouteEvent(HexaEngine.Core.Windows.Events.RoutedEventArgs,System.Object)">
+  RouteEvent(RoutedEventArgs, object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RouteEvent(RoutedEventArgs args, object? stop)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventArgs.html">RoutedEventArgs</a></dt>
+    <dd></dd>
+    <dt><code>stop</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_UI_UIElement_UninitializeComponent_" data-uid="HexaEngine.UI.UIElement.UninitializeComponent*"></a>
+
+  <h3 id="HexaEngine_UI_UIElement_UninitializeComponent" data-uid="HexaEngine.UI.UIElement.UninitializeComponent">
+  UninitializeComponent()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void UninitializeComponent()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_GotFocus" data-uid="HexaEngine.UI.UIElement.GotFocus">
+  GotFocus
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;FocusGainedEventArgs&gt; GotFocus</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Windows.Events.FocusGainedEventArgs.html">FocusGainedEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_Initialized" data-uid="HexaEngine.UI.UIElement.Initialized">
+  Initialized
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;EventArgs&gt;? Initialized</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventargs">EventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_KeyDown" data-uid="HexaEngine.UI.UIElement.KeyDown">
+  KeyDown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;KeyboardEventArgs&gt; KeyDown</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.KeyboardEventArgs.html">KeyboardEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_KeyUp" data-uid="HexaEngine.UI.UIElement.KeyUp">
+  KeyUp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;KeyboardEventArgs&gt; KeyUp</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.KeyboardEventArgs.html">KeyboardEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_LostFocus" data-uid="HexaEngine.UI.UIElement.LostFocus">
+  LostFocus
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L149"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;FocusLostEventArgs&gt; LostFocus</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Windows.Events.FocusLostEventArgs.html">FocusLostEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseDown" data-uid="HexaEngine.UI.UIElement.MouseDown">
+  MouseDown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseButtonEventArgs&gt; MouseDown</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseEnter" data-uid="HexaEngine.UI.UIElement.MouseEnter">
+  MouseEnter
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseEventArgs&gt; MouseEnter</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseEventArgs.html">MouseEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseLeave" data-uid="HexaEngine.UI.UIElement.MouseLeave">
+  MouseLeave
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseEventArgs&gt; MouseLeave</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseEventArgs.html">MouseEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseLeftButtonDown" data-uid="HexaEngine.UI.UIElement.MouseLeftButtonDown">
+  MouseLeftButtonDown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseButtonEventArgs&gt; MouseLeftButtonDown</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseLeftButtonUp" data-uid="HexaEngine.UI.UIElement.MouseLeftButtonUp">
+  MouseLeftButtonUp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseButtonEventArgs&gt; MouseLeftButtonUp</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseMove" data-uid="HexaEngine.UI.UIElement.MouseMove">
+  MouseMove
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L125"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseMoveEventArgs&gt; MouseMove</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseMoveEventArgs.html">MouseMoveEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseRightButtonDown" data-uid="HexaEngine.UI.UIElement.MouseRightButtonDown">
+  MouseRightButtonDown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseButtonEventArgs&gt; MouseRightButtonDown</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseRightButtonUp" data-uid="HexaEngine.UI.UIElement.MouseRightButtonUp">
+  MouseRightButtonUp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseButtonEventArgs&gt; MouseRightButtonUp</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseUp" data-uid="HexaEngine.UI.UIElement.MouseUp">
+  MouseUp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseButtonEventArgs&gt; MouseUp</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseButtonEventArgs.html">MouseButtonEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_MouseWheel" data-uid="HexaEngine.UI.UIElement.MouseWheel">
+  MouseWheel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;MouseWheelEventArgs&gt; MouseWheel</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.MouseWheelEventArgs.html">MouseWheelEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TextInput" data-uid="HexaEngine.UI.UIElement.TextInput">
+  TextInput
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;TextInputEventArgs&gt; TextInput</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TextInputEventArgs.html">TextInputEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchDown" data-uid="HexaEngine.UI.UIElement.TouchDown">
+  TouchDown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;TouchEventArgs&gt; TouchDown</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchEnter" data-uid="HexaEngine.UI.UIElement.TouchEnter">
+  TouchEnter
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L157"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;TouchEventArgs&gt; TouchEnter</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchLeave" data-uid="HexaEngine.UI.UIElement.TouchLeave">
+  TouchLeave
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;TouchEventArgs&gt; TouchLeave</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchMove" data-uid="HexaEngine.UI.UIElement.TouchMove">
+  TouchMove
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L173"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;TouchMoveEventArgs&gt; TouchMove</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchMoveEventArgs.html">TouchMoveEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_TouchUp" data-uid="HexaEngine.UI.UIElement.TouchUp">
+  TouchUp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Input.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event RoutedEventHandler&lt;TouchEventArgs&gt; TouchUp</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Windows.Events.RoutedEventHandler-1.html">RoutedEventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Events.TouchEventArgs.html">TouchEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_UI_UIElement_Uninitialized" data-uid="HexaEngine.UI.UIElement.Uninitialized">
+  Uninitialized
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;EventArgs&gt;? Uninitialized</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventargs">EventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/UI/UIElement.Layout.cs/#L6" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
