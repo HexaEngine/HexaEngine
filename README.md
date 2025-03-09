@@ -97,6 +97,7 @@ A work in progress Game Engine written in C#, aiming for high performance and cr
 
 ## Rendering
 - Physically based Rendering (Roughness, Metallic, Reflectance, AO Workflow)
+- SDR (Gamma 2.2 Rec. 709) and HDR10 (SMPTE ST 2084 Rec. 2020) support with automatic switching.
 - Skinned Mesh Rendering
 - Multi-Layered Terrain rendering with optional GPU Tessellation
 - Level of detail:
