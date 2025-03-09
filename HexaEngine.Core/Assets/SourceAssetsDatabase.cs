@@ -81,6 +81,7 @@
         private static FileSystemWatcher? watcher;
         private static readonly List<SourceAssetMetadata> sourceAssets = [];
         private static readonly Dictionary<Guid, SourceAssetMetadata> guidToSourceAsset = [];
+        private static readonly Dictionary<Guid, SourceAssetMetadataGroup> guidToGroup = [];
         private static readonly HashSet<string> importedFiles = [];
         private static readonly ManualResetEventSlim initLock = new(false);
 
@@ -120,6 +121,23 @@
                 if (metadata != null)
                 {
                     Insert(metadata);
+
+                    if (metadata.NeedsUpdate())
+                    {
+                        metadata.Save(file);
+                    }
+
+                    if (metadata.GroupGuid != Guid.Empty)
+                    {
+                        if (!guidToGroup.TryGetValue(metadata.GroupGuid, out var group))
+                        {
+                            group = [];
+                            guidToGroup.Add(metadata.GroupGuid, group);
+                        }
+                        group.Add(metadata);
+                    }
+
+                    GenerateThumbnail(metadata);
                 }
 
                 progress.Report(Interlocked.Increment(ref progressValue) / (float)progressMax);
@@ -191,6 +209,17 @@
         }
 
         public static ThumbnailCache ThumbnailCache => thumbnailCache;
+
+        private static void GenerateThumbnail(SourceAssetMetadata metadata, bool invalidate = false)
+        {
+            if (!invalidate && thumbnailCache.ContainsKey(metadata.Guid)) return;
+            var extension = Path.GetExtension(metadata.FilePath);
+            if (!AssetImporterRegistry.TryGetThumbnailProviderForFile(extension, metadata, out var provider)) return;
+            var image = provider.CreateThumbnail(metadata, logger);
+            if (image == null) return;
+            thumbnailCache.Set(metadata.Guid, image);
+            image.Dispose();
+        }
 
         public static void Ignore(string path)
         {
@@ -484,6 +513,8 @@
             context.Commit();
 
             sourceAsset.Save();
+
+            GenerateThumbnail(sourceAsset, true);
         }
 
         private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, List<Artifact> artifacts, IGuidProvider? provider, IImportProgress? progress)
@@ -515,6 +546,8 @@
             context.Commit();
 
             sourceAsset.Save();
+
+            GenerateThumbnail(sourceAsset, true);
         }
 
         private static void ImportInternal(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IImportProgress? progress)
@@ -544,6 +577,8 @@
             context.Commit();
 
             sourceAsset.Save();
+
+            GenerateThumbnail(sourceAsset, true);
         }
 
         private static async Task ImportInternalAsync(string? sourcePath, string path, SourceAssetMetadata sourceAsset, IGuidProvider? provider, IImportProgress? progress)
@@ -573,6 +608,8 @@
             context.Commit();
 
             sourceAsset.Save();
+
+            GenerateThumbnail(sourceAsset, true);
         }
 
         public static SourceAssetMetadata? ImportFile(string path, IGuidProvider? provider = null, IImportProgress? progress = null)

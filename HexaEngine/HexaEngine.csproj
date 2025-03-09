@@ -866,6 +866,9 @@
 		<None Update="assets\shared\shaders\weather.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\display.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\world.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

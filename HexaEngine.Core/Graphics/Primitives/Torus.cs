@@ -89,6 +89,9 @@
                     normal = Vector3.TransformNormal(normal, transform);
                     tangent = Vector3.TransformNormal(tangent, transform);
 
+                    if (i == tessellation) u = 0;
+                    if (j == tessellation) v = 0;
+
                     vertices[vcounter++] = new(position, new Vector2(u, v), normal, tangent);
 
                     // And create indices for two triangles.

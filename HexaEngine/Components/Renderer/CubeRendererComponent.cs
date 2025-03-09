@@ -102,27 +102,92 @@
     }
 
     [EditorCategory("Primitives")]
-    [EditorComponent(typeof(GeodesicSphereRendererComponent), "Geodesic Sphere Renderer", Icon = "\xf5ee")]
-    public class GeodesicSphereRendererComponent : PrimitiveRenderComponent
+    [EditorComponent(typeof(CylinderRendererComponent), "Cylinder Renderer", Icon = "\xf5ee")]
+    public class CylinderRendererComponent : PrimitiveRenderComponent
     {
-        private float size = 1;
+        private float height = 1;
+        private float diameter = 1;
         private uint tessellation = 16;
 
-        [EditorProperty("Size", 0f, float.MaxValue, EditorPropertyMode.Default)]
-        public float Size { get => size; set => SetAndUpdateModelEquals(ref size, value); }
+        [EditorProperty("Height", 0f, float.MaxValue, EditorPropertyMode.Default)]
+        public float Height { get => height; set => SetAndUpdateModelEquals(ref height, value); }
 
-        [EditorProperty("Tessellation", 3u, 7u, EditorPropertyMode.Default)]
+        [EditorProperty("Diameter", 0f, float.MaxValue, EditorPropertyMode.Default)]
+        public float Diameter { get => diameter; set => SetAndUpdateModelEquals(ref diameter, value); }
+
+        [EditorProperty("Tessellation", 3u, 128u, EditorPropertyMode.Default)]
         public uint Tessellation { get => tessellation; set => SetAndUpdateModelEquals(ref tessellation, value); }
 
         protected override IPrimitive CreatePrimitive()
         {
-            return new GeodesicSphere(new(size, tessellation));
+            return new Cylinder(new(height, diameter, tessellation));
         }
 
         protected override BoundingBox GetBoundingBox()
         {
-            float radius = size * 0.5f;
-            return new BoundingBox(new Vector3(-radius), new Vector3(radius));
+            float radius = diameter * 0.5f;
+            float halfHeight = height * 0.5f;
+            return new BoundingBox(new Vector3(-radius, -halfHeight, -radius), new Vector3(radius, halfHeight, radius));
+        }
+    }
+
+    [EditorCategory("Primitives")]
+    [EditorComponent(typeof(CapsuleRendererComponent), "Capsule Renderer", Icon = "\xf5ee")]
+    public class CapsuleRendererComponent : PrimitiveRenderComponent
+    {
+        private float height = 1;
+        private float diameter = 1;
+        private uint tessellation = 16;
+
+        [EditorProperty("Height", 0f, float.MaxValue, EditorPropertyMode.Default)]
+        public float Height { get => height; set => SetAndUpdateModelEquals(ref height, value); }
+
+        [EditorProperty("Diameter", 0f, float.MaxValue, EditorPropertyMode.Default)]
+        public float Diameter { get => diameter; set => SetAndUpdateModelEquals(ref diameter, value); }
+
+        [EditorProperty("Tessellation", 3u, 128u, EditorPropertyMode.Default)]
+        public uint Tessellation { get => tessellation; set => SetAndUpdateModelEquals(ref tessellation, value); }
+
+        protected override IPrimitive CreatePrimitive()
+        {
+            return new Capsule(new(height, diameter, Math.Max(tessellation, 3)));
+        }
+
+        protected override BoundingBox GetBoundingBox()
+        {
+            float radius = diameter * 0.5f;
+            float halfHeight = height * 0.5f + radius;
+            return new BoundingBox(new Vector3(-radius, -halfHeight, -radius), new Vector3(radius, halfHeight, radius));
+        }
+    }
+
+    [EditorCategory("Primitives")]
+    [EditorComponent(typeof(TorusRendererComponent), "Torus Renderer", Icon = "\xf5ee")]
+    public class TorusRendererComponent : PrimitiveRenderComponent
+    {
+        private float diameter = 1;
+        private float thickness = 1;
+        private uint tessellation = 16;
+
+        [EditorProperty("Diameter", 0f, float.MaxValue, EditorPropertyMode.Default)]
+        public float Diameter { get => diameter; set => SetAndUpdateModelEquals(ref diameter, value); }
+
+        [EditorProperty("Thickness", 0f, float.MaxValue, EditorPropertyMode.Default)]
+        public float Thickness { get => thickness; set => SetAndUpdateModelEquals(ref thickness, value); }
+
+        [EditorProperty("Tessellation", 3u, 128u, EditorPropertyMode.Default)]
+        public uint Tessellation { get => tessellation; set => SetAndUpdateModelEquals(ref tessellation, value); }
+
+        protected override IPrimitive CreatePrimitive()
+        {
+            return new Torus(new(diameter, thickness, Math.Max(tessellation, 3)));
+        }
+
+        protected override BoundingBox GetBoundingBox()
+        {
+            float radius = diameter * 0.5f;
+            float halfHeight = thickness * 0.5f + radius;
+            return new BoundingBox(new Vector3(-radius, -halfHeight, -radius), new Vector3(radius, halfHeight, radius));
         }
     }
 }

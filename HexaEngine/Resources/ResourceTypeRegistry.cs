@@ -1,12 +1,13 @@
 ﻿namespace HexaEngine.Resources
 {
-    using System.Collections.Concurrent;
+    using System.Collections.Generic;
 
     public static class ResourceTypeRegistry
     {
         private static int currentIndex;
-        private static readonly ConcurrentDictionary<Type, int> typeToUsageTypeId = new();
-        private static readonly ConcurrentDictionary<int, string> typeToUsageTypeName = new();
+        private static readonly Dictionary<Type, int> typeToUsageTypeId = new();
+        private static readonly Dictionary<int, string> typeToUsageTypeName = new();
+        private static readonly Lock _lock = new();
 
         public static string GetName(int id)
         {
@@ -20,26 +21,39 @@
 
         public static int Register<T>()
         {
-            var id = Interlocked.Increment(ref currentIndex);
-            typeToUsageTypeId.TryAdd(typeof(T), id);
-            typeToUsageTypeName.TryAdd(id, nameof(T));
-            return id;
+            lock (_lock)
+            {
+                if (typeToUsageTypeId.TryGetValue(typeof(T), out int id))
+                {
+                    return id;
+                }
+                id = currentIndex++;
+                typeToUsageTypeId.Add(typeof(T), id);
+                typeToUsageTypeName.Add(id, typeof(T).Name);
+                return id;
+            }
         }
 
         public static bool Unregister<T>()
         {
-            if (typeToUsageTypeId.TryRemove(typeof(T), out int id))
+            lock (_lock)
             {
-                return typeToUsageTypeName.TryRemove(id, out _);
+                if (typeToUsageTypeId.Remove(typeof(T), out int id))
+                {
+                    return typeToUsageTypeName.Remove(id, out _);
+                }
             }
             return false;
         }
 
         public static int GetId<T>()
         {
-            if (typeToUsageTypeId.TryGetValue(typeof(T), out int id))
+            lock (_lock)
             {
-                return id;
+                if (typeToUsageTypeId.TryGetValue(typeof(T), out int id))
+                {
+                    return id;
+                }
             }
             return Register<T>();
         }
@@ -51,22 +65,35 @@
 
         public static int Register(Type type)
         {
-            var id = Interlocked.Increment(ref currentIndex);
-            typeToUsageTypeId.TryAdd(type, id);
-            typeToUsageTypeName.TryAdd(id, type.Name);
-            return id;
+            lock (_lock)
+            {
+                if (typeToUsageTypeId.TryGetValue(type, out int id))
+                {
+                    return id;
+                }
+                id = currentIndex++;
+                typeToUsageTypeId.Add(type, id);
+                typeToUsageTypeName.Add(id, type.Name);
+                return id;
+            }
         }
 
         public static bool Unregister(Type type)
         {
-            return typeToUsageTypeId.TryRemove(type, out _);
+            lock (_lock)
+            {
+                return typeToUsageTypeId.Remove(type, out _);
+            }
         }
 
         public static int GetId(Type type)
         {
-            if (typeToUsageTypeId.TryGetValue(type, out int id))
+            lock (_lock)
             {
-                return id;
+                if (typeToUsageTypeId.TryGetValue(type, out int id))
+                {
+                    return id;
+                }
             }
             return Register(type);
         }

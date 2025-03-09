@@ -1,7 +1,6 @@
-﻿using HexaEngine.Core.Assets.Importer;
-
-namespace HexaEngine.Core.Assets
+﻿namespace HexaEngine.Core.Assets
 {
+    using HexaEngine.Core.Assets.Importer;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -9,6 +8,7 @@ namespace HexaEngine.Core.Assets
     public static class AssetImporterRegistry
     {
         private static readonly List<IAssetImporter> importers = [];
+        private static readonly List<IAssetThumbnailProvider> thumbnailProviders = [];
 
         static AssetImporterRegistry()
         {
@@ -20,6 +20,17 @@ namespace HexaEngine.Core.Assets
             RegisterImporter<MaterialImporter>();
             RegisterImporter<DummyImporter>();
             RegisterImporter<TerrainImporter>();
+            RegisterThumbnailProvider<TextureThumbnailProvider>();
+        }
+
+        public static void RegisterThumbnailProvider(IAssetThumbnailProvider provider)
+        {
+            thumbnailProviders.Add(provider);
+        }
+
+        public static void RegisterThumbnailProvider<T>() where T : IAssetThumbnailProvider, new()
+        {
+            RegisterThumbnailProvider(new T());
         }
 
         public static void RegisterImporter(IAssetImporter importer)
@@ -73,6 +84,50 @@ namespace HexaEngine.Core.Assets
             }
 
             importer = null;
+            return false;
+        }
+
+        public static T GetThumbnailProvider<T>() where T : IAssetThumbnailProvider
+        {
+            for (var i = 0; i < thumbnailProviders.Count; i++)
+            {
+                var provider = thumbnailProviders[i];
+                if (provider is T t)
+                {
+                    return t;
+                }
+            }
+
+            throw new KeyNotFoundException($"Importer ({nameof(T)}) not found");
+        }
+
+        public static IAssetThumbnailProvider GetThumbnailProviderForFile(ReadOnlySpan<char> fileExtension, SourceAssetMetadata metadata)
+        {
+            for (var i = 0; i < thumbnailProviders.Count; i++)
+            {
+                var provider = thumbnailProviders[i];
+                if (provider.CanCreate(fileExtension, metadata))
+                {
+                    return provider;
+                }
+            }
+
+            throw new KeyNotFoundException($"No importer for {fileExtension} found");
+        }
+
+        public static bool TryGetThumbnailProviderForFile(ReadOnlySpan<char> fileExtension, SourceAssetMetadata metadata, [NotNullWhen(true)] out IAssetThumbnailProvider? provider)
+        {
+            for (var i = 0; i < thumbnailProviders.Count; i++)
+            {
+                var iprovider = thumbnailProviders[i];
+                if (iprovider.CanCreate(fileExtension, metadata))
+                {
+                    provider = iprovider;
+                    return true;
+                }
+            }
+
+            provider = null;
             return false;
         }
     }

@@ -35,6 +35,7 @@
         /// Waits for the presentation of the current frame to complete.
         /// </summary>
         void WaitForPresent();
+        void SetColorSpace(ColorSpace colorSpace);
 
         /// <summary>
         /// Occurs when the swap chain is being resized.

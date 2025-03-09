@@ -6,6 +6,72 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
 
+    public class TextureThumbnailProvider : IAssetThumbnailProvider
+    {
+        private readonly IGraphicsDevice device = Application.GraphicsDevice;
+
+        public bool CanCreate(ReadOnlySpan<char> fileExtension, SourceAssetMetadata metadata)
+        {
+            return fileExtension switch
+            {
+                ".png" => true,
+                ".jpg" => true,
+                ".jpeg" => true,
+                ".tga" => true,
+                ".dds" => true,
+                ".hdr" => true,
+                ".tiff" => true,
+                ".gif" => true,
+                ".wmp" => true,
+                ".bmp" => true,
+                ".ico" => true,
+                ".raw" => true,
+                _ => false,
+            };
+        }
+
+        public IScratchImage? CreateThumbnail(SourceAssetMetadata metadata, ILogger? logger = null)
+        {
+            IScratchImage? image = null;
+            try
+            {
+                image = device.TextureLoader.LoadFormFile(metadata.GetFullPath());
+            }
+            catch (Exception ex)
+            {
+                image?.Dispose();
+                logger?.Log(ex);
+                logger?.Error($"Failed to generate thumbnail for texture {metadata}");
+                return null;
+            }
+
+            var texMetadata = image.Metadata;
+            bool owns = false;
+            if (FormatHelper.IsCompressed(texMetadata.Format))
+            {
+                Swap(ref owns, ref image, image.Decompress(Format.R8G8B8A8UNorm));
+            }
+            else if (texMetadata.Format != Format.R8G8B8A8UNorm)
+            {
+                Swap(ref owns, ref image, image.Convert(Format.R8G8B8A8UNorm, 0));
+            }
+
+            Swap(ref owns, ref image, image.Resize(256, 256, 0));
+
+            return image;
+        }
+
+        private static void Swap(ref bool owns, ref IScratchImage image, IScratchImage newImage)
+        {
+            if (owns)
+            {
+                image.Dispose();
+            }
+            owns = true;
+            image = newImage;
+        }
+    }
+
     public class TextureImporter : IAssetImporter
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(TextureImporter));
@@ -145,7 +211,10 @@
                         try
                         {
                             Logger.Info($"Compressing texture ({image.Metadata.Format}) -> ({settings.Format})");
-                            SwapImage(ref image, image.Compress(settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
+                            Application.MainWindow.Dispatcher.InvokeBlocking(() =>
+                            {
+                                SwapImage(ref image, image.Compress(device, settings.Format, settings.BC7Quick ? TexCompressFlags.BC7Quick | TexCompressFlags.Parallel : TexCompressFlags.Parallel));
+                            });
                         }
                         catch (Exception ex)
                         {

@@ -57,6 +57,8 @@
 
         public float ButtonSize { get => buttonSize; set => buttonSize = value; }
 
+        public int NativeHeight { get; private set; }
+
         public virtual void OnBuild(TitleBarBuilder builder)
         {
             builder.AddElement(new TitleBarMainMenuBar(MainMenuBar.Draw));
@@ -304,7 +306,7 @@
                 uint dpi = WinApi.GetDpiForWindow(hwnd);
                 float dpiScale = dpi / 96.0f;
                 int titleBarHeight = (int)MathF.Ceiling((WinApi.GetSystemMetrics(SystemMetrics.CyCaption) + WinApi.GetSystemMetrics(SystemMetrics.CyFrame)) * dpiScale + WinApi.GetSystemMetrics(SystemMetrics.CxPaddedBorder));
-
+                NativeHeight = titleBarHeight;
                 if (WinApi.IsZoomed(hwnd)) // fix for maximized windows.
                 {
                     nccsp->RgRc0.Top = Math.Max(nccsp->RgRc0.Top - titleBarHeight, -titleBarHeight - 1);

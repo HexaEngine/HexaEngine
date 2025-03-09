@@ -5,6 +5,7 @@
     using HexaEngine.Core.Configuration;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.Windows;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Numerics;
@@ -44,6 +45,8 @@
             ImGui.TableSetupColumn("");
             ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextColumn();
+
+            DisplayKey("Display");
 
             DisplayKey("Text Editor");
             for (int i = 0; i < keys.Count; i++)
@@ -336,6 +339,10 @@
 
                 switch (key)
                 {
+                    case "Display":
+                        DisplayPage();
+                        break;
+
                     case "Text Editor":
                         TextEditorPage();
                         break;
@@ -354,6 +361,24 @@
             }
 
             ImGui.EndTable();
+        }
+
+        private static void DisplayPage()
+        {
+            var window = (Window)Application.MainWindow;
+            var isAuto = !window.ForceHDR.HasValue;
+            if (ImGui.Checkbox("Auto HDR", ref isAuto))
+            {
+                window.ForceHDR = isAuto ? null : false;
+            }
+            if (window.ForceHDR.HasValue)
+            {
+                var forceEnabled = window.ForceHDR.Value;
+                if (ImGui.Checkbox("Force HDR", ref forceEnabled))
+                {
+                    window.ForceHDR = forceEnabled;
+                }
+            }
         }
 
         private static unsafe void TextEditorPage()

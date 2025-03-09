@@ -17,6 +17,8 @@ namespace HexaEngine.Core.Windows.UI
 
         public int Height { get; set; }
 
+        public int NativeHeight { get; }
+
         public void OnAttach(CoreWindow window);
 
         public void OnDetach(CoreWindow window);

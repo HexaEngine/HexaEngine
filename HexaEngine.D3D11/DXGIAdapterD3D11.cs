@@ -5,6 +5,7 @@
     using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
+    using HexaGen.Runtime.COM;
     using Silk.NET.Core.Contexts;
     using System;
     using System.Runtime.InteropServices;
@@ -199,13 +200,13 @@
 
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SdlWindow window)
         {
-            var (Hwnd, HDC, HInstance) = window.Win32 ?? throw new NotSupportedException();
+            var hwnd = window.GetHWND();
 
             SwapChainDesc1 desc = new()
             {
                 Width = (uint)window.Width,
                 Height = (uint)window.Height,
-                Format = AutoChooseSwapChainFormat(device.Device, IDXGIOutput),
+                Format = AutoChooseSwapChainFormat(device.Device, IDXGIOutput, out var colorSpace),
                 BufferCount = 2,
                 BufferUsage = (uint)DXGI.DXGI_USAGE_RENDER_TARGET_OUTPUT,
                 SampleDesc = new(1, 0),
@@ -223,9 +224,12 @@
                 ScanlineOrdering = Hexa.NET.DXGI.ModeScanlineOrder.Unspecified,
             };
 
-            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), Hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
-            return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
+            swapChain.QueryInterface<IDXGISwapChain3>(out var swapChain3);
+            swapChain.Release();
+
+            return new DXGISwapChain(device, swapChain3, (SwapChainFlag)desc.Flags);
         }
 
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
@@ -238,7 +242,10 @@
 
             IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), Hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
-            return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
+            swapChain.QueryInterface<IDXGISwapChain3>(out var swapChain3);
+            swapChain.Release();
+
+            return new DXGISwapChain(device, swapChain3, (SwapChainFlag)desc.Flags);
         }
 
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SDLWindow* window)
@@ -255,7 +262,7 @@
             {
                 Width = (uint)width,
                 Height = (uint)height,
-                Format = AutoChooseSwapChainFormat(device.Device, IDXGIOutput),
+                Format = AutoChooseSwapChainFormat(device.Device, IDXGIOutput, out var colorSpace),
                 BufferCount = 2,
                 BufferUsage = (uint)DXGI.DXGI_USAGE_RENDER_TARGET_OUTPUT,
                 SampleDesc = new(1, 0),
@@ -274,7 +281,10 @@
 
             IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
-            return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
+            swapChain.QueryInterface<IDXGISwapChain3>(out var swapChain3);
+            swapChain.Release();
+
+            return new DXGISwapChain(device, swapChain3, (SwapChainFlag)desc.Flags);
         }
 
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
@@ -289,7 +299,10 @@
 
             IDXGIFactory.CreateSwapChainForHwnd(device.Device.As<IUnknown>(), hwnd, &desc, &fullscreenDesc, IDXGIOutput.As<IDXGIOutput>(), out ComPtr<IDXGISwapChain1> swapChain);
 
-            return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
+            swapChain.QueryInterface<IDXGISwapChain3>(out var swapChain3);
+            swapChain.Release();
+
+            return new DXGISwapChain(device, swapChain3, (SwapChainFlag)desc.Flags);
         }
 
         private ComPtr<IDXGIAdapter4> GetHardwareAdapter(string? name)
@@ -402,8 +415,9 @@
             }
         }
 
-        private static Hexa.NET.DXGI.Format AutoChooseSwapChainFormat(ComPtr<ID3D11Device5> device, ComPtr<IDXGIOutput6> output)
+        private static Hexa.NET.DXGI.Format AutoChooseSwapChainFormat(ComPtr<ID3D11Device5> device, ComPtr<IDXGIOutput6> output, out ColorSpaceType colorSpace)
         {
+            colorSpace = ColorSpaceType.RgbFullG22NoneP709;
             if (output.Handle == null)
             {
                 return Hexa.NET.DXGI.Format.B8G8R8A8Unorm;

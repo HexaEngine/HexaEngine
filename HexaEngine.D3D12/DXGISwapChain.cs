@@ -170,6 +170,11 @@
             Resized?.Invoke(this, new(oldWidth, oldHeight, width, height));
         }
 
+        public void SetColorSpace(ColorSpace colorSpace)
+        {
+            swapChain->SetColorSpace1(Helper.Convert(colorSpace));
+        }
+
         protected override void DisposeCore()
         {
             Backbuffer.Dispose();

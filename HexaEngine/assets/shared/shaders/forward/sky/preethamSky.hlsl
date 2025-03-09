@@ -70,7 +70,7 @@ float4 main(VertexOut pin) : SV_TARGET
 
 	float3 skyLuminance = calculateSkyLuminanceRGB(light_dir.xyz, dir);
 
-	skyLuminance *= 0.05; // hdr compensation.
+	skyLuminance *= 0.005; // hdr compensation.
 
 	float3 sunContribution = ComputeSunContribution(dir);
 	float3 finalColor = skyLuminance + sunContribution;

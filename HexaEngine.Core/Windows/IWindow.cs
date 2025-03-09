@@ -219,6 +219,11 @@
         event EventHandler<DropEventArgs> DropComplete;
 
         /// <summary>
+        /// Event triggered when the HDR parameters of the window changed.
+        /// </summary>
+        event EventHandler<HDRStateChangedArgs> HDRStateChanged;
+
+        /// <summary>
         /// Shows the window.
         /// </summary>
         void Show();

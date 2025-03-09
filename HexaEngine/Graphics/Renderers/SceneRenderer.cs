@@ -279,7 +279,7 @@
             graphExecuter.Execute(context, enableProfiling ? CPUProfiler.Global : null);
         }
 
-        public unsafe void RenderTo(IGraphicsContext context, IRenderTargetView target, Hexa.NET.Mathematics.Viewport viewport, IScene scene, Camera camera)
+        public unsafe void RenderTo(IGraphicsContext context, IRenderTargetView target, Viewport viewport, IScene scene, Camera camera)
         {
             if (!initialized)
             {

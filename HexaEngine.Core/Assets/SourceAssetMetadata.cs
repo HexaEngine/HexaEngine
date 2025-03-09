@@ -6,15 +6,18 @@
 
     public class SourceAssetMetadata
     {
+        private const string LatestVersion = "1.0";
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(SourceAssetsDatabase));
         private readonly SemaphoreSlim _semaphore = new(1);
 
         [JsonConstructor]
-        public SourceAssetMetadata(string filePath, Guid guid, Guid parentGuid, DateTime lastModified, uint crc32, Dictionary<string, object> additional)
+        public SourceAssetMetadata(string? version, string filePath, Guid guid, Guid parentGuid, Guid groupGuid, DateTime lastModified, uint crc32, Dictionary<string, object> additional)
         {
+            Version = version!;
             FilePath = filePath;
             Guid = guid;
             ParentGuid = parentGuid;
+            GroupGuid = version == null ? parentGuid : groupGuid;
             LastModified = lastModified;
             CRC32 = crc32;
             Additional = additional;
@@ -25,6 +28,7 @@
             FilePath = filePath;
             Guid = Guid.NewGuid();
             ParentGuid = parentGuid;
+            GroupGuid = parentGuid;
             LastModified = lastModified;
             CRC32 = crc32;
             Additional = [];
@@ -33,11 +37,15 @@
         [JsonIgnore]
         internal string MetadataFilePath { get; set; } = null!;
 
+        public string Version { get; private set; } = LatestVersion;
+
         public string FilePath { get; internal set; }
 
         public Guid Guid { get; }
 
         public Guid ParentGuid { get; internal set; }
+
+        public Guid GroupGuid { get; set; }
 
         public DateTime LastModified { get; internal set; }
 
@@ -362,6 +370,16 @@
         public IEnumerable<Artifact> GetArtifacts()
         {
             return ArtifactDatabase.GetArtifactsForSource(Guid);
+        }
+
+        internal bool NeedsUpdate()
+        {
+            return Version != LatestVersion;
+        }
+
+        public override string ToString()
+        {
+            return $"{Guid}, {FilePath}";
         }
     }
 }

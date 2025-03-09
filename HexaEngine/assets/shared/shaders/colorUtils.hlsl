@@ -1,11 +1,12 @@
-
-
-
 #ifndef COLOR_UTILS_H_INCLUDED
 #define COLOR_UTILS_H_INCLUDED
 
 #include "math.hlsl"
 #include "aces.hlsl"
+
+#ifndef DEFAULT_MAX_PQ
+#define DEFAULT_MAX_PQ 10000.0
+#endif
 
 // Gamma20
 float Gamma20ToLinear(float c)
@@ -403,7 +404,6 @@ inline float Luminance(float3 c)
 #define ACEScc_MAX      1.4679964
 #define ACEScc_MIDGRAY  0.4135884
 
-
 float AcesLuminance(float3 linearRgb)
 {
 	return dot(linearRgb, AP1_RGB2Y);
@@ -499,6 +499,61 @@ float3 LogCToLinear(float3 x)
 #else
 	return (pow(10.0, (x - LogC.d) / LogC.c) - LogC.b) / LogC.a;
 #endif
+}
+
+//
+// SMPTE ST.2084 (PQ) transfer functions
+// Used for HDR Lut storage, max range depends on the maxPQValue parameter
+//
+struct ParamsPQ
+{
+	float N, M;
+	float C1, C2, C3;
+};
+
+static const ParamsPQ PQ =
+{
+	2610.0 / 4096.0 / 4.0,   // N
+	2523.0 / 4096.0 * 128.0, // M
+	3424.0 / 4096.0,         // C1
+	2413.0 / 4096.0 * 32.0,  // C2
+	2392.0 / 4096.0 * 32.0,  // C3
+};
+
+float3 LinearToPQ(float3 x)
+{
+	x = PositivePow(x, PQ.N);
+	float3 nd = (PQ.C1 + PQ.C2 * x) / (1.0 + PQ.C3 * x);
+	return PositivePow(nd, PQ.M);
+}
+
+float3 PQToLinear(float3 x)
+{
+	x = PositivePow(x, rcp(PQ.M));
+	float3 nd = max(x - PQ.C1, 0.0) / (PQ.C2 - (PQ.C3 * x));
+	return PositivePow(nd, rcp(PQ.N));
+}
+
+float3 Rec709ToRec2020(float3 color)
+{
+	static const float3x3 conversion =
+	{
+		0.627402, 0.329292, 0.043306,
+		0.069095, 0.919544, 0.011360,
+		0.016394, 0.088028, 0.895578
+	};
+	return mul(conversion, color);
+}
+
+float3 Rec2020ToRec709(float3 color)
+{
+	static const float3x3 conversion =
+	{
+		1.660496, -0.587656, -0.072840,
+		-0.124547, 1.132895, -0.008348,
+		-0.018154, -0.100597, 1.118751
+	};
+	return mul(conversion, color);
 }
 
 #endif

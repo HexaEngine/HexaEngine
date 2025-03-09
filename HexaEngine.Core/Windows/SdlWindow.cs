@@ -16,7 +16,6 @@
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using System.Text;
-    using YamlDotNet.Core.Tokens;
     using static Extensions.SdlErrorHandlingExtensions;
     using Key = Input.Key;
 
@@ -53,6 +52,7 @@
         private readonly DropEventArgs dropEventArgs = new();
         private readonly DropFileEventArgs dropFileEventArgs = new();
         private readonly DropTextEventArgs dropTextEventArgs = new();
+        private readonly HDRStateChangedArgs hdrStateChangedEventArgs = new();
 
         private ITitleBar? titlebar;
 
@@ -353,6 +353,14 @@
         /// <returns>A pointer to the window.</returns>
         public SDLWindow* GetWindow() => window;
 
+        public uint Properties => SDL.GetWindowProperties(window);
+
+        public bool HDREnabled => SDL.GetBooleanProperty(Properties, SDL.SDL_PROP_WINDOW_HDR_ENABLED_BOOLEAN, false);
+
+        public float SDRWhiteLevel => SDL.GetFloatProperty(Properties, SDL.SDL_PROP_WINDOW_SDR_WHITE_LEVEL_FLOAT, 0);
+
+        public float HDRHeadroom => SDL.GetFloatProperty(Properties, SDL.SDL_PROP_WINDOW_HDR_HEADROOM_FLOAT, 0);
+
         /// <summary>
         /// Gets the window ID.
         /// </summary>
@@ -399,7 +407,7 @@
             {
                 if (titlebar != null)
                 {
-                    value += titlebar.Height;
+                    value += titlebar.NativeHeight;
                 }
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 y = value;
@@ -432,15 +440,12 @@
         /// <exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
         public int Height
         {
-            get
-            {
-                return height;
-            }
+            get => height;
             set
             {
                 if (titlebar != null)
                 {
-                    value -= titlebar.Height;
+                    value -= titlebar.NativeHeight;
                 }
                 Logger.ThrowIf(destroyed, "The window is already destroyed");
                 resizedEventArgs.OldHeight = height;
@@ -720,6 +725,7 @@
         private readonly EventHandlers<DropFileEventArgs> DropFileHandlers = new();
         private readonly EventHandlers<DropTextEventArgs> DropTextHandlers = new();
         private readonly EventHandlers<DropEventArgs> DropCompleteHandlers = new();
+        private readonly EventHandlers<HDRStateChangedArgs> HDRStateChangedHandlers = new();
 
         /// <summary>
         /// Event triggered when the window is shown.
@@ -962,6 +968,15 @@
         {
             add => DropCompleteHandlers.AddHandler(value);
             remove => DropCompleteHandlers.RemoveHandler(value);
+        }
+
+        /// <summary>
+        /// Event triggered when the HDR parameters of the window changed.
+        /// </summary>
+        public event EventHandler<HDRStateChangedArgs> HDRStateChanged
+        {
+            add => HDRStateChangedHandlers.AddHandler(value);
+            remove => HDRStateChangedHandlers.RemoveHandler(value);
         }
 
         /// <summary>
@@ -1217,6 +1232,15 @@
             DropCompleteHandlers.InvokeRouted(this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="HDRStateChanged"/> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
+        protected virtual void OnHDRStateChanged(HDRStateChangedArgs args)
+        {
+            HDRStateChangedHandlers.InvokeRouted(this, args);
+        }
+
         #endregion Events
 
         private SDLHitTest? callback;
@@ -1344,7 +1368,6 @@
             // WindowOccluded
             // WindowEnterFullscreen
             // WindowLeaveFullscreen
-            // WindowHdrStateChanged
             switch (type)
             {
                 case SDLEventType.WindowShown:
@@ -1528,6 +1551,16 @@
                         hitTestEventArgs.Timestamp = evnt.Timestamp;
                         hitTestEventArgs.Handled = false;
                         OnHitTest(hitTestEventArgs);
+                    }
+                    break;
+
+                case SDLEventType.WindowHdrStateChanged:
+                    {
+                        hdrStateChangedEventArgs.Handled = false;
+                        hdrStateChangedEventArgs.HDREnabled = HDREnabled;
+                        hdrStateChangedEventArgs.SDRWhiteLevel = SDRWhiteLevel;
+                        hdrStateChangedEventArgs.HDRHeadroom = HDRHeadroom;
+                        OnHDRStateChanged(hdrStateChangedEventArgs);
                     }
                     break;
             }
@@ -1731,6 +1764,7 @@
                 DropFileHandlers.Clear();
                 DropTextHandlers.Clear();
                 DropCompleteHandlers.Clear();
+                HDRStateChangedHandlers.Clear();
 
                 for (SDLSystemCursor i = 0; i < SDLSystemCursor.Count; i++)
                 {

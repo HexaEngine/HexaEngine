@@ -10,7 +10,7 @@
     public unsafe partial class DXGISwapChain : DeviceChildBase, ISwapChain
     {
         private D3D11GraphicsDevice device;
-        private ComPtr<IDXGISwapChain1> swapChain;
+        private ComPtr<IDXGISwapChain3> swapChain;
         private readonly SwapChainFlag flags;
         private ComPtr<ID3D11Texture2D> backbuffer;
         private ITexture2D depthStencil;
@@ -21,7 +21,7 @@
         private int targetFPS = 120;
         private bool active;
 
-        internal DXGISwapChain(D3D11GraphicsDevice device, ComPtr<IDXGISwapChain1> swapChain, SwapChainFlag flags)
+        internal DXGISwapChain(D3D11GraphicsDevice device, ComPtr<IDXGISwapChain3> swapChain, SwapChainFlag flags)
         {
             this.device = device;
             this.swapChain = swapChain;
@@ -169,6 +169,11 @@
             BackbufferDSV = Device.CreateDepthStencilView(depthStencil);
 
             Resized?.Invoke(this, new(oldWidth, oldHeight, width, height));
+        }
+
+        public void SetColorSpace(ColorSpace colorSpace)
+        {
+            swapChain.SetColorSpace1(Helper.Convert(colorSpace));
         }
 
         private bool CheckError(HResult hr)

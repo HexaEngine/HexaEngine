@@ -318,5 +318,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public void SetColorSpace(ColorSpace colorSpace)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

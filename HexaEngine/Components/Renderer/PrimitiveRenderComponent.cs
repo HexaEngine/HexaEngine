@@ -19,7 +19,8 @@
     public abstract class PrimitiveRenderComponent : BaseDrawableComponent
     {
         protected AssetRef materialAsset;
-        protected PrimitiveRenderer renderer = null!;
+        private static PrimitiveRenderer renderer = null!;
+        private static readonly Lock rendererlock = new();
         private BoundingBox boundingBox;
         private PrimitiveModel? model;
 
@@ -44,8 +45,19 @@
 
         protected override void LoadCore(IGraphicsDevice device)
         {
-            renderer = new();
-            ((IRenderer1)renderer).Initialize(device, CullingManager.Current.Context);
+            lock (rendererlock)
+            {
+                if (renderer == null || renderer.IsDisposed)
+                {
+                    renderer = new();
+                    ((IRenderer1)renderer).Initialize(device, CullingManager.Current.Context);
+                }
+                else
+                {
+                    renderer.AddRef();
+                }
+            }
+
             UpdateModel(ModelUpdateFlags.All);
         }
 

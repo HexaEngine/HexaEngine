@@ -193,14 +193,38 @@
             }
         }
 
-        private struct Item(string name, string path, SourceAssetMetadata? metadata, Ref<Texture2D>? thumbnail)
+        private struct Item : IEquatable<Item>
         {
-            public string Path = path;
-            public string Name = name;
+            public Item(string name, string path, SourceAssetMetadata? metadata, Ref<Texture2D>? thumbnail)
+            {
+                Path = path;
+                Name = name;
+                NameNoExtension = System.IO.Path.GetFileNameWithoutExtension(path);
+                Metadata = metadata;
+                Thumbnail = thumbnail;
+            }
+
+            public Item(string path)
+            {
+                Path = path;
+            }
+
+            public string Path;
+            public string Name;
             public List<Item> GroupItems = [];
-            public string NameNoExtension = System.IO.Path.GetFileNameWithoutExtension(path);
-            public SourceAssetMetadata? Metadata = metadata;
-            public readonly Ref<Texture2D>? Thumbnail = thumbnail;
+            public string NameNoExtension;
+            public SourceAssetMetadata? Metadata;
+            public readonly Ref<Texture2D>? Thumbnail;
+
+            public override readonly bool Equals(object? obj) => obj is Item item && Equals(item);
+
+            public readonly bool Equals(Item other) => Path == other.Path;
+
+            public override readonly int GetHashCode() => HashCode.Combine(Path);
+
+            public static bool operator ==(Item left, Item right) => left.Equals(right);
+
+            public static bool operator !=(Item left, Item right) => !(left == right);
         }
 
         private readonly struct ItemGroupComparer(HashSet<Guid> groups) : IComparer<Item>
@@ -209,8 +233,8 @@
 
             public int Compare(Item x, Item y)
             {
-                var parentA = x.Metadata?.ParentGuid ?? default;
-                var parentB = y.Metadata?.ParentGuid ?? default;
+                var parentA = x.Metadata?.GroupGuid ?? default;
+                var parentB = y.Metadata?.GroupGuid ?? default;
 
                 if (parentA == default && parentB == default)
                 {
@@ -411,9 +435,9 @@
                     if (metadata != null)
                     {
                         SourceAssetsDatabase.ThumbnailCache.TryGet(metadata.Guid, out thumbnail);
-                        if (metadata.ParentGuid != default)
+                        if (metadata.GroupGuid != default)
                         {
-                            groups.Add(metadata.ParentGuid);
+                            groups.Add(metadata.GroupGuid);
                         }
                     }
                     files.Add(new(Path.GetFileName(fse), fse, metadata, thumbnail));
@@ -423,17 +447,17 @@
             for (int i = 0; i < files.Count; i++)
             {
                 var file = files[i];
-                if (file.Metadata == null || file.Metadata.ParentGuid == default)
+                if (file.Metadata == null || file.Metadata.GroupGuid == default)
                 {
                     continue;
                 }
 
-                Guid parentGuid = file.Metadata.ParentGuid;
+                Guid groupGuid = file.Metadata.GroupGuid;
 
                 for (int j = 0; j < files.Count; j++)
                 {
                     var item = files[j];
-                    if (item.Metadata != null && item.Metadata.Guid == parentGuid)
+                    if (item.Metadata != null && item.Metadata.Guid == groupGuid)
                     {
                         item.GroupItems.Add(file);
                         files.RemoveAt(i);
@@ -779,7 +803,7 @@
             return isHovered;
         }
 
-        private static unsafe void HandleInput(bool isHovered, Item file)
+        private unsafe void HandleInput(bool isHovered, Item file)
         {
             if (!isHovered)
             {
@@ -789,7 +813,28 @@
             if (ImGuiP.IsMouseClicked(ImGuiMouseButton.Left))
             {
                 AssetFileInfo info = new(file.Path, file.Metadata);
-                if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
+                if (ImGuiP.IsKeyDown(ImGuiKey.LeftShift))
+                {
+                    if (SelectionCollection.Global.Count > 0 && SelectionCollection.Global[0] is AssetFileInfo item)
+                    {
+                        var start = files.IndexOf(new Item(item.Path));
+                        var end = files.IndexOf(file);
+                        if (start == -1 || end == -1) return;
+                        if (start > end) (start, end) = (end, start);
+                        SelectionCollection.Global.ClearSelection();
+                        for (int i = start; i <= end; i++)
+                        {
+                            var currentFile = files[i];
+                            AssetFileInfo currentInfo = new(currentFile.Path, currentFile.Metadata);
+                            SelectionCollection.Global.AddSelection(currentInfo);
+                        }
+                    }
+                    else
+                    {
+                        SelectionCollection.Global.AddSelection(info);
+                    }
+                }
+                else if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
                 {
                     SelectionCollection.Global.AddSelection(info);
                 }

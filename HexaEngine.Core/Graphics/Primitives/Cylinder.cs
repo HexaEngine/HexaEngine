@@ -3,23 +3,24 @@
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics.Buffers;
     using System;
+    using System.Diagnostics.Metrics;
     using System.Numerics;
 
     public struct CylinderDesc
     {
         public float Height = 1;
         public float Diameter = 1;
-        public uint Tesselation = 32;
+        public uint Tessellation = 32;
 
         public CylinderDesc()
         {
         }
 
-        public CylinderDesc(float height, float diameter, uint tesselation = 32)
+        public CylinderDesc(float height, float diameter, uint tessellation = 32)
         {
             Height = height;
             Diameter = diameter;
-            Tesselation = tesselation;
+            Tessellation = tessellation;
         }
     }
 
@@ -43,20 +44,19 @@
         /// </returns>
         protected override (VertexBuffer<PrimVertex>, IndexBuffer<uint>?) InitializeMesh(CylinderDesc desc)
         {
-            CreateCylinder(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, desc.Height, desc.Diameter, desc.Tesselation);
+            CreateCylinder(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, desc.Height, desc.Diameter, desc.Tessellation);
             return (vertexBuffer, indexBuffer);
         }
 
         /// <summary>
         /// Generates vertices and indices for a cylinder mesh.
         /// </summary>
-
         /// <param name="vertexBuffer">The vertex buffer of the cylinder mesh.</param>
         /// <param name="indexBuffer">The optional index buffer of the cylinder mesh.</param>
         /// <param name="height">The height of the cylinder.</param>
         /// <param name="diameter">The diameter of the cylinder.</param>
         /// <param name="tessellation">The number of subdivisions around the cylinder.</param>
-        public static void CreateCylinder(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float height = 1, float diameter = 1, uint tessellation = 32)
+        public static unsafe void CreateCylinder(out VertexBuffer<PrimVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float height = 1, float diameter = 1, uint tessellation = 32)
         {
             if (tessellation < 3)
             {
@@ -69,12 +69,15 @@
 
             float radius = diameter / 2;
             uint stride = tessellation + 1;
+            uint strideSquared = stride * 2;
 
-            PrimVertex[] vertices = new PrimVertex[stride * 2 + tessellation * 2];
-            uint[] indices = new uint[stride * 6 + (tessellation - 2) * 3 * 2];
+            uint vertexCount = stride * 2 + tessellation * 2;
+            uint indexCount = stride * 6 + (tessellation - 2) * 3 * 2;
+            PrimVertex* vertices = AllocT<PrimVertex>(vertexCount);
+            uint* indices = AllocT<uint>(indexCount);
 
-            uint vcounter = 0;
-            uint icounter = 0;
+            PrimVertex* vtxWritePtr = vertices;
+            uint* idxWritePtr = indices;
             for (uint i = 0; i <= tessellation; i++)
             {
                 Vector3 normal = GetCircleVector(i, tessellation);
@@ -85,25 +88,28 @@
 
                 Vector3 tangent = GetCircleTangent(i, tessellation);
 
-                vertices[vcounter] = new(sideOffset + topOffset, new Vector2(u, 0), normal, tangent);
-                vertices[vcounter + 1] = new(sideOffset - topOffset, new Vector2(u, 1), normal, tangent);
-                vcounter += 2;
+                *vtxWritePtr++ = new(sideOffset + topOffset, new Vector2(u, 0), normal, tangent);
+                *vtxWritePtr++ = new(sideOffset - topOffset, new Vector2(u, 1), normal, tangent);
 
-                indices[icounter] = i * 2;
-                indices[icounter + 1] = (i * 2 + 2) % (stride * 2);
-                indices[icounter + 2] = i * 2 + 1;
+                uint baseIdx = i * 2;
 
-                indices[icounter + 3] = i * 2 + 1;
-                indices[icounter + 4] = (i * 2 + 2) % (stride * 2);
-                indices[icounter + 5] = (i * 2 + 2) % (stride * 2);
-                icounter += 6;
+                *idxWritePtr++ = baseIdx;
+                *idxWritePtr++ = (baseIdx + 2) % strideSquared;
+                *idxWritePtr++ = baseIdx + 1;
+
+                *idxWritePtr++ = baseIdx + 1;
+                *idxWritePtr++ = (baseIdx + 2) % strideSquared;
+                *idxWritePtr++ = (baseIdx + 3) % strideSquared;
             }
 
-            CreateCylinderCap(vertices, indices, ref vcounter, ref icounter, tessellation, height, radius, true);
-            CreateCylinderCap(vertices, indices, ref vcounter, ref icounter, tessellation, height, radius, false);
+            CreateCylinderCap(vertices, indices, &vtxWritePtr, &idxWritePtr, tessellation, height, radius, true);
+            CreateCylinderCap(vertices, indices, &vtxWritePtr, &idxWritePtr, tessellation, height, radius, false);
 
-            vertexBuffer = new VertexBuffer<PrimVertex>(vertices, CpuAccessFlags.None);
-            indexBuffer = new IndexBuffer<uint>(indices, CpuAccessFlags.None);
+            vertexBuffer = new VertexBuffer<PrimVertex>(vertices, vertexCount, CpuAccessFlags.None);
+            indexBuffer = new IndexBuffer<uint>(indices, indexCount, CpuAccessFlags.None);
+
+            Free(indices);
+            Free(vertices);
         }
 
         private static Vector3 GetCircleVector(uint i, uint tessellation)
@@ -122,8 +128,13 @@
             return new(dx, 0, dz);
         }
 
-        private static void CreateCylinderCap(PrimVertex[] vertices, uint[] indices, ref uint vcounter, ref uint icounter, uint tessellation, float height, float radius, bool isTop)
+        private static unsafe void CreateCylinderCap(PrimVertex* vertices, uint* indices, PrimVertex** pVtxWritePtr, uint** pIdxWritePtr, uint tessellation, float height, float radius, bool isTop)
         {
+            PrimVertex* vtxWritePtr = *pVtxWritePtr;
+            uint* idxWritePtr = *pIdxWritePtr;
+
+            uint idxBase = (uint)(vtxWritePtr - vertices);
+
             // Create cap indices.
             for (uint i = 0; i < tessellation - 2; i++)
             {
@@ -135,10 +146,9 @@
                     (i2, i1) = (i1, i2);
                 }
 
-                indices[icounter] = vcounter;
-                indices[icounter + 1] = vcounter + i1;
-                indices[icounter + 2] = vcounter + i2;
-                icounter += 3;
+                *idxWritePtr++ = idxBase;
+                *idxWritePtr++ = idxBase + i1;
+                *idxWritePtr++ = idxBase + i2;
             }
 
             // Which end of the cylinder is this?
@@ -161,8 +171,11 @@
 
                 Vector2 textureCoordinate = new Vector2(circleVector.X, circleVector.Z) * textureScale + new Vector2(0.5f);
 
-                vertices[vcounter++] = new(position, textureCoordinate, normal, tangent);
+                *vtxWritePtr++ = new(position, textureCoordinate, normal, tangent);
             }
+
+            *pVtxWritePtr = vtxWritePtr;
+            *pIdxWritePtr = idxWritePtr;
         }
     }
 }

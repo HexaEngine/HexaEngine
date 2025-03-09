@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.D3D12
 {
+    using Hexa.NET.DXGI;
     using HexaEngine.Core.Graphics;
     using System;
     using System.Runtime.CompilerServices;
@@ -358,6 +359,16 @@
         internal static ResourceFlags Convert(ResourceMiscFlag miscFlags)
         {
             throw new NotImplementedException();
+        }
+
+        public static ColorSpaceType Convert(ColorSpace colorSpace)
+        {
+            return colorSpace switch
+            {
+                ColorSpace.RGBFullG22NoneP709 => ColorSpaceType.RgbFullG22NoneP709,
+                ColorSpace.RGBFullG2084NoneP2020 => ColorSpaceType.RgbFullG2084NoneP2020,
+                _ => throw new NotSupportedException(),
+            };
         }
     }
 }

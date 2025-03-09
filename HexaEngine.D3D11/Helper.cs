@@ -3201,5 +3201,15 @@
 
             return result;
         }
+
+        public static ColorSpaceType Convert(ColorSpace colorSpace)
+        {
+            return colorSpace switch
+            {
+                ColorSpace.RGBFullG22NoneP709 => ColorSpaceType.RgbFullG22NoneP709,
+                ColorSpace.RGBFullG2084NoneP2020 => ColorSpaceType.RgbFullG2084NoneP2020,
+                _ => throw new NotSupportedException(),
+            };
+        }
     }
 }

@@ -353,6 +353,48 @@
             return hashTable.TryGetValue(key, out entry);
         }
 
+        public unsafe bool Remove(Guid key)
+        {
+            BeginRead();
+            try
+            {
+                if (!TryGetEntry(key, out var entry))
+                {
+                    return false;
+                }
+
+                entry.Lock();
+                try
+                {
+                    RemoveFromDisk(entry);
+
+                    if (entry.Data != null)
+                    {
+                        Interlocked.Add(ref allocatedMemory, -entry.MemSize);
+                        entry.Free();
+                        entry.MemSize = 0;
+                    }
+
+                    if (entry.Texture != null)
+                    {
+                        Interlocked.Add(ref allocatedVideoMemory, -entry.VideoMemSize);
+                        entry.FreeVideo();
+                        entry.VideoMemSize = 0;
+                    }
+
+                    return true;
+                }
+                finally
+                {
+                    entry.ReleaseLock();
+                }
+            }
+            finally
+            {
+                EndRead();
+            }
+        }
+
         public void Get(Guid key, out Ref<Texture2D> texture)
         {
             BeginRead();
@@ -742,6 +784,50 @@
 
             cacheFileSemaphore.Release();
             entry.PersistenceState = default;
+        }
+
+        private void RemoveFromDisk(ThumbnailCacheEntry entry)
+        {
+            var state = entry.PersistenceState;
+            cacheFileSemaphore.Wait();
+
+            if (entry.Position != -1)
+            {
+                var itemSize = state.IsDirty ? state.OldSize : entry.MemSize;
+                // prevent fragmentation.
+                var startPos = entry.Position;
+                var endPos = entry.Position + itemSize;
+                var size = writtenBytes - endPos;
+
+                // lock affected entries before moving.
+                for (int i = 0; i < entries.Count; i++)
+                {
+                    var sEntry = entries[i];
+                    if (sEntry.Position > startPos)
+                    {
+                        sEntry.Lock();
+                    }
+                }
+
+                cacheStream.MoveBlock(endPos, startPos, size);
+
+                // offset position and release lock again.
+                for (int i = 0; i < entries.Count; i++)
+                {
+                    var sEntry = entries[i];
+                    if (sEntry.Position > startPos)
+                    {
+                        sEntry.Position -= itemSize;
+                        sEntry.ReleaseLock();
+                    }
+                }
+
+                writtenBytes -= itemSize;
+            }
+
+            cacheFileSemaphore.Release();
+            entry.PersistenceState = default;
+            entry.Position = -1;
         }
 
         public void GenerateAndSetThumbnail(Guid key, IScratchImage image)

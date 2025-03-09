@@ -117,7 +117,7 @@ namespace Editor
         /// <param name="args">The event arguments.</param>
         protected override void OnResized(ResizedEventArgs args)
         {
-            resize = true;
+            sizeChanged = true;
             base.OnResized(args);
         }
 
@@ -138,10 +138,16 @@ namespace Editor
 #endif
 
             // Resize the swap chain if necessary.
-            if (resize)
+            if (sizeChanged)
             {
                 swapChain.Resize(Width, Height);
-                resize = false;
+                sizeChanged = false;
+            }
+
+            if (hdrStateChanged)
+            {
+                UpdateHDRState(context);
+                hdrStateChanged = false;
             }
 
             // Initialize time if requested.

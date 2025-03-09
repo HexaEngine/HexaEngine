@@ -2,14 +2,17 @@
 
 namespace HexaEngine.Windows
 {
+    using Hexa.NET.ImGui;
     using Hexa.NET.Logging;
     using Hexa.NET.Mathematics;
     using Hexa.NET.Utilities.Threading;
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
+    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
     using HexaEngine.Resources;
@@ -32,9 +35,11 @@ namespace HexaEngine.Windows
         protected IGraphicsContext graphicsContext;
         protected ISwapChain swapChain;
         protected SceneRenderer sceneRenderer;
+        protected ConstantBuffer<CBDisplay> displayBuffer;
         protected Task initTask;
         protected bool rendererInitialized;
-        protected bool resize = false;
+        protected bool sizeChanged = false;
+        protected bool hdrStateChanged = false;
 
         protected Thread updateThread;
 
@@ -54,6 +59,8 @@ namespace HexaEngine.Windows
         /// </summary>
         public string? StartupScene;
 
+        private bool? forceHDR;
+
         /// <summary>
         /// Gets the scene renderer associated with the window.
         /// </summary>
@@ -68,6 +75,16 @@ namespace HexaEngine.Windows
         /// Gets the viewport used for rendering.
         /// </summary>
         public override sealed Viewport RenderViewport => renderViewport;
+
+        public bool? ForceHDR
+        {
+            get => forceHDR;
+            set
+            {
+                forceHDR = value;
+                hdrStateChanged = true;
+            }
+        }
 
 #nullable disable
 
@@ -94,6 +111,10 @@ namespace HexaEngine.Windows
             graphicsContext = graphicsDevice.Context;
             swapChain = SwapChain;
             renderDispatcher = (ThreadDispatcher)Dispatcher;
+
+            displayBuffer = new(CpuAccessFlags.Write);
+            graphicsDevice.SetGlobalCBV("DisplayBuffer", displayBuffer);
+            UpdateHDRState(graphicsContext);
 
             if (Application.MainWindow == this)
             {
@@ -217,10 +238,16 @@ namespace HexaEngine.Windows
 #endif
 
             // Resize the swap chain if necessary.
-            if (resize)
+            if (sizeChanged)
             {
                 swapChain.Resize(Width, Height);
-                resize = false;
+                sizeChanged = false;
+            }
+
+            if (hdrStateChanged)
+            {
+                UpdateHDRState(context);
+                hdrStateChanged = false;
             }
 
             // Initialize time if requested.
@@ -280,6 +307,18 @@ namespace HexaEngine.Windows
 #endif
         }
 
+        protected void UpdateHDRState(IGraphicsContext context)
+        {
+            var enabled = HDREnabled;
+            if (ForceHDR.HasValue)
+            {
+                enabled = ForceHDR.Value;
+            }
+            ColorSpace colorSpace = enabled ? ColorSpace.RGBFullG2084NoneP2020 : ColorSpace.RGBFullG22NoneP709;
+            swapChain.SetColorSpace(colorSpace);
+            displayBuffer.Update(context, new(SDRWhiteLevel, 400, colorSpace));
+        }
+
         /// <summary>
         /// Called when [renderer initialize].
         /// </summary>
@@ -328,8 +367,14 @@ namespace HexaEngine.Windows
         /// <param name="args">The event arguments.</param>
         protected override void OnResized(ResizedEventArgs args)
         {
-            resize = true;
+            sizeChanged = true;
             base.OnResized(args);
+        }
+
+        protected override void OnHDRStateChanged(HDRStateChangedArgs args)
+        {
+            hdrStateChanged = true;
+            base.OnHDRStateChanged(args);
         }
 
         protected override void DisposeCore()

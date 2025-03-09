@@ -42,7 +42,7 @@
                 return;
             }
 
-            var tex = new Texture2D(new TextureFileDescription(artifact.Path));
+            var tex = new Texture2D(new TextureFileDescription(artifact.Path), $"{nameof(MaterialTexture)}, {Path.GetFileNameWithoutExtension(artifact.Path)}");
             var sampler = device.CreateSamplerState(desc.GetSamplerDesc());
             instance.Initialize(tex, sampler);
         }
