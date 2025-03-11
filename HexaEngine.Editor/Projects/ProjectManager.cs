@@ -43,7 +43,6 @@
             ReferencedAssemblyNames.Add("HexaEngine.Vulkan, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.OpenAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.XAudio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            ReferencedAssemblyNames.Add("Silk.NET.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             foreach (string name in ReferencedAssemblyNames)
             {
                 var assembly = Assembly.Load(name);

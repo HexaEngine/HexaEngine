@@ -4,14 +4,12 @@
     using Hexa.NET.SDL3;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
-    using Silk.NET.Core.Contexts;
-    using Silk.NET.Core.Native;
     using System.Numerics;
 
     /// <summary>
     /// Represents a window.
     /// </summary>
-    public interface IWindow : INativeWindow, INativeWindowSource
+    public interface IWindow : INativeWindow
     {
         /// <summary>
         /// Gets or sets a _value indicating whether the window has a border.
@@ -257,11 +255,11 @@
         /// <summary>
         /// Creates a Vulkan surface for the window.
         /// </summary>
-        /// <param name="vkHandle">The Vulkan handle.</param>
+        /// <param name="vkInstance">The Vulkan handle.</param>
         /// <param name="allocationCallbacks"></param>
-        /// <param name="vkNonDispatchableHandle">The Vulkan non-dispatchable handle.</param>
+        /// <param name="surface">The Vulkan non-dispatchable handle.</param>
         /// <returns><c>true</c> if the surface creation was successful; otherwise, <c>false</c>.</returns>
-        unsafe bool VulkanCreateSurface(VkHandle vkHandle, VkAllocationCallbacks* allocationCallbacks, VkNonDispatchableHandle* vkNonDispatchableHandle);
+        unsafe bool VulkanCreateSurface(VkInstance vkInstance, VkAllocationCallbacks* allocationCallbacks, VkSurfaceKHR* surface);
 
         /// <summary>
         /// Creates an OpenGL context for the window.

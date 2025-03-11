@@ -2,16 +2,16 @@
 {
     using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Contexts;
+    using HexaEngine.Core.Windows;
     using System.Runtime.Versioning;
 
     public unsafe class DXGIAdapterD3D11On12 : DXGIAdapterD3D11
     {
-        public DXGIAdapterD3D11On12(INativeWindowSource windowSource, bool debug) : base(windowSource, debug)
+        public DXGIAdapterD3D11On12(IWindow windowSource, bool debug) : base(windowSource, debug)
         {
         }
 
-        public new static void Init(INativeWindowSource windowSource, bool debug)
+        public new static void Init(IWindow windowSource, bool debug)
         {
             if (OperatingSystem.IsWindows())
             {

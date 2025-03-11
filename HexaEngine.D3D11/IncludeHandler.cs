@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.IO;
-    using Silk.NET.Core.Native;
     using System.Runtime.InteropServices;
     using System.Text;
 
@@ -17,7 +16,7 @@
             this.systemInclude = systemInclude;
         }
 
-        public unsafe int Open(ID3DInclude* pInclude, D3DIncludeType includeType, byte* pFileName, void* pParentData, void** ppData, uint* pBytes)
+        public unsafe int Open(ID3DInclude* pInclude, IncludeType includeType, byte* pFileName, void* pParentData, void** ppData, uint* pBytes)
         {
             string fileName = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(pFileName));
             string path = Path.Combine(basePath, fileName);

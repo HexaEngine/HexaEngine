@@ -4,7 +4,6 @@
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaGen.Runtime;
-    using Silk.NET.Maths;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -29,11 +28,8 @@
 
         public event EventHandler? OnDisposed;
 
-        protected D3D11GraphicsContextBase(IGraphicsDevice device, ComPtr<ID3D11DeviceContext4> context)
+        protected D3D11GraphicsContextBase(IGraphicsDevice device, ComPtr<ID3D11DeviceContext4> context) : this(device, context.As<ID3D11DeviceContext3>())
         {
-            Device = device;
-            DeviceContext.Handle = (ID3D11DeviceContext3*)context.Handle;
-            nativePointer = (nint)context.Handle;
         }
 
         protected D3D11GraphicsContextBase(IGraphicsDevice device, ComPtr<ID3D11DeviceContext3> context)

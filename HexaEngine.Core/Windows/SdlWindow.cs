@@ -8,8 +8,7 @@
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Core.Windows.UI;
-    using Silk.NET.Core.Contexts;
-    using Silk.NET.Core.Native;
+    using HexaGen.Runtime;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -22,7 +21,7 @@
     /// <summary>
     /// The main class responsible for managing SDL windows.
     /// </summary>
-    public unsafe class SdlWindow : IWindow, INativeWindow
+    public unsafe class SdlWindow : IWindow
     {
         private static readonly ILogger Logger = LoggerFactory.GetLogger(nameof(Sdl));
 
@@ -85,11 +84,11 @@
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Kind = NativeWindowFlags.Win32;
+                Kind = NativeWindowKind.Win32;
             }
             else
             {
-                Kind = NativeWindowFlags.Sdl;
+                Kind = NativeWindowKind.SDL;
             }
 
             PlatformConstruct(flags);
@@ -106,11 +105,11 @@
             this.height = height;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Kind = NativeWindowFlags.Win32;
+                Kind = NativeWindowKind.Win32;
             }
             else
             {
-                Kind = NativeWindowFlags.Sdl;
+                Kind = NativeWindowKind.SDL;
             }
 
             PlatformConstruct(flags);
@@ -264,15 +263,15 @@
         ///<summary>
         /// Creates a Vulkan surface for the window.
         ///</summary>
-        ///<param name="vkHandle">The Vulkan handle.</param>
+        ///<param name="vkInstance">The Vulkan handle.</param>
         /// <param name="allocationCallbacks"></param>
-        ///<param name="vkNonDispatchableHandle">The Vulkan non-dispatchable handle.</param>
+        ///<param name="surface">The Vulkan non-dispatchable handle.</param>
         ///<returns><c>true</c> if the Vulkan surface is created successfully; otherwise, <c>false</c>.</returns>
         ///<exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
-        public bool VulkanCreateSurface(VkHandle vkHandle, VkAllocationCallbacks* allocationCallbacks, VkNonDispatchableHandle* vkNonDispatchableHandle)
+        public bool VulkanCreateSurface(VkInstance vkInstance, VkAllocationCallbacks* allocationCallbacks, VkSurfaceKHR* surface)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
-            return SDL.VulkanCreateSurface(window, new VkInstance(vkHandle.Handle), allocationCallbacks, (VkSurfaceKHR*)vkNonDispatchableHandle);
+            return SDL.VulkanCreateSurface(window, vkInstance, allocationCallbacks, surface);
         }
 
         ///<summary>
@@ -301,7 +300,7 @@
 
             public readonly nint Handle => context.Handle;
 
-            public IGLContextSource? Source { get; }
+            public IGLContext? Source { get; }
 
             public readonly bool IsCurrent => SDL.GLGetCurrentContext().Handle == context.Handle;
 
@@ -604,9 +603,9 @@
         public Viewport Viewport { get; private set; }
 
         /// <summary>
-        /// Gets the native window flags.
+        /// Gets the native window type.
         /// </summary>
-        public NativeWindowFlags Kind { get; }
+        public NativeWindowKind Kind { get; }
 
         /// <summary>
         /// Gets the X11 information of the window.

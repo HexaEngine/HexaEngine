@@ -6,7 +6,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaGen.Runtime.COM;
-    using Silk.NET.Core.Contexts;
     using System;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -32,7 +31,7 @@
         private readonly Guid DXGI_DEBUG_APP = new(0x6cd6e01, 0x4219, 0x4ebd, 0x87, 0x9, 0x27, 0xed, 0x23, 0x36, 0xc, 0x62);
         private readonly Guid DXGI_DEBUG_D3D11 = new(0x4b99317b, 0xac39, 0x4aa6, 0xbb, 0xb, 0xba, 0xa0, 0x47, 0x84, 0x79, 0x8f);
 
-        public DXGIAdapterD3D11(INativeWindowSource source, bool debug)
+        public DXGIAdapterD3D11(IWindow source, bool debug)
         {
             if (debug)
             {
@@ -58,7 +57,7 @@
             this.debug = debug;
         }
 
-        public static void Init(INativeWindowSource source, bool debug)
+        public static void Init(IWindow source, bool debug)
         {
             GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D11(source, debug));
         }

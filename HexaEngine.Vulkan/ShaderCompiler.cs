@@ -4,7 +4,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using Silk.NET.Core.Native;
     using System.Runtime.InteropServices;
     using System.Text;
 

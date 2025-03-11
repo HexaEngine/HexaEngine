@@ -1,37 +1,37 @@
 ﻿namespace HexaEngine.Core.Assets.Importer
 {
+    using Hexa.NET.Assimp;
     using HexaEngine.Editor.Attributes;
-    using Silk.NET.Assimp;
 
     public class ModelImporterSettings
     {
-        public PostProcessSteps PostProcessSteps { get; set; } =
-            PostProcessSteps.FlipUVs |
-            PostProcessSteps.CalculateTangentSpace |
-            PostProcessSteps.MakeLeftHanded |
-            PostProcessSteps.FindInvalidData |
-            PostProcessSteps.FindDegenerates |
-            PostProcessSteps.ImproveCacheLocality |
-            PostProcessSteps.Triangulate |
-            PostProcessSteps.FindInstances |
-            PostProcessSteps.LimitBoneWeights |
-            PostProcessSteps.RemoveRedundantMaterials;
+        public AiPostProcessSteps PostProcessSteps { get; set; } =
+            AiPostProcessSteps.FlipUVs |
+            AiPostProcessSteps.CalcTangentSpace |
+            AiPostProcessSteps.MakeLeftHanded |
+            AiPostProcessSteps.FindInvalidData |
+            AiPostProcessSteps.FindDegenerates |
+            AiPostProcessSteps.ImproveCacheLocality |
+            AiPostProcessSteps.Triangulate |
+            AiPostProcessSteps.FindInstances |
+            AiPostProcessSteps.LimitBoneWeights |
+            AiPostProcessSteps.RemoveRedundantMaterials;
 
         [JsonIgnore]
         [EditorProperty("Optimize Meshes")]
         [EditorCategory("Optimization")]
         public bool OptimizeMeshes
         {
-            get => (PostProcessSteps & PostProcessSteps.OptimizeMeshes) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.OptimizeMeshes) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.OptimizeMeshes;
+                    PostProcessSteps |= AiPostProcessSteps.OptimizeMeshes;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.OptimizeMeshes;
+                    PostProcessSteps &= ~AiPostProcessSteps.OptimizeMeshes;
                 }
             }
         }
@@ -41,16 +41,16 @@
         [EditorCategory("Optimization")]
         public bool OptimizeGraph
         {
-            get => (PostProcessSteps & PostProcessSteps.OptimizeGraph) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.OptimizeGraph) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.OptimizeGraph;
+                    PostProcessSteps |= AiPostProcessSteps.OptimizeGraph;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.OptimizeGraph;
+                    PostProcessSteps &= ~AiPostProcessSteps.OptimizeGraph;
                 }
             }
         }
@@ -60,16 +60,16 @@
         [EditorCategory("Optimization")]
         public bool SplitLargeMeshes
         {
-            get => (PostProcessSteps & PostProcessSteps.SplitLargeMeshes) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.SplitLargeMeshes) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.SplitLargeMeshes;
+                    PostProcessSteps |= AiPostProcessSteps.SplitLargeMeshes;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.SplitLargeMeshes;
+                    PostProcessSteps &= ~AiPostProcessSteps.SplitLargeMeshes;
                 }
             }
         }
@@ -79,16 +79,16 @@
         [EditorCategory("Normals and UVs")]
         public bool RemoveComponent
         {
-            get => (PostProcessSteps & PostProcessSteps.RemoveComponent) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.RemoveComponent) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.RemoveComponent;
+                    PostProcessSteps |= AiPostProcessSteps.RemoveComponent;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.RemoveComponent;
+                    PostProcessSteps &= ~AiPostProcessSteps.RemoveComponent;
                 }
             }
         }
@@ -98,16 +98,16 @@
         [EditorCategory("Normals and UVs")]
         public bool GenerateNormals
         {
-            get => (PostProcessSteps & PostProcessSteps.GenerateNormals) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.GenNormals) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.GenerateNormals;
+                    PostProcessSteps |= AiPostProcessSteps.GenNormals;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.GenerateNormals;
+                    PostProcessSteps &= ~AiPostProcessSteps.GenNormals;
                 }
             }
         }
@@ -117,16 +117,16 @@
         [EditorCategory("Normals and UVs")]
         public bool GenerateSmoothNormals
         {
-            get => (PostProcessSteps & PostProcessSteps.GenerateSmoothNormals) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.GenSmoothNormals) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.GenerateSmoothNormals;
+                    PostProcessSteps |= AiPostProcessSteps.GenSmoothNormals;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.GenerateSmoothNormals;
+                    PostProcessSteps &= ~AiPostProcessSteps.GenSmoothNormals;
                 }
             }
         }
@@ -136,16 +136,16 @@
         [EditorCategory("Normals and UVs")]
         public bool CalculateTangentSpace
         {
-            get => (PostProcessSteps & PostProcessSteps.CalculateTangentSpace) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.CalcTangentSpace) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.CalculateTangentSpace;
+                    PostProcessSteps |= AiPostProcessSteps.CalcTangentSpace;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.CalculateTangentSpace;
+                    PostProcessSteps &= ~AiPostProcessSteps.CalcTangentSpace;
                 }
             }
         }
@@ -155,16 +155,16 @@
         [EditorCategory("Normals and UVs")]
         public bool GenerateUVCoords
         {
-            get => (PostProcessSteps & PostProcessSteps.GenerateUVCoords) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.GenUvCoords) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.GenerateUVCoords;
+                    PostProcessSteps |= AiPostProcessSteps.GenUvCoords;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.GenerateUVCoords;
+                    PostProcessSteps &= ~AiPostProcessSteps.GenUvCoords;
                 }
             }
         }
@@ -174,16 +174,16 @@
         [EditorCategory("Normals and UVs")]
         public bool FlipUVs
         {
-            get => (PostProcessSteps & PostProcessSteps.FlipUVs) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.FlipUVs) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.FlipUVs;
+                    PostProcessSteps |= AiPostProcessSteps.FlipUVs;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.FlipUVs;
+                    PostProcessSteps &= ~AiPostProcessSteps.FlipUVs;
                 }
             }
         }
@@ -193,16 +193,16 @@
         [EditorCategory("Normals and UVs")]
         public bool FixInFacingNormals
         {
-            get => (PostProcessSteps & PostProcessSteps.FixInFacingNormals) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.FixInfacingNormals) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.FixInFacingNormals;
+                    PostProcessSteps |= AiPostProcessSteps.FixInfacingNormals;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.FixInFacingNormals;
+                    PostProcessSteps &= ~AiPostProcessSteps.FixInfacingNormals;
                 }
             }
         }
@@ -212,16 +212,16 @@
         [EditorCategory("Geometry")]
         public bool JoinIdenticalVertices
         {
-            get => (PostProcessSteps & PostProcessSteps.JoinIdenticalVertices) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.JoinIdenticalVertices) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.JoinIdenticalVertices;
+                    PostProcessSteps |= AiPostProcessSteps.JoinIdenticalVertices;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.JoinIdenticalVertices;
+                    PostProcessSteps &= ~AiPostProcessSteps.JoinIdenticalVertices;
                 }
             }
         }
@@ -231,16 +231,16 @@
         [EditorCategory("Geometry")]
         public bool MakeLeftHanded
         {
-            get => (PostProcessSteps & PostProcessSteps.MakeLeftHanded) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.MakeLeftHanded) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.MakeLeftHanded;
+                    PostProcessSteps |= AiPostProcessSteps.MakeLeftHanded;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.MakeLeftHanded;
+                    PostProcessSteps &= ~AiPostProcessSteps.MakeLeftHanded;
                 }
             }
         }
@@ -250,16 +250,16 @@
         [EditorCategory("Geometry")]
         public bool Triangulate
         {
-            get => (PostProcessSteps & PostProcessSteps.Triangulate) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.Triangulate) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.Triangulate;
+                    PostProcessSteps |= AiPostProcessSteps.Triangulate;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.Triangulate;
+                    PostProcessSteps &= ~AiPostProcessSteps.Triangulate;
                 }
             }
         }
@@ -269,16 +269,16 @@
         [EditorCategory("Geometry")]
         public bool FlipWindingOrder
         {
-            get => (PostProcessSteps & PostProcessSteps.FlipWindingOrder) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.FlipWindingOrder) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.FlipWindingOrder;
+                    PostProcessSteps |= AiPostProcessSteps.FlipWindingOrder;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.FlipWindingOrder;
+                    PostProcessSteps &= ~AiPostProcessSteps.FlipWindingOrder;
                 }
             }
         }
@@ -288,16 +288,16 @@
         [EditorCategory("Geometry")]
         public bool Debone
         {
-            get => (PostProcessSteps & PostProcessSteps.Debone) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.Debone) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.Debone;
+                    PostProcessSteps |= AiPostProcessSteps.Debone;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.Debone;
+                    PostProcessSteps &= ~AiPostProcessSteps.Debone;
                 }
             }
         }
@@ -307,16 +307,16 @@
         [EditorCategory("Misc")]
         public bool RemoveRedundantMaterials
         {
-            get => (PostProcessSteps & PostProcessSteps.RemoveRedundantMaterials) != 0;
+            get => (PostProcessSteps & AiPostProcessSteps.RemoveRedundantMaterials) != 0;
             set
             {
                 if (value)
                 {
-                    PostProcessSteps |= PostProcessSteps.RemoveRedundantMaterials;
+                    PostProcessSteps |= AiPostProcessSteps.RemoveRedundantMaterials;
                 }
                 else
                 {
-                    PostProcessSteps &= ~PostProcessSteps.RemoveRedundantMaterials;
+                    PostProcessSteps &= ~AiPostProcessSteps.RemoveRedundantMaterials;
                 }
             }
         }

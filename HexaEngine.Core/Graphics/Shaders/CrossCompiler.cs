@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.Core.Graphics.Shaders
 {
     using Hexa.NET.Logging;
-    using HexaEngine.Core;
-    using HexaEngine.Core.IO;
     using Hexa.NET.Shaderc;
     using Hexa.NET.SPIRVCross;
-    using Silk.NET.Core.Native;
+    using HexaEngine.Core;
+    using HexaEngine.Core.IO;
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;

@@ -39,13 +39,13 @@
 		<PackageReference Include="Hexa.NET.ImPlot" Version="2.2.6" />
 		<PackageReference Include="Hexa.NET.ImGui.Backends.SDL3" Version="1.0.14-preview" />
 		<PackageReference Include="Hexa.NET.SDL3" Version="1.2.13" />
-		
+
+		<PackageReference Include="Hexa.NET.Assimp" Version="1.0.3" />
 		<PackageReference Include="Hexa.NET.Shaderc" Version="1.0.0" />
 		<PackageReference Include="Hexa.NET.SPIRVCross" Version="1.0.1" />
 		<PackageReference Include="Hexa.NET.SPIRVReflect" Version="1.0.1" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.12.0" />
 		<PackageReference Include="SharpGLTF.Core" Version="1.0.3" />
-		<PackageReference Include="Silk.NET.Assimp" Version="2.22.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
 		<PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.8" />
