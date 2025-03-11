@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
@@ -18,6 +17,7 @@
         private IGraphicsPipelineState psoSSGI;
         private ConstantBuffer<SSGIParams> ssgiParamsBuffer;
         private ResourceRef<Texture2D> ssgiBuffer;
+        private Texture2D tempSsgiBuffer;
         private GaussianBlur blur;
 
 #nullable restore
@@ -224,7 +224,8 @@
             ssgiParams.RaySteps = raySteps;
             ssgiParams.DepthBias = depthBias;
             ssgiParamsBuffer = new(ssgiParams, CpuAccessFlags.Write);
-            ssgiBuffer = creator.CreateBuffer("SSGI_BUFFER");
+            ssgiBuffer = creator.CreateBuffer("SSGI_BUFFER", creationFlags: ResourceCreationFlags.None);
+            tempSsgiBuffer = new(creator.Format, creator.Width, creator.Height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(creator, "SSGI", additive: true);
         }
 
@@ -246,6 +247,7 @@
         public override void UpdateBindings()
         {
             psoSSGI.Bindings.SetSRV("inputTex", Input);
+            psoSSGI.Bindings.SetSRV("prevTex", tempSsgiBuffer.SRV);
             psoSSGI.Bindings.SetCBV("SSGIParams", ssgiParamsBuffer);
         }
 
@@ -258,14 +260,18 @@
 
             context.ClearRenderTargetView(ssgiBuffer.Value!, default);
 
-            context.SetRenderTarget(ssgiBuffer.Value, null);
+            context.SetRenderTarget(ssgiBuffer.Value!, null);
             context.SetViewport(Viewport);
             context.SetGraphicsPipelineState(psoSSGI);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
 
-            blur.Blur(context, ssgiBuffer.Value!, Output, Viewport.Width, Viewport.Height);
+            context.CopyResource(tempSsgiBuffer, ssgiBuffer.Value!);
+
+            context.CopyResource(OutputResource, ssgiBuffer.Value!);
+
+            //blur.Blur(context, ssgiBuffer.Value!, Output, Viewport.Width, Viewport.Height);
         }
 
         protected override void DisposeCore()

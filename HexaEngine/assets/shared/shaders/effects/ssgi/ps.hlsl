@@ -23,11 +23,12 @@ cbuffer SSGIParams : register(b0)
 
 #endif
 
-Texture2D inputTex : register(t0);
-Texture2D<float> depthTex : register(t1);
-Texture2D normalTex : register(t2);
+Texture2D inputTex;
+Texture2D<float> depthTex;
+Texture2D normalTex;
+Texture2D prevTex;
 
-SamplerState linearWrapSampler : register(s0);
+SamplerState linearWrapSampler;
 
 #if SSGI_QUALITY == 1
 #define SSGI_RAY_STEPS 1
@@ -47,8 +48,6 @@ SamplerState linearWrapSampler : register(s0);
 #define SSGI_DEPTH_BIAS 0.1
 #endif
 
-
-
 #define PI 3.14159265359
 
 struct VertexOut
@@ -57,59 +56,11 @@ struct VertexOut
 	float2 Tex : TEXCOORD;
 };
 
-float GetMipLevel(float2 offset)
+float2 mod_dither3(float2 u)
 {
-	float v = clamp(pow(dot(offset, offset), 0.1), 0.0, 1.0);
-	float lod = 10.0 * v;
-	return lod;
-}
-
-float Rand(float2 co)
-{
-	return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453);
-}
-
-float CalculateShadowRayCast(float3 startPosition, float3 endPosition, float2 startUV)
-{
-	float rayDistance = length(endPosition - startPosition);
-	float3 rayDirection = normalize(endPosition - startPosition);
-
-	float distancePerStep = rayDistance / SSGI_RAY_STEPS;
-	for (int i = 1; i < SSGI_RAY_STEPS; i++)
-	{
-		float currentDistance = i * distancePerStep;
-		float3 currentPosition = startPosition + rayDirection * currentDistance;
-
-		float4 projectedPosition = mul(float4(currentPosition, 1.0f), proj);
-		projectedPosition.xyz /= projectedPosition.w;
-		float2 currentUV = projectedPosition.xy;
-
-		float lod = GetMipLevel(currentUV - startUV);
-		float projectedDepth = 1.0 / projectedPosition.z;
-
-		float currentDepth = 1.0 / depthTex.SampleLevel(linearWrapSampler, currentUV, lod).r;
-		if (projectedDepth > currentDepth + SSGI_DEPTH_BIAS)
-		{
-			return float(i - 1) / SSGI_RAY_STEPS;
-		}
-	}
-
-	return 1.0;
-}
-
-float3 GetViewPos(float2 coord, float4x4 ipm)
-{
-	float depth = depthTex.SampleLevel(linearWrapSampler, coord, 0.0f);
-	return GetPositionWS(coord, depth);
-}
-float3 UnpackNormal(float3 normal)
-{
-    return 2 * normal - 1;
-}
-
-float3 GetViewNormal(float2 coord, float4x4 ipm, float2 texel)
-{
-	return UnpackNormal(normalTex.SampleLevel(linearWrapSampler, coord, 0).xyz);
+	float noiseX = fmod(u.x + u.y + fmod(208. + u.x * 3.58, 13. + fmod(u.y * 22.9, 9.)), 7.) * .143;
+	float noiseY = fmod(u.y + u.x + fmod(203. + u.y * 3.18, 12. + fmod(u.x * 27.4, 8.)), 6.) * .139;
+	return float2(noiseX, noiseY) * 2.0 - 1.0;
 }
 
 float2 dither(float2 coord, float seed, float2 size)
@@ -119,78 +70,135 @@ float2 dither(float2 coord, float seed, float2 size)
 	return float2(noiseX, noiseY);
 }
 
+float3 getViewPos(float2 coord)
+{
+	float depth = depthTex.Sample(linearWrapSampler, coord).r;
+	return GetPositionVS(coord, depth);
+}
+
+float3 UnpackNormal(float3 normal)
+{
+	return 2 * normal - 1;
+}
+
+float3 getViewNormal(float2 coord)
+{
+	float3 normal = normalTex.Sample(linearWrapSampler, coord).rgb;
+	return normalize(mul(UnpackNormal(normal), (float3x3)view));
+
+	float pW = screenDim.x;
+	float pH = screenDim.y;
+
+	float3 p1 = getViewPos(coord + float2(pW, 0.0)).xyz;
+	float3 p2 = getViewPos(coord + float2(0.0, pH)).xyz;
+	float3 p3 = getViewPos(coord + float2(-pW, 0.0)).xyz;
+	float3 p4 = getViewPos(coord + float2(0.0, -pH)).xyz;
+
+	float3 vP = getViewPos(coord);
+
+	float3 dx = vP - p1;
+	float3 dy = p2 - vP;
+	float3 dx2 = p3 - vP;
+	float3 dy2 = vP - p4;
+
+	if (length(dx2) < length(dx) && coord.x - pW >= 0.0 || coord.x + pW > 1.0)
+	{
+		dx = dx2;
+	}
+
+	if (length(dy2) < length(dy) && coord.y - pH >= 0.0 || coord.y + pH > 1.0)
+	{
+		dy = dy2;
+	}
+
+	return normalize(-cross(dx, dy).xyz);
+}
+
 float lenSq(float3 v)
 {
 	return pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0);
 }
 
-float3 LightBounce(float2 coord, float2 lightcoord, float3 normal, float3 position)
+#define _NoiseAmount 1
+#define _Noise 1
+
+float3 lightSample(float2 coord, float2 lightcoord, float3 normal, float3 position, float n, float2 texsize)
 {
-	float2 lightUV = coord + lightcoord;
-		
-	float3 lightColor = inputTex.SampleLevel(linearWrapSampler, lightUV, 0).rgb;
-	float3 lightPosition = GetViewPos((lightUV), projInv).xyz;
+	float2 random = float2(1.0, 1.0);
 
-	float3 lightDirection = lightPosition - position;
-	float3 L = normalize(lightDirection);
-
-	float currentDistance = length(lightDirection);
-	float distanceAttenuation = clamp(1.0f - pow(currentDistance / distance, 4.0f), 0.0, 1.0);
-	distanceAttenuation = isinf(currentDistance) ? 0.0 : distanceAttenuation;
-
-	float NdotL = saturate(dot(normal, L));
-
-	return lightColor * NdotL * distanceAttenuation;
-}
-
-float3 SecondBounce(float2 coords, float r, float3 normal, float3 position)
-{
-	float3 indirect = float3(0.0,0.0,0.0);
-	for (int i = 0; i < SSGI_RAY_STEPS; i++)
+	if (_Noise > 0)
 	{
-		float sampleDistance = exp(i - SSGI_RAY_STEPS);
-		float phi = ((i + r * SSGI_RAY_COUNT) * 2.0 * PI) / SSGI_RAY_COUNT;
- 		float2 uv = sampleDistance * float2(cos(phi), sin(phi));
-
-		indirect += LightBounce(coords, uv, normal, position);
+		random = (mod_dither3((coord * texsize) + float2(n * 82.294, n * 127.721))) * 0.01 * _NoiseAmount;
+	}
+	else
+	{
+		random = dither(coord, 1.0, texsize) * 0.1 * _NoiseAmount;
 	}
 
-	return indirect / SSGI_RAY_STEPS;
+	lightcoord *= float2(0.7, 0.7);
+
+	//light absolute data
+	float3 lightcolor = inputTex.Sample(linearWrapSampler, ((lightcoord)+random)).rgb;
+	float3 lightnormal = getViewNormal(frac(lightcoord) + random).rgb;
+	float3 lightposition = getViewPos(frac(lightcoord) + random).xyz;
+
+	//light variable data
+	float3 lightpath = lightposition - position;
+	float3 lightdir = normalize(lightpath);
+
+	//falloff calculations
+	float cosemit = clamp(dot(lightdir, -lightnormal), 0.0, 1.0); //emit only in one direction
+	float coscatch = clamp(dot(lightdir, normal) * 0.5 + 0.5, 0.0, 1.0); //recieve light from one direction
+	float distfall = pow(lenSq(lightpath), 0.1) + 1.0;        //fall off with distance
+
+	return (lightcolor * cosemit * coscatch / distfall) * (length(lightposition) / 20);
+}
+
+float2 ReprojectUV(float2 currentUV, float currentDepth)
+{
+	float4 screenPos = float4(currentUV.x * 2.0 - 1.0, (1.0 - currentUV.y) * 2.0 - 1.0, currentDepth, 1.0);
+	float4 worldPos = mul(screenPos, viewProjInv);
+	float4 newScreenPos = mul(worldPos, prevViewProj);
+	float2 reprojectedUV = (newScreenPos.xy * 0.5) + 0.5;
+	reprojectedUV.y = 1.0 - reprojectedUV.y;
+
+	return reprojectedUV;
 }
 
 float4 main(VertexOut input) : SV_TARGET
 {
-
 	float depth = depthTex.SampleLevel(linearWrapSampler, input.Tex, 0.0f);
 	if (depth == 1)
 		discard;
-	uint3 dimensions;
-	inputTex.GetDimensions(0, dimensions.x, dimensions.y, dimensions.z);
-	float2 texSize = float2(dimensions.xy);
-	float2 inverse_size = 1.0f / float2(dimensions.xy);
 
+	float3 direct = inputTex.Sample(linearWrapSampler, input.Tex).rgb;
+	float3 indirect = float3(0.0, 0.0, 0.0);
+	float3 position = getViewPos(input.Tex);
+	float3 normal = getViewNormal(input.Tex);
 
-	float3 position = GetViewPos(input.Tex, projInv);
-	float3 normal = GetViewNormal(input.Tex, projInv, inverse_size);
-
-	float3 indirect = float3(0.0,0.0,0.0);
-	float r = Rand(input.Tex);
+	float dlong = PI * (3.0 - sqrt(5.0));
+	float dz = 1.0 / float(SSGI_RAY_COUNT);
+	float l = 0.0;
+	float z = 1.0 - dz / 2.0;
 
 	for (int i = 0; i < SSGI_RAY_COUNT; i++)
 	{
-		float sampleDistance = exp(i - SSGI_RAY_COUNT);
- 		float phi = ((i + r * SSGI_RAY_COUNT) * 2.0 * PI) / SSGI_RAY_COUNT;
- 		float2 uv = sampleDistance * float2(cos(phi), sin(phi));
+		float r = sqrt(1.0 - z);
 
-		float2 lightUV = input.Tex + uv;
+		float xpoint = (cos(l) * r) * 0.5 + 0.5;
+		float ypoint = (sin(l) * r) * 0.5 + 0.5;
 
-		float3 lightPosition = GetViewPos((lightUV), projInv).xyz;
-		float3 lightNormal = GetViewNormal((lightUV), projInv, inverse_size);
-		
-		float3 lightColor = LightBounce(input.Tex, uv, normal, position) + SecondBounce(lightUV, r, lightNormal, lightPosition);
+		z = z - dz;
+		l = l + dlong;
 
-		indirect += lightColor;
+		indirect += lightSample(input.Tex, float2(xpoint, ypoint), normal, position, float(i), screenDim);
 	}
 
-	return float4(indirect / float(SSGI_RAY_COUNT) * intensity, 1.0);
+	float3 result = (indirect / float(SSGI_RAY_COUNT) * intensity);
+
+	float3 prev = prevTex.Sample(linearWrapSampler, ReprojectUV(input.Tex, depth)).rgb;
+
+	result = lerp(result, prev, deltaTime * 160);
+
+	return float4(result, 1.0);
 }
