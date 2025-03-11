@@ -102,7 +102,7 @@
         {
             lock (rendererLock)
             {
-                if (meshRenderer == null)
+                if (meshRenderer == null || meshRenderer.IsDisposed)
                 {
                     meshRenderer = new();
                     ((IRenderer1)meshRenderer).Initialize(device, CullingManager.Current.Context);

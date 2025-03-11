@@ -191,7 +191,8 @@
             description.ByteWidth = (int)size;
             BufferDesc desc = Helper.Convert(description);
             var data = Helper.Convert(new SubresourceData(values, description.ByteWidth));
-            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowIf();
+            var pData = data.PSysMem == null ? null : &data;
+            Device.CreateBuffer(&desc, pData, &buffer.Handle).ThrowIf();
             return new D3D11Buffer(buffer, description);
         }
 
@@ -203,7 +204,8 @@
             description.ByteWidth = (int)size;
             BufferDesc desc = Helper.Convert(description);
             var data = Helper.Convert(new SubresourceData(values, description.ByteWidth));
-            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowIf();
+            var pData = data.PSysMem == null ? null : &data;
+            Device.CreateBuffer(&desc, pData, &buffer.Handle).ThrowIf();
             return new D3D11Buffer(buffer, description);
         }
 
