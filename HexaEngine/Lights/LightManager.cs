@@ -116,7 +116,7 @@
 
         private void LightTransformed(GameObject gameObject, Transform transform)
         {
-            if (gameObject is Light light)
+            if (gameObject is LightSource light)
             {
                 lightUpdateQueue.Enqueue(light);
             }
@@ -124,7 +124,7 @@
 
         private void LightPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (sender is Light light)
+            if (sender is LightSource light)
             {
                 lightUpdateQueue.Enqueue(light);
             }
@@ -136,12 +136,12 @@
             {
                 foreach (var lightSource in lights)
                 {
+                    lightSource.TransformUpdated -= LightTransformed;
+                    lightSource.PropertyChanged -= LightPropertyChanged;
                     if (lightSource is Light light)
                     {
                         light.DestroyShadowMap();
-                        light.TransformUpdated += LightTransformed;
-                        light.PropertyChanged += LightPropertyChanged;
-                        light.ShadowMapChanged += OnLightShadowMapChanged;
+                        light.ShadowMapChanged -= OnLightShadowMapChanged;
                     }
                 }
                 lights.Clear();
@@ -163,9 +163,8 @@
 
         public unsafe void Unregister(GameObject gameObject)
         {
-            if (gameObject is Light light)
+            if (gameObject is LightSource light)
             {
-                light.DestroyShadowMap();
                 RemoveLight(light);
             }
             if (gameObject is Probe probe)
@@ -180,10 +179,10 @@
             {
                 lights.Add(lightSource);
                 lightUpdateQueue.Enqueue(lightSource);
+                lightSource.TransformUpdated += LightTransformed;
+                lightSource.PropertyChanged += LightPropertyChanged;
                 if (lightSource is Light light)
                 {
-                    light.TransformUpdated += LightTransformed;
-                    light.PropertyChanged += LightPropertyChanged;
                     light.ShadowMapChanged += OnLightShadowMapChanged;
                 }
             }
@@ -207,16 +206,21 @@
         {
             lock (lights)
             {
+                lightSource.PropertyChanged -= LightPropertyChanged;
+                lightSource.TransformUpdated -= LightTransformed;
                 if (lightSource is Light light)
                 {
                     light.DestroyShadowMap();
-                    light.PropertyChanged -= LightPropertyChanged;
-                    light.TransformUpdated -= LightTransformed;
                     light.ShadowMapChanged -= OnLightShadowMapChanged;
                 }
 
                 lights.Remove(lightSource);
-                activeLights.Remove(lightSource);
+                bool activeLightsChanged = activeLights.Remove(lightSource);
+
+                if (activeLightsChanged)
+                {
+                    OnActiveLightsChanged();
+                }
             }
         }
 
@@ -231,7 +235,7 @@
         public readonly Queue<LightSource> UpdateShadowLightQueue = new();
 
         [Profiling.Profile]
-        public unsafe void Update(IGraphicsContext context, ShadowAtlas shadowAtlas, Camera camera)
+        public unsafe void Update(ShadowAtlas shadowAtlas, Camera camera)
         {
             bool activeLightsChanged = false;
             while (lightUpdateQueue.TryDequeue(out var lightSource))

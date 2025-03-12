@@ -272,7 +272,7 @@
 
             scene.RenderManager.Update(context);
             scene.WeatherManager.Update(context);
-            scene.LightManager.Update(context, graphExecuter.ResourceBuilder.GetShadowAtlas(0), camera);
+            scene.LightManager.Update(graphExecuter.ResourceBuilder.GetShadowAtlas(0), camera);
 
             graphExecuter.ResourceBuilder.Output = swapChain.BackbufferRTV;
             graphExecuter.ResourceBuilder.OutputViewport = outputViewport;
@@ -297,7 +297,7 @@
 
             scene.RenderManager.Update(context);
             scene.WeatherManager.Update(context);
-            scene.LightManager.Update(context, graphExecuter.ResourceBuilder.GetShadowAtlas(0), camera);
+            scene.LightManager.Update(graphExecuter.ResourceBuilder.GetShadowAtlas(0), camera);
 
             graphExecuter.ResourceBuilder.Output = target;
             graphExecuter.ResourceBuilder.OutputViewport = viewport;
