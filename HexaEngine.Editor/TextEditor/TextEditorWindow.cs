@@ -16,8 +16,6 @@
 
         public bool Initialized { get; }
 
-        protected override string Name => "Text Editor";
-
         bool IEditorWindow.IsShown => IsShown;
 
         string IEditorWindow.Name => Name;
@@ -83,6 +81,11 @@
         protected virtual void OnClosed()
         {
             Closed?.Invoke(this);
+        }
+
+        public void DrawMenu()
+        {
+            ImGui.Text("Text Editor");
         }
     }
 }

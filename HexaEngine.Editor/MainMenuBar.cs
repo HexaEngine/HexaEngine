@@ -20,7 +20,7 @@
     using HexaEngine.Windows;
     using System;
     using System.Diagnostics;
-    using System.Numerics;
+    using IPopup = Dialogs.IPopup;
     using OpenFileDialog = Hexa.NET.ImGui.Widgets.Dialogs.OpenFileDialog;
     using SaveFileDialog = Hexa.NET.ImGui.Widgets.Dialogs.SaveFileDialog;
 

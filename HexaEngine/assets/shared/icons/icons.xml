@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Icons>
 	<Icon theme="Light" name="File" path="assets/icons/file.png" target=".*" priority="-1" tint="#000" />
-	<Icon theme="Light" name="Folder" path="assets/icons/folder.png" target="/" priority="-1" tint="#000" />
+	<Icon theme="Light" name="Folder" path="assets/icons/folder.png" target="\/$" priority="-1" tint="#000" />
 	<Icon theme="Light" name="Material" path="assets/icons/material.png" target="*.material" tint="#000" />
 	<Icon theme="Light" name="Model" path="assets/icons/model.png" target="*.model" tint="#000" />
 	<Icon theme="Light" name="gltf" path="assets/icons/model.png" target="*.gltf" tint="#000" />
@@ -25,7 +25,7 @@
 	<Icon theme="Light" name="ImgBmp" path="assets/icons/image.png" target="*.bmp" tint="#000" />
 
 	<Icon theme="Dark" name="File" path="assets/icons/file.png" target=".*" priority="-1" tint="#FFF" />
-	<Icon theme="Dark" name="Folder" path="assets/icons/folder.png" target="/" priority="-1" tint="#FFF" />
+	<Icon theme="Dark" name="Folder" path="assets/icons/folder.png" target="\/$" priority="-1" tint="#FFF" />
 	<Icon theme="Dark" name="Material" path="assets/icons/material.png" target="*.material" tint="#FFF" />
 	<Icon theme="Dark" name="Model" path="assets/icons/model.png" target="*.model" tint="#FFF" />
 	<Icon theme="Dark" name="gltf" path="assets/icons/model.png" target="*.gltf" tint="#FFF" />

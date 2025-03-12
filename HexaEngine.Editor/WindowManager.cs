@@ -10,6 +10,7 @@
     using HexaEngine.Editor.PoseEditor;
     using HexaEngine.Editor.TextEditor;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Editor.Widgets.AssetBrowser;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
     using HexaEngine.Windows;
@@ -32,7 +33,7 @@
 
             Register<PreferencesWidget>();
             Register<PipelineWidget>();
-            Register<AssetBrowser>();
+            Register<AssetBrowserWidget>();
             Register<GitWidget>();
             Register<HierarchyWidget>();
             Register<PropertiesWidget>();

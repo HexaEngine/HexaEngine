@@ -237,6 +237,11 @@
             ImGui.Image(this, size, uv0, uv1, tint);
         }
 
+        public void AddImage(ImDrawListPtr drawListPtr, Vector2 min, Vector2 max)
+        {
+            drawListPtr.AddImage(this, min, max);
+        }
+
         public static implicit operator ImTextureID(Icon icon)
         {
             return (ulong)icon.icon.SRV!.NativePointer;

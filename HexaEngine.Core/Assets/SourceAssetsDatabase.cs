@@ -83,6 +83,7 @@
         private static readonly Dictionary<Guid, SourceAssetMetadata> guidToSourceAsset = [];
         private static readonly Dictionary<Guid, SourceAssetMetadataGroup> guidToGroup = [];
         private static readonly HashSet<string> importedFiles = [];
+        private static readonly HashSet<string> lockedFiles = [];
         private static readonly ManualResetEventSlim initLock = new(false);
 
         public static Task Init(string path, IProgress<float> progress)
@@ -221,6 +222,22 @@
             image.Dispose();
         }
 
+        public static void Lock(string path)
+        {
+            lock (_lock)
+            {
+                lockedFiles.Add(path);
+            }
+        }
+
+        public static void Unlock(string path)
+        {
+            lock (_lock)
+            {
+                lockedFiles.Remove(path);
+            }
+        }
+
         public static void Ignore(string path)
         {
             lock (_lock)
@@ -267,6 +284,14 @@
             {
                 logger.Trace($"Ignored {e.ChangeType} event for '{e.FullPath}'");
                 return;
+            }
+
+            lock (_lock)
+            {
+                if (lockedFiles.Contains(e.FullPath))
+                {
+                    return;
+                }
             }
 
             switch (e.ChangeType)
@@ -971,10 +996,19 @@
             string oldMetadataLocation = metadata.MetadataFilePath;
             string? metadataLocation = SourceAssetMetadata.GetMetadataFilePath(targetLocation) ?? throw new MetadataPathNotFoundException(targetLocation);
 
+            Lock(fileToMove);
+            Lock(targetLocation);
+            Ignore(targetLocation);
+
             metadata.MetadataFilePath = metadataLocation;
             metadata.FilePath = relativeTargetLocation;
             File.Move(fileToMove, targetLocation);
             File.Move(oldMetadataLocation, metadataLocation);
+
+            Unignore(fileToMove);
+            Unlock(fileToMove);
+            Unlock(targetLocation);
+
             metadata.Save();
         }
 
@@ -982,6 +1016,7 @@
         {
             initLock.Wait();
 
+            Directory.CreateDirectory(newPath);
             foreach (var subFolder in Directory.EnumerateDirectories(folder))
             {
                 var newSubPath = Path.Combine(newPath, Path.GetFileName(subFolder));

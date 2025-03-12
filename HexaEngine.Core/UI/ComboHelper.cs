@@ -124,6 +124,8 @@
     /// </summary>
     public static class ComboHelper
     {
+        private static string searchString = string.Empty;
+
         /// <summary>
         /// Displays a combo box to select an asset value of a specified asset type.
         /// </summary>
@@ -155,9 +157,12 @@
             bool changed = false;
             if (isOpen)
             {
+                ImGui.InputTextWithHint("##Search"u8, "Search..."u8, ref searchString, 1024);
+                bool search = !string.IsNullOrEmpty(searchString);
                 changed |= DrawAssetRefSelectable(ref assetRef, Artifact.Empty);
                 foreach (var asset in ArtifactDatabase.GetArtifactsFromType(type))
                 {
+                    if (search && !asset.DisplayName.Contains(searchString, StringComparison.OrdinalIgnoreCase)) continue;
                     changed |= DrawAssetRefSelectable(ref assetRef, asset);
                 }
 

@@ -6,6 +6,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Properties;
+    using HexaEngine.Editor.Widgets.AssetBrowser;
     using System;
     using System.Collections.Generic;
 

@@ -24,6 +24,7 @@
         private static Icon Default = null!;
         private static readonly AtlasBuilder atlasBuilder = new(256 * 8 + 2, 2048, Format.R8G8B8A8UNorm);
         private static Texture2D iconAtlas = null!;
+        private static Icon folderIcon;
         private static readonly List<IconGlyphTileInfo> glyphs = new();
         private static readonly Dictionary<Guid, IconGlyphTileInfo> keyToGlyph = new();
         private static readonly IconCache iconCache = new("cache/iconcache.bin");
@@ -110,6 +111,7 @@
             }
 
             icons.Sort(IconPriorityComparer.Default);
+            folderIcon = icons.First(x => x.Target == "\\/$");
         }
 
         private static unsafe void UpdateAtlas()
@@ -157,6 +159,8 @@
 
                     AddToAtlas(icon);
                 }
+
+                folderIcon = icons.First(x => x.Target == "/");
             }
             catch (Exception ex)
             {
@@ -301,15 +305,7 @@
         /// <returns>The icon associated with the file, or the default icon if not found.</returns>
         public static Icon GetIconForDirectory(string name)
         {
-            for (int i = 0; i < icons.Count; i++)
-            {
-                var icon = icons[i];
-                if (icon.Target == "/")
-                {
-                    return icon;
-                }
-            }
-            return Default;
+            return folderIcon;
         }
 
         /// <summary>
