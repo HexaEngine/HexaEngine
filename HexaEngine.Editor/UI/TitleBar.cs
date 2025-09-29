@@ -9,6 +9,7 @@
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.UI;
     using HexaEngine.Editor.Extensions;
+    using HexaEngine.Graphics.Renderers;
     using System;
     using System.Numerics;
     using System.Runtime.InteropServices;
@@ -339,7 +340,9 @@
 
         public void Draw(TitleBarContext context)
         {
-            context.DrawList.AddRectFilled(context.Area.Min, context.Area.Max, context.BackgroundColor);
+            ImGuiManager.PushFont("WidgetsFont");
+            var bg = ImGui.GetBackgroundDrawList();
+            bg.AddRectFilled(context.Area.Min, context.Area.Max, context.BackgroundColor);
 
             for (int i = 0; i < elements.Count; i++)
             {
@@ -355,6 +358,8 @@
                     AlignContext(context);
                 }
             }
+
+            ImGuiManager.PopFont();
         }
 
         public void AlignContext(TitleBarContext context)
