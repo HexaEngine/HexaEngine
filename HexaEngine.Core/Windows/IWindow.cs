@@ -12,6 +12,11 @@
     public interface IWindow : INativeWindow
     {
         /// <summary>
+        /// Gets the scale factor applied to the content.
+        /// </summary>
+        public float ContentScale { get; }
+
+        /// <summary>
         /// Gets or sets a _value indicating whether the window has a border.
         /// </summary>
         bool Bordered { get; set; }

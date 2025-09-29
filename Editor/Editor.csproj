@@ -9,6 +9,7 @@
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak;PROFILE</DefineConstants>
 		<PublishAot>true</PublishAot>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">

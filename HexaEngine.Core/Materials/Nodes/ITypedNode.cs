@@ -11,4 +11,8 @@
     {
         SType Type { get; }
     }
+
+    public interface IPropertyNode : ITypedNode
+    {
+    }
 }

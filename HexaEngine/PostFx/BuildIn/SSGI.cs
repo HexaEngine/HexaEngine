@@ -15,7 +15,11 @@
 #nullable disable
         private PostFxGraphResourceBuilder creator;
         private IGraphicsPipelineState psoSSGI;
+        private IGraphicsPipelineState psoDenoise;
+        private IGraphicsPipelineState psoBlend;
+
         private ConstantBuffer<SSGIParams> ssgiParamsBuffer;
+        private ConstantBuffer<DenoiseParams> denoiseParamsBuffer;
         private ResourceRef<Texture2D> ssgiBuffer;
         private Texture2D tempSsgiBuffer;
         private GaussianBlur blur;
@@ -26,8 +30,12 @@
         private float distance = 10;
         private int maxRayCount = 16;
         private int raySteps = 8;
-        private float depthBias = 0.1f;
+        private float rayStep = 0.1f;
+        private float rayHitThreshold = 2f;
         private SSGIQualityPreset qualityPreset;
+        private float sigmaS = 2.0f;
+        private float sigmaR = 0.1f;
+        private float radius = 16.0f;
 
         /// <inheritdoc/>
         public override string Name { get; } = "SSGI";
@@ -144,22 +152,49 @@
         }
 
         /// <summary>
-        /// Gets or sets the depth bias for SSGI.
+        /// Gets or sets the ray step for SSGI.
         /// </summary>
-        [EditorProperty("Depth Bias")]
-        [Tooltip("Specifies the depth bias for Screen Space Global Illumination (SSGI). This value is applicable when the quality preset is set to 'Custom'.")]
-        public float DepthBias
+        [EditorProperty("Ray Step")]
+        [Tooltip("Specifies the ray step for Screen Space Global Illumination (SSGI). This value is applicable when the quality preset is set to 'Custom'.")]
+        public float RayStep
         {
-            get => depthBias;
+            get => rayStep;
             set
             {
-                NotifyPropertyChangedAndSet(ref depthBias, value);
+                NotifyPropertyChangedAndSet(ref rayStep, value);
                 if (qualityPreset == SSGIQualityPreset.Custom)
                 {
                     NotifyReload();
                 }
             }
         }
+
+        /// <summary>
+        /// Gets or sets the ray step for SSGI.
+        /// </summary>
+        [EditorProperty("Ray Hit Threshold")]
+        [Tooltip("Specifies the ray hit threshold for Screen Space Global Illumination (SSGI). This value is applicable when the quality preset is set to 'Custom'.")]
+        public float RayHitThreshold
+        {
+            get => rayHitThreshold;
+            set
+            {
+                NotifyPropertyChangedAndSet(ref rayHitThreshold, value);
+                if (qualityPreset == SSGIQualityPreset.Custom)
+                {
+                    NotifyReload();
+                }
+            }
+        }
+
+        [EditorProperty("Denoise Sigma S")]
+        public float SigmaS { get => sigmaS; set => NotifyPropertyChangedAndSet(ref sigmaS, value); }
+
+        [EditorProperty("Denoise Sigma R")]
+        public float SigmaR { get => sigmaR; set => NotifyPropertyChangedAndSet(ref sigmaR, value); }
+
+        [EditorProperty("Denoise Radius")]
+        public float Radius { get => radius; set => NotifyPropertyChangedAndSet(ref radius, value); }
 
         #region Structs
 
@@ -169,13 +204,29 @@
             public float Distance;
             public int MaxRayCount;
             public int RaySteps;
-            public float DepthBias;
-            public Vector3 Padding;
+            public float RayStep;
+            public float RayHitThreshold;
+            public Vector2 Padding;
 
             public SSGIParams()
             {
                 Intensity = 1f;
                 Distance = 10;
+            }
+        }
+
+        private struct DenoiseParams
+        {
+            public float SigmaS;
+            public float SigmaR;
+            public float Radius;
+            public float Padding;
+
+            public DenoiseParams(float sigmaS, float sigmaR, float radius)
+            {
+                SigmaS = sigmaS;
+                SigmaR = sigmaR;
+                Radius = radius;
             }
         }
 
@@ -207,13 +258,28 @@
             {
                 shaderMacros.Add(new("SSGI_RAY_COUNT", maxRayCount));
                 shaderMacros.Add(new("SSGI_RAY_STEPS", raySteps));
-                shaderMacros.Add(new("SSGI_DEPTH_BIAS", depthBias));
+                shaderMacros.Add(new("SSGI_RAY_STEP", rayStep));
+                shaderMacros.Add(new("SSGI_RAY_HIT_THRESHOLD", rayHitThreshold));
             }
 
             psoSSGI = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/ssgi/ps.hlsl",
+                PixelShader = "effects/ssgi/ps2.hlsl",
+                Macros = [.. shaderMacros]
+            }, GraphicsPipelineStateDesc.DefaultAdditiveFullscreen);
+
+            psoDenoise = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/ssgi/denoise.hlsl",
+                Macros = [.. shaderMacros]
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+
+            psoBlend = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/ssgi/blend.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
@@ -222,11 +288,18 @@
             ssgiParams.Distance = distance;
             ssgiParams.MaxRayCount = maxRayCount;
             ssgiParams.RaySteps = raySteps;
-            ssgiParams.DepthBias = depthBias;
+            ssgiParams.RayStep = rayStep;
             ssgiParamsBuffer = new(ssgiParams, CpuAccessFlags.Write);
+
+            Unsafe.SkipInit<DenoiseParams>(out var denoiseParams);
+            denoiseParams.SigmaS = sigmaS;
+            denoiseParams.SigmaR = sigmaR;
+            denoiseParams.Radius = radius;
+            denoiseParamsBuffer = new(denoiseParams, CpuAccessFlags.Write);
+
             ssgiBuffer = creator.CreateBuffer("SSGI_BUFFER", creationFlags: ResourceCreationFlags.None);
             tempSsgiBuffer = new(creator.Format, creator.Width, creator.Height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            blur = new(creator, "SSGI", additive: true);
+            blur = new(creator, "SSGI", radius: GaussianRadius.Radius7x7, additive: true);
         }
 
         public override void Update(IGraphicsContext context)
@@ -238,8 +311,14 @@
                 ssgiParams.Distance = distance;
                 ssgiParams.MaxRayCount = maxRayCount;
                 ssgiParams.RaySteps = raySteps;
-                ssgiParams.DepthBias = depthBias;
+                ssgiParams.RayStep = rayStep;
+                ssgiParams.RayHitThreshold = rayHitThreshold;
                 ssgiParamsBuffer.Update(context, ssgiParams);
+                Unsafe.SkipInit<DenoiseParams>(out var denoiseParams);
+                denoiseParams.SigmaS = sigmaS;
+                denoiseParams.SigmaR = sigmaR;
+                denoiseParams.Radius = radius;
+                denoiseParamsBuffer.Update(context, denoiseParams);
                 dirty = false;
             }
         }
@@ -249,6 +328,12 @@
             psoSSGI.Bindings.SetSRV("inputTex", Input);
             psoSSGI.Bindings.SetSRV("prevTex", tempSsgiBuffer.SRV);
             psoSSGI.Bindings.SetCBV("SSGIParams", ssgiParamsBuffer);
+            psoDenoise.Bindings.SetSRV("inputTex", ssgiBuffer.Value);
+            psoDenoise.Bindings.SetCBV("DenoiseParams", denoiseParamsBuffer);
+
+            psoBlend.Bindings.SetSRV("inputTex", Input);
+            psoBlend.Bindings.SetSRV("indirectTex", tempSsgiBuffer!.SRV);
+            psoBlend.Bindings.SetCBV("SSGIParams", ssgiParamsBuffer);
         }
 
         public override void Draw(IGraphicsContext context)
@@ -267,18 +352,29 @@
             context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
 
-            context.CopyResource(tempSsgiBuffer, ssgiBuffer.Value!);
+            context.SetRenderTarget(tempSsgiBuffer!, null);
+            context.SetViewport(Viewport);
+            context.SetGraphicsPipelineState(psoDenoise);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipelineState(null);
+            context.SetRenderTarget(null, null);
 
-            context.CopyResource(OutputResource, ssgiBuffer.Value!);
-
-            //blur.Blur(context, ssgiBuffer.Value!, Output, Viewport.Width, Viewport.Height);
+            context.SetRenderTarget(Output, null);
+            context.SetViewport(Viewport);
+            context.SetGraphicsPipelineState(psoBlend);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipelineState(null);
+            context.SetRenderTarget(null, null);
         }
 
         protected override void DisposeCore()
         {
             creator.DisposeResource("SSGI_BUFFER");
             psoSSGI.Dispose();
+            psoDenoise.Dispose();
+            psoBlend.Dispose();
             ssgiParamsBuffer.Dispose();
+            denoiseParamsBuffer.Dispose();
             blur.Dispose();
         }
     }

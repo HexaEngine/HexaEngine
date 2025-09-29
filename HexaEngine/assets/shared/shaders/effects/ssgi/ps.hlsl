@@ -1,4 +1,4 @@
-#include "../../camera.hlsl"
+#include "../../common.hlsl"
 
 #ifndef SSGI_QUALITY
 #define SSGI_QUALITY 1
@@ -26,7 +26,6 @@ cbuffer SSGIParams : register(b0)
 Texture2D inputTex;
 Texture2D<float> depthTex;
 Texture2D normalTex;
-Texture2D prevTex;
 
 SamplerState linearWrapSampler;
 
@@ -70,15 +69,10 @@ float2 dither(float2 coord, float seed, float2 size)
 	return float2(noiseX, noiseY);
 }
 
-float3 getViewPos(float2 coord)
+float3 GetViewPos(float2 coord)
 {
 	float depth = depthTex.Sample(linearWrapSampler, coord).r;
 	return GetPositionVS(coord, depth);
-}
-
-float3 UnpackNormal(float3 normal)
-{
-	return 2 * normal - 1;
 }
 
 float3 getViewNormal(float2 coord)
@@ -89,12 +83,12 @@ float3 getViewNormal(float2 coord)
 	float pW = screenDim.x;
 	float pH = screenDim.y;
 
-	float3 p1 = getViewPos(coord + float2(pW, 0.0)).xyz;
-	float3 p2 = getViewPos(coord + float2(0.0, pH)).xyz;
-	float3 p3 = getViewPos(coord + float2(-pW, 0.0)).xyz;
-	float3 p4 = getViewPos(coord + float2(0.0, -pH)).xyz;
+	float3 p1 = GetViewPos(coord + float2(pW, 0.0)).xyz;
+	float3 p2 = GetViewPos(coord + float2(0.0, pH)).xyz;
+	float3 p3 = GetViewPos(coord + float2(-pW, 0.0)).xyz;
+	float3 p4 = GetViewPos(coord + float2(0.0, -pH)).xyz;
 
-	float3 vP = getViewPos(coord);
+	float3 vP = GetViewPos(coord);
 
 	float3 dx = vP - p1;
 	float3 dy = p2 - vP;
@@ -119,7 +113,7 @@ float lenSq(float3 v)
 	return pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0);
 }
 
-#define _NoiseAmount 1
+#define _NoiseAmount 0.1
 #define _Noise 1
 
 float3 lightSample(float2 coord, float2 lightcoord, float3 normal, float3 position, float n, float2 texsize)
@@ -140,16 +134,16 @@ float3 lightSample(float2 coord, float2 lightcoord, float3 normal, float3 positi
 	//light absolute data
 	float3 lightcolor = inputTex.Sample(linearWrapSampler, ((lightcoord)+random)).rgb;
 	float3 lightnormal = getViewNormal(frac(lightcoord) + random).rgb;
-	float3 lightposition = getViewPos(frac(lightcoord) + random).xyz;
+	float3 lightposition = GetViewPos(frac(lightcoord) + random).xyz;
 
 	//light variable data
 	float3 lightpath = lightposition - position;
 	float3 lightdir = normalize(lightpath);
 
 	//falloff calculations
-	float cosemit = clamp(dot(lightdir, -lightnormal), 0.0, 1.0); //emit only in one direction
-	float coscatch = clamp(dot(lightdir, normal) * 0.5 + 0.5, 0.0, 1.0); //recieve light from one direction
-	float distfall = pow(lenSq(lightpath), 0.1) + 1.0;        //fall off with distance
+	float cosemit = clamp(dot(lightdir, -lightnormal), 0.0, 1.0);
+	float coscatch = clamp(dot(lightdir, normal) * 0.5 + 0.5, 0.0, 1.0);
+	float distfall = pow(lenSq(lightpath), 0.1) + 1.0;
 
 	return (lightcolor * cosemit * coscatch / distfall) * (length(lightposition) / 20);
 }
@@ -173,7 +167,7 @@ float4 main(VertexOut input) : SV_TARGET
 
 	float3 direct = inputTex.Sample(linearWrapSampler, input.Tex).rgb;
 	float3 indirect = float3(0.0, 0.0, 0.0);
-	float3 position = getViewPos(input.Tex);
+	float3 position = GetViewPos(input.Tex);
 	float3 normal = getViewNormal(input.Tex);
 
 	float dlong = PI * (3.0 - sqrt(5.0));
@@ -195,10 +189,6 @@ float4 main(VertexOut input) : SV_TARGET
 	}
 
 	float3 result = (indirect / float(SSGI_RAY_COUNT) * intensity);
-
-	float3 prev = prevTex.Sample(linearWrapSampler, ReprojectUV(input.Tex, depth)).rgb;
-
-	result = lerp(result, prev, deltaTime * 160);
 
 	return float4(result, 1.0);
 }

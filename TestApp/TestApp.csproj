@@ -10,6 +10,7 @@
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<EnablePreviewFeatures>True</EnablePreviewFeatures>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -496,6 +497,12 @@
 		<None Update="Sample_BeeMoved_96kHz24bit.flac">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="library.hxslib">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="shader.hxsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="speech.wav">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -511,6 +518,7 @@
 	  <ProjectReference Include="..\HexaEngine.Audio.Common\HexaEngine.Audio.Common.csproj" />
 	  <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 	  <ProjectReference Include="..\HexaEngine.Editor\HexaEngine.Editor.csproj" />
+	  <ProjectReference Include="..\HexaEngine.ShadingLang\HexaEngine.ShadingLang.csproj" />
 	  <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>
 	<ItemGroup>

@@ -264,7 +264,7 @@
 
             int currentWidth = width / 2;
             int currentHeight = height / 2;
-            int levels = Math.Min(TextureHelper.ComputeMipLevels(currentWidth, currentHeight), 8);
+            int levels = Math.Min(TextureHelper.ComputeMipLevels(currentWidth, currentHeight), passes);
 
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];

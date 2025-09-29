@@ -44,12 +44,16 @@
 #include "../../camera.hlsl"
 #include "../../gbuffer.hlsl"
 
-#define cb_zThickness 0.05f		// thickness to ascribe to each pixel in the depth buffer
-#define cb_stride 10 			// Step in horizontal or vertical pixels between samples. This is a float
- // because integer math is slow on GPUs, but should be set to an integer >= 1.
-#define	cb_maxSteps 100			// Maximum number of iterations. Higher gives better images but may be slow.
-#define	cb_maxDistance 10 	// Maximum camera-space distance to trace before returning a miss.
-#define	cb_strideZCutoff 100 	// More distant pixels are smaller in screen space. This value tells at what point to
+cbuffer DDASSRParams
+{
+	float intensity;
+	float cb_zThickness = 0.05f; // thickness to ascribe to each pixel in the depth buffer
+	float cb_stride = 10; // Step in horizontal or vertical pixels between samples. This is a float
+	// because integer math is slow on GPUs, but should be set to an integer >= 1.
+	int cb_maxSteps = 100; // Maximum number of iterations. Higher gives better images but may be slow.
+	float cb_maxDistance = 10; // Maximum camera-space distance to trace before returning a miss.
+	float cb_strideZCutoff = 100; // More distant pixels are smaller in screen space. This value tells at what point to
+};
 
 static const float4x4 viewToTextureSpaceMatrix =
 {
@@ -87,8 +91,8 @@ bool intersectsDepthBuffer(float z, float minZ, float maxZ)
 	 * artifacts. Driving this value up too high can cause
 	 * artifacts of its own.
 	 */
-	//float depthScale = min(1.0f, z * cb_strideZCutoff);
-	//z += cb_zThickness + lerp(0.0f, 2.0f, depthScale);
+	 //float depthScale = min(1.0f, z * cb_strideZCutoff);
+	 //z += cb_zThickness + lerp(0.0f, 2.0f, depthScale);
 	return (maxZ >= z) && (minZ - cb_zThickness <= z);
 }
 
@@ -233,12 +237,12 @@ float4 main(VertexOut pin) : SV_TARGET
 	float4 NormalRoughness = normalTex.Load(int3(screenPos, 0));
 	float roughness = NormalRoughness.a;
 
-	if (depth == 1 || roughness > 0.8f)
+	if (depth == 1)
 	{
 		return scene_color;
 	}
 
-	float3 normal = UnpackNormal(NormalRoughness.rgb);	
+	float3 normal = UnpackNormal(NormalRoughness.rgb);
 
 	//get world position from depth
 	float2 uv = (screenPos.xy + 0.5) * screenDimInv;
@@ -250,7 +254,6 @@ float4 main(VertexOut pin) : SV_TARGET
 	float4 result = 0;
 	bool intersection = false;
 
-	
 	//convert normal to view space to find the correct reflection vector
 	float3 normalVS = mul(normal.xyz, (float3x3)view);
 
@@ -260,46 +263,44 @@ float4 main(VertexOut pin) : SV_TARGET
 	float3 rayOrigin = viewPos.xyz + normalVS * 0.01;
 	toPosition = normalize(rayOrigin.xyz);
 
-	
+	/*
+			* Since position is reconstructed in view space, just normalize it to get the
+			* vector from the eye to the position and then reflect that around the normal to
+			* get the ray direction to trace.
+			*/
+		rayDirection = reflect(toPosition, normalVS);
 
-/*
-		* Since position is reconstructed in view space, just normalize it to get the
-		* vector from the eye to the position and then reflect that around the normal to
-		* get the ray direction to trace.
-		*/
-	rayDirection = reflect(toPosition, normalVS);
+		float2 hitPixel = float2(0.0f, 0.0f);
+		float3 hitPoint = float3(0.0f, 0.0f, 0.0f);
 
-	float2 hitPixel = float2(0.0f, 0.0f);
-	float3 hitPoint = float3(0.0f, 0.0f, 0.0f);
+		float jitter = cb_stride > 1.0f ? float(int(screenPos.x + screenPos.y) & 1) * 0.5f : 0.0f;
 
-	float jitter = cb_stride > 1.0f ? float(int(screenPos.x + screenPos.y) & 1) * 0.5f : 0.0f;
+		// perform ray tracing - true if hit found, false otherwise
+		intersection = traceScreenSpaceRay(rayOrigin, rayDirection, jitter, hitPixel, hitPoint);
 
-	// perform ray tracing - true if hit found, false otherwise
-	intersection = traceScreenSpaceRay(rayOrigin, rayDirection, jitter, hitPixel, hitPoint);
+		// move hit pixel from pixel position to UVs;
+		/*if (hitPixel.x > screenDim.x || hitPixel.x < 0.0f || hitPixel.y > screenDim.y || hitPixel.y < 0.0f)
+		{
+			intersection = false;
+		}*/
 
-	// move hit pixel from pixel position to UVs;
-	if (hitPixel.x > screenDim.x || hitPixel.x < 0.0f || hitPixel.y > screenDim.y || hitPixel.y < 0.0f)
-	{
-		intersection = false;
-	}
+		//return float4(rayDirectionVS, 1);
 
-	//return float4(rayDirectionVS, 1);
+	#if SSR_CONE_TRACE
+		// output rDotV to the alpha channel for use in determining how much to fade the ray
+		float rDotV = dot(rayDirectionVS, toPositionVS);
+	#endif
 
-#if SSR_CONE_TRACE
-	// output rDotV to the alpha channel for use in determining how much to fade the ray
-	float rDotV = dot(rayDirectionVS, toPositionVS);
-#endif
+		depth = depthTex.Load(int3(hitPixel, 0)).r;
 
-	depth = depthTex.Load(int3(hitPixel, 0)).r;
+	#if SSR_CONE_TRACE
+		return float4(hitPixel, depth, rDotV) * (intersection ? 1.0f : 0.0f);
+	#endif
 
-#if SSR_CONE_TRACE
-	return float4(hitPixel, depth, rDotV) * (intersection ? 1.0f : 0.0f);
-#endif
+		//return float4(hitPixel, 0, 1) * (intersection ? 1.0f : 0.0f);
 
-	//return float4(hitPixel, 0, 1) * (intersection ? 1.0f : 0.0f);
+		float3 reflectionColor = (intersection ? 1.0f : 0.0f) * inputTex.Load(int3(hitPixel, 0)).rgb;
 
-	float3 reflectionColor = (intersection ? 1.0f : 0.0f) * inputTex.Load(int3(hitPixel, 0)).rgb;
-
-	//return float4(reflectionColor, 1);
-	return scene_color + max(0, float4(reflectionColor, 1.0f));
+		//return float4(reflectionColor, 1);
+		return scene_color + (1 - roughness) * max(0, float4(reflectionColor, 1.0f));
 }

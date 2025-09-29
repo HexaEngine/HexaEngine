@@ -15,6 +15,7 @@
 		<EnableAotAnalyzer>true</EnableAotAnalyzer>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -185,6 +186,15 @@
 		</None>
 		<None Update="assets\shared\shaders\effects\blur\gaussian3x3.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\ssgi\blend.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\ssgi\denoise.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\ssgi\ps2.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\filter\clear\cs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

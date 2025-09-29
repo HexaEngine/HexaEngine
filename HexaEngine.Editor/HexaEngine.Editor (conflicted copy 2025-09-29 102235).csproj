@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Platforms>AnyCPU;x64</Platforms>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+		<DefineConstants>WINDOWS</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+		<DefineConstants>LINUX</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+		<DefineConstants>OSX</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="LibGit2Sharp" Version="0.31.0" />
+		<PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.17" />
+		<PackageReference Include="Hexa.NET.ImGui.Widgets" Version="1.2.11" />
+		<PackageReference Include="Hexa.NET.ImGui.Widgets.Extras" Version="1.0.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="assets\shared\fonts\MaterialIconsRound-Regular.otf">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+</Project>

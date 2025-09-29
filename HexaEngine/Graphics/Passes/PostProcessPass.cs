@@ -35,6 +35,7 @@
             postProcessingManager.Add<HBAO>();
             postProcessingManager.Add<VolumetricClouds>();
             postProcessingManager.Add<SSR>();
+            postProcessingManager.Add<DDASSR>();
             postProcessingManager.Add<SSGI>();
             postProcessingManager.Add<Fog>();
             postProcessingManager.Add<VolumetricLighting>();

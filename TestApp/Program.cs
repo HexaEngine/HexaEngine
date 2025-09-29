@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics.Shaders.Reflection;
     using HexaEngine.Core.IO;
     using HexaEngine.Graphics;
+    using HexaEngine.ShadingLang;
     using System;
     using System.Numerics;
 
@@ -12,6 +13,10 @@
     {
         public static void Main(string[] args)
         {
+            var obj = Parser.Parse(File.ReadAllText("shader.hxsl"));
+            var shader = obj.FindShader("MyPixelShader")!;
+            var code = obj.CompileShaderToHLSL(shader);
+
             Viewport mainViewport = new(80, 80, 2560, 1440);
             Viewport renderViewport = new(30, 40, 860, 483.75f);
             Viewport virtualWindow = new(0, 0, 1920, 1080);

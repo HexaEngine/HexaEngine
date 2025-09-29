@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Materials.Generator
 {
+    using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Materials.Nodes;
     using HexaEngine.Materials;
     using HexaEngine.Materials.Generator.Enums;
     using HexaEngine.Materials.Generator.Structs;
@@ -14,6 +16,7 @@
         public readonly Dictionary<Node, int> Mapping = new();
         public readonly Dictionary<ITextureNode, uint> TextureMapping = new();
         public readonly Dictionary<ITextureNode, uint> SamplerMapping = new();
+        public ConstantBufferBuilder DynamicVarCBBuilder;
 
         public Struct Input;
         public Operation InputVar;
@@ -439,6 +442,7 @@
         public GenerationContext()
         {
             InputVar = null!;
+            DynamicVarCBBuilder = new(Table);
         }
 
         public GenerationContext(Struct input, Operation inputVar, Struct output, OutputDefinition outputDef)
@@ -447,6 +451,7 @@
             InputVar = inputVar;
             Output = output;
             OutputDef = outputDef;
+            DynamicVarCBBuilder = new(Table);
         }
 
         public void Reset()
@@ -455,6 +460,7 @@
             Mapping.Clear();
             TextureMapping.Clear();
             SamplerMapping.Clear();
+            DynamicVarCBBuilder.Clear();
 
             for (int i = 0; i < keywords.Length; i++)
             {
@@ -654,6 +660,16 @@
             }
         }
 
+        public Definition GetDynamicVariableFirstLink(Pin pin, out string propertyName)
+        {
+            if (pin.Kind != PinKind.Output || pin.Parent is not IPropertyNode propertyNode)
+            {
+                throw new Exception("Invalid node type for dynamic property.");
+            }
+            propertyName = Table.GetUniqueName(pin.Parent.Name);
+            return new($"{DynamicVarCBBuilder.Name}.{propertyName}", propertyNode.Type);
+        }
+
         public Definition GetVariableFirstLink(ITypedNode node, PrimitivePin pin)
         {
             if (pin.Links.Count == 0)
@@ -709,14 +725,14 @@
 
         public ShaderResourceView AddSrv(ITextureNode node, string name, SType srvType, SType type)
         {
-            var srv = Table.AddShaderResourceView(new(Table.GetUniqueName(name), srvType, type));
+            var srv = Table.AddShaderResourceView(new(Table.GetUniqueName(name), srvType, type), false);
             TextureMapping.Add(node, srv.Slot);
             return srv;
         }
 
         public SamplerState AddSampler(ITextureNode node, string name, SType samplerType)
         {
-            var sampler = Table.AddSamplerState(new(Table.GetUniqueName(name), samplerType));
+            var sampler = Table.AddSamplerState(new(Table.GetUniqueName(name), samplerType), false);
             SamplerMapping.Add(node, sampler.Slot);
             return sampler;
         }
@@ -736,6 +752,14 @@
         public Operation AddVariable(Operation operation)
         {
             return Table.AddVariable(operation);
+        }
+
+        public Operation AddDynamicVariable(string name, Node node, SType type, string def, string propertyName, bool allowInline = true)
+        {
+            name = name.ToLower().Replace(" ", string.Empty);
+            string newName = Table.GetUniqueName(name);
+            DynamicVarCBBuilder.Add(propertyName, type);
+            return Table.AddVariable(new(Mapping[node], newName, type, def, allowInline, true));
         }
 
         public void BuildTable(CodeWriter builder)

@@ -128,7 +128,7 @@
             byte[] bytes = Encoding.UTF8.GetBytes(title);
             byte* ptr = (byte*)Unsafe.AsPointer(ref bytes[0]);
 
-            flags |= SDLWindowFlags.Hidden;
+            flags |= SDLWindowFlags.Hidden | SDLWindowFlags.HighPixelDensity;
 
             switch (Application.GraphicsBackend)
             {
@@ -145,7 +145,9 @@
                     break;
             }
 
-            window = SdlCheckError(SDL.CreateWindow(ptr, width, height, flags));
+            var scale = SDL.GetDisplayContentScale(SDL.GetPrimaryDisplay());
+
+            window = SdlCheckError(SDL.CreateWindow(ptr, (int)(width * scale), (int)(height * scale), flags));
 
             WindowID = SDL.GetWindowID(window).SdlThrowIf();
 
@@ -359,6 +361,8 @@
         public float SDRWhiteLevel => SDL.GetFloatProperty(Properties, SDL.SDL_PROP_WINDOW_SDR_WHITE_LEVEL_FLOAT, 0);
 
         public float HDRHeadroom => SDL.GetFloatProperty(Properties, SDL.SDL_PROP_WINDOW_HDR_HEADROOM_FLOAT, 0);
+
+        public float ContentScale => SDL.GetWindowDisplayScale(window);
 
         /// <summary>
         /// Gets the window ID.

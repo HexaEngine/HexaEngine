@@ -103,7 +103,7 @@
         {
             Vector2 size = texture.Viewport.Size;
 
-            remapBuffer.Update(context, new(size, 0, 0, Vector4.Zero));
+            remapBuffer.Update(context, new((UPoint2)size, 0, 0, Vector4.Zero));
 
             channelBuffer.Clear(context);
 
@@ -124,7 +124,7 @@
         private unsafe void MoveChannel(IGraphicsContext context, Texture2D texture, uint source, uint destination, Vector4 factor)
         {
             Vector2 size = texture.Viewport.Size;
-            remapBuffer.Update(context, new(size, source, destination, factor));
+            remapBuffer.Update(context, new((UPoint2)size, source, destination, factor));
 
             channelRemapPipeline.Bindings.SetSRV("maskTex", texture.SRV!);
             context.SetComputePipelineState(channelRemapPipeline);

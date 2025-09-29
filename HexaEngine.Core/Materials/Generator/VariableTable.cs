@@ -281,34 +281,46 @@
             identifiers.Add(new(name));
         }
 
-        public UnorderedAccessView AddUnorderedAccessView(UnorderedAccessView unorderedAccessView)
+        public UnorderedAccessView AddUnorderedAccessView(UnorderedAccessView unorderedAccessView, bool autoSlot)
         {
             identifiers.Add(new(unorderedAccessView.Name));
-            unorderedAccessView.Slot = uavCounter++;
+            if (autoSlot)
+            {
+                unorderedAccessView.Slot = uavCounter++;
+            }
             unorderedAccessViews.Add(unorderedAccessView);
             return unorderedAccessView;
         }
 
-        public ShaderResourceView AddShaderResourceView(ShaderResourceView shaderResourceView)
+        public ShaderResourceView AddShaderResourceView(ShaderResourceView shaderResourceView, bool autoSlot)
         {
             identifiers.Add(new(shaderResourceView.Name));
-            shaderResourceView.Slot = srvCounter++;
+            if (autoSlot)
+            {
+                shaderResourceView.Slot = srvCounter++;
+            }
             shaderResourceViews.Add(shaderResourceView);
             return shaderResourceView;
         }
 
-        public ConstantBuffer AddConstantBuffer(ConstantBuffer constantBuffer)
+        public ConstantBuffer AddConstantBuffer(ConstantBuffer constantBuffer, bool autoSlot)
         {
             identifiers.Add(new(constantBuffer.Name));
-            constantBuffer.Slot = cbvCounter++;
+            if (autoSlot)
+            {
+                constantBuffer.Slot = cbvCounter++;
+            }
             constantBuffers.Add(constantBuffer);
             return constantBuffer;
         }
 
-        public SamplerState AddSamplerState(SamplerState samplerState)
+        public SamplerState AddSamplerState(SamplerState samplerState, bool autoSlot)
         {
             identifiers.Add(new(samplerState.Name));
-            samplerState.Slot = sptCounter++;
+            if (autoSlot)
+            {
+                samplerState.Slot = sptCounter++;
+            }
             samplers.Add(samplerState);
             return samplerState;
         }

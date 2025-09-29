@@ -39,6 +39,8 @@
             ImPlot.SetCurrentContext(plotContext);
             ImPlot.StyleColorsDark(ImPlot.GetStyle());
 
+            var scale = Application.MainWindow.ContentScale;
+
             var io = ImGui.GetIO();
             io.ConfigFlags |= flags;
             io.ConfigViewportsNoAutoMerge = false;
@@ -52,6 +54,7 @@
             var fonts = io.Fonts;
             fonts.FontBuilderFlags = (uint)ImFontAtlasFlags.NoPowerOfTwoHeight;
             fonts.TexDesiredWidth = 2048;
+           
 
             uint* glyphRanges = stackalloc uint[]
             {
@@ -61,17 +64,17 @@
             };
 
             ImGuiFontBuilder defaultBuilder = new(fonts);
-            defaultBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15)
+            defaultBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15 * scale)
                           .SetOption(conf => conf.GlyphMinAdvanceX = 16)
-                          .AddFontFromFileTTF("assets/shared/fonts/fa-solid-900.ttf", 14, glyphRanges)
-                          .AddFontFromFileTTF("assets/shared/fonts/fa-brands-400.ttf", 14, glyphRanges);
+                          .AddFontFromFileTTF("assets/shared/fonts/fa-solid-900.ttf", 14 * scale, glyphRanges)
+                          .AddFontFromFileTTF("assets/shared/fonts/fa-brands-400.ttf", 14 * scale, glyphRanges);
             aliasToFont.Add("Default", defaultBuilder.Font);
             defaultBuilder.Destroy();
 
             ImGuiFontBuilder iconsRegularBuilder = new(fonts);
-            iconsRegularBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15)
+            iconsRegularBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15 * scale)
                                .SetOption(conf => conf.GlyphMinAdvanceX = 16)
-                               .AddFontFromFileTTF("assets/shared/fonts/fa-regular-400.ttf", 14, glyphRanges);
+                               .AddFontFromFileTTF("assets/shared/fonts/fa-regular-400.ttf", 14 * scale, glyphRanges);
             aliasToFont.Add("Icons-Regular", iconsRegularBuilder.Font);
             iconsRegularBuilder.Destroy();
 
@@ -82,16 +85,16 @@
             };
 
             ImGuiFontBuilder widgetsFontBuilder = new(fonts);
-            widgetsFontBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.ttf", size: 16)
+            widgetsFontBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.ttf", size: 16 * scale)
                                  .SetOption(conf => conf.GlyphMinAdvanceX = 16)
-                                 .AddFontFromFileTTF("assets/shared/fonts/MaterialSymbolsRounded.ttf", 20, glyphMaterialRanges);
+                                 .AddFontFromFileTTF("assets/shared/fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges);
             aliasToFont.Add("WidgetsFont", widgetsFontBuilder.Font);
             widgetsFontBuilder.Destroy();
 
             ImGuiFontBuilder textEditorFontBuilder = new(fonts);
-            textEditorFontBuilder.AddFontFromFileTTF("assets/shared/fonts/CascadiaMono.ttf", size: 16)
+            textEditorFontBuilder.AddFontFromFileTTF("assets/shared/fonts/CascadiaMono.ttf", size: 16 * scale)
                                  .SetOption(conf => conf.GlyphMinAdvanceX = 16)
-                                 .AddFontFromFileTTF("assets/shared/fonts/MaterialSymbolsRounded.ttf", 20, glyphMaterialRanges)
+                                 .AddFontFromFileTTF("assets/shared/fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges)
                                  ;
             aliasToFont.Add("TextEditorFont", textEditorFontBuilder.Font);
             textEditorFontBuilder.Destroy();
@@ -185,6 +188,8 @@
                 style.WindowRounding = 0.0f;
                 style.Colors[(int)ImGuiCol.WindowBg].W = 1.0f;
             }
+
+            style.ScaleAllSizes(scale);
 
             ImGuiImplSDL3.SetCurrentContext(guiContext);
             ImGuiImplSDL3.SDL3InitForD3D((Hexa.NET.ImGui.Backends.SDL3.SDLWindow*)window.GetWindow());

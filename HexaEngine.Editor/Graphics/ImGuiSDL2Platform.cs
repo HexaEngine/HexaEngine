@@ -980,12 +980,6 @@ namespace HexaEngine.Graphics.Renderers
             return size;
         }
 
-        private static unsafe void SetWindowPos(ImGuiViewport* viewport, Vector2 pos)
-        {
-            ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
-            SDL.SetWindowPosition(vd->Window, (int)pos.X, (int)pos.Y);
-        }
-
         private static unsafe Vector2* GetWindowSize(Vector2* size, ImGuiViewport* viewport)
         {
             ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
@@ -994,6 +988,14 @@ namespace HexaEngine.Graphics.Renderers
             *size = new Vector2(w, h);
             return size;
         }
+
+        private static unsafe void SetWindowPos(ImGuiViewport* viewport, Vector2 pos)
+        {
+            ViewportData* vd = (ViewportData*)viewport->PlatformUserData;
+            SDL.SetWindowPosition(vd->Window, (int)pos.X, (int)pos.Y);
+        }
+
+       
 
         private static unsafe void SetWindowSize(ImGuiViewport* viewport, Vector2 size)
         {

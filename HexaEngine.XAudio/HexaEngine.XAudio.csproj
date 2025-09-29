@@ -6,6 +6,7 @@
 		<Nullable>enable</Nullable>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>

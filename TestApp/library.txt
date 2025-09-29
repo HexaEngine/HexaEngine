@@ -1,0 +1,32 @@
+﻿Version: "HXSL1.0-Lib",
+Properties: [ ],
+Library:
+{
+	Code:
+	<!
+	namespace Testlib;
+
+	using HexaEngine.Common;
+
+	public struct Vertex
+	{
+		float3 position : POSITION;
+		float2 uv : TEXCOORD;
+	};
+
+	public float3 BlinnPhong(float3 radiance, float3 L, float3 V, float3 N, float3 baseColor, float shininess)
+	{
+		float NdotL = max(0, dot(N, L));
+		float3 diffuse = radiance * NdotL;
+
+		const float kEnergyConservation = (8.0 + shininess) / (8.0 * PI);
+		float3 halfwayDir = normalize(L + V);
+		float spec = kEnergyConservation * pow(max(dot(N, halfwayDir), 0.0), shininess);
+
+		float3 specular = radiance * spec;
+
+		return (diffuse + specular) * baseColor;
+	}
+
+	!>
+}

@@ -10,16 +10,16 @@
 #define SSR_QUALITY 2
 #endif
 
-#if SSR_QUALITY == 0
 cbuffer SSRParams : register(b0)
 {
+	float intensity;
+#if SSR_QUALITY == 0
 	int SSR_MAX_RAY_COUNT;
 	int SSR_RAY_STEPS;
 	float SSR_RAY_STEP;
 	float SSR_RAY_HIT_THRESHOLD;
-};
-
 #endif
+};
 
 #if SSR_QUALITY == 1
 #define SSR_MAX_RAY_COUNT 8
@@ -109,10 +109,10 @@ float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord)
 		float fDepthDiff = vHitCoord.z - fPositionVS.z;
 
 		[branch]
-			if (fDepthDiff > 0.0f)
-			{
-				return SSRBinarySearch(vDir, vHitCoord);
-			}
+		if (fDepthDiff > 0.0f)
+		{
+			return SSRBinarySearch(vDir, vHitCoord);
+		}
 
 		vDir *= SSR_RAY_STEP;
 	}
@@ -125,6 +125,24 @@ bool bInsideScreen(in float2 vCoord)
 	return !(vCoord.x < 0 || vCoord.x > 1 || vCoord.y < 0 || vCoord.y > 1);
 }
 
+float3 GetViewNormal(float2 uv)
+{
+	float3 normal = normalTex.Sample(linearBorderSampler, uv).rgb;
+	normal = 2 * normal - 1.0;
+	return normalize(mul(normal, (float3x3)view));
+}
+
+float3 GetViewPos(float2 uv)
+{
+	float depth = depthTex.Sample(linearClampSampler, uv);
+	return GetPositionVS(uv, depth);
+}
+
+float lenSq(float3 v)
+{
+	return pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0);
+}
+
 float4 main(VertexOut pin) : SV_TARGET
 {
 	float depth = depthTex.Sample(linearClampSampler, pin.Tex);
@@ -134,32 +152,29 @@ float4 main(VertexOut pin) : SV_TARGET
 	if (depth == 1)
 		return scene_color;
 
-	float4 NormalRoughness = normalTex.Sample(linearBorderSampler, pin.Tex);
-	float roughness = NormalRoughness.a;
+	float4 normalRoughness = normalTex.Sample(linearBorderSampler, pin.Tex);
+	float roughness = normalRoughness.a;
 
-	if (roughness > 0.8f)
-		return scene_color;
+	float3 normal = normalRoughness.rgb;
+	normal = 2 * normal - 1.0;
+	normal = normalize(mul(normal, (float3x3)view));
 
-	float3 Normal = NormalRoughness.rgb;
-	Normal = 2 * Normal - 1.0;
-	Normal = normalize(mul(Normal, (float3x3)view));
-
-	float3 Position = GetPositionVS(pin.Tex, depth);
-	float3 ReflectDir = normalize(reflect(Position, Normal));
+	float3 position = GetPositionVS(pin.Tex, depth);
+	float3 reflectDir = normalize(reflect(position, normal));
 
 	//Raycast
-	float3 HitPos = Position;
-	float4 vCoords = SSRRayMarch(ReflectDir, HitPos);
+	float3 hitPos = position;
+	float4 vCoords = SSRRayMarch(reflectDir, hitPos);
 
 	float2 vCoordsEdgeFact = float2(1, 1) - pow(saturate(abs(vCoords.xy - float2(0.5f, 0.5f)) * 2), 8);
 	float fScreenEdgeFactor = saturate(min(vCoordsEdgeFact.x, vCoordsEdgeFact.y));
 	float reflectionIntensity =
 		saturate(
 			fScreenEdgeFactor * // screen fade
-			saturate(ReflectDir.z) // camera facing fade
+			saturate(reflectDir.z) // camera facing fade
 			* (vCoords.w) // / 2 + 0.5f) // rayhit binary fade
 			);
 
-	float3 reflectionColor = reflectionIntensity * inputTex.SampleLevel(linearClampSampler, vCoords.xy, 0).rgb;
+	float3 reflectionColor = reflectionIntensity * inputTex.SampleLevel(linearClampSampler, vCoords.xy, 0).rgb * intensity;
 	return scene_color + (1 - roughness) * max(0, float4(reflectionColor, 1.0f));
 }

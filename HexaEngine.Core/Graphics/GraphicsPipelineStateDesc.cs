@@ -58,13 +58,6 @@
         public InputElementDescription[]? InputElements;
 
         /// <summary>
-        /// Gets or sets the flags of the graphics pipeline state.
-        /// </summary>
-        [XmlAttribute]
-        [DefaultValue(0)]
-        public GraphicsPipelineStateFlags Flags;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsPipelineStateDesc"/> struct with default values.
         /// </summary>
         public GraphicsPipelineStateDesc()
@@ -108,11 +101,6 @@
         /// Gets a default alpha blend fullscreen graphics pipeline state for rendering to the entire screen with alpha blending.
         /// </summary>
         public static GraphicsPipelineStateDesc DefaultAlphaBlendFullscreen => new() { DepthStencil = DepthStencilDescription.None, Rasterizer = RasterizerDescription.CullBack, Blend = BlendDescription.AlphaBlend, Topology = PrimitiveTopology.TriangleStrip, BlendFactor = default, SampleMask = int.MaxValue };
-
-        /// <summary>
-        /// Gets a default fullscreen graphics pipeline state for rendering to the entire screen.
-        /// </summary>
-        public static GraphicsPipelineStateDesc DefaultFullscreenF => new() { DepthStencil = DepthStencilDescription.None, Rasterizer = RasterizerDescription.CullBack, Blend = BlendDescription.Opaque, Topology = PrimitiveTopology.TriangleStrip, BlendFactor = default, SampleMask = int.MaxValue, Flags = GraphicsPipelineStateFlags.CreateResourceBindingList };
 
         /// <inheritdoc/>
         public override readonly bool Equals(object? obj)

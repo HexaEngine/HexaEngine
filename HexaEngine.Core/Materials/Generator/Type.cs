@@ -2,6 +2,7 @@
 {
     using HexaEngine.Materials.Generator.Enums;
     using HexaEngine.Materials.Generator.Structs;
+    using HexaEngine.Materials.Pins;
 
     [Flags]
     public enum TypeFlags
@@ -34,7 +35,7 @@
 
     public struct SType
     {
-        private static readonly Dictionary<string, SType> map = new();
+        private static readonly Dictionary<string, SType> map = new(StringComparer.InvariantCultureIgnoreCase);
         private readonly string? structName;
 
         static SType()
@@ -484,9 +485,9 @@
             }
         }
 
-        public override int GetHashCode()
+        public readonly override int GetHashCode()
         {
-            HashCode hash = new HashCode();
+            HashCode hash = new();
             hash.Add(structName);
             hash.Add(Semantic);
             hash.Add(IsScalar);
@@ -510,6 +511,304 @@
             return hash.ToHashCode();
         }
 
+        public readonly int SizeOf()
+        {
+            var scalar = ToScalar();
+            var components = ComponentCount();
+            var scalarSize = scalar.ScalarType switch
+            {
+                ScalarType.Bool => 4,
+                ScalarType.Int => 4,
+                ScalarType.UInt => 4,
+                ScalarType.Half => 2,
+                ScalarType.Float => 4,
+                ScalarType.Double => 8,
+                _ => throw new NotSupportedException(),
+            };
+            return scalarSize * components;
+        }
+
+        public readonly SType ToScalar()
+        {
+            if (IsScalar)
+            {
+                return this;
+            }
+            else if (IsVector)
+            {
+                return VectorType switch
+                {
+                    VectorType.Bool2 => new(ScalarType.Bool),
+                    VectorType.Bool3 => new(ScalarType.Bool),
+                    VectorType.Bool4 => new(ScalarType.Bool),
+                    VectorType.Int2 => new(ScalarType.Int),
+                    VectorType.Int3 => new(ScalarType.Int),
+                    VectorType.Int4 => new(ScalarType.Int),
+                    VectorType.UInt2 => new(ScalarType.UInt),
+                    VectorType.UInt3 => new(ScalarType.UInt),
+                    VectorType.UInt4 => new(ScalarType.UInt),
+                    VectorType.Half2 => new(ScalarType.Half),
+                    VectorType.Half3 => new(ScalarType.Half),
+                    VectorType.Half4 => new(ScalarType.Half),
+                    VectorType.Float2 => new(ScalarType.Float),
+                    VectorType.Float3 => new(ScalarType.Float),
+                    VectorType.Float4 => new(ScalarType.Float),
+                    VectorType.Double2 => new(ScalarType.Double),
+                    VectorType.Double3 => new(ScalarType.Double),
+                    VectorType.Double4 => new(ScalarType.Double),
+                    _ => throw new NotSupportedException()
+                };
+            }
+            else if (IsMatrix)
+            {
+                return MatrixType switch
+                {
+                    MatrixType.Bool1x1 => new(ScalarType.Bool),
+                    MatrixType.Bool1x2 => new(ScalarType.Bool),
+                    MatrixType.Bool1x3 => new(ScalarType.Bool),
+                    MatrixType.Bool1x4 => new(ScalarType.Bool),
+                    MatrixType.Bool2x1 => new(ScalarType.Bool),
+                    MatrixType.Bool2x2 => new(ScalarType.Bool),
+                    MatrixType.Bool2x3 => new(ScalarType.Bool),
+                    MatrixType.Bool2x4 => new(ScalarType.Bool),
+                    MatrixType.Bool3x1 => new(ScalarType.Bool),
+                    MatrixType.Bool3x2 => new(ScalarType.Bool),
+                    MatrixType.Bool3x3 => new(ScalarType.Bool),
+                    MatrixType.Bool3x4 => new(ScalarType.Bool),
+                    MatrixType.Bool4x1 => new(ScalarType.Bool),
+                    MatrixType.Bool4x2 => new(ScalarType.Bool),
+                    MatrixType.Bool4x3 => new(ScalarType.Bool),
+                    MatrixType.Bool4x4 => new(ScalarType.Bool),
+                    MatrixType.Int1x1 => new(ScalarType.Int),
+                    MatrixType.Int1x2 => new(ScalarType.Int),
+                    MatrixType.Int1x3 => new(ScalarType.Int),
+                    MatrixType.Int1x4 => new(ScalarType.Int),
+                    MatrixType.Int2x1 => new(ScalarType.Int),
+                    MatrixType.Int2x2 => new(ScalarType.Int),
+                    MatrixType.Int2x3 => new(ScalarType.Int),
+                    MatrixType.Int2x4 => new(ScalarType.Int),
+                    MatrixType.Int3x1 => new(ScalarType.Int),
+                    MatrixType.Int3x2 => new(ScalarType.Int),
+                    MatrixType.Int3x3 => new(ScalarType.Int),
+                    MatrixType.Int3x4 => new(ScalarType.Int),
+                    MatrixType.Int4x1 => new(ScalarType.Int),
+                    MatrixType.Int4x2 => new(ScalarType.Int),
+                    MatrixType.Int4x3 => new(ScalarType.Int),
+                    MatrixType.Int4x4 => new(ScalarType.Int),
+                    MatrixType.UInt1x1 => new(ScalarType.UInt),
+                    MatrixType.UInt1x2 => new(ScalarType.UInt),
+                    MatrixType.UInt1x3 => new(ScalarType.UInt),
+                    MatrixType.UInt1x4 => new(ScalarType.UInt),
+                    MatrixType.UInt2x1 => new(ScalarType.UInt),
+                    MatrixType.UInt2x2 => new(ScalarType.UInt),
+                    MatrixType.UInt2x3 => new(ScalarType.UInt),
+                    MatrixType.UInt2x4 => new(ScalarType.UInt),
+                    MatrixType.UInt3x1 => new(ScalarType.UInt),
+                    MatrixType.UInt3x2 => new(ScalarType.UInt),
+                    MatrixType.UInt3x3 => new(ScalarType.UInt),
+                    MatrixType.UInt3x4 => new(ScalarType.UInt),
+                    MatrixType.UInt4x1 => new(ScalarType.UInt),
+                    MatrixType.UInt4x2 => new(ScalarType.UInt),
+                    MatrixType.UInt4x3 => new(ScalarType.UInt),
+                    MatrixType.UInt4x4 => new(ScalarType.UInt),
+                    MatrixType.Half1x1 => new(ScalarType.Half),
+                    MatrixType.Half1x2 => new(ScalarType.Half),
+                    MatrixType.Half1x3 => new(ScalarType.Half),
+                    MatrixType.Half1x4 => new(ScalarType.Half),
+                    MatrixType.Half2x1 => new(ScalarType.Half),
+                    MatrixType.Half2x2 => new(ScalarType.Half),
+                    MatrixType.Half2x3 => new(ScalarType.Half),
+                    MatrixType.Half2x4 => new(ScalarType.Half),
+                    MatrixType.Half3x1 => new(ScalarType.Half),
+                    MatrixType.Half3x2 => new(ScalarType.Half),
+                    MatrixType.Half3x3 => new(ScalarType.Half),
+                    MatrixType.Half3x4 => new(ScalarType.Half),
+                    MatrixType.Half4x1 => new(ScalarType.Half),
+                    MatrixType.Half4x2 => new(ScalarType.Half),
+                    MatrixType.Half4x3 => new(ScalarType.Half),
+                    MatrixType.Half4x4 => new(ScalarType.Half),
+                    MatrixType.Float1x1 => new(ScalarType.Float),
+                    MatrixType.Float1x2 => new(ScalarType.Float),
+                    MatrixType.Float1x3 => new(ScalarType.Float),
+                    MatrixType.Float1x4 => new(ScalarType.Float),
+                    MatrixType.Float2x1 => new(ScalarType.Float),
+                    MatrixType.Float2x2 => new(ScalarType.Float),
+                    MatrixType.Float2x3 => new(ScalarType.Float),
+                    MatrixType.Float2x4 => new(ScalarType.Float),
+                    MatrixType.Float3x1 => new(ScalarType.Float),
+                    MatrixType.Float3x2 => new(ScalarType.Float),
+                    MatrixType.Float3x3 => new(ScalarType.Float),
+                    MatrixType.Float3x4 => new(ScalarType.Float),
+                    MatrixType.Float4x1 => new(ScalarType.Float),
+                    MatrixType.Float4x2 => new(ScalarType.Float),
+                    MatrixType.Float4x3 => new(ScalarType.Float),
+                    MatrixType.Float4x4 => new(ScalarType.Float),
+                    MatrixType.Double1x1 => new(ScalarType.Double),
+                    MatrixType.Double1x2 => new(ScalarType.Double),
+                    MatrixType.Double1x3 => new(ScalarType.Double),
+                    MatrixType.Double1x4 => new(ScalarType.Double),
+                    MatrixType.Double2x1 => new(ScalarType.Double),
+                    MatrixType.Double2x2 => new(ScalarType.Double),
+                    MatrixType.Double2x3 => new(ScalarType.Double),
+                    MatrixType.Double2x4 => new(ScalarType.Double),
+                    MatrixType.Double3x1 => new(ScalarType.Double),
+                    MatrixType.Double3x2 => new(ScalarType.Double),
+                    MatrixType.Double3x3 => new(ScalarType.Double),
+                    MatrixType.Double3x4 => new(ScalarType.Double),
+                    MatrixType.Double4x1 => new(ScalarType.Double),
+                    MatrixType.Double4x2 => new(ScalarType.Double),
+                    MatrixType.Double4x3 => new(ScalarType.Double),
+                    MatrixType.Double4x4 => new(ScalarType.Double),
+                    _ => throw new NotSupportedException()
+                };
+            }
+
+            throw new NotSupportedException();
+        }
+
+        public readonly int ComponentCount()
+        {
+            if (IsScalar)
+            {
+                return 1;
+            }
+            else if (IsVector)
+            {
+                return VectorType switch
+                {
+                    VectorType.Bool2 => 2,
+                    VectorType.Bool3 => 3,
+                    VectorType.Bool4 => 4,
+                    VectorType.Int2 => 2,
+                    VectorType.Int3 => 3,
+                    VectorType.Int4 => 4,
+                    VectorType.UInt2 => 2,
+                    VectorType.UInt3 => 3,
+                    VectorType.UInt4 => 4,
+                    VectorType.Half2 => 2,
+                    VectorType.Half3 => 3,
+                    VectorType.Half4 => 4,
+                    VectorType.Float2 => 2,
+                    VectorType.Float3 => 3,
+                    VectorType.Float4 => 4,
+                    VectorType.Double2 => 2,
+                    VectorType.Double3 => 3,
+                    VectorType.Double4 => 4,
+                    _ => throw new NotSupportedException()
+                };
+            }
+            else if (IsMatrix)
+            {
+                return MatrixType switch
+                {
+                    MatrixType.Bool1x1 => 1,
+                    MatrixType.Bool1x2 => 2,
+                    MatrixType.Bool1x3 => 3,
+                    MatrixType.Bool1x4 => 4,
+                    MatrixType.Bool2x1 => 2,
+                    MatrixType.Bool2x2 => 4,
+                    MatrixType.Bool2x3 => 6,
+                    MatrixType.Bool2x4 => 8,
+                    MatrixType.Bool3x1 => 3,
+                    MatrixType.Bool3x2 => 6,
+                    MatrixType.Bool3x3 => 9,
+                    MatrixType.Bool3x4 => 12,
+                    MatrixType.Bool4x1 => 4,
+                    MatrixType.Bool4x2 => 8,
+                    MatrixType.Bool4x3 => 12,
+                    MatrixType.Bool4x4 => 16,
+                    MatrixType.Int1x1 => 1,
+                    MatrixType.Int1x2 => 2,
+                    MatrixType.Int1x3 => 3,
+                    MatrixType.Int1x4 => 4,
+                    MatrixType.Int2x1 => 2,
+                    MatrixType.Int2x2 => 4,
+                    MatrixType.Int2x3 => 6,
+                    MatrixType.Int2x4 => 8,
+                    MatrixType.Int3x1 => 3,
+                    MatrixType.Int3x2 => 6,
+                    MatrixType.Int3x3 => 9,
+                    MatrixType.Int3x4 => 12,
+                    MatrixType.Int4x1 => 4,
+                    MatrixType.Int4x2 => 8,
+                    MatrixType.Int4x3 => 12,
+                    MatrixType.Int4x4 => 16,
+                    MatrixType.UInt1x1 => 1,
+                    MatrixType.UInt1x2 => 2,
+                    MatrixType.UInt1x3 => 3,
+                    MatrixType.UInt1x4 => 4,
+                    MatrixType.UInt2x1 => 2,
+                    MatrixType.UInt2x2 => 4,
+                    MatrixType.UInt2x3 => 6,
+                    MatrixType.UInt2x4 => 8,
+                    MatrixType.UInt3x1 => 3,
+                    MatrixType.UInt3x2 => 6,
+                    MatrixType.UInt3x3 => 9,
+                    MatrixType.UInt3x4 => 12,
+                    MatrixType.UInt4x1 => 4,
+                    MatrixType.UInt4x2 => 8,
+                    MatrixType.UInt4x3 => 12,
+                    MatrixType.UInt4x4 => 16,
+                    MatrixType.Half1x1 => 1,
+                    MatrixType.Half1x2 => 2,
+                    MatrixType.Half1x3 => 3,
+                    MatrixType.Half1x4 => 4,
+                    MatrixType.Half2x1 => 2,
+                    MatrixType.Half2x2 => 4,
+                    MatrixType.Half2x3 => 6,
+                    MatrixType.Half2x4 => 8,
+                    MatrixType.Half3x1 => 3,
+                    MatrixType.Half3x2 => 6,
+                    MatrixType.Half3x3 => 9,
+                    MatrixType.Half3x4 => 12,
+                    MatrixType.Half4x1 => 4,
+                    MatrixType.Half4x2 => 8,
+                    MatrixType.Half4x3 => 12,
+                    MatrixType.Half4x4 => 16,
+                    MatrixType.Float1x1 => 1,
+                    MatrixType.Float1x2 => 2,
+                    MatrixType.Float1x3 => 3,
+                    MatrixType.Float1x4 => 4,
+                    MatrixType.Float2x1 => 2,
+                    MatrixType.Float2x2 => 4,
+                    MatrixType.Float2x3 => 6,
+                    MatrixType.Float2x4 => 8,
+                    MatrixType.Float3x1 => 3,
+                    MatrixType.Float3x2 => 6,
+                    MatrixType.Float3x3 => 9,
+                    MatrixType.Float3x4 => 12,
+                    MatrixType.Float4x1 => 4,
+                    MatrixType.Float4x2 => 8,
+                    MatrixType.Float4x3 => 12,
+                    MatrixType.Float4x4 => 16,
+                    MatrixType.Double1x1 => 1,
+                    MatrixType.Double1x2 => 2,
+                    MatrixType.Double1x3 => 3,
+                    MatrixType.Double1x4 => 4,
+                    MatrixType.Double2x1 => 2,
+                    MatrixType.Double2x2 => 4,
+                    MatrixType.Double2x3 => 6,
+                    MatrixType.Double2x4 => 8,
+                    MatrixType.Double3x1 => 3,
+                    MatrixType.Double3x2 => 6,
+                    MatrixType.Double3x3 => 9,
+                    MatrixType.Double3x4 => 12,
+                    MatrixType.Double4x1 => 4,
+                    MatrixType.Double4x2 => 8,
+                    MatrixType.Double4x3 => 12,
+                    MatrixType.Double4x4 => 16,
+                    _ => throw new NotSupportedException()
+                };
+            }
+
+            throw new NotSupportedException();
+        }
+
+        public readonly bool IsAny(TypeFlags flags)
+        {
+            return (_flags & flags) != 0;
+        }
+
         public static bool operator ==(SType? left, SType? right)
         {
             if (left is null && right is null)
@@ -528,6 +827,56 @@
         public static bool operator !=(SType? left, SType? right)
         {
             return !(left == right);
+        }
+
+        public override readonly string ToString()
+        {
+            if (IsScalar)
+            {
+                return ScalarType.ToString().ToLowerInvariant();
+            }
+            else if (IsVector)
+            {
+                return VectorType.ToString().ToLowerInvariant();
+            }
+            else if (IsMatrix)
+            {
+                return MatrixType.ToString().ToLowerInvariant();
+            }
+            else if (IsSampler)
+            {
+                return SamplerType.ToString().ToLowerInvariant();
+            }
+            else if (IsBuffer)
+            {
+                return BufferType.ToString().ToLowerInvariant();
+            }
+            else if (IsTexture)
+            {
+                return TextureType.ToString().ToLowerInvariant();
+            }
+            else if (IsUavBuffer)
+            {
+                return UavBufferType.ToString().ToLowerInvariant();
+            }
+            else if (IsUavTexture)
+            {
+                return UavTextureType.ToString().ToLowerInvariant();
+            }
+            else if (IsConstantBuffer)
+            {
+                return "cbuffer";
+            }
+            else if (IsStruct)
+            {
+                return structName!;
+            }
+            else if (IsVoid)
+            {
+                return "void";
+            }
+
+            return "unknown";
         }
     }
 }

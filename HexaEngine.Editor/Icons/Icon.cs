@@ -139,9 +139,9 @@
 
         public Texture2D Texture { get => icon; protected internal set => icon = value; }
 
-        public Vector2 AtlasPos { get => position; protected internal set => position = value; }
+        public Point2 AtlasPos { get => position; protected internal set => position = value; }
 
-        public Vector2 Size { get => size; protected internal set => size = value; }
+        public Point2 Size { get => size; protected internal set => size = value; }
 
         public Vector2 UVStart => uv0;
 

@@ -12,6 +12,7 @@
             AddAnalyzer<InputNodeAnalyzer>();
             AddAnalyzer<SwizzleVectorNodeAnalyzer>();
             AddAnalyzer<ConstantNodeAnalyzer>();
+            AddAnalyzer<PropertyNodeAnalyzer>();
             AddAnalyzer<FlipUVNodeAnalyzer>();
             AddAnalyzer<FuncCallDeclarationNodeAnalyzer>();
             AddAnalyzer<FuncCallNodeAnalyzer>();

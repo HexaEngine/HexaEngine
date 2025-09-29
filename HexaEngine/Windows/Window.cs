@@ -144,10 +144,6 @@ namespace HexaEngine.Windows
             initTask = sceneRenderer.Initialize(graphicsDevice, swapChain, this);
             initTask.ContinueWith(x =>
             {
-                if (x.IsCompletedSuccessfully)
-                {
-                    LoggerFactory.General.Info("Renderer: Initialized");
-                }
                 if (x.IsFaulted)
                 {
                     LoggerFactory.General.Error("Renderer: Failed Initialize");
@@ -281,7 +277,7 @@ namespace HexaEngine.Windows
                 scene.GraphicsUpdate(context);
 
                 sceneRenderer.OutputViewport = windowViewport;
-                sceneRenderer.Render(context, scene, CameraManager.Current);
+                sceneRenderer.Render(context, scene, CameraManager.Current!);
             }
 
             // Invoke virtual method for post-render operations.

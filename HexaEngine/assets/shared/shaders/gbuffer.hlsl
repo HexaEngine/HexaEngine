@@ -1,37 +1,37 @@
 #ifndef GBUFFER_H_INCLUDED
 #define GBUFFER_H_INCLUDED
 
-struct GeometryData
-{
-    float4 GBufferA : SV_TARGET0;
-    float4 GBufferB : SV_TARGET1;
-    float4 GBufferC : SV_TARGET2;
-    float4 GBufferD : SV_TARGET3;
-};
-
-struct GeometryAttributes
-{
-    float3 baseColor;
-    float3 normal;
-    float3 emission;
-    float3 emissionStrength;
-    uint materialID;
-    float roughness;
-    float metallic;
-    float reflectance;
-    float ao;
-    float materialData;
-};
-
 float3 PackNormal(float3 normal)
 {
-    return 0.5 * normal + 0.5;
+	return 0.5 * normal + 0.5;
 }
 
 float3 UnpackNormal(float3 normal)
 {
-    return 2 * normal - 1;
+	return 2 * normal - 1;
 }
+
+struct GeometryData
+{
+	float4 GBufferA : SV_TARGET0;
+	float4 GBufferB : SV_TARGET1;
+	float4 GBufferC : SV_TARGET2;
+	float4 GBufferD : SV_TARGET3;
+};
+
+struct GeometryAttributes
+{
+	float3 baseColor;
+	float3 normal;
+	float3 emission;
+	float3 emissionStrength;
+	uint materialID;
+	float roughness;
+	float metallic;
+	float reflectance;
+	float ao;
+	float materialData;
+};
 
 GeometryData PackGeometryData(
 	in uint materialID,
@@ -46,18 +46,18 @@ GeometryData PackGeometryData(
 	in float emissionStrength
 )
 {
-    GeometryData data;
-    data.GBufferA.rgb = baseColor;
-    data.GBufferA.a = asfloat(materialID);
-    data.GBufferB.xyz = PackNormal(normal);
-    data.GBufferB.w = roughness;
-    data.GBufferC.x = metallic;
-    data.GBufferC.y = reflectance;
-    data.GBufferC.z = ao;
-    data.GBufferC.w = materialData;
-    data.GBufferD.rgb = emission;
-    data.GBufferD.a = emissionStrength;
-    return data;
+	GeometryData data;
+	data.GBufferA.rgb = baseColor;
+	data.GBufferA.a = asfloat(materialID);
+	data.GBufferB.xyz = PackNormal(normal);
+	data.GBufferB.w = roughness;
+	data.GBufferC.x = metallic;
+	data.GBufferC.y = reflectance;
+	data.GBufferC.z = ao;
+	data.GBufferC.w = materialData;
+	data.GBufferD.rgb = emission;
+	data.GBufferD.a = emissionStrength;
+	return data;
 }
 
 void ExtractGeometryData(
@@ -69,21 +69,21 @@ void ExtractGeometryData(
 	SamplerState state,
 	out GeometryAttributes attrs)
 {
-    float4 a = GBufferA.Sample(state, tex);
-    float4 b = GBufferB.Sample(state, tex);
-    float4 c = GBufferC.Sample(state, tex);
-    float4 d = GBufferD.Sample(state, tex);
+	float4 a = GBufferA.Sample(state, tex);
+	float4 b = GBufferB.Sample(state, tex);
+	float4 c = GBufferC.Sample(state, tex);
+	float4 d = GBufferD.Sample(state, tex);
 
-    attrs.baseColor = a.rgb;
-    attrs.materialID = asuint(a.a);
-    attrs.normal = UnpackNormal(b.xyz);
-    attrs.roughness = b.w;
-    attrs.metallic = c.x;
-    attrs.reflectance = c.y;
-    attrs.ao = c.z;
-    attrs.materialData = c.w;
-    attrs.emission = d.xyz;
-    attrs.emissionStrength = d.a;
+	attrs.baseColor = a.rgb;
+	attrs.materialID = asuint(a.a);
+	attrs.normal = UnpackNormal(b.xyz);
+	attrs.roughness = b.w;
+	attrs.metallic = c.x;
+	attrs.reflectance = c.y;
+	attrs.ao = c.z;
+	attrs.materialData = c.w;
+	attrs.emission = d.xyz;
+	attrs.emissionStrength = d.a;
 }
 
 #endif

@@ -62,6 +62,8 @@
                 context.AnalyzeNode(node);
             }
 
+            context.DynamicVarCBBuilder.Finish(false);
+
             OnPostBuildTable?.Invoke(table);
 
             StringBuilder builder = new();

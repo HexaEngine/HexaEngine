@@ -33,6 +33,7 @@
 
         public DXGIAdapterD3D11(IWindow source, bool debug)
         {
+            debug = false;
             if (debug)
             {
                 DXGI.GetDebugInterface1(0, out IDXGIDebug);
@@ -187,13 +188,7 @@
 
         public virtual IGraphicsDevice CreateGraphicsDevice(bool debug)
         {
-            AdapterDesc1 desc;
-            IDXGIAdapter.GetDesc1(&desc);
-            string name = new(&desc.Description_0);
-
-            LoggerFactory.General.Info("Backend: Using Graphics API: D3D11");
-            LoggerFactory.General.Info($"Backend: Using Graphics Device: {name}");
-
+            debug = false;
             return new D3D11GraphicsDevice(this, debug);
         }
 

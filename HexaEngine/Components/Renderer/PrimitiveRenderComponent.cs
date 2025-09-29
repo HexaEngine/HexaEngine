@@ -133,7 +133,7 @@
                 var material = MaterialData.GetMaterial(materialAsset, LoggerFactory.General);
                 boundingBox = GetBoundingBox();
                 model = new(primitive, material, boundingBox);
-                GameObject.SendUpdateTransformed(); // neccary to inform the light system about an change for updating shadows.
+                GameObject.SendUpdateTransformed(); // necessary to inform the light system about an change for updating shadows.
                 return;
             }
 
@@ -145,7 +145,7 @@
                 model.Prim = newPrimitive;
                 model.BoundingBox = boundingBox;
                 oldPrimitive.Dispose();
-                GameObject.SendUpdateTransformed(); // neccary to inform the light system about an change for updating shadows.
+                GameObject.SendUpdateTransformed(); // necessary to inform the light system about an change for updating shadows.
                 return;
             }
 
@@ -155,7 +155,7 @@
                 var oldMaterial = model.MaterialData;
                 model.MaterialData = newMaterial;
                 oldMaterial.Dispose();
-                GameObject.SendUpdateTransformed(); // neccary to inform the light system about an change for updating shadows.
+                GameObject.SendUpdateTransformed(); // necessary to inform the light system about an change for updating shadows.
                 return;
             }
         }

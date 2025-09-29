@@ -80,8 +80,6 @@ namespace HexaEngine.Graphics.Passes
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
-            var stateDesc = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen;
-            stateDesc.Flags = GraphicsPipelineStateFlags.CreateResourceBindingList;
             deferred = creator.CreateGraphicsPipelineState(new()
             {
                 Pipeline = new()
@@ -89,7 +87,7 @@ namespace HexaEngine.Graphics.Passes
                     VertexShader = "quad.hlsl",
                     PixelShader = "deferred/brdf/light.hlsl",
                 },
-                State = stateDesc
+                State = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen
             });
 
             LightManager.ActiveLightsChanged += ActiveLightsChanged;

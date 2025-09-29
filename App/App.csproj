@@ -10,6 +10,7 @@
 		<StripSymbols>true</StripSymbols>
 		<AnalysisLevel>latest-all</AnalysisLevel>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>

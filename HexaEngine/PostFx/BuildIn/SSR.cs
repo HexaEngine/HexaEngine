@@ -5,6 +5,7 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
     using HexaEngine.PostFx;
+    using System.Numerics;
 
     /// <summary>
     /// Screen Space Reflections (SSR) post-processing effect.
@@ -18,6 +19,7 @@
 #nullable restore
 
         private SSRQualityPreset qualityPreset = SSRQualityPreset.Medium;
+        private float intensity = 1;
         private int maxRayCount = 16;
         private int raySteps = 16;
         private float rayStep = 1.60f;
@@ -69,6 +71,11 @@
         public struct SSRParams
         {
             /// <summary>
+            /// Gets or sets the intensity for SSR.
+            /// </summary>
+            public float Intensity;
+
+            /// <summary>
             /// Gets or sets the maximum number of rays for SSR.
             /// </summary>
             public int MaxRayCount;
@@ -87,6 +94,8 @@
             /// Gets or sets the threshold for SSR ray hits.
             /// </summary>
             public float RayHitThreshold;
+
+            private Vector3 padding;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="SSRParams"/> struct.
@@ -116,6 +125,17 @@
             {
                 NotifyPropertyChangedAndSetAndReload(ref qualityPreset, value);
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the intensity of SSGI.
+        /// </summary>
+        [EditorProperty("Intensity")]
+        [Tooltip("Specifies the intensity of Screen Space Global Illumination (SSGI).")]
+        public float Intensity
+        {
+            get => intensity;
+            set => NotifyPropertyChangedAndSet(ref intensity, value);
         }
 
         /// <summary>
@@ -219,15 +239,14 @@
                 shaderMacros.Add(new("SSR_RAY_STEP", rayStep));
                 shaderMacros.Add(new("SSR_RAY_HIT_THRESHOLD", rayHitThreshold));
             }
-            if (qualityPreset == SSRQualityPreset.Dynamic)
-            {
-                SSRParams ssrParams;
-                ssrParams.MaxRayCount = maxRayCount;
-                ssrParams.RaySteps = raySteps;
-                ssrParams.RayStep = rayStep;
-                ssrParams.RayHitThreshold = rayHitThreshold;
-                ssrParamsBuffer = new(ssrParams, CpuAccessFlags.Write);
-            }
+
+            SSRParams ssrParams = default;
+            ssrParams.Intensity = intensity;
+            ssrParams.MaxRayCount = maxRayCount;
+            ssrParams.RaySteps = raySteps;
+            ssrParams.RayStep = rayStep;
+            ssrParams.RayHitThreshold = rayHitThreshold;
+            ssrParamsBuffer = new(ssrParams, CpuAccessFlags.Write);
 
             pipelineSSR = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
@@ -255,7 +274,8 @@
             context.SetViewport(Viewport);
             if (ssrParamsBuffer != null)
             {
-                SSRParams ssrParams;
+                SSRParams ssrParams = default;
+                ssrParams.Intensity = intensity;
                 ssrParams.MaxRayCount = maxRayCount;
                 ssrParams.RaySteps = raySteps;
                 ssrParams.RayStep = rayStep;

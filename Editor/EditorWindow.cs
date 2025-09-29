@@ -36,7 +36,7 @@ namespace Editor
         public EditorWindow()
         {
             Flags = RendererFlags.None;
-            Title = "Editor";
+            Title = $"Editor ({Application.GraphicsBackend})";
             TitleBar = new TitleBar();
         }
 
@@ -89,10 +89,6 @@ namespace Editor
             });
             initEditorTask.ContinueWith(x =>
             {
-                if (x.IsCompletedSuccessfully)
-                {
-                    LoggerFactory.General.Info("Editor: Initialized");
-                }
                 if (x.IsFaulted)
                 {
                     LoggerFactory.General.Error("Editor: Failed Initialize");

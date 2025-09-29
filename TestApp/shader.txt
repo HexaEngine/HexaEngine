@@ -1,0 +1,62 @@
+﻿Version: "HXSL1.0",
+Properties:
+[
+	color: { Type: float4, Default: "float4(1,0,0,1)" },
+	otherProperty: { Type: float2, Default: "float2(1,0)" }
+],
+Shaders:
+[
+	MyVertexShader:
+	{
+		Code:
+		<!
+			namespace Test;
+			using HexaEngine.Common;
+
+			internal struct Pixel
+			{
+				float4 position : SV_POSITION;
+				float2 uv : TEXCOORD;
+			};
+
+			private Pixel main(Vertex vtx)
+			{
+				Pixel pixel;
+				pixel.position = TransformViewProject(float4(vtx.position, 1));
+				pixel.uv = vtx.uv;
+				return pixel;
+			}
+		!>
+	},
+	MyPixelShader:
+	{
+		Code:
+		<!
+			namespace Test;
+			using HexaEngine.Common;
+
+			struct Pixel
+			{
+				float4 position : SV_POSITION;
+				float2 uv : TEXCOORD;
+			};
+
+			@otherProperty prop;
+			@color color; 
+
+			private float4 main(Pixel pin) : SV_TARGET
+			{
+				return color;
+			}
+		!>
+	}
+],
+Passes:
+[
+	Main:
+	{
+		Tags: [ queue: opaque, anotherTag: value, ],
+		Vertex: MyVertexShader,
+		Pixel: MyPixelShader,
+	}
+]

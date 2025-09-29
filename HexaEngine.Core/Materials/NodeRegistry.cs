@@ -1,4 +1,5 @@
-﻿using HexaEngine.Core.Materials.Nodes.Functions;
+﻿using HexaEngine.Core.Materials.Nodes;
+using HexaEngine.Core.Materials.Nodes.Functions;
 using HexaEngine.Core.Materials.Nodes.Intrinsics;
 using HexaEngine.Core.Materials.Nodes.Intrinsics.Conditional;
 using HexaEngine.Core.Materials.Nodes.Intrinsics.Misc;
@@ -24,6 +25,7 @@ namespace HexaEngine.Core.Materials
         static MaterialNodeRegistry()
         {
             Register<ConstantNode>(MaterialNodeType.Constant, "Constant");
+            Register<PropertyNode>(MaterialNodeType.Constant, "Property");
             Register<SwizzleVectorNode>(MaterialNodeType.Constant, "Swizzle Vector");
             Register<SplitNode>(MaterialNodeType.Constant, "Vector to Components");
             Register<PackNode>(MaterialNodeType.Constant, "Components to Vector");

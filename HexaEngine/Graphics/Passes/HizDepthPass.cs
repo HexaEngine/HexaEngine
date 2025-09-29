@@ -36,7 +36,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
-            }, GraphicsPipelineStateDesc.DefaultFullscreenF));
+            }, GraphicsPipelineStateDesc.DefaultFullscreen));
 
             cbDownsample = creator.CreateConstantBuffer<Vector4>("HiZDownsampleCB", CpuAccessFlags.Write);
             samplerState = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);

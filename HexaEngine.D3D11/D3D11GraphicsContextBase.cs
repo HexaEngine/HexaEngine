@@ -524,7 +524,7 @@
             Hexa.NET.D3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
             DeviceContext.Map(resource, 0, Hexa.NET.D3D11.Map.WriteDiscard, 0, &data).ThrowIf();
-            Buffer.MemoryCopy(value, data.PData, data.RowPitch, size);
+            Buffer.MemoryCopy(value, data.PData, size, size);
             DeviceContext.Unmap(resource, 0);
         }
 

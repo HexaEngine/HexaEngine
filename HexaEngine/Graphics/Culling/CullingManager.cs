@@ -58,7 +58,7 @@
             swapBuffer = new(CpuAccessFlags.RW);
             drawIndirectArgs = new(CpuAccessFlags.Write);
             visibleListBuffer = new(CpuAccessFlags.Read);
-            sampler = new(new(Filter.MaximumMinMagLinearMipPoint, TextureAddressMode.Clamp));
+            sampler = new(new(Filter.MinMagLinearMipPoint, TextureAddressMode.Clamp));
 
             var bindings = culling.Bindings;
             bindings.SetCBV("CullingParams", occlusionParamBuffer);

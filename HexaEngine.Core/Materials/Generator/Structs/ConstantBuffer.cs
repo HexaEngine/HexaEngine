@@ -6,17 +6,26 @@
     {
         public uint Slot;
         public string Name;
-        public List<ConstantBufferDef> Defs = new();
+        public List<ConstantBufferDef> Defs;
 
-        public ConstantBuffer(uint slot, string name) : this()
+        public ConstantBuffer(uint slot, string name)
         {
             Slot = slot;
             Name = name;
+            Defs = [];
         }
 
-        public void Build(CodeWriter builder)
+        public ConstantBuffer(uint slot, string name, List<ConstantBufferDef> defs)
         {
-            using (builder.PushBlockSemicolon($"cbuffer {Name}"))
+            Slot = slot;
+            Name = name;
+            Defs = defs;
+        }
+
+        public readonly void Build(CodeWriter builder)
+        {
+            string header = Slot == uint.MaxValue ? $"cbuffer {Name}" : $"cbuffer {Name} : register(b{Slot})";
+            using (builder.PushBlockSemicolon(header))
             {
                 for (int i = 0; i < Defs.Count; i++)
                 {
