@@ -65,7 +65,7 @@
 
             ImGuiFontBuilder defaultBuilder = new(fonts);
             defaultBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15 * scale)
-                          .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                          .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
                           .AddFontFromFileTTF("assets/shared/fonts/fa-solid-900.ttf", 14 * scale, glyphRanges)
                           .AddFontFromFileTTF("assets/shared/fonts/fa-brands-400.ttf", 14 * scale, glyphRanges);
             aliasToFont.Add("Default", defaultBuilder.Font);
@@ -73,7 +73,7 @@
 
             ImGuiFontBuilder iconsRegularBuilder = new(fonts);
             iconsRegularBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.TTF", 15 * scale)
-                               .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                               .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
                                .AddFontFromFileTTF("assets/shared/fonts/fa-regular-400.ttf", 14 * scale, glyphRanges);
             aliasToFont.Add("Icons-Regular", iconsRegularBuilder.Font);
             iconsRegularBuilder.Destroy();
@@ -86,14 +86,14 @@
 
             ImGuiFontBuilder widgetsFontBuilder = new(fonts);
             widgetsFontBuilder.AddFontFromFileTTF("assets/shared/fonts/ARIAL.ttf", size: 16 * scale)
-                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
                                  .AddFontFromFileTTF("assets/shared/fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges);
             aliasToFont.Add("WidgetsFont", widgetsFontBuilder.Font);
             widgetsFontBuilder.Destroy();
 
             ImGuiFontBuilder textEditorFontBuilder = new(fonts);
             textEditorFontBuilder.AddFontFromFileTTF("assets/shared/fonts/CascadiaMono.ttf", size: 16 * scale)
-                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
                                  .AddFontFromFileTTF("assets/shared/fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges)
                                  ;
             aliasToFont.Add("TextEditorFont", textEditorFontBuilder.Font);
