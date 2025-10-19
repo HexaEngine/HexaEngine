@@ -58,6 +58,8 @@
             Register<InputManagerWindow>();
             Register<PackageManagerWidget>();
             Register<ErrorListWidget>();
+            Register<CullingWidget>();
+            Register<BundlerWidget>();
 
             Register<GraphicsDebugger>();
 

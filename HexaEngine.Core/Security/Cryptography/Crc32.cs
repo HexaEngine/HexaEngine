@@ -287,5 +287,17 @@ namespace HexaEngine.Core.Security.Cryptography
 
             return result;
         }
+
+        public static uint HashData(Stream stream)
+        {
+            uint hash = DefaultSeed;
+            Span<byte> buffer = stackalloc byte[8192];
+            while (stream.Position != stream.Length)
+            {
+                int read = stream.Read(buffer);
+                hash = Compute(hash, buffer[..read]);
+            }
+            return hash;
+        }
     }
 }

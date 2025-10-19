@@ -11,17 +11,14 @@
     /// <summary>
     /// Represents an entry in the header of an asset archive, providing information about a specific asset.
     /// </summary>
-    public struct AssetArchiveEntry : IEquatable<AssetArchiveEntry>
+    public class AssetArchiveEntry
     {
-        /// <summary>
-        /// The compression method used for the asset.
-        /// </summary>
-        public Compression Compression;
+        public AssetArchive Archive { get; private set; } = null!;
 
         /// <summary>
         /// The path to the archive or source file containing the data.
         /// </summary>
-        public string ArchivePath;
+        public string ArchivePath => Archive.Parts[PartIndex];
 
         /// <summary>
         /// The index of the part to which this entry belongs.
@@ -54,11 +51,6 @@
         public string PathInArchive;
 
         /// <summary>
-        /// The content offset.
-        /// </summary>
-        public long BaseOffset;
-
-        /// <summary>
         /// The starting position of the asset's data in the archive.
         /// </summary>
         public long Start;
@@ -73,10 +65,15 @@
         /// </summary>
         public long ActualLength;
 
-        public AssetArchiveEntry(Compression compression, string archivePath, int partIndex, AssetType type, Guid guid, Guid parentGuid, string name, string pathInArchive, long start, long length, long actualLength)
+        private AssetArchiveEntry()
         {
-            Compression = compression;
-            ArchivePath = archivePath;
+            Name = null!;
+            PathInArchive = null!;
+        }
+
+        public AssetArchiveEntry(AssetArchive archive, int partIndex, AssetType type, Guid guid, Guid parentGuid, string name, string pathInArchive, long start, long length, long actualLength)
+        {
+            Archive = archive;
             PartIndex = partIndex;
             Type = type;
             Guid = guid;
@@ -86,6 +83,14 @@
             Start = start;
             Length = length;
             ActualLength = actualLength;
+        }
+
+        public static AssetArchiveEntry ReadFrom(Stream stream, Encoding encoding, Endianness endianness, AssetArchive archive)
+        {
+            AssetArchiveEntry entry = new();
+            entry.Read(stream, encoding, endianness);
+            entry.Archive = archive;
+            return entry;
         }
 
         /// <summary>
@@ -113,7 +118,7 @@
         /// <param name="stream">The output stream.</param>
         /// <param name="encoding">The character encoding.</param>
         /// <param name="endianness">The endianness of the data in the stream.</param>
-        public readonly void Write(Stream stream, Encoding encoding, Endianness endianness)
+        public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteInt32(PartIndex, endianness);
             stream.WriteGuid(Guid, endianness);
@@ -131,7 +136,7 @@
         /// </summary>
         /// <param name="encoding">The character encoding.</param>
         /// <returns>The size of the header entry in bytes.</returns>
-        public readonly int Size(Encoding encoding)
+        public int SizeOf(Encoding encoding)
         {
             int size = 76;
             if (Name != null)
@@ -151,7 +156,7 @@
         /// <returns>A <see cref="VirtualStream"/> representing the asset data.</returns>
         public VirtualStream GetStream()
         {
-            return Compression switch
+            return Archive.Compression switch
             {
                 Compression.None => OpenStream(),
                 Compression.Deflate => DeflateDecompress(),
@@ -189,7 +194,7 @@
         /// <returns>A <see cref="VirtualStream"/> representing the uncompressed asset data.</returns>
         private VirtualStream OpenStream()
         {
-            return new VirtualStream(File.Open(ArchivePath, FileMode.Open, FileAccess.Read, FileShare.Read), Start + BaseOffset, Length);
+            return new VirtualStream(File.Open(ArchivePath, FileMode.Open, FileAccess.Read, FileShare.Read), Archive.BaseOffset + Start, Length);
         }
 
         /// <summary>
@@ -214,53 +219,6 @@
             var decompressor = LZ4Stream.Decode(baseStream);
             var wrapper = new VirtualStream(decompressor, 0, ActualLength);
             return wrapper;
-        }
-
-        public override readonly bool Equals(object? obj)
-        {
-            return obj is AssetArchiveEntry entry && Equals(entry);
-        }
-
-        public readonly bool Equals(AssetArchiveEntry other)
-        {
-            return Compression == other.Compression &&
-                   ArchivePath == other.ArchivePath &&
-                   PartIndex == other.PartIndex &&
-                   Type == other.Type &&
-                   Guid.Equals(other.Guid) &&
-                   ParentGuid.Equals(other.ParentGuid) &&
-                   Name == other.Name &&
-                   PathInArchive == other.PathInArchive &&
-                   Start == other.Start &&
-                   Length == other.Length &&
-                   ActualLength == other.ActualLength;
-        }
-
-        public override readonly int GetHashCode()
-        {
-            HashCode hash = new();
-            hash.Add(Compression);
-            hash.Add(ArchivePath);
-            hash.Add(PartIndex);
-            hash.Add(Type);
-            hash.Add(Guid);
-            hash.Add(ParentGuid);
-            hash.Add(Name);
-            hash.Add(PathInArchive);
-            hash.Add(Start);
-            hash.Add(Length);
-            hash.Add(ActualLength);
-            return hash.ToHashCode();
-        }
-
-        public static bool operator ==(AssetArchiveEntry left, AssetArchiveEntry right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(AssetArchiveEntry left, AssetArchiveEntry right)
-        {
-            return !(left == right);
         }
     }
 }

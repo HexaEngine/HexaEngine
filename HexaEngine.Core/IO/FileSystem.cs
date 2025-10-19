@@ -88,7 +88,7 @@
             for (int i = 0; i < bundles.Length; i++)
             {
                 string file = bundles[i];
-                FileSystem.bundles.Add(new AssetArchive(file));
+                FileSystem.bundles.Add(new AssetArchive(file, AssetArchiveMode.OpenRead));
             }
 
             // Create file indices for the files in the "assets" directory and its subdirectories

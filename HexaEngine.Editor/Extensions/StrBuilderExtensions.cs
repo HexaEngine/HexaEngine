@@ -93,6 +93,16 @@
             return builder;
         }
 
+        public static StrBuilder BuildLabelId(this ref StrBuilder builder, char icon, int id)
+        {
+            builder.Reset();
+            builder.Append(icon);
+            builder.Append("##"u8);
+            builder.Append(id);
+            builder.End();
+            return builder;
+        }
+
         public static StrBuilder BuildLabelId(this ref StrBuilder builder, ReadOnlySpan<byte> text, ReadOnlySpan<byte> id)
         {
             builder.Reset();
@@ -206,11 +216,31 @@
             return builder;
         }
 
+        public static StrBuilder BuildId(this ref StrBuilder builder, int id)
+        {
+            builder.Reset();
+            builder.Append("##"u8);
+            builder.Append(id);
+            builder.End();
+            return builder;
+        }
+
         public static StrBuilder BuildId(this ref StrBuilder builder, ReadOnlySpan<byte> id)
         {
             builder.Reset();
             builder.Append("##"u8);
             builder.Append(id);
+            builder.End();
+            return builder;
+        }
+
+        public static StrBuilder BuildId(this ref StrBuilder builder, int id0, int id1)
+        {
+            builder.Reset();
+            builder.Append("##"u8);
+            builder.Append(id0);
+            builder.Append("_"u8);
+            builder.Append(id1);
             builder.End();
             return builder;
         }

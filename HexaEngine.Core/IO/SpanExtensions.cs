@@ -97,6 +97,18 @@
         }
 
         /// <summary>
+        /// Gets the size, in bytes, of a string when encoded with the specified encoder.
+        /// </summary>
+        /// <param name="str">The string to calculate the size of.</param>
+        /// <param name="encoder">The encoder to use for size calculation.</param>
+        /// <returns>The size of the string when encoded with the given encoder.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public static int SizeOf(this string str, Encoding encoder)
+        {
+            return 4 + encoder.GetByteCount(str);
+        }
+
+        /// <summary>
         /// Writes a 16-bit signed integer to the specified <see cref="Span{T}"/> using the specified endianness.
         /// </summary>
         /// <param name="dest">The destination <see cref="Span{T}"/> to write to.</param>

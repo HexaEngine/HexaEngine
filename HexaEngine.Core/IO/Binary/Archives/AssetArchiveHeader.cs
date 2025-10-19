@@ -3,7 +3,27 @@
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Security.Cryptography;
     using System.IO;
+    using System.Security.Cryptography;
     using System.Text;
+
+    public enum RSASignatureMode
+    {
+        SHA256_PKCS1v15,
+    }
+
+    public struct RSASignature
+    {
+        public RSASignatureMode Mode;
+        public byte[] PublicKey;
+        public byte[] Signature;
+
+        public RSASignature(RSASignatureMode mode, RSA rsa, Span<byte> signature) : this()
+        {
+            Mode = mode;
+            PublicKey = rsa.ExportRSAPublicKey();
+            Signature = signature.ToArray();
+        }
+    }
 
     /// <summary>
     /// Represents the header information of an asset archive.
@@ -46,18 +66,28 @@
         public string[] Parts;
 
         /// <summary>
-        /// Entry count of the archive.
-        /// </summary>
-        public int EntryCount;
-
-        /// <summary>
         /// The position in the stream where the content starts.
         /// </summary>
         public long ContentStart;
 
+        public uint Alignment;
         public uint CRC32;
-
         public SHA256Signature SHA256;
+        public RSASignature RSASignature;
+
+        public Encoding Encoding;
+
+        public const uint DefaultAlignment = 256;
+
+        public AssetArchiveHeader(Endianness endianness = Endianness.LittleEndian, Encoding? encoding = null, Compression compression = Compression.LZ4, AssetArchiveFlags flags = AssetArchiveFlags.Normal, string[]? parts = null, uint alignment = DefaultAlignment)
+        {
+            Endianness = endianness;
+            Encoding = encoding ?? Encoding.UTF8;
+            Compression = compression;
+            Flags = flags;
+            Parts = parts ?? [];
+            Alignment = alignment;
+        }
 
         /// <summary>
         /// Reads the asset archive header from a stream.
@@ -89,12 +119,12 @@
                 Parts[i] = stream.ReadString(encoding, Endianness) ?? string.Empty;
             }
 
-            EntryCount = stream.ReadInt32(Endianness);
             ContentStart = stream.ReadInt64(Endianness);
             CRC32 = stream.ReadUInt32(Endianness);
             Span<byte> buffer = stackalloc byte[32];
             stream.ReadExactly(buffer);
             SHA256 = new(buffer, Endianness == Endianness.BigEndian);
+            Encoding = encoding;
         }
 
         /// <summary>
@@ -116,7 +146,6 @@
                 stream.WriteString(Parts[i], encoding, Endianness);
             }
 
-            stream.WriteInt32(EntryCount, Endianness);
             stream.WriteInt64(ContentStart, Endianness);
             stream.WriteUInt32(CRC32, Endianness);
             Span<byte> buffer = stackalloc byte[32];
@@ -129,7 +158,7 @@
         /// </summary>
         /// <param name="encoding">The character encoding.</param>
         /// <returns>The size of the header in bytes.</returns>
-        public readonly int Size(Encoding encoding)
+        public readonly int SizeOf(Encoding encoding)
         {
             return MagicNumber.Length + 1 + 8 + 4 + 4 + 4 + Parts.Sum(x => encoding.GetByteCount(x) + 4) + 4 + 8 + 4;
         }
