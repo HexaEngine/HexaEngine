@@ -109,7 +109,7 @@
         /// <returns>The read <see cref="WebCacheEntry"/>.</returns>
         public static WebCacheEntry Read(Stream stream, Span<byte> buffer)
         {
-            stream.Read(buffer);
+            stream.ReadExactly(buffer);
             uint key = BinaryPrimitives.ReadUInt32LittleEndian(buffer);
             uint size = BinaryPrimitives.ReadUInt32LittleEndian(buffer[4..]);
             long position = BinaryPrimitives.ReadInt64LittleEndian(buffer[8..]);
