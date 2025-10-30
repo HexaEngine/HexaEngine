@@ -60,8 +60,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Analyzers.Tests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Analyzers.Annotations", "HexaEngine.Analyzers.Annotations\HexaEngine.Analyzers.Annotations.csproj", "{1EEAFB17-B07D-4211-BD3D-3E72339557C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaEngine.ShadingLang", "HexaEngine.ShadingLang\HexaEngine.ShadingLang.csproj", "{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaEngine.UI", "HexaEngine.UI\HexaEngine.UI.csproj", "{7CBEA087-34BD-4893-BB81-696DC04C4086}"
 EndProject
 Global
@@ -498,26 +496,6 @@ Global
 		{1EEAFB17-B07D-4211-BD3D-3E72339557C2}.TraceLeak|Any CPU.Build.0 = Debug|Any CPU
 		{1EEAFB17-B07D-4211-BD3D-3E72339557C2}.TraceLeak|x64.ActiveCfg = Release|x64
 		{1EEAFB17-B07D-4211-BD3D-3E72339557C2}.TraceLeak|x64.Build.0 = Release|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.Debug|x64.ActiveCfg = Debug|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.Debug|x64.Build.0 = Debug|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.MinSizeRel|Any CPU.ActiveCfg = Release|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.MinSizeRel|Any CPU.Build.0 = Release|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.MinSizeRel|x64.ActiveCfg = Release|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.MinSizeRel|x64.Build.0 = Release|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.Release|x64.ActiveCfg = Release|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.Release|x64.Build.0 = Release|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.RelWithDebInfo|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.RelWithDebInfo|Any CPU.Build.0 = Debug|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.RelWithDebInfo|x64.ActiveCfg = Debug|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.RelWithDebInfo|x64.Build.0 = Debug|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.TraceLeak|Any CPU.ActiveCfg = Release|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.TraceLeak|Any CPU.Build.0 = Release|Any CPU
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.TraceLeak|x64.ActiveCfg = Release|x64
-		{5E937BF4-A505-4D8C-B318-1ABFD804DB3D}.TraceLeak|x64.Build.0 = Release|x64
 		{7CBEA087-34BD-4893-BB81-696DC04C4086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7CBEA087-34BD-4893-BB81-696DC04C4086}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CBEA087-34BD-4893-BB81-696DC04C4086}.Debug|x64.ActiveCfg = Debug|Any CPU
