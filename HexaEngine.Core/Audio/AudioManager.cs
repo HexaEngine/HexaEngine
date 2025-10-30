@@ -50,9 +50,20 @@
         /// </summary>
         /// <param name="path">The path to the audio file.</param>
         /// <returns>An audio stream created from the specified audio file.</returns>
+        [Obsolete("Use AssetPath overload instead.")]
         public static IAudioStream CreateStream(string path)
         {
-            return audioDevice.CreateWaveAudioStream(FileSystem.OpenRead(Paths.CurrentSoundPath + path));
+            return audioDevice.CreateWaveAudioStream(FileSystem.OpenRead(path));
+        }
+
+        /// <summary>
+        /// Creates an audio stream from the specified file path.
+        /// </summary>
+        /// <param name="path">The path to the audio file.</param>
+        /// <returns>An audio stream created from the specified audio file.</returns>
+        public static IAudioStream CreateStream(AssetPath path)
+        {
+            return audioDevice.CreateWaveAudioStream(FileSystem.OpenRead(path));
         }
 
         /// <summary>

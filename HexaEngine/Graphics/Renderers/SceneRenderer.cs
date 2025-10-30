@@ -67,8 +67,6 @@
 
         public RenderGraphExecuter RenderGraphExecuter => graphExecuter;
 
-        public IReadOnlyList<RenderPass> Passes => renderGraph.Passes;
-
         public GraphResourceBuilder ResourceBuilder => graphExecuter.ResourceBuilder;
 
         public bool EnableProfiling { get => enableProfiling; set => enableProfiling = value; }
@@ -140,10 +138,9 @@
             configKey.Sort();
             RenderResolution = configKey.GetOrAddValue(nameof(RenderResolution), 1f);
 
-            RenderGraph.ResolveGlobalResources();
             RenderGraph.Build();
 
-            graphExecuter = new(device, renderGraph, renderGraph.Passes);
+            graphExecuter = new(device, renderGraph);
 
             return Task.Factory.StartNew(Initialize);
         }

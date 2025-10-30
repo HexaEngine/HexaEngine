@@ -1,18 +1,15 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
     using Hexa.NET.DebugDraw;
-    using Hexa.NET.FreeType;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
+    using HexaEngine.Graphics.Overlays;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
-    using HexaEngine.UI;
-    using HexaEngine.UI.Graphics;
-    using System.Numerics;
 
-    public class OverlayPass : RenderPass
+    public class OverlayPass : RenderPass<OverlayPass>
     {
         private ResourceRef<IGraphicsPipelineState> copyPipeline = null!;
         private ResourceRef<ISamplerState> samplerState = null!;
@@ -20,12 +17,9 @@
         private ResourceRef<DepthStencil> depthStencil = null!;
         private ResourceRef<Texture2D> postFxBuffer = null!;
 
-        private UIRenderer uirenderer = null!;
-
-        public OverlayPass() : base("OverlayPass")
+        public override void BuildDependencies(GraphDependencyBuilder builder)
         {
-            AddReadDependency(new("#DepthStencil"));
-            AddReadDependency(new("PostFxBuffer"));
+            builder.RunAfter<PostProcessPass>();
         }
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -34,8 +28,8 @@
             {
                 Pipeline = new()
                 {
-                    VertexShader = "quad.hlsl",
-                    PixelShader = "effects/copy/ps.hlsl",
+                    VertexShader = AssetShaderPath("quad.hlsl"),
+                    PixelShader = AssetShaderPath("effects/copy/ps.hlsl"),
                     Macros = [new ShaderMacro("SAMPLED", 1)]
                 },
                 State = GraphicsPipelineStateDesc.DefaultFullscreen,
@@ -45,7 +39,7 @@
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             postFxBuffer = creator.GetTexture2D("PostFxBuffer");
 
-            uirenderer = new(creator.Device);
+            OverlayManager.Current.Init();
         }
 
         public override void Prepare(GraphResourceBuilder creator)
@@ -58,6 +52,10 @@
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var enabled = (SceneRenderer.Current.DrawFlags & SceneDrawFlags.NoOverlay) == 0;
+
+            var manager = OverlayManager.Current;
+
+            manager.Draw(context, creator.Viewport, postFxBuffer, depthStencil);
 
             if (Application.InEditorMode && enabled)
             {
@@ -74,27 +72,6 @@
                 profiler?.End("DebugDraw");
             }
 
-            var ui = UISystem.Current;
-            if (ui != null)
-            {
-                var commandList = ui.CommandList;
-                float L = 0;
-                float R = creator.Viewport.Width;
-                float T = 0;
-                float B = creator.Viewport.Height;
-                Matrix4x4 mvp = new
-                    (
-                     2.0f / (R - L), 0.0f, 0.0f, 0.0f,
-                     0.0f, 2.0f / (T - B), 0.0f, 0.0f,
-                     0.0f, 0.0f, 0.5f, 0.0f,
-                     (R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f
-                );
-
-                context.SetRenderTarget(postFxBuffer.Value, depthStencil.Value);
-                // End the ImGui frame rendering.
-                uirenderer?.RenderDrawData(context, creator.Viewport, mvp, commandList);
-            }
-
             context.SetRenderTarget(creator.Output, null);
             context.SetViewport(creator.OutputViewport);
             context.SetGraphicsPipelineState(copyPipeline.Value);
@@ -106,7 +83,7 @@
 
         public override void Release()
         {
-            uirenderer.Release();
+            OverlayManager.Current.Release();
         }
     }
 }

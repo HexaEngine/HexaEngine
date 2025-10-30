@@ -65,7 +65,7 @@ namespace HexaEngine.PostFx.BuildIn
 
         public override string Name => "HBAO";
 
-        public override PostFxFlags Flags { get; } = PostFxFlags.NoOutput | PostFxFlags.NoInput;
+        public override PostFxFlags Flags { get; } = PostFxFlags.NoOutput | PostFxFlags.NoInput | PostFxFlags.PrePass;
 
         /// <inheritdoc/>
         public override PostFxColorSpace ColorSpace { get; } = PostFxColorSpace.None;
@@ -186,7 +186,7 @@ namespace HexaEngine.PostFx.BuildIn
             pipeline.Bindings.SetCBV("ConfigBuffer", paramsBuffer);
         }
 
-        public override unsafe void Draw(IGraphicsContext context)
+        public override void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             context.ClearRenderTargetView(ao.Value.RTV, Vector4.One);
 
@@ -198,6 +198,10 @@ namespace HexaEngine.PostFx.BuildIn
             context.SetRenderTarget(null, null);
 
             blur.Blur(context, intermediateTex.SRV, ao.Value.RTV, (int)viewport.Width, (int)viewport.Height);
+        }
+
+        public override unsafe void Draw(IGraphicsContext context)
+        {
         }
 
         protected override unsafe void DisposeCore()

@@ -120,6 +120,7 @@ namespace HexaEngine.Editor.Widgets
             var folder = dialog.SelectedFile!;
             foreach (var entry in FileUtils.EnumerateEntries(folder, "*.*", SearchOption.AllDirectories))
             {
+                if ((entry.Attributes & FileAttributes.Directory) != 0) continue;
                 var srcPath = entry.Path.ToString();
                 var relPath = Path.GetRelativePath(folder, srcPath);
                 ns.Assets.Add(new AssetEntry

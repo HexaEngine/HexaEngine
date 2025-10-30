@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
-    public class RenderPassMetadata
+    public struct RenderPassMetadata
     {
         public RenderPassMetadata(string name, RenderPassType type)
         {

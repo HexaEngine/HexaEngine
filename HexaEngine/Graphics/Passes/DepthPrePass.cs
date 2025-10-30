@@ -13,7 +13,6 @@
 
         public DepthPrePass() : base("PrePass")
         {
-            AddWriteDependency(new("#DepthStencil"));
         }
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)

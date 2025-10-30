@@ -12,7 +12,7 @@ namespace HexaEngine.Graphics.Passes
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
 
-    public class LightDeferredPass : DrawPass
+    public class LightDeferredPass : RenderPass<LightDeferredPass>
     {
         private ResourceRef<DepthStencil> depthStencil;
         private ResourceRef<GBuffer> gbuffer;
@@ -38,16 +38,23 @@ namespace HexaEngine.Graphics.Passes
         private ResourceRef<IGraphicsPipelineState> deferred;
         private IGraphicsDevice dev;
 
-        private readonly bool forceForward = true;
+        private readonly bool forceForward = false;
 
-        public LightDeferredPass(Windows.RendererFlags flags) : base("LightDeferred")
+        public LightDeferredPass(Windows.RendererFlags flags)
         {
             forceForward = (flags & Windows.RendererFlags.ForceForward) != 0;
-            AddWriteDependency(new("LightBuffer"));
-            AddReadDependency(new("GBuffer"));
-            AddReadDependency(new("#AOBuffer"));
-            AddReadDependency(new("ShadowAtlas"));
-            AddReadDependency(new("BRDFLUT"));
+        }
+
+        public override void BuildDependencies(GraphDependencyBuilder builder)
+        {
+            builder
+                .RunAfter<LightCullPass>()
+                .RunAfter<LightUpdatePass>()
+                .RunAfter<ShadowMapPass>()
+                .RunAfter<GBufferPass>()
+                .RunAfter<PostProcessPrePass>()
+                .RunBefore<LightForwardPass>()
+                .RunBefore<PostProcessPass>();
         }
 
         public override unsafe void Init(GraphResourceBuilder creator, ICPUProfiler profiler)
@@ -84,8 +91,8 @@ namespace HexaEngine.Graphics.Passes
             {
                 Pipeline = new()
                 {
-                    VertexShader = "quad.hlsl",
-                    PixelShader = "deferred/brdf/light.hlsl",
+                    VertexShader = AssetShaderPath("quad.hlsl"),
+                    PixelShader = AssetShaderPath("deferred/brdf/light.hlsl"),
                 },
                 State = GraphicsPipelineStateDesc.DefaultAdditiveFullscreen
             });

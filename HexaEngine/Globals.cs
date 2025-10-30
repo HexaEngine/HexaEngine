@@ -1,8 +1,7 @@
 ﻿global using Hexa.NET.Utilities;
 global using Newtonsoft.Json;
 global using static Hexa.NET.Utilities.Utils;
+global using static HexaEngine.AssetPathHelper;
 using HexaEngine.Profiling;
-using HexaEngine.UI.Markup;
 
-[assembly: XmlnsDefinition("http://hexaengine.com/ui/v0/xaml", "HexaEngine.UI")]
 [module: Profile]

@@ -2,6 +2,7 @@
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.IO;
     using System.Runtime.CompilerServices;
 
     public sealed unsafe class Texture2D : Texture<ITexture2D, Texture2DDescription>, ITexture2D, IShaderResourceView, IRenderTargetView, IUnorderedAccessView
@@ -384,9 +385,20 @@
         /// </summary>
         /// <param name="path">The path to the texture asset.</param>
         /// <returns>The loaded <see cref="Texture2D"/> object.</returns>
+        [Obsolete("Use AssetPath overload instead.")]
         public static Texture2D LoadFromAssets(string path)
         {
-            return new(new TextureFileDescription(Paths.CurrentTexturePath + path));
+            return new(new TextureFileDescription(new(path)));
+        }
+
+        /// <summary>
+        /// Loads a <see cref="Texture2D"/> from assets and returns it.
+        /// </summary>
+        /// <param name="path">The path to the texture asset.</param>
+        /// <returns>The loaded <see cref="Texture2D"/> object.</returns>
+        public static Texture2D LoadFromAssets(AssetPath path)
+        {
+            return new(new TextureFileDescription(path));
         }
 
         /// <summary>
@@ -396,7 +408,7 @@
         /// <returns>The loaded <see cref="Texture2D"/> object.</returns>
         public static Texture2D LoadFromAssets(AssetRef assetRef)
         {
-            return new(new TextureFileDescription(assetRef.GetPath()!));
+            return new(new TextureFileDescription(assetRef));
         }
 
         /// <summary>
@@ -407,7 +419,7 @@
         /// <returns>The loaded <see cref="Texture2D"/> object.</returns>
         public static Texture2D LoadFromAssets(AssetRef assetRef, TextureDimension forceDim)
         {
-            return new(new TextureFileDescription(assetRef.GetPath()!, forceDim));
+            return new(new TextureFileDescription(assetRef, forceDim));
         }
     }
 }

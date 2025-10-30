@@ -8,7 +8,7 @@
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
 
-    public class LightCullPass : ComputePass
+    public class LightCullPass : RenderPass<LightCullPass>
     {
         private bool recreateClusters = true;
 
@@ -34,11 +34,9 @@
 
         private ResourceRef<ConstantBuffer<CullLightParams>> lightParamsBuffer = null!;
 
-        public LightCullPass() : base("LightCull")
+        public override void BuildDependencies(GraphDependencyBuilder builder)
         {
-            AddReadDependency(new("#DepthStencil"));
-            AddWriteDependency(new("LightIndexList"));
-            AddWriteDependency(new("LightGridBuffer"));
+            builder.RunAfter<LightUpdatePass>();
         }
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -48,11 +46,11 @@
 
             clusterBuilding = creator.CreateComputePipelineState(new ComputePipelineDesc()
             {
-                Path = "compute/clustered/building.hlsl"
+                Path = AssetShaderPath("compute/clustered/building.hlsl")
             });
             clusterCulling = creator.CreateComputePipelineState(new ComputePipelineDesc()
             {
-                Path = "compute/clustered/culling.hlsl"
+                Path = AssetShaderPath("compute/clustered/culling.hlsl")
             });
 
             lightParamsBuffer = creator.CreateConstantBuffer<CullLightParams>("CBCullLightParams", CpuAccessFlags.Write);

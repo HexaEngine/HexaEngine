@@ -1,122 +1,138 @@
-﻿namespace HexaEngine.Graphics.Graph
+﻿
+namespace HexaEngine.Graphics.Graph
 {
+    public enum GraphDependencyType
+    {
+        Default,
+        Required,
+        AfterAll,
+        AllNotReferenced
+    }
+
+    public struct GraphDependency : IEquatable<GraphDependency>
+    {
+        public string Name;
+        public GraphDependencyType Type;
+
+        public GraphDependency(string name, GraphDependencyType type)
+        {
+            Name = name;
+            Type = type;
+        }
+
+        public readonly override bool Equals(object? obj)
+        {
+            return obj is GraphDependency dependency && Equals(dependency);
+        }
+
+        public readonly bool Equals(GraphDependency other)
+        {
+            return Name == other.Name;
+        }
+
+        public readonly override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+
+        public static bool operator ==(GraphDependency left, GraphDependency right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(GraphDependency left, GraphDependency right)
+        {
+            return !(left == right);
+        }
+    }
+
     public class GraphDependencyBuilder
     {
         private readonly RenderGraphNode node;
-        private readonly List<ResourceBinding> bindings = new();
-        private readonly List<ResourceTarget> sources = new();
+        private readonly GraphNodeRegistry registry;
 
-        private readonly List<string> after = new();
-        private readonly List<string> before = new();
+        private readonly HashSet<GraphDependency> after = [];
+        private readonly HashSet<GraphDependency> before = [];
 
-        public GraphDependencyBuilder(RenderGraphNode node)
+        public GraphDependencyBuilder(RenderGraphNode node, GraphNodeRegistry registry)
         {
             this.node = node;
+            this.registry = registry;
         }
 
-        public void Build(RenderGraph graph)
-        {
-        }
+        public RenderGraphNode Node { get => node; }
 
         public void Clear()
         {
-            bindings.Clear();
-            sources.Clear();
             after.Clear();
             before.Clear();
         }
 
-        public void AddWrite(ResourceTarget target)
+        public GraphDependencyBuilder AddDependency(string name, GraphDependencyType type)
         {
-            sources.Add(target);
+            after.Add(new GraphDependency(name, GraphDependencyType.Default));
+            return this;
         }
 
-        public void AddWrite(string target)
+        public GraphDependencyBuilder AddDependent(string name, GraphDependencyType type)
         {
-            AddWrite(new ResourceTarget(target));
+            before.Add(new GraphDependency(name, GraphDependencyType.Default));
+            return this;
         }
 
-        public void AddRead(ResourceBinding source)
+        public GraphDependencyBuilder RunBefore(string name)
         {
-            bindings.Add(source);
+            return AddDependent(name, GraphDependencyType.Default);
+           
         }
 
-        public void AddRead(string source)
+        public GraphDependencyBuilder RunAfter(string name)
         {
-            AddRead(new ResourceBinding(source));
+            return AddDependency(name, GraphDependencyType.Default);
         }
 
-        public void RunBefore(string name)
+        public GraphDependencyBuilder RunBefore<T>() where T : RenderPass
         {
-            before.Add(name);
-        }
-
-        public void RunAfter(string name)
-        {
-            after.Add(name);
-        }
-
-        private static RenderGraphNode? ResolveDependency(ResourceBinding binding, IReadOnlyList<RenderGraphNode> others, IReadOnlyList<ResourceBinding> globalResources)
-        {
-            var name = binding.Name;
-            if (name.StartsWith('#'))
+            if (registry.TryGetNodeName<T>(out var name))
             {
-                throw new InvalidOperationException($"Couldn't find render graph global resource: {name}");
+                AddDependent(name, GraphDependencyType.Default);
             }
-            else
-            {
-                for (int i = 0; i < others.Count; i++)
-                {
-                    var node = others[i];
-                    var builder = node.Builder;
-                    for (int j = 0; j < builder.sources.Count; j++)
-                    {
-                        var source = builder.sources[j];
-                        if (source.Name == name)
-                        {
-                            return node;
-                        }
-                    }
-                }
-                for (int i = 0; i < globalResources.Count; i++)
-                {
-                    var global = globalResources[i];
-                    if (global.Name == name)
-                    {
-                        return null;
-                    }
-                }
-
-                throw new InvalidOperationException($"Couldn't find local or sub graph local resource: {name}");
-            }
+            return this;
         }
 
-        private static RenderGraphNode? ResolveNode(string name, IReadOnlyList<RenderGraphNode> others)
+        public GraphDependencyBuilder RunAfter<T>() where T : RenderPass
         {
-            for (int i = 0; i < others.Count; i++)
+            if (registry.TryGetNodeName<T>(out var name))
             {
-                var other = others[i];
-                if (other.Name == name)
-                {
-                    return other;
-                }
+                AddDependency(name, GraphDependencyType.Default);
             }
-            return null;
+            return this;
+        }
+        
+        private RenderGraphNode? ResolveNode(string name, bool optional)
+        {
+            if (!registry.TryGetNode(name, out var node))
+            {
+                if (optional) return null;
+                throw new KeyNotFoundException($"Failed to resolve node '{name}'.");
+            }
+            if (!node.Pass.Enabled && !optional)
+            {
+                if (node.Pass.Type == RenderPassType.Optional)
+                {
+                    node.Pass.Enabled = true;
+                    return node;
+                }
+                throw new InvalidOperationException($"The pass '{node.Name}' has an active relationship with '{node.Name}', but '{node.Name}' was not enabled.");
+            }
+            return node;
         }
 
         public bool HasDependencyOn(string name)
         {
-            if (after.Contains(name))
+            if (after.Contains(new GraphDependency(name, GraphDependencyType.Default)))
             {
                 return true;
-            }
-
-            for (int i = 0; i < bindings.Count; i++)
-            {
-                if (bindings[i].Name == name)
-                {
-                    return true;
-                }
             }
 
             return false;
@@ -129,88 +145,64 @@
                 return true;
             }
 
-            for (int i = 0; i < sources.Count; i++)
-            {
-                if (other.Builder.HasDependencyOn(sources[i].Name))
-                {
-                    return true;
-                }
-            }
-
             return false;
         }
 
-        public void Build(IReadOnlyList<RenderGraphNode> others, IReadOnlyList<ResourceBinding> globalResources)
+        public void Build()
         {
-            for (int i = 0; i < bindings.Count; i++)
+            foreach (var runAfter in after)
             {
-                var dep = ResolveDependency(bindings[i], others, globalResources);
-                if (dep is null)
+                switch (runAfter.Type)
                 {
-                    throw new Exception("Could not resolve dependencyaaaaaaaaaaaaaa");
-                }
-                else
-                {
-                    if (!node.Dependencies.Contains(dep))
-                    {
-                        node.Dependencies.Add(dep);
-                        dep.Dependents.Add(node);
-                    }
-                }
-            }
-
-            for (int i = 0; i < after.Count; i++)
-            {
-                var runAfter = after[i];
-                var afterNode = ResolveNode(runAfter, others);
-                if (afterNode is null)
-                {
-                    if (runAfter == "!All")
-                    {
-                        for (int j = 0; j < others.Count; j++)
+                    case GraphDependencyType.Default:
+                        var afterNode = ResolveNode(runAfter.Name, true);
+                        if (afterNode != null)
                         {
-                            var other = others[j];
+                            node.AddDependency(afterNode);
+                        }
+                        break;
+
+                    case GraphDependencyType.Required:
+                        node.AddDependency(ResolveNode(runAfter.Name, false)!);
+                        break;
+
+                    case GraphDependencyType.AfterAll:
+                        foreach (var other in registry.Nodes)
+                        {
                             if (node != other)
                             {
-                                if (!node.Dependencies.Contains(other))
-                                {
-                                    node.Dependencies.Add(other);
-                                }
+                                node.AddDependency(other);
                             }
                         }
-                    }
-                    if (runAfter == "!AllNotReferenced")
-                    {
-                        for (int j = 0; j < others.Count; j++)
+                        break;
+
+                    case GraphDependencyType.AllNotReferenced:
+                        foreach (var other in registry.Nodes)
                         {
-                            var other = others[j];
                             if (node != other && !IsReferencedBy(other))
                             {
-                                if (!node.Dependencies.Contains(other))
-                                {
-                                    node.Dependencies.Add(other);
-                                }
+                                node.AddDependency(other);
                             }
                         }
-                    }
-                    continue;
-                }
-                if (!node.Dependencies.Contains(afterNode))
-                {
-                    node.Dependencies.Add(afterNode);
+                        break;
                 }
             }
 
-            for (int i = 0; i < before.Count; i++)
+            foreach (var before in before)
             {
-                var beforeNode = ResolveNode(before[i], others);
-                if (beforeNode is null)
+                switch (before.Type)
                 {
-                    continue;
-                }
-                if (!beforeNode.Dependencies.Contains(node))
-                {
-                    beforeNode.Dependencies.Add(node);
+                    case GraphDependencyType.Default:
+                        var beforeNode = ResolveNode(before.Name, true);
+                        beforeNode?.AddDependency(node);
+                        break;
+
+                    case GraphDependencyType.Required:
+                        node.AddDependent(ResolveNode(before.Name, false)!);
+                        break;
+
+                    default:
+                        throw new NotSupportedException();
                 }
             }
         }

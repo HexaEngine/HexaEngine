@@ -180,7 +180,6 @@
             }
 
             var renderGraph = renderer.RenderGraph;
-            var passes = renderer.Passes;
 
             ImNodes.EditorContextSet(nodeContext);
             ImNodes.BeginNodeEditor();
@@ -193,11 +192,8 @@
                     ImGui.BulletText(node.Name);
                 }
 
-                for (int i = 0; i < passes.Count; i++)
+                foreach (var node in renderGraph.Nodes)
                 {
-                    var pass = passes[i];
-                    var node = renderGraph.GetGraphNodeByName(pass.Name);
-                    if (node == null) continue;
                     var imNode = GetOrAddNode(node);
 
                     ImNodes.BeginNode(imNode.Id);
@@ -212,31 +208,6 @@
                     ImNodes.BeginOutputAttribute(imNode.Output, ImNodesPinShape.CircleFilled);
                     ImNodes.EndOutputAttribute();
 
-                    for (int j = 0; j < node.Dependencies.Count; j++)
-                    {
-                        var dep = node.Dependencies[j];
-                        var depNode = GetOrAddNode(dep);
-                        var link = GetOrAddLink(node, dep);
-                        ImNodes.Link(link.Id, imNode.Input, depNode.Output);
-                    }
-
-                    for (int j = 0; j < pass.WriteDependencies.Count; j++)
-                    {
-                        var dep = pass.WriteDependencies[j];
-                        var atrri = GetOrAddAttribute(ref imNode, dep);
-                        ImNodes.BeginOutputAttribute(atrri.Id, ImNodesPinShape.CircleFilled);
-                        ImGui.Text(dep.Name);
-                        ImNodes.EndOutputAttribute();
-                    }
-
-                    for (int j = 0; j < pass.ReadDependencies.Count; j++)
-                    {
-                        var dep = pass.ReadDependencies[j];
-                        var atrri = GetOrAddAttribute(ref imNode, dep);
-                        ImNodes.BeginInputAttribute(atrri.Id, ImNodesPinShape.CircleFilled);
-                        ImGui.Text(dep.Name);
-                        ImNodes.EndInputAttribute();
-                    }
 
                     ImNodes.EndNode();
                 }

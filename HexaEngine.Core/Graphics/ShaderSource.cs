@@ -1,4 +1,5 @@
-﻿using HexaEngine.Core.IO;
+﻿using Hexa.NET.Logging;
+using HexaEngine.Core.IO;
 using System.Text;
 
 namespace HexaEngine.Core.Graphics
@@ -45,6 +46,11 @@ namespace HexaEngine.Core.Graphics
 
         public override byte[] GetData()
         {
+            AssetPath path = new(filePath);
+            if (path.HasNamespace)
+            {
+                return Encoding.UTF8.GetBytes(FileSystem.ReadAllText(path.Raw));
+            }
             return Encoding.UTF8.GetBytes(FileSystem.ReadAllText(Paths.CurrentShaderPath + filePath));
         }
     }

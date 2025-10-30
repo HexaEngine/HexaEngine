@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.PostFx
 {
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Profiling;
@@ -9,7 +10,7 @@
 
     public class PostProcessingManager : IDisposable
     {
-        private readonly object _lock = new();
+        private readonly Lock _lock = new();
         private readonly SemaphoreSlim semaphore = new(1);
 
         private ShaderMacro[] macros;
@@ -75,7 +76,7 @@
 
         public IReadOnlyList<PostProcessingExecutionGroup> Groups => groups;
 
-        public object SyncObject => _lock;
+        public Lock SyncObject => _lock;
 
         public bool Enabled { get => enabled; set => enabled = value; }
 
@@ -89,7 +90,7 @@
 
         public void Initialize(int width, int height, ICPUProfiler? profiler)
         {
-            semaphore.Wait();
+            using var guard = semaphore.Lock();
 
             for (int i = 0; i < effects.Count; i++)
             {
@@ -126,8 +127,6 @@
             UpdateGroups();
 
             isInitialized = true;
-
-            semaphore.Release();
         }
 
         private enum PrivateFlags
@@ -176,7 +175,11 @@
                 return;
             }
 
-            semaphore.Wait();
+            using var guard = semaphore.TryLock();
+            if (!guard.OwnsLock)
+            {
+                return;
+            }
             GraphResourceContainer container = graph.GetNode(postFx).Container;
             postFx.Dispose();
             container.DisposeResources();
@@ -185,7 +188,6 @@
             postFx.Initialize(device, creator, width, height, macros);
             creator.Container = null;
             Invalidate();
-            semaphore.Release();
         }
 
         private void PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -201,9 +203,11 @@
                 return;
             }
 
-            semaphore.Wait();
-            Invalidate();
-            semaphore.Release();
+            using var guard = semaphore.TryLock();
+            if (guard.OwnsLock)
+            {
+                Invalidate();
+            }
         }
 
         private class SuppressHandle : IDisposable
@@ -338,7 +342,7 @@
             isDirty = true;
         }
 
-        #region Getter
+#region Getter
 
         public IPostFx? GetByName(string name)
         {
@@ -407,10 +411,13 @@
         }
 
         #endregion Getter
-
         public void Reload()
         {
-            semaphore.Wait();
+            using var guard = semaphore.TryLock();
+            if (!guard.OwnsLock)
+            {
+                return;
+            }
 
             isReloading = true;
 
@@ -449,15 +456,17 @@
             UpdateGroups();
 
             isReloading = false;
-
-            semaphore.Release();
         }
 
         public Task ReloadAsync()
         {
             return Task.Factory.StartNew(() =>
             {
-                semaphore.Wait();
+                using var guard = semaphore.TryLock();
+                if (!guard.OwnsLock)
+                {
+                    return;
+                }
 
                 isReloading = true;
 
@@ -496,14 +505,12 @@
                 UpdateGroups();
 
                 isReloading = false;
-
-                semaphore.Release();
             });
         }
 
         public void BeginResize()
         {
-            semaphore.Wait();
+            semaphore.Lock();
             Invalidate();
         }
 
@@ -697,6 +704,7 @@
                 groups.Clear();
 
                 postContext.Dispose();
+                semaphore.Dispose();
                 disposedValue = true;
             }
         }

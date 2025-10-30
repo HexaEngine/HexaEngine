@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Graph
 {
     using Hexa.NET.Mathematics;
-    using Hexa.NET.Utilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Lights;
@@ -9,7 +8,6 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.CompilerServices;
 
     public class GraphResourceBuilder : IGraphResourceBuilder
     {

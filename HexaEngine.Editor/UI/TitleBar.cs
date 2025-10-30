@@ -448,7 +448,7 @@
 
         public float ButtonSize { get => buttonSize; set => buttonSize = value; }
 
-        public int NativeHeight { get; }
+        public int NativeHeight { get; private set; }
 
         public virtual void OnBuild(TitleBarBuilder builder)
         {
@@ -696,10 +696,9 @@
                 WindowPos* winPos = nccsp->LpPos;
 
                 // see https://stackoverflow.com/questions/28524463/how-to-get-the-default-caption-bar-height-of-a-window-in-windows/28524464#28524464
-                uint dpi = WinApi.GetDpiForWindow(hwnd);
-                float dpiScale = dpi / 96.0f;
-                int titleBarHeight = (int)MathF.Ceiling(WinApi.GetSystemMetrics(SystemMetrics.CyCaption) + WinApi.GetSystemMetrics(SystemMetrics.CyFrame) //* dpiScale 
+                int titleBarHeight = (int)MathF.Ceiling(WinApi.GetSystemMetrics(SystemMetrics.CyCaption) + WinApi.GetSystemMetrics(SystemMetrics.CyFrame)
                     + WinApi.GetSystemMetrics(SystemMetrics.CxPaddedBorder));
+                NativeHeight = titleBarHeight;
 
                 if (WinApi.IsZoomed(hwnd)) // fix for maximized windows.
                 {

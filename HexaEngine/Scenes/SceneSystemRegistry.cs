@@ -30,9 +30,6 @@
             descriptors.AddSingleton<DrawLayerManager>();
             descriptors.AddSingleton<AnimationManager>();
 
-            if (!graphicsDisabled)
-                Register<UISystem>();
-
             Register<QuerySystem>();
             Register<TransformSystem>();
             Register<InputSystem>();

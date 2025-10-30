@@ -1,24 +1,19 @@
 ﻿namespace HexaEngine.Graphics.Passes
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Culling;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes.Managers;
 
-    public class ObjectCullPass : ComputePass
+    public class ObjectCullPass : RenderPass<ObjectCullPass>
     {
-        private bool isEnabled;
         private ResourceRef<DepthMipChain> chain = null!;
 
-        public ObjectCullPass() : base("ObjectCull")
+        public override void BuildDependencies(GraphDependencyBuilder builder)
         {
-            AddReadDependency(new("HiZBuffer"));
+            builder.RunAfter<HizDepthPass>();
         }
-
-        public bool IsEnabled { get => isEnabled; set => isEnabled = value; }
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {

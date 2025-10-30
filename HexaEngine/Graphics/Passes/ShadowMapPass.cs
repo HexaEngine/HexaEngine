@@ -16,7 +16,7 @@
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
-    public class ShadowMapPass : DrawPass
+    public class ShadowMapPass : RenderPass<ShadowMapPass>
     {
         private ResourceRef<ShadowAtlas> shadowAtlas = null!;
 
@@ -29,9 +29,9 @@
         private ReprojectEffect reprojectEffect = null!;
         private ClearSliceEffect clearSliceEffect = null!;
 
-        public ShadowMapPass() : base("ShadowMap")
+        public override void BuildDependencies(GraphDependencyBuilder builder)
         {
-            AddWriteDependency(new("ShadowAtlas"));
+            builder.RunAfter<LightUpdatePass>();
         }
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)

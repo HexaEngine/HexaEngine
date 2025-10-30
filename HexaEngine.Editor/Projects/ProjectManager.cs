@@ -653,15 +653,15 @@
             //assets.AddRange(AssetDesc.CreateFromDir(CurrentProjectAssetsFolder));
 
             // shared assets
-            string assetsPath = Paths.CurrentAssetsPath;
-            string sharedAssetsPath = Path.Combine(assetsPath, "shared");
-            string sharedAssetPackagePath = Path.Combine(assetsPath, "shared.assets");
-            if (File.Exists(sharedAssetPackagePath))
+            //string assetsPath = Paths.CurrentAssetsPath;
+            //string sharedAssetsPath = Path.Combine(assetsPath, "shared");
+            //string sharedAssetPackagePath = Path.Combine(assetsPath, "shared.assets");
+            //if (File.Exists(sharedAssetPackagePath))
             {
                 //AssetArchive archive = new(sharedAssetPackagePath);
                 //assets.AddRange(archive.Assets.Cast<AssetDesc>());
             }
-            else
+            //else
             {
                 //assets.AddRange(AssetDesc.CreateFromDir(sharedAssetsPath));
             }

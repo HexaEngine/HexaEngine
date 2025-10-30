@@ -66,9 +66,9 @@
                 Topology = PrimitiveTopology.TriangleStrip
             });
 
-            weatherTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/weather.dds"));
-            cloudTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/cloud.dds"));
-            worleyTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/worley.dds"));
+            weatherTex = new(new TextureFileDescription(new("HexaEngine.Core:textures/clouds/weather.dds")));
+            cloudTex = new(new TextureFileDescription(new("HexaEngine.Core:textures/clouds/cloud.dds")));
+            worleyTex = new(new TextureFileDescription(new("HexaEngine.Core:textures/clouds/worley.dds")));
 
             intermediateTex = new(Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             gaussianBlur = new(creator, "VOLUMETRIC_CLOUDS", alphaBlend: true);

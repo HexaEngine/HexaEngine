@@ -395,6 +395,24 @@
             }
 
             initialized = true;
+
+            SDL.AddEventWatch(Event, null);
+        }
+
+        private static byte Event(void* userdata, SDLEvent* evnt)
+        {
+            if (evnt->Type == (uint)SDLEventType.WindowResized)
+            {
+                var even = evnt->Window;
+                if (even.WindowID == mainWindow.WindowID)
+                {
+                    ((SdlWindow)mainWindow).ProcessEvent(even);
+                    mainWindow.Render(graphicsContext);
+                    Trace.WriteLine("Window Size Changed Event - Rendered Frame");
+                    return 1;
+                }
+            }
+            return 0;
         }
 
         /// <summary>

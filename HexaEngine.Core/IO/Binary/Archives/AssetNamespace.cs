@@ -4,10 +4,10 @@ using System.Text;
 
 namespace HexaEngine.Core.IO.Binary.Archives
 {
-    public class AssetNamespace
+    public class AssetNamespace : IAssetNamespace
     {
         private string name;
-        private readonly Dictionary<string, AssetArchiveEntry> assets = [];
+        private readonly Dictionary<string, AssetArchiveEntry> assets = new(PathComparer.Instance);
         private readonly Dictionary<Guid, AssetArchiveEntry> guidToAsset = [];
 
         public AssetNamespace(string name)
@@ -78,8 +78,8 @@ namespace HexaEngine.Core.IO.Binary.Archives
         public int SizeOf(Encoding encoding)
         {
             int size = 0;
-            size += sizeof(uint);
             size += name.SizeOf(encoding);
+            size += sizeof(uint);
             foreach (var asset in assets.Values)
             {
                 size += asset.SizeOf(encoding);
@@ -101,6 +101,20 @@ namespace HexaEngine.Core.IO.Binary.Archives
                 using var fs = File.Create(fullPath);
                 asset.CopyTo(fs);
             }
+        }
+
+        public bool TryGetAsset(Guid guid, [NotNullWhen(true)] out IAssetEntry? entry)
+        {
+            var result = TryGetAsset(guid, out AssetArchiveEntry? e);
+            entry = e;
+            return result;
+        }
+
+        public bool TryGetAsset(ReadOnlySpan<char> path, [NotNullWhen(true)] out IAssetEntry? entry)
+        {
+            var result = TryGetAsset(path, out AssetArchiveEntry? e);
+            entry = e;
+            return result;
         }
     }
 }

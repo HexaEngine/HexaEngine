@@ -12,12 +12,14 @@ namespace Editor
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
     using HexaEngine.Editor.UI;
+    using HexaEngine.Graphics.Overlays;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Windows;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents the application window that implements the <see cref="ICoreWindow"/> interface.
@@ -42,6 +44,8 @@ namespace Editor
 
         private bool firstTime = true;
         private readonly EditorConfig config = EditorConfig.Default;
+
+        public bool EditorInitialized => editorInitialized;
 
         protected override void OnShown(ShownEventArgs args)
         {
@@ -80,6 +84,8 @@ namespace Editor
 
         protected override void OnRendererInitialize(IGraphicsDevice device)
         {
+            OverlayManager.Current.Add(new EditorRenderer(this));
+
             imGuiRenderer = new(this, graphicsDevice, graphicsContext);
             DebugDrawRenderer.Init(device);
 
@@ -121,7 +127,7 @@ namespace Editor
         /// Renders the content of the window using the specified graphics context.
         /// </summary>
         /// <param name="context">The graphics context.</param>
-        public override void Render(IGraphicsContext context)
+        public unsafe override void Render(IGraphicsContext context)
         {
             signal.Set();
 
@@ -213,14 +219,9 @@ namespace Editor
                 sceneRenderer.Render(context, scene, CameraManager.Current);
                 CPUProfiler.Global.End("Scene.Render");
             }
-
-            // Draw additional elements like Designer, WindowManager, ImGuiConsole, MessageBoxes, etc.
-            if (editorInitialized)
+            else if (editorInitialized)
             {
-                // Set the camera for DebugDraw based on the current camera's view projection matrix.
-                DebugDraw.SetCamera(CameraManager.Current?.Transform.ViewProjection ?? Matrix4x4.Identity);
-                Designer.Draw(context);
-                SceneWindow.Draw();
+                EditorRenderer.DrawEditor(context);
             }
 
             // Invoke virtual method for post-render operations.

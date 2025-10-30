@@ -112,7 +112,7 @@
 
         public bool GetButtonUp(string name)
         {
-            return (nameToAxis[name].State.Flags & VirtualAxisStateFlags.Released) == 0;
+            return (nameToAxis[name].State.Flags & VirtualAxisStateFlags.Released) != 0;
         }
 
         public bool GetMouseButton(MouseButton button)

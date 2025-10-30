@@ -54,19 +54,20 @@
                 ImGui.EndPopup();
             }
 
-            Vector2 main_viewport_pos = ImGui.GetMainViewport().Pos;
-            Vector2 main_viewport_size = ImGui.GetMainViewport().Size;
-            ImGui.SetNextWindowPos(main_viewport_pos);
-            ImGui.SetNextWindowSize(main_viewport_size);
+            var vp = ImGui.GetMainViewport();
+            Vector2 vpPos = vp.Pos;
+            Vector2 vpSize = vp.Size;
+            ImGui.SetNextWindowPos(vpPos);
+            ImGui.SetNextWindowSize(vpSize);
             ImGui.SetNextWindowBgAlpha(0.9f);
             ImGui.Begin("Overlay", null, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoInputs);
             ImGui.End();
 
             if (first)
             {
-                Vector2 size = new(800, 500);
-                Vector2 mainViewportPos = ImGui.GetMainViewport().Pos;
-                Vector2 s = main_viewport_size;
+                Vector2 size = new Vector2(800, 500) * vp.DpiScale;
+                Vector2 mainViewportPos = vpPos;
+                Vector2 s = vpSize;
 
                 ImGui.SetNextWindowSize(size);
                 ImGui.SetNextWindowPos(mainViewportPos + (s / 2 - size / 2));

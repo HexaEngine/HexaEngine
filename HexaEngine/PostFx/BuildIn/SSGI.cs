@@ -297,8 +297,8 @@
             denoiseParams.Radius = radius;
             denoiseParamsBuffer = new(denoiseParams, CpuAccessFlags.Write);
 
-            ssgiBuffer = creator.CreateBuffer("SSGI_BUFFER", creationFlags: ResourceCreationFlags.None);
-            tempSsgiBuffer = new(creator.Format, creator.Width, creator.Height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            ssgiBuffer = creator.CreateBufferHalfRes("SSGI_BUFFER", creationFlags: ResourceCreationFlags.None);
+            tempSsgiBuffer = new(creator.Format, creator.Width / 2, creator.Height / 2, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(creator, "SSGI", radius: GaussianRadius.Radius7x7, additive: true);
         }
 
@@ -346,14 +346,14 @@
             context.ClearRenderTargetView(ssgiBuffer.Value!, default);
 
             context.SetRenderTarget(ssgiBuffer.Value!, null);
-            context.SetViewport(Viewport);
+            context.SetViewport(ssgiBuffer.Value!.Viewport);
             context.SetGraphicsPipelineState(psoSSGI);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
 
             context.SetRenderTarget(tempSsgiBuffer!, null);
-            context.SetViewport(Viewport);
+            context.SetViewport(tempSsgiBuffer!.Viewport);
             context.SetGraphicsPipelineState(psoDenoise);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);

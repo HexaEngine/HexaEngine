@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Graphics;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
@@ -233,11 +232,14 @@
                     pipeline.Bindings.SetSRV("cascadeShadowMaps", dir.GetShadowMap());
                 }
             }
+
+            NotifyPropertyChanged();
         }
 
         private void ActiveLightsChanged(object? sender, ActiveLightsChangedEventArgs e)
         {
             pipeline.Bindings.SetSRV("shadowData", e.LightManager.ShadowDataBuffer.SRV);
+            NotifyPropertyChanged();
         }
 
         public override void UpdateBindings()
@@ -252,18 +254,20 @@
             blurPipeline.Bindings.SetCBV("BlurParams", blurParams);
         }
 
+        public override void Update(IGraphicsContext context)
+        {
+            if (volumetricLightBuffer.IsEmpty) return;
+
+            volumetricLightBuffer.Update(context);
+            constantBuffer.Update(context, new(volumetricLightBuffer.Count, density, rayleighCoefficient, mieCoefficient, mieG));
+
+            blurParams.Update(context, new(Viewport.Size, buffer.Value!.Viewport.Size));
+        }
+
         /// <inheritdoc/>
         public override void Draw(IGraphicsContext context)
         {
-            // early exit nothing to render
-            if (volumetricLightBuffer.Count == 0)
-            {
-                return;
-            }
-
-            // update buffers
-            volumetricLightBuffer.Update(context);
-            constantBuffer.Update(context, new(volumetricLightBuffer.Count, density, rayleighCoefficient, mieCoefficient, mieG));
+            if (volumetricLightBuffer.IsEmpty) return;
 
             // Volumetric pass
             context.SetRenderTarget(buffer.Value, null);
@@ -276,9 +280,6 @@
             context.SetGraphicsPipelineState(null);
 
             // Blur Pass
-
-            blurParams.Update(context, new(Viewport.Size, buffer.Value.Viewport.Size));
-
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
 
@@ -295,6 +296,8 @@
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
+            LightManager.ActiveLightsChanged -= ActiveLightsChanged;
+            LightManager.LightUpdated -= LightUpdated;
             pipeline.Dispose();
             blurPipeline.Dispose();
             blurParams.Dispose();

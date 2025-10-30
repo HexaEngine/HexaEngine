@@ -8,20 +8,26 @@
     using HexaEngine.Scenes;
     using System.Numerics;
 
-    public class GBufferPass : RenderPass
+    public class GBufferPass : RenderPass<GBufferPass>
     {
         private ResourceRef<GBuffer> gbuffer = null!;
         private ResourceRef<Texture2D> lightBuffer = null!;
         private ResourceRef<DepthStencil> depthStencil = null!;
 
-        public GBufferPass(Windows.RendererFlags flags) : base("GBuffer")
+        public GBufferPass(Windows.RendererFlags flags)
         {
             forceForward = (flags & Windows.RendererFlags.ForceForward) != 0;
-            AddWriteDependency(new("#DepthStencil"));
-            AddWriteDependency(new("GBuffer"));
         }
 
-        private readonly bool forceForward = true;
+        private readonly bool forceForward = false;
+
+        public override void BuildDependencies(GraphDependencyBuilder builder)
+        {
+            builder
+                .RunAfter<DepthPrePass>()
+                .RunAfter<ObjectCullPass>()
+                .RunAfter<LightCullPass>();
+        }
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {

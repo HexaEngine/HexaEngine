@@ -286,7 +286,7 @@ namespace HexaEngine.PostFx.BuildIn
             cbBokeh = new(CpuAccessFlags.Write);
             cbDof = new(CpuAccessFlags.Write);
 
-            bokehTex = new(new TextureFileDescription(Paths.CurrentAssetsPath + "textures/bokeh/hex.dds"));
+            bokehTex = new(new TextureFileDescription(new("HexaEngine.Core:textures/bokeh/hex.dds")));
         }
 
         /// <inheritdoc/>

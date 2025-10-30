@@ -2,6 +2,7 @@
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.IO;
     using K4os.Compression.LZ4.Streams;
     using System;
     using System.IO;
@@ -11,14 +12,14 @@
     /// <summary>
     /// Represents an entry in the header of an asset archive, providing information about a specific asset.
     /// </summary>
-    public class AssetArchiveEntry
+    public class AssetArchiveEntry : IAssetEntry
     {
         public AssetArchive Archive { get; private set; } = null!;
 
         /// <summary>
         /// The path to the archive or source file containing the data.
         /// </summary>
-        public string ArchivePath => Archive.Parts[PartIndex];
+        public string ArchivePath => Archive.GetPath(PartIndex);
 
         /// <summary>
         /// The index of the part to which this entry belongs.
@@ -138,7 +139,7 @@
         /// <returns>The size of the header entry in bytes.</returns>
         public int SizeOf(Encoding encoding)
         {
-            int size = 76;
+            int size = 4 + 16 + 16 + 8 + 8 + 8 + 8 + 4 + 4;
             if (Name != null)
             {
                 size += encoding.GetByteCount(Name);
@@ -194,7 +195,10 @@
         /// <returns>A <see cref="VirtualStream"/> representing the uncompressed asset data.</returns>
         private VirtualStream OpenStream()
         {
-            return new VirtualStream(File.Open(ArchivePath, FileMode.Open, FileAccess.Read, FileShare.Read), Archive.BaseOffset + Start, Length);
+            var fs = File.Open(ArchivePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var offset = Archive.BaseOffset + Start;
+            var length = Archive.Compression == Compression.None ? ActualLength : Length;
+            return new VirtualStream(fs, offset, length);
         }
 
         /// <summary>

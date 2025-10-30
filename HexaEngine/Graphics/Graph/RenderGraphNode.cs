@@ -4,24 +4,28 @@
 
     public class RenderGraphNode : INode<RenderGraphNode>
     {
-        public RenderGraphNode(string name)
+        private readonly RenderPass pass;
+        private readonly GraphDependencyBuilder builder;
+
+        public RenderGraphNode(RenderPass pass, GraphNodeRegistry registry)
         {
-            Name = name;
-            Builder = new(this);
+            this.pass = pass;
+            builder = new(this, registry);
             Container = new();
+            Type = pass.GetType();
         }
 
-        public string Name { get; }
+        public string Name => pass.Name;
 
-        public List<RenderGraphNode> Dependencies { get; } = new();
+        public RenderPass Pass => pass;
 
-        public List<RenderGraphNode> Dependents { get; } = new();
+        public Type Type { get; }
 
-        public List<ResourceBinding> Bindings { get; } = new();
+        public HashSet<RenderGraphNode> Dependencies { get; } = [];
 
-        public List<ResourceBinding> Writes { get; } = new();
+        public HashSet<RenderGraphNode> Dependents { get; } = [];
 
-        public GraphDependencyBuilder Builder { get; }
+        public GraphDependencyBuilder Builder => builder;
 
         public GraphResourceContainer Container { get; }
 
@@ -29,7 +33,6 @@
         {
             Dependencies.Clear();
             Dependents.Clear();
-            Bindings.Clear();
             Builder.Clear();
             if (clearContainer)
             {
@@ -37,13 +40,34 @@
             }
         }
 
-        public int QueueIndex { get; internal set; }
+        public void BuildDependencies()
+        {
+            Reset(true);
+            pass.BuildDependencies(Builder);
+        }
+
+        public void ResolveDependencies()
+        {
+            Builder.Build();
+        }
+
+        public void AddDependency(RenderGraphNode node)
+        {
+            Dependencies.Add(node);
+            node.Dependents.Add(this);
+        }
+
+        public void AddDependent(RenderGraphNode node)
+        {
+            Dependents.Add(node);
+            node.Dependencies.Add(this);
+        }
 
         IEnumerable<RenderGraphNode> INode<RenderGraphNode>.Dependencies => Dependencies;
 
         public override string ToString()
         {
-            return $"{Name}:{QueueIndex}";
+            return Name;
         }
     }
 }

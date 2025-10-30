@@ -10,13 +10,13 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
-    public class LightUpdatePass : RenderPass
+    public class LightUpdatePass : RenderPass<LightUpdatePass>
     {
         public StructuredUavBuffer<ProbeData> GlobalProbes = null!;
         public StructuredUavBuffer<LightData> LightBuffer = null!;
         public StructuredUavBuffer<ShadowData> ShadowDataBuffer = null!;
 
-        public LightUpdatePass() : base("LightUpdate")
+        public LightUpdatePass()
         {
         }
 

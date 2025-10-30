@@ -4,14 +4,14 @@
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Profiling;
 
-    public class BRDFLUTPass : RenderPass
+  
+    public class BRDFLUTPass : RenderPass<BRDFLUTPass>
     {
         private ResourceRef<Texture2D> lut = null!;
         private ResourceRef<IGraphicsPipelineState> lutPass = null!;
 
-        public BRDFLUTPass() : base("BRDFLUT", RenderPassType.OneHit)
+        public BRDFLUTPass() : base(RenderPassType.OneHit)
         {
-            AddWriteDependency(new("BRDFLUT"));
         }
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -21,8 +21,8 @@
             {
                 Pipeline = new()
                 {
-                    PixelShader = "effects/dfg/ps.hlsl",
-                    VertexShader = "quad.hlsl",
+                    PixelShader = AssetShaderPath("effects/dfg/ps.hlsl"),
+                    VertexShader = AssetShaderPath("quad.hlsl"),
                 },
                 State = GraphicsPipelineStateDesc.DefaultFullscreen,
             });

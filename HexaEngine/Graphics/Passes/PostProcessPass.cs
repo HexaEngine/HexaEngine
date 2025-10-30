@@ -9,25 +9,22 @@
     using HexaEngine.Scenes;
     using System.Numerics;
 
-    public class PostProcessPass : DrawPass
+    public class PostProcessPass : RenderPass<PostProcessPass>
     {
         private PostProcessingManager postProcessingManager = null!;
         private ResourceRef<Texture2D> lightBuffer = null!;
-        private ResourceRef<Texture2D> AOBuffer = null!;
         private ResourceRef<Texture2D> postFxBuffer = null!;
 
-        public PostProcessPass() : base("PostProcess")
+        public override void BuildDependencies(GraphDependencyBuilder builder)
         {
-            AddReadDependency(new("GBuffer"));
-            AddReadDependency(new("LightBuffer"));
-            AddReadDependency(new("#DepthStencil"));
-            AddWriteDependency(new("PostFxBuffer"));
+            builder
+                .RunAfter<LightDeferredPass>()
+                .RunAfter<LightForwardPass>();
         }
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             lightBuffer = creator.GetTexture2D("LightBuffer");
-            AOBuffer = creator.GetTexture2D("#AOBuffer");
             var viewport = creator.Viewport;
             postProcessingManager = new(creator.Device, creator, (int)viewport.Width, (int)viewport.Height, 4, PostProcessingFlags.HDR);
             postProcessingManager.Add<VelocityBuffer>();
@@ -60,7 +57,6 @@
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
-            context.ClearRenderTargetView(AOBuffer.Value!, Vector4.One);
             context.ClearRenderTargetView(postFxBuffer.Value!.RTV!, default);
             postProcessingManager.Enabled = (SceneRenderer.Current.DrawFlags & SceneDrawFlags.NoPostProcessing) == 0;
             postProcessingManager.Input = lightBuffer.Value!;

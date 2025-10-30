@@ -55,7 +55,9 @@
 
         private AssetExplorerIconSize iconSize = AssetExplorerIconSize.Medium;
 
+        private Vector2 chipSizeBase = new(86, 92);
         private Vector2 chipSize = new(86, 92);
+        private Vector2 imageSizeBase = new(64, 64);
         private Vector2 imageSize = new(64, 64);
 
         private PasteMode pasteMode;
@@ -107,18 +109,18 @@
                 switch (value)
                 {
                     case AssetExplorerIconSize.Small:
-                        imageSize = new(32, 32);
-                        chipSize = new(40, 52);
+                        imageSizeBase = new(32, 32);
+                        chipSizeBase = new(40, 52);
                         break;
 
                     case AssetExplorerIconSize.Medium:
-                        imageSize = new(64, 64);
-                        chipSize = new(72, 86);
+                        imageSizeBase = new(64, 64);
+                        chipSizeBase = new(72, 86);
                         break;
 
                     case AssetExplorerIconSize.Large:
-                        imageSize = new(86, 86);
-                        chipSize = new(94, 108);
+                        imageSizeBase = new(86, 86);
+                        chipSizeBase = new(94, 108);
                         break;
                 }
             }
@@ -918,6 +920,9 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
+            var vp = ImGui.GetWindowViewport();
+            chipSize = chipSizeBase * vp.DpiScale;
+            imageSize = imageSizeBase * vp.DpiScale;
             windowPos = ImGui.GetWindowPos();
             windowSize = ImGui.GetWindowSize();
 

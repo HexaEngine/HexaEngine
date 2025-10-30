@@ -4,10 +4,9 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Profiling;
-    using System.Collections.Generic;
     using System.Numerics;
 
-    public class HizDepthPass : ComputePass
+    public class HizDepthPass : RenderPass<HizDepthPass>
     {
         private ResourceRef<DepthStencil> depthStencil = null!;
         private ResourceRef<IComputePipelineState> downsample = null!;
@@ -18,10 +17,9 @@
         private string[] names = null!;
         private IResourceBindingList[] lists = null!;
 
-        public HizDepthPass() : base("HiZDepth")
+        public override void BuildDependencies(GraphDependencyBuilder builder)
         {
-            AddReadDependency(new("#DepthStencil"));
-            AddWriteDependency(new("HiZBuffer"));
+            builder.RunAfter<DepthPrePass>();
         }
 
         public override void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -29,13 +27,13 @@
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             downsample = creator.CreateComputePipelineState(new()
             {
-                Path = "compute/hiz/shader.hlsl",
+                Path = AssetShaderPath("compute/hiz/shader.hlsl"),
             });
 
             copy = creator.CreateGraphicsPipelineState(new(new()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/copy/ps.hlsl",
+                VertexShader = AssetShaderPath("quad.hlsl"),
+                PixelShader = AssetShaderPath("effects/copy/ps.hlsl"),
             }, GraphicsPipelineStateDesc.DefaultFullscreen));
 
             cbDownsample = creator.CreateConstantBuffer<Vector4>("HiZDownsampleCB", CpuAccessFlags.Write);

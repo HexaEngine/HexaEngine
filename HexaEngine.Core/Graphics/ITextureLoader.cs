@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.Graphics.Textures;
+    using HexaEngine.Core.IO;
     using System;
     using System.Runtime.CompilerServices;
 
@@ -58,7 +59,7 @@
         /// </summary>
         /// <param name="filename">The filename of the image asset.</param>
         /// <returns>An <see cref="IScratchImage"/> representing the loaded image.</returns>
-        IScratchImage LoadFormAssets(string filename);
+        IScratchImage LoadFormAssets(AssetPath filename);
 
         /// <summary>
         /// Loads a scratch image from memory stream.

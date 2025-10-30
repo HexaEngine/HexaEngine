@@ -156,5 +156,10 @@
         {
             return !(left == right);
         }
+
+        public static implicit operator AssetPath(in AssetRef assetRef)
+        {
+            return new(assetRef.GetPath()!);
+        }
     }
 }

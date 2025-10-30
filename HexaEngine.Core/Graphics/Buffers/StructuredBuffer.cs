@@ -110,6 +110,8 @@
         /// </summary>
         public uint Count => count;
 
+        public bool IsEmpty => count == 0;
+
         /// <summary>
         /// Gets or sets the capacity (maximum number of elements) of the buffer.
         /// </summary>

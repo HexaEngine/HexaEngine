@@ -4,6 +4,7 @@
     {
         Default,
         OneHit,
-        Trigger
+        Trigger,
+        Optional
     }
 }

@@ -8,46 +8,32 @@
         private readonly GraphResourceBuilder resourceCreator;
         private readonly GraphPipelineBuilder pipelineCreator;
         private readonly RenderGraph renderGraph;
-        private readonly RenderPass[] renderPasses;
-        private readonly RenderPass[] renderPassesSorted;
-        private readonly HashSet<RenderPass> triggeredPasses = [];
+        private readonly HashSet<RenderGraphNode> triggeredPasses = [];
         private bool oneHitPassed;
 
-        public RenderGraphExecuter(IGraphicsDevice device, RenderGraph renderGraph, RenderPass[] renderPasses)
+        public RenderGraphExecuter(IGraphicsDevice device, RenderGraph renderGraph)
         {
             this.renderGraph = renderGraph;
-            this.renderPasses = renderPasses;
-            renderPassesSorted = new RenderPass[renderPasses.Length];
             resourceCreator = new GraphResourceBuilder(device);
             pipelineCreator = new GraphPipelineBuilder(device);
         }
 
         public GraphResourceBuilder ResourceBuilder => resourceCreator;
 
-        public IReadOnlyList<RenderPass> RenderPasses => renderPasses;
-
-        public IReadOnlyList<RenderPass> RenderPassesSorted => renderPassesSorted;
-
         public void Init(ICPUProfiler? profiler)
         {
-            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            foreach (var node in renderGraph.SortedNodes)
             {
-                var idx = renderGraph.SortedNodeIndices[i];
-                var node = renderGraph.Nodes[idx];
-                var pass = renderPasses[idx];
-                renderPassesSorted[idx] = pass;
                 resourceCreator.Container = node.Container;
-                pass.Init(resourceCreator, profiler);
+                node.Pass.Init(resourceCreator, profiler);
                 resourceCreator.Container = null;
             }
 
             resourceCreator.CreateResources();
 
-            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            foreach (var node in renderGraph.SortedNodes)
             {
-                var idx = renderGraph.SortedNodeIndices[i];
-                var pass = renderPasses[idx];
-                pass.Prepare(resourceCreator);
+                node.Pass.Prepare(resourceCreator);
             }
         }
 
@@ -58,34 +44,31 @@
 
         public void TriggerPass(string passName)
         {
-            for (int i = 0; i < renderPasses.Length; i++)
+            var node = renderGraph.GetNodeByName(passName);
+            if (node != null)
             {
-                var pass = renderPasses[i];
-                if (pass.Name == passName)
-                {
-                    triggeredPasses.Add(pass);
-                    break;
-                }
+                triggeredPasses.Add(node);
             }
         }
 
-        [Profiling.Profile]
+        [Profile]
         public void Execute(IGraphicsContext context, ICPUProfiler? profiler)
         {
-            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            for (int i = 0; i < renderGraph.SortedNodes.Count; i++)
             {
-                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
+                var node = renderGraph.SortedNodes[i];
+                var pass = node.Pass;
                 if (pass.Type == RenderPassType.OneHit && oneHitPassed)
                 {
                     continue;
                 }
-                if (pass.Type == RenderPassType.Trigger && !triggeredPasses.Contains(pass))
+                if (pass.Type == RenderPassType.Trigger && !triggeredPasses.Contains(node))
                 {
                     continue;
                 }
                 else if (pass.Type == RenderPassType.Trigger)
                 {
-                    triggeredPasses.Remove(pass);
+                    triggeredPasses.Remove(node);
                 }
 
 #if DEBUG
@@ -105,19 +88,19 @@
         {
             resourceCreator.ReleaseResources();
             pipelineCreator.ReleaseResources();
-            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            for (int i = 0; i < renderGraph.SortedNodes.Count; i++)
             {
-                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
-                pass.OnResize(resourceCreator);
+                var node = renderGraph.SortedNodes[i];
+                node.Pass.OnResize(resourceCreator);
             }
         }
 
         public void ResizeEnd(ICPUProfiler? profiler)
         {
-            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            for (int i = 0; i < renderGraph.SortedNodes.Count; i++)
             {
-                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
-                pass.Init(resourceCreator, profiler);
+                var node = renderGraph.SortedNodes[i];
+                node.Pass.Init(resourceCreator, profiler);
             }
             resourceCreator.CreateResources();
         }
@@ -126,10 +109,10 @@
         {
             resourceCreator.ReleaseResources();
             pipelineCreator.ReleaseResources();
-            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            for (int i = 0; i < renderGraph.SortedNodes.Count; i++)
             {
-                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
-                pass.Release();
+                var node = renderGraph.SortedNodes[i];
+                node.Pass.Release();
             }
         }
     }

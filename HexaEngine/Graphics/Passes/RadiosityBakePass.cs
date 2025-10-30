@@ -4,9 +4,9 @@
     using HexaEngine.Graphics.Graph;
     using HexaEngine.Profiling;
 
-    public class RadiosityBakePass : RenderPass
+    public class RadiosityBakePass : RenderPass<RadiosityBakePass>
     {
-        public RadiosityBakePass() : base("RadiosityBakePass", RenderPassType.Trigger)
+        public RadiosityBakePass() : base(RenderPassType.Trigger)
         {
         }
 

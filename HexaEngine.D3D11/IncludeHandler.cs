@@ -19,12 +19,19 @@
         public unsafe int Open(ID3DInclude* pInclude, IncludeType includeType, byte* pFileName, void* pParentData, void** ppData, uint* pBytes)
         {
             string fileName = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(pFileName));
-            string path = Path.Combine(basePath, fileName);
-            var data = FileSystem.ReadAllBytes(path);
+
+            AssetPath assetPath = new(fileName);
+
+            if (!assetPath.HasNamespace)
+            {
+                assetPath = new(Path.Combine(basePath, fileName));
+            }
+           
+            var data = FileSystem.ReadAllBytes(assetPath);
 
             paths.Push(basePath);
-            var dirName = Path.GetDirectoryName(path);
-            basePath = dirName!;
+            var dirName = Path.GetDirectoryName(assetPath.Path);
+            basePath = dirName.ToString();
 
             *ppData = AllocCopyT(data);
             *pBytes = (uint)data.Length;

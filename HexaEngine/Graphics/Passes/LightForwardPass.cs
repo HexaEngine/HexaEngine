@@ -9,7 +9,7 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
-    public class LightForwardPass : RenderPass
+    public class LightForwardPass : RenderPass<LightForwardPass>
     {
         private ResourceRef<DepthStencil> depthStencil = null!;
         private ResourceRef<GBuffer> gbuffer = null!;
@@ -21,16 +21,24 @@
         private unsafe void** forwardRTVs;
         private const uint nForwardRTVs = 3;
 
-        public LightForwardPass(Windows.RendererFlags flags) : base("LightForward")
+        public LightForwardPass(Windows.RendererFlags flags)
         {
             forceForward = (flags & Windows.RendererFlags.ForceForward) != 0;
-            AddWriteDependency(new("LightBuffer"));
-            AddWriteDependency(new("GBuffer"));
-            AddReadDependency(new("#AOBuffer"));
-            AddReadDependency(new("ShadowAtlas"));
         }
 
         private readonly bool forceForward = false;
+
+        public override void BuildDependencies(GraphDependencyBuilder builder)
+        {
+            builder
+                .RunAfter<LightCullPass>()
+                .RunAfter<LightUpdatePass>()
+                .RunAfter<ShadowMapPass>()
+                .RunAfter<GBufferPass>()
+                .RunAfter<PostProcessPrePass>()
+                .RunAfter<LightDeferredPass>()
+                .RunBefore<PostProcessPass>();
+        }
 
         public override unsafe void Init(GraphResourceBuilder creator, ICPUProfiler? profiler)
         {

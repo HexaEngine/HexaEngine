@@ -371,7 +371,9 @@
                 ImGuiViewport = Viewport.ScaleAndCenterToFit(SourceViewport, iPosition, iSize);
             }
 
-            ImGui.PushItemWidth(100);
+            var vp = ImGui.GetWindowViewport();
+            ImGui.PushItemWidth(100 * vp.DpiScale);
+            var buttonSize = new Vector2(32, 32) * vp.DpiScale;
 
             if (Application.InEditMode)
             {
@@ -384,25 +386,25 @@
                 // something here causes gc pressue needs investigation.
                 ImGui.PopItemWidth();
 
-                if (ImGui.Button(builder.BuildLabel(UwU.UpDownLeftRight), new(32, 32)))
+                if (ImGui.Button(builder.BuildLabel(UwU.UpDownLeftRight), buttonSize))
                 {
                     Inspector.Operation = ImGuizmoOperation.Translate;
                 }
                 TooltipHelper.Tooltip("Translate"u8);
 
-                if (ImGui.Button(builder.BuildLabel(UwU.Rotate), new(32, 32)))
+                if (ImGui.Button(builder.BuildLabel(UwU.Rotate), buttonSize))
                 {
                     Inspector.Operation = ImGuizmoOperation.Rotate;
                 }
                 TooltipHelper.Tooltip("Rotate"u8);
 
-                if (ImGui.Button(builder.BuildLabel(UwU.Maximize), new(32, 32)))
+                if (ImGui.Button(builder.BuildLabel(UwU.Maximize), buttonSize))
                 {
                     Inspector.Operation = ImGuizmoOperation.Scale;
                 }
                 TooltipHelper.Tooltip("Scale"u8);
 
-                if (ImGui.Button(builder.BuildLabel(UwU.ArrowsToDot), new(32, 32)))
+                if (ImGui.Button(builder.BuildLabel(UwU.ArrowsToDot), buttonSize))
                 {
                     Inspector.Operation = ImGuizmoOperation.Universal;
                 }

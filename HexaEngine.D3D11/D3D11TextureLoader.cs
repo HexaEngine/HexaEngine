@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
     using Hexa.NET.DirectXTex;
+    using Hexa.NET.Logging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using System.Diagnostics;
@@ -9,6 +10,7 @@
 
     public unsafe class D3D11TextureLoader : ITextureLoader
     {
+        public static readonly ILogger Logger = LoggerFactory.GetLogger("TextureLoader");
         private readonly IGraphicsDevice device;
         private TextureLoaderFlags flags = TextureLoaderFlags.None;
         private float scalingFactor = 1;
@@ -38,17 +40,17 @@
             return new D3DScratchImage(image);
         }
 
-        public IScratchImage LoadFormAssets(string path)
+        public IScratchImage LoadFormAssets(AssetPath path)
         {
             if (!FileSystem.TryOpenRead(path, out VirtualStream? fs))
             {
-                Trace.WriteLine($"Warning couldn't find texture {path}");
+                Logger.Warn($"Warning couldn't find texture {path}");
                 return default!;
             }
 
             ScratchImage image = DirectXTex.CreateScratchImage();
             var data = fs.ReadBytes();
-            string extension = Path.GetExtension(path);
+            var extension = Path.GetExtension(path.Path);
             fixed (byte* p = data)
             {
                 switch (extension)
@@ -73,17 +75,17 @@
             return new D3DScratchImage(image);
         }
 
-        public IScratchImage LoadFormAssets(string path, TextureDimension dimension)
+        public IScratchImage LoadFormAssets(AssetPath path, TextureDimension dimension)
         {
             if (!FileSystem.TryOpenRead(path, out VirtualStream? fs))
             {
-                Trace.WriteLine($"Warning couldn't find texture {path}");
+                Logger.Warn($"Warning couldn't find texture {path}");
                 return InitFallback(dimension);
             }
 
             ScratchImage image = DirectXTex.CreateScratchImage();
             var data = fs.ReadBytes();
-            string extension = Path.GetExtension(path);
+            var extension = Path.GetExtension(path.Path);
             fixed (byte* p = data)
             {
                 switch (extension)
@@ -370,7 +372,7 @@
 
         public ITexture1D LoadTexture1D(string path, Core.Graphics.Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, Core.Graphics.ResourceMiscFlag misc)
         {
-            var image = LoadFormAssets(path, TextureDimension.Texture1D);
+            var image = LoadFormAssets(new(path), TextureDimension.Texture1D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
@@ -392,7 +394,7 @@
 
         public ITexture2D LoadTexture2D(string path, Core.Graphics.Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, Core.Graphics.ResourceMiscFlag misc)
         {
-            var image = LoadFormAssets(path, TextureDimension.Texture2D);
+            var image = LoadFormAssets(new(path), TextureDimension.Texture2D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
@@ -414,7 +416,7 @@
 
         public ITexture3D LoadTexture3D(string path, Core.Graphics.Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, Core.Graphics.ResourceMiscFlag misc)
         {
-            var image = LoadFormAssets(path, TextureDimension.Texture3D);
+            var image = LoadFormAssets(new(path), TextureDimension.Texture3D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
@@ -436,7 +438,7 @@
 
         public ITexture1D LoadTexture1D(string path)
         {
-            var image = LoadFormAssets(path, TextureDimension.Texture1D);
+            var image = LoadFormAssets(new(path), TextureDimension.Texture1D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
@@ -458,7 +460,7 @@
 
         public ITexture2D LoadTexture2D(string path)
         {
-            var image = LoadFormAssets(path, TextureDimension.Texture2D);
+            var image = LoadFormAssets(new(path), TextureDimension.Texture2D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
@@ -486,7 +488,7 @@
 
         public ITexture3D LoadTexture3D(string path)
         {
-            var image = LoadFormAssets(path, TextureDimension.Texture3D);
+            var image = LoadFormAssets(new(path), TextureDimension.Texture3D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
@@ -531,9 +533,9 @@
         public ITexture2D LoadTexture2D(TextureFileDescription desc)
         {
             IScratchImage image;
-            if (Path.IsPathFullyQualified(desc.Path))
+            if (!desc.Path.HasNamespace)
             {
-                image = LoadFormFile(desc.Path, desc.Dimension);
+                image = LoadFormFile(desc.Path.Raw, desc.Dimension);
             }
             else
             {

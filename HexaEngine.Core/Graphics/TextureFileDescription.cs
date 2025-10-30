@@ -1,5 +1,6 @@
 namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.IO;
     using System;
 
     /// <summary>
@@ -10,7 +11,7 @@ namespace HexaEngine.Core.Graphics
         /// <summary>
         /// The path to the texture file.
         /// </summary>
-        public string Path;
+        public AssetPath Path;
 
         /// <summary>
         /// The dimension of the texture.
@@ -53,7 +54,7 @@ namespace HexaEngine.Core.Graphics
         /// <param name="cPUAccessFlags">The CPU access flags of the texture.</param>
         /// <param name="forceSRGB">Indicates whether to force SRGB.</param>
         public TextureFileDescription(
-            string path,
+            in AssetPath path,
             TextureDimension dimension = TextureDimension.Texture2D,
             int mipLevels = 0,
             Usage usage = Usage.Default,

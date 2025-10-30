@@ -8,6 +8,7 @@
 
     public enum RSASignatureMode
     {
+        None,
         SHA256_PKCS1v15,
     }
 
@@ -33,7 +34,7 @@
         /// <summary>
         /// Magic number identifying the asset archive format.
         /// </summary>
-        public static readonly byte[] MagicNumber = [0x54, 0x72, 0x61, 0x6e, 0x73, 0x41, 0x72, 0x63, 0x68, 0x69, 0x76, 0x65, 0x00];
+        public static readonly byte[] Magic = [0x54, 0x72, 0x61, 0x6e, 0x73, 0x41, 0x72, 0x63, 0x68, 0x69, 0x76, 0x65, 0x00];
 
         /// <summary>
         /// Current version of the asset archive format.
@@ -96,7 +97,7 @@
         /// <param name="encoding">The character encoding.</param>
         public void Read(Stream stream, Encoding encoding)
         {
-            if (!stream.Compare(MagicNumber))
+            if (!stream.Compare(Magic))
             {
                 throw new InvalidDataException();
             }
@@ -134,7 +135,7 @@
         /// <param name="encoding">The character encoding.</param>
         public readonly void Write(Stream stream, Encoding encoding)
         {
-            stream.Write(MagicNumber);
+            stream.Write(Magic);
             stream.WriteByte((byte)Endianness);
             stream.WriteUInt64(Version, Endianness);
             stream.WriteInt32((int)Compression, Endianness);
@@ -156,11 +157,15 @@
         /// <summary>
         /// Calculates the size of the asset archive header in bytes.
         /// </summary>
-        /// <param name="encoding">The character encoding.</param>
         /// <returns>The size of the header in bytes.</returns>
-        public readonly int SizeOf(Encoding encoding)
+        public readonly int SizeOf()
         {
-            return MagicNumber.Length + 1 + 8 + 4 + 4 + 4 + Parts.Sum(x => encoding.GetByteCount(x) + 4) + 4 + 8 + 4;
+            var size = Magic.Length + 1 + 8 + 4 + 4 + 4 + 8 + 4 + 32;
+            foreach (var part in Parts)
+            {
+                size += part.SizeOf(Encoding);
+            }
+            return size;
         }
     }
 }

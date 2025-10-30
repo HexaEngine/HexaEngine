@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.IO.Binary.Archives
 {
-    using Hexa.NET.FreeType;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Security.Cryptography;
@@ -10,7 +9,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.IO.Compression;
-    using System.Reflection.Emit;
+    using System.Runtime.InteropServices;
     using System.Security.Cryptography;
     using System.Text;
 
@@ -18,6 +17,85 @@
     {
         OpenRead,
         Create,
+    }
+
+    public class PathComparer : IEqualityComparer<string>, IAlternateEqualityComparer<ReadOnlySpan<char>, string>
+    {
+        public static readonly PathComparer Instance = new();
+
+        public string Create(ReadOnlySpan<char> alternate)
+        {
+            return alternate.ToString();
+        }
+
+        public static bool EqualsCore(ReadOnlySpan<char> x, ReadOnlySpan<char> y)
+        {
+            if (x.Length != y.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                var a = x[i];
+                var b = y[i];
+                if (a == '\\')
+                {
+                    a = '/';
+                }
+                if (b == '\\')
+                {
+                    b = '/';
+                }
+                if (char.ToLowerInvariant(a) != char.ToLowerInvariant(b))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool Equals(string? x, string? y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            return EqualsCore(x, y);
+        }
+
+        public bool Equals(ReadOnlySpan<char> alternate, string other)
+        {
+            return EqualsCore(alternate, other);
+        }
+
+        public int GetHashCode([DisallowNull] string obj)
+        {
+            return GetHashCode(obj.AsSpan());
+        }
+
+        public int GetHashCode(ReadOnlySpan<char> alternate)
+        {
+            ReadOnlySpan<char> span = alternate;
+            HashCode code = default;
+            while (!span.IsEmpty)
+            {
+                var idx = span.IndexOfAny("/\\");
+                if (idx == -1)
+                {
+                    idx = span.Length;
+                }
+                ReadOnlySpan<char> part = span[..idx];
+                code.AddBytes(MemoryMarshal.AsBytes(part));
+                if (idx != span.Length)
+                {
+                    idx++;
+                }
+                span = span[idx..];
+            }
+            return code.ToHashCode();
+        }
     }
 
     /// <summary>
@@ -79,6 +157,15 @@
             }
         }
 
+        public string GetPath(int partIndex)
+        {
+            if (header.Flags == AssetArchiveFlags.Normal)
+            {
+                return path;
+            }
+            return Parts[partIndex];
+        }
+
         public AssetNamespace AddNamespace(string name)
         {
             var ns = new AssetNamespace(name);
@@ -91,23 +178,20 @@
             return namespaces.GetAlternateLookup<ReadOnlySpan<char>>().TryGetValue(name, out ns);
         }
 
-        public bool TryGetEntry(string path, [NotNullWhen(true)] out AssetArchiveEntry? entry)
+        public bool TryGetEntry(in AssetPath path, [NotNullWhen(true)] out AssetArchiveEntry? entry)
         {
-            var idx = path.IndexOf(':');
-            if (idx == -1)
+            if (path.HasNamespace)
             {
-                return AnonymousNamespace.TryGetAsset(path, out entry);
-            }
-            else
-            {
-                var nsName = path.AsSpan()[..idx];
-                var assetPath = path.AsSpan()[(idx + 1)..];
-                if (TryGetNamespace(nsName, out var ns))
+                if (TryGetNamespace(path.Namespace, out var ns))
                 {
-                    return ns.TryGetAsset(assetPath, out entry);
+                    return ns.TryGetAsset(path.Path, out entry);
                 }
                 entry = null;
                 return false;
+            }
+            else
+            {
+                return AnonymousNamespace.TryGetAsset(path.Raw, out entry);
             }
         }
 
@@ -160,7 +244,7 @@
             SignContent(dstStream, rsa);
 
             var encoding = header.Encoding;
-            int metadataSize = header.SizeOf(encoding);
+            int metadataSize = header.SizeOf();
             foreach (var (_, ns) in namespaces)
             {
                 metadataSize += ns.SizeOf(encoding);
@@ -168,9 +252,11 @@
 
             header.ContentStart = AlignUp(metadataSize, header.Alignment);
 
-            MoveContent(dstStream, metadataSize);
-
+            MoveContent(dstStream, header.ContentStart);
             dstStream.Position = 0;
+            PaddContent(dstStream, header.ContentStart);
+            dstStream.Position = 0;
+
             header.Write(dstStream, encoding);
 
             dstStream.WriteUInt32((uint)namespaces.Count, header.Endianness);
@@ -182,7 +268,7 @@
             dstStream.Flush();
         }
 
-        private void MoveContent(Stream stream, int offset)
+        private void MoveContent(Stream stream, long offset)
         {
             Span<byte> buffer = stackalloc byte[8192];
             long toMove = stream.Length;
@@ -228,8 +314,6 @@
             if (dstStream == null) throw new InvalidOperationException("Archive not opened in create mode.");
 
             var offset = dstStream.Position;
-
-            long pos = dstStream.Position;
             switch (header.Compression)
             {
                 case Compression.None:
@@ -252,22 +336,28 @@
             }
 
             long actualLength = stream.Length;
-            long length = dstStream.Position - pos;
+            long length = dstStream.Position - offset;
             var lengthAligned = AlignUp(length, header.Alignment);
             var padding = lengthAligned - length;
 
             AssetArchiveEntry entry = new(this, 0, type, guid, parentGuid, name, path, offset, lengthAligned, actualLength);
 
-            Span<byte> buffer = stackalloc byte[8192];
-            while (padding > 0)
-            {
-                var toWrite = Math.Min(padding, buffer.Length);
-                dstStream.Write(buffer[..(int)toWrite]);
-                padding -= toWrite;
-            }
+            PaddContent(dstStream, padding);
 
             ns.AddAsset(entry);
             return entry;
+        }
+
+        private void PaddContent(Stream stream, long padding)
+        {
+            Span<byte> buffer = stackalloc byte[8192];
+            buffer.Fill(0xCD);
+            while (padding > 0)
+            {
+                var toWrite = Math.Min(padding, buffer.Length);
+                stream.Write(buffer[..(int)toWrite]);
+                padding -= toWrite;
+            }
         }
 
         public AssetArchiveEntry AddArtifact(Artifact artifact, string pathInArchive)
