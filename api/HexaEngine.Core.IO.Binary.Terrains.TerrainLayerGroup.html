@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class TerrainLayerGroup </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class TerrainLayerGroup ">
+      
+      <meta name="description" content="Represents a group of terrain layers.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup.md&amp;value=---%0Auid%3A%20HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup">
+
+
+
+  <h1 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup" class="text-break">
+Class TerrainLayerGroup  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.IO.html">IO</a>.<a class="xref" href="HexaEngine.Core.IO.Binary.html">Binary</a>.<a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.html">Terrains</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a group of terrain layers.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class TerrainLayerGroup</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">TerrainLayerGroup</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup__ctor_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup__ctor" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.#ctor">
+  TerrainLayerGroup()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.html">TerrainLayerGroup</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainLayerGroup()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup__ctor_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup__ctor_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer___System_Int32_HexaEngine_Core_IO_Binary_Terrains_LayerBlendMask_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.#ctor(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer[],System.Int32,HexaEngine.Core.IO.Binary.Terrains.LayerBlendMask)">
+  TerrainLayerGroup(TerrainLayer[], int, LayerBlendMask)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.html">TerrainLayerGroup</a> class with specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainLayerGroup(TerrainLayer[] layers, int layerCount, LayerBlendMask mask)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layers</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a>[]</dt>
+    <dd><p>The array of terrain layers in the group.</p>
+</dd>
+    <dt><code>layerCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of layers in the group.</p>
+</dd>
+    <dt><code>mask</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.LayerBlendMask.html">LayerBlendMask</a></dt>
+    <dd><p>The mask associated with the layer group.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Mask" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Mask">
+  Mask
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The mask associated with the layer group.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LayerBlendMask Mask</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.LayerBlendMask.html">LayerBlendMask</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_MaxLayers" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.MaxLayers">
+  MaxLayers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The maximum number of layers allowed in a terrain layer group.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int MaxLayers = 4</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Count_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Count*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Count" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Count">
+  Count
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The number of layers in the group.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Count { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Item_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Item*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Item_System_Int32_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Item(System.Int32)">
+  this[int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainLayer this[int index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Add_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Add*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Add_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Add(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  Add(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Add(TerrainLayer layer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Contains_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Contains*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Contains_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Contains(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  Contains(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Contains(TerrainLayer layer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_IndexOf_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.IndexOf*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_IndexOf_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.IndexOf(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  IndexOf(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int IndexOf(TerrainLayer layer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Read_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Read*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Read_System_IO_Stream_Hexa_NET_Mathematics_Endianness_HexaEngine_Core_IO_Compression_HexaEngine_Core_IO_Binary_Terrains_TerrainLoadMode_System_Collections_Generic_List_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer__" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Read(System.IO.Stream,Hexa.NET.Mathematics.Endianness,HexaEngine.Core.IO.Compression,HexaEngine.Core.IO.Binary.Terrains.TerrainLoadMode,System.Collections.Generic.List{HexaEngine.Core.IO.Binary.Terrains.TerrainLayer})">
+  Read(Stream, Endianness, Compression, TerrainLoadMode, List&lt;TerrainLayer&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads terrain layer group data from a stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static TerrainLayerGroup Read(Stream stream, Endianness endianness, Compression compression, TerrainLoadMode mode, List&lt;TerrainLayer&gt; layers)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness used for binary data.</p>
+</dd>
+    <dt><code>compression</code> <a class="xref" href="HexaEngine.Core.IO.Compression.html">Compression</a></dt>
+    <dd></dd>
+    <dt><code>mode</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLoadMode.html">TerrainLoadMode</a></dt>
+    <dd></dd>
+    <dt><code>layers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a>&gt;</dt>
+    <dd><p>The list of terrain layers used for indexing.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.html">TerrainLayerGroup</a></dt>
+    <dd><p>A new instance of <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.html">TerrainLayerGroup</a> containing the read data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Remove_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Remove*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Remove_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Remove(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  Remove(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Remove(TerrainLayer layer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_RemoveAt_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.RemoveAt*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_RemoveAt_System_Int32_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.RemoveAt(System.Int32)">
+  RemoveAt(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveAt(int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Write_" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Write*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Terrains_TerrainLayerGroup_Write_System_IO_Stream_Hexa_NET_Mathematics_Endianness_HexaEngine_Core_IO_Compression_System_Collections_Generic_List_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer__" data-uid="HexaEngine.Core.IO.Binary.Terrains.TerrainLayerGroup.Write(System.IO.Stream,Hexa.NET.Mathematics.Endianness,HexaEngine.Core.IO.Compression,System.Collections.Generic.List{HexaEngine.Core.IO.Binary.Terrains.TerrainLayer})">
+  Write(Stream, Endianness, Compression, List&lt;TerrainLayer&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes the terrain layer group data to a stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Write(Stream stream, Endianness endianness, Compression compression, List&lt;TerrainLayer&gt; layers)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness used for binary data.</p>
+</dd>
+    <dt><code>compression</code> <a class="xref" href="HexaEngine.Core.IO.Compression.html">Compression</a></dt>
+    <dd></dd>
+    <dt><code>layers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a>&gt;</dt>
+    <dd><p>The list of terrain layers used for indexing.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Terrains/TerrainLayerGroup.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

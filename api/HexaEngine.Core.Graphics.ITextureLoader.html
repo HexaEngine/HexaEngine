@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface ITextureLoader </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface ITextureLoader ">
+      
+      <meta name="description" content="Provides methods for loading and initializing textures and scratch images.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_ITextureLoader.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.ITextureLoader%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.ITextureLoader">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_ITextureLoader" data-uid="HexaEngine.Core.Graphics.ITextureLoader" class="text-break">
+Interface ITextureLoader  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Provides methods for loading and initializing textures and scratch images.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface ITextureLoader</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_Device_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Device*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_Device" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Device">
+  Device
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the graphics device associated with the texture loader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsDevice Device { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_Flags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Flags*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_Flags" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the flags for texture loading operations.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">TextureLoaderFlags Flags { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.TextureLoaderFlags.html">TextureLoaderFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_ScalingFactor_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.ScalingFactor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_ScalingFactor" data-uid="HexaEngine.Core.Graphics.ITextureLoader.ScalingFactor">
+  ScalingFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the scaling factor for texture loading operations.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">float ScalingFactor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_CaptureTexture_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.CaptureTexture*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_CaptureTexture_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IResource_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.CaptureTexture(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.IResource)">
+  CaptureTexture(IGraphicsContext, IResource)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Captures a texture to a scratch image using the specified graphics context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage CaptureTexture(IGraphicsContext context, IResource resource)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used to capture the texture.</p>
+</dd>
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to capture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a> containing the captured texture data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_Initialize_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_Initialize_HexaEngine_Core_Graphics_Textures_TexMetadata_HexaEngine_Core_Graphics_Textures_CPFlags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize(HexaEngine.Core.Graphics.Textures.TexMetadata,HexaEngine.Core.Graphics.Textures.CPFlags)">
+  Initialize(TexMetadata, CPFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a scratch image with the specified metadata and flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage Initialize(TexMetadata metadata, CPFlags flags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>metadata</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.TexMetadata.html">TexMetadata</a></dt>
+    <dd><p>The metadata describing the image.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.CPFlags.html">CPFlags</a></dt>
+    <dd><p>Flags specifying how to initialize the image.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a> initialized with the provided metadata and flags.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_Initialize1D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize1D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_Initialize1D_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_Textures_CPFlags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize1D(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.Textures.CPFlags)">
+  Initialize1D(Format, int, int, int, CPFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a scratch image for a 1D texture with the specified format, dimensions, and flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage Initialize1D(Format fmt, int length, int arraySize, int mipLevels, CPFlags flags = CPFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fmt</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.CPFlags.html">CPFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_Initialize2D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize2D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_Initialize2D_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_Textures_CPFlags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize2D(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.Textures.CPFlags)">
+  Initialize2D(Format, int, int, int, int, CPFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a scratch image for a 2D texture with the specified format, dimensions, and flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage Initialize2D(Format fmt, int width, int height, int arraySize, int mipLevels, CPFlags flags = CPFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fmt</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.CPFlags.html">CPFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_Initialize3D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize3D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_Initialize3D_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_Textures_CPFlags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize3D(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.Textures.CPFlags)">
+  Initialize3D(Format, int, int, int, int, CPFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a scratch image for a 3D texture with the specified format, dimensions, and flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage Initialize3D(Format fmt, int width, int height, int depth, int mipLevels, CPFlags flags = CPFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fmt</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>depth</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.CPFlags.html">CPFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_Initialize3DFromImages_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize3DFromImages*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_Initialize3DFromImages_HexaEngine_Core_Graphics_IImage___System_Int32_HexaEngine_Core_Graphics_Textures_CPFlags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.Initialize3DFromImages(HexaEngine.Core.Graphics.IImage[],System.Int32,HexaEngine.Core.Graphics.Textures.CPFlags)">
+  Initialize3DFromImages(IImage[], int, CPFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L206"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a scratch image for a 3D texture from an array of images.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage Initialize3DFromImages(IImage[] images, int depth, CPFlags flags = CPFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>images</code> <a class="xref" href="HexaEngine.Core.Graphics.IImage.html">IImage</a>[]</dt>
+    <dd></dd>
+    <dt><code>depth</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.CPFlags.html">CPFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_InitializeArrayFromImages_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.InitializeArrayFromImages*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_InitializeArrayFromImages_HexaEngine_Core_Graphics_IImage___System_Boolean_HexaEngine_Core_Graphics_Textures_CPFlags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.InitializeArrayFromImages(HexaEngine.Core.Graphics.IImage[],System.Boolean,HexaEngine.Core.Graphics.Textures.CPFlags)">
+  InitializeArrayFromImages(IImage[], bool, CPFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L196"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a scratch image from an array of images.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage InitializeArrayFromImages(IImage[] images, bool allow1D = false, CPFlags flags = CPFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>images</code> <a class="xref" href="HexaEngine.Core.Graphics.IImage.html">IImage</a>[]</dt>
+    <dd></dd>
+    <dt><code>allow1D</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.CPFlags.html">CPFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_InitializeCube_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.InitializeCube*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_InitializeCube_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_Textures_CPFlags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.InitializeCube(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.Textures.CPFlags)">
+  InitializeCube(Format, int, int, int, int, CPFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a scratch image for a cube map texture with the specified format, dimensions, and flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage InitializeCube(Format fmt, int width, int height, int nCubes, int mipLevels, CPFlags flags = CPFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fmt</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>nCubes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.CPFlags.html">CPFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_InitializeCubeFromImages_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.InitializeCubeFromImages*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_InitializeCubeFromImages_HexaEngine_Core_Graphics_IImage___HexaEngine_Core_Graphics_Textures_CPFlags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.InitializeCubeFromImages(HexaEngine.Core.Graphics.IImage[],HexaEngine.Core.Graphics.Textures.CPFlags)">
+  InitializeCubeFromImages(IImage[], CPFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a scratch image for a cube map from an array of images.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage InitializeCubeFromImages(IImage[] images, CPFlags flags = CPFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>images</code> <a class="xref" href="HexaEngine.Core.Graphics.IImage.html">IImage</a>[]</dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.CPFlags.html">CPFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_InitializeFromImage_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.InitializeFromImage*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_InitializeFromImage_HexaEngine_Core_Graphics_IImage_System_Boolean_HexaEngine_Core_Graphics_Textures_CPFlags_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.InitializeFromImage(HexaEngine.Core.Graphics.IImage,System.Boolean,HexaEngine.Core.Graphics.Textures.CPFlags)">
+  InitializeFromImage(IImage, bool, CPFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L191"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a scratch image from an existing image.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage InitializeFromImage(IImage image, bool allow1D = false, CPFlags flags = CPFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>image</code> <a class="xref" href="HexaEngine.Core.Graphics.IImage.html">IImage</a></dt>
+    <dd></dd>
+    <dt><code>allow1D</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.CPFlags.html">CPFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadFormAssets_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFormAssets*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadFormAssets_HexaEngine_Core_IO_AssetPath_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFormAssets(HexaEngine.Core.IO.AssetPath)">
+  LoadFormAssets(AssetPath)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a scratch image from assets.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage LoadFormAssets(AssetPath filename)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>filename</code> <a class="xref" href="HexaEngine.Core.IO.AssetPath.html">AssetPath</a></dt>
+    <dd><p>The filename of the image asset.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a> representing the loaded image.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadFormFile_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFormFile*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadFormFile_System_String_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFormFile(System.String)">
+  LoadFormFile(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a scratch image from a file.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage LoadFormFile(string filename)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The path to the image file to load.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a> representing the loaded image.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadFromMemory_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFromMemory*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadFromMemory_HexaEngine_Core_Graphics_Textures_TexFileFormat_System_Byte__System_UIntPtr_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFromMemory(HexaEngine.Core.Graphics.Textures.TexFileFormat,System.Byte*,System.UIntPtr)">
+  LoadFromMemory(TexFileFormat, byte*, nuint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a scratch image from memory stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage LoadFromMemory(TexFileFormat format, byte* data, nuint length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.TexFileFormat.html">TexFileFormat</a></dt>
+    <dd><p>The format of the image.</p>
+</dd>
+    <dt><code>data</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>A pointer containing the image data.</p>
+</dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uintptr">nuint</a></dt>
+    <dd><p>The pointer length.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a> representing the loaded image.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadFromMemory_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFromMemory*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadFromMemory_HexaEngine_Core_Graphics_Textures_TexFileFormat_System_IO_Stream_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFromMemory(HexaEngine.Core.Graphics.Textures.TexFileFormat,System.IO.Stream)">
+  LoadFromMemory(TexFileFormat, Stream)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a scratch image from memory stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage LoadFromMemory(TexFileFormat format, Stream stream)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Textures.TexFileFormat.html">TexFileFormat</a></dt>
+    <dd><p>The format of the image.</p>
+</dd>
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> containing the image data.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a> representing the loaded image.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadFromMemory_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFromMemory*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadFromMemory_System_String_System_IO_Stream_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadFromMemory(System.String,System.IO.Stream)">
+  LoadFromMemory(string, Stream)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a scratch image from memory stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IScratchImage LoadFromMemory(string filename, Stream stream)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The filename of the image.</p>
+</dd>
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> containing the image data.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a> representing the loaded image.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture1D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture1D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture1D_HexaEngine_Core_Graphics_TextureFileDescription_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture1D(HexaEngine.Core.Graphics.TextureFileDescription)">
+  LoadTexture1D(TextureFileDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a 1D texture from a file using specified description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture1D LoadTexture1D(TextureFileDescription desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.TextureFileDescription.html">TextureFileDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture1D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture1D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture1D_System_String_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture1D(System.String)">
+  LoadTexture1D(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a 1D texture from a file.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture1D LoadTexture1D(string path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The path to the texture file to load.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a> representing the loaded 1D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture1D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture1D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture1D_System_String_HexaEngine_Core_Graphics_Usage_HexaEngine_Core_Graphics_BindFlags_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture1D(System.String,HexaEngine.Core.Graphics.Usage,HexaEngine.Core.Graphics.BindFlags,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  LoadTexture1D(string, Usage, BindFlags, CpuAccessFlags, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a 1D texture from a file using specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>usage</code> <a class="xref" href="HexaEngine.Core.Graphics.Usage.html">Usage</a></dt>
+    <dd></dd>
+    <dt><code>bind</code> <a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+    <dd></dd>
+    <dt><code>cpuAccess</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>misc</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture2D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture2D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture2D_HexaEngine_Core_Graphics_TextureFileDescription_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture2D(HexaEngine.Core.Graphics.TextureFileDescription)">
+  LoadTexture2D(TextureFileDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a 2D texture from a file using specified description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture2D LoadTexture2D(TextureFileDescription desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.TextureFileDescription.html">TextureFileDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture2D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture2D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture2D_System_String_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture2D(System.String)">
+  LoadTexture2D(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L143"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a 2D texture from a file.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture2D LoadTexture2D(string path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The path to the texture file to load.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a> representing the loaded 2D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture2D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture2D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture2D_System_String_HexaEngine_Core_Graphics_Usage_HexaEngine_Core_Graphics_BindFlags_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture2D(System.String,HexaEngine.Core.Graphics.Usage,HexaEngine.Core.Graphics.BindFlags,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  LoadTexture2D(string, Usage, BindFlags, CpuAccessFlags, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a 2D texture from a file with the specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The path to the texture file to load.</p>
+</dd>
+    <dt><code>usage</code> <a class="xref" href="HexaEngine.Core.Graphics.Usage.html">Usage</a></dt>
+    <dd><p>The intended usage of the texture.</p>
+</dd>
+    <dt><code>bind</code> <a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+    <dd><p>The bind flags for the texture.</p>
+</dd>
+    <dt><code>cpuAccess</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the texture.</p>
+</dd>
+    <dt><code>misc</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous resource flags for the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a> representing the loaded 2D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture3D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture3D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture3D_HexaEngine_Core_Graphics_TextureFileDescription_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture3D(HexaEngine.Core.Graphics.TextureFileDescription)">
+  LoadTexture3D(TextureFileDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a 3D texture from a file using specified description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture3D LoadTexture3D(TextureFileDescription desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.TextureFileDescription.html">TextureFileDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture3D.html">ITexture3D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture3D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture3D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture3D_System_String_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture3D(System.String)">
+  LoadTexture3D(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a 3D texture from a file.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture3D LoadTexture3D(string path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The path to the texture file to load.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture3D.html">ITexture3D</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.ITexture3D.html">ITexture3D</a> representing the loaded 3D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture3D_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture3D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_ITextureLoader_LoadTexture3D_System_String_HexaEngine_Core_Graphics_Usage_HexaEngine_Core_Graphics_BindFlags_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.ITextureLoader.LoadTexture3D(System.String,HexaEngine.Core.Graphics.Usage,HexaEngine.Core.Graphics.BindFlags,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  LoadTexture3D(string, Usage, BindFlags, CpuAccessFlags, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads a 3D texture from a file with the specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The path to the texture file to load.</p>
+</dd>
+    <dt><code>usage</code> <a class="xref" href="HexaEngine.Core.Graphics.Usage.html">Usage</a></dt>
+    <dd><p>The intended usage of the texture.</p>
+</dd>
+    <dt><code>bind</code> <a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+    <dd><p>The bind flags for the texture.</p>
+</dd>
+    <dt><code>cpuAccess</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the texture.</p>
+</dd>
+    <dt><code>misc</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous resource flags for the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture3D.html">ITexture3D</a></dt>
+    <dd><p>An <a class="xref" href="HexaEngine.Core.Graphics.ITexture3D.html">ITexture3D</a> representing the loaded 3D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/ITextureLoader.cs/#L33" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

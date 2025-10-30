@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class MeshLODData </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MeshLODData ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_IO_Binary_Meshes_MeshLODData.md&amp;value=---%0Auid%3A%20HexaEngine.Core.IO.Binary.Meshes.MeshLODData%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData">
+
+
+
+  <h1 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData" class="text-break">
+Class MeshLODData  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.IO.html">IO</a>.<a class="xref" href="HexaEngine.Core.IO.Binary.html">Binary</a>.<a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.html">Meshes</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class MeshLODData : ILODData</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">MeshLODData</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.ILODData.html">ILODData</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData__ctor_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData__ctor_System_UInt32_System_UInt32_System_UInt32_Hexa_NET_Mathematics_BoundingBox_Hexa_NET_Mathematics_BoundingSphere_System_UInt32___System_Numerics_Vector4___System_Numerics_Vector3___HexaEngine_Core_IO_Binary_Meshes_UVChannel___System_Numerics_Vector3___System_Numerics_Vector3___HexaEngine_Core_IO_BoneWeight___" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.#ctor(System.UInt32,System.UInt32,System.UInt32,Hexa.NET.Mathematics.BoundingBox,Hexa.NET.Mathematics.BoundingSphere,System.UInt32[],System.Numerics.Vector4[],System.Numerics.Vector3[],HexaEngine.Core.IO.Binary.Meshes.UVChannel[],System.Numerics.Vector3[],System.Numerics.Vector3[],HexaEngine.Core.IO.BoneWeight[])">
+  MeshLODData(uint, uint, uint, BoundingBox, BoundingSphere, uint[], Vector4[], Vector3[], UVChannel[], Vector3[], Vector3[], BoneWeight[]?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new instance of <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.html">MeshLODData</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MeshLODData(uint lodLevel, uint verticesCount, uint indicesCount, BoundingBox box, BoundingSphere sphere, uint[] indices, Vector4[] colors, Vector3[] positions, UVChannel[] uvChannels, Vector3[] normals, Vector3[] tangents, BoneWeight[]? boneWeights)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lodLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The LOD Level.</p>
+</dd>
+    <dt><code>verticesCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The vertex count.</p>
+</dd>
+    <dt><code>indicesCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The index count.</p>
+</dd>
+    <dt><code>box</code> <span class="xref">BoundingBox</span></dt>
+    <dd><p>The pre-computed bounding box.</p>
+</dd>
+    <dt><code>sphere</code> <span class="xref">BoundingSphere</span></dt>
+    <dd><p>The pre-computed bounding sphere.</p>
+</dd>
+    <dt><code>indices</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>[]</dt>
+    <dd><p>The indices.</p>
+</dd>
+    <dt><code>colors</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a>[]</dt>
+    <dd><p>The vertex colors.</p>
+</dd>
+    <dt><code>positions</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd><p>The vertex positions.</p>
+</dd>
+    <dt><code>uvChannels</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.UVChannel.html">UVChannel</a>[]</dt>
+    <dd><p>The vertex UV coords.</p>
+</dd>
+    <dt><code>normals</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd><p>The vertex normals.</p>
+</dd>
+    <dt><code>tangents</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd><p>The vertex tangents.</p>
+</dd>
+    <dt><code>boneWeights</code> <a class="xref" href="HexaEngine.Core.IO.BoneWeight.html">BoneWeight</a>[]</dt>
+    <dd><p>The vertex bone weights.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_BoneWeights_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.BoneWeights*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_BoneWeights" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.BoneWeights">
+  BoneWeights
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The array of bone weights associated with each vertex.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoneWeight[]? BoneWeights { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.BoneWeight.html">BoneWeight</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Box_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Box*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Box" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Box">
+  Box
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The bounding box of the mesh.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox Box { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">BoundingBox</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Colors_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Colors*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Colors" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Colors">
+  Colors
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The array of colors associated with each vertex.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector4[] Colors { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_IndexCount_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.IndexCount*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_IndexCount" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.IndexCount">
+  IndexCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The number of indices in the mesh.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint IndexCount { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Indices_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Indices*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Indices" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Indices">
+  Indices
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The array of indices defining the mesh topology.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint[] Indices { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_LODLevel_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.LODLevel*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_LODLevel" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.LODLevel">
+  LODLevel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The LOD-Level of the mesh.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint LODLevel { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Normals_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Normals*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Normals" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Normals">
+  Normals
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The array of 3D normals associated with each vertex.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3[] Normals { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Positions_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Positions*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Positions" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Positions">
+  Positions
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The array of 3D positions of each vertex.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3[] Positions { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Sphere_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Sphere*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Sphere" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Sphere">
+  Sphere
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The bounding sphere of the mesh.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingSphere Sphere { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">BoundingSphere</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Tangents_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Tangents*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Tangents" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Tangents">
+  Tangents
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The array of 3D tangents associated with each vertex.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3[] Tangents { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_UVChannels_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.UVChannels*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_UVChannels" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.UVChannels">
+  UVChannels
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>UV Channels.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public UVChannel[] UVChannels { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.UVChannel.html">UVChannel</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_VertexCount_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.VertexCount*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_VertexCount" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.VertexCount">
+  VertexCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The number of vertices in the mesh.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint VertexCount { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_CreateIndexBuffer_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.CreateIndexBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_CreateIndexBuffer_HexaEngine_Core_Graphics_CpuAccessFlags_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.CreateIndexBuffer(HexaEngine.Core.Graphics.CpuAccessFlags)">
+  CreateIndexBuffer(CpuAccessFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L616"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IIndexBuffer CreateIndexBuffer(CpuAccessFlags accessFlags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.IIndexBuffer.html">IIndexBuffer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_CreateVertexBuffer_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.CreateVertexBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_CreateVertexBuffer_HexaEngine_Core_Graphics_CpuAccessFlags_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.CreateVertexBuffer(HexaEngine.Core.Graphics.CpuAccessFlags)">
+  CreateVertexBuffer(CpuAccessFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L689"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IVertexBuffer CreateVertexBuffer(CpuAccessFlags accessFlags = CpuAccessFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.IVertexBuffer.html">IVertexBuffer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GenerateBounds_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GenerateBounds*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GenerateBounds" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GenerateBounds">
+  GenerateBounds()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L581"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Generates bounding box and bounding sphere for the mesh.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GenerateBounds()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GenerateNTB_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GenerateNTB*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GenerateNTB" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GenerateNTB">
+  GenerateNTB()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L572"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Generates normal, tangent, and bitangent vectors for the mesh vertices.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GenerateNTB()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFaceAtIndex_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFaceAtIndex*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFaceAtIndex_System_UInt32_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFaceAtIndex(System.UInt32)">
+  GetFaceAtIndex(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L425"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the face at the specified index.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Face GetFaceAtIndex(uint index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The index of the face.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Face.html">Face</a></dt>
+    <dd><p>The face at the specified index.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFaceForIndex_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFaceForIndex*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFaceForIndex_System_UInt32_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFaceForIndex(System.UInt32)">
+  GetFaceForIndex(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L405"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the face that includes the specified index.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Face GetFaceForIndex(uint index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The index of the face.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Face.html">Face</a></dt>
+    <dd><p>The face that includes the specified index.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFaces_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFaces*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFaces" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFaces">
+  GetFaces()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L591"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an array of faces representing the triangles in the mesh.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Face[] GetFaces()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Face.html">Face</a>[]</dt>
+    <dd><p>An array of faces.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFaces_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFaces*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFaces_System_Collections_Generic_List_HexaEngine_Core_IO_Binary_Meshes_Face__" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFaces(System.Collections.Generic.List{HexaEngine.Core.IO.Binary.Meshes.Face})">
+  GetFaces(List&lt;Face&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L605"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a list of faces representing the triangles in the mesh.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetFaces(List&lt;Face&gt; faces)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>faces</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Face.html">Face</a>&gt;</dt>
+    <dd><p>The list to populate with faces.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFacesForVertex_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFacesForVertex*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFacesForVertex_System_Int32_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFacesForVertex(System.Int32)">
+  GetFacesForVertex(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L345"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an array of faces that include the specified vertex.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Face[] GetFacesForVertex(int vertex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the vertex.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Face.html">Face</a>[]</dt>
+    <dd><p>An array of faces that include the specified vertex.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFacesForVertex_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFacesForVertex*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFacesForVertex_System_Int32_System_Collections_Generic_List_HexaEngine_Core_IO_Binary_Meshes_Face__" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFacesForVertex(System.Int32,System.Collections.Generic.List{HexaEngine.Core.IO.Binary.Meshes.Face})">
+  GetFacesForVertex(int, List&lt;Face&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L366"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the faces that include the specified vertex and adds them to the provided list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetFacesForVertex(int vertex, List&lt;Face&gt; faces)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the vertex.</p>
+</dd>
+    <dt><code>faces</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Face.html">Face</a>&gt;</dt>
+    <dd><p>The list to which the faces will be added.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFacesForVertex_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFacesForVertex*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetFacesForVertex_System_UInt32_System_Collections_Generic_List_HexaEngine_Core_IO_Binary_Meshes_Face__" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetFacesForVertex(System.UInt32,System.Collections.Generic.List{HexaEngine.Core.IO.Binary.Meshes.Face})">
+  GetFacesForVertex(uint, List&lt;Face&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L385"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the provided list and adds the faces that include the specified vertex to it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetFacesForVertex(uint vertex, List&lt;Face&gt; faces)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The index of the vertex.</p>
+</dd>
+    <dt><code>faces</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Face.html">Face</a>&gt;</dt>
+    <dd><p>The list to which the faces will be added.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetIndexStride_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetIndexStride*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetIndexStride" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetIndexStride">
+  GetIndexStride()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint GetIndexStride()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetNeighborFaces_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetNeighborFaces*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetNeighborFaces_HexaEngine_Core_IO_Binary_Meshes_Face_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetNeighborFaces(HexaEngine.Core.IO.Binary.Meshes.Face)">
+  GetNeighborFaces(Face)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L440"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an array of faces that are neighbors to the specified face.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Face[] GetNeighborFaces(Face face)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>face</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Face.html">Face</a></dt>
+    <dd><p>The reference face.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Face.html">Face</a>[]</dt>
+    <dd><p>An array of faces that are neighbors to the specified face.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetSize_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetSize*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetSize_HexaEngine_Core_IO_Binary_Meshes_VertexFlags_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetSize(HexaEngine.Core.IO.Binary.Meshes.VertexFlags)">
+  GetSize(VertexFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint GetSize(VertexFlags flags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.VertexFlags.html">VertexFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetUVChannels_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetUVChannels*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetUVChannels" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetUVChannels">
+  GetUVChannels()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L801"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;UVChannel&gt; GetUVChannels()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.UVChannel.html">UVChannel</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetVertexStride_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetVertexStride*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_GetVertexStride_HexaEngine_Core_IO_Binary_Meshes_VertexFlags_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.GetVertexStride(HexaEngine.Core.IO.Binary.Meshes.VertexFlags)">
+  GetVertexStride(VertexFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint GetVertexStride(VertexFlags flags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.VertexFlags.html">VertexFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Intersect_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Intersect*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Intersect_Hexa_NET_Mathematics_Ray_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Intersect(Hexa.NET.Mathematics.Ray)">
+  Intersect(Ray)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L526"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculates the intersection between the ray and the triangle mesh, returning the distance to the intersection point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float? Intersect(Ray ray)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ray</code> <span class="xref">Ray</span></dt>
+    <dd><p>The ray to perform the intersection test with.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>?</dt>
+    <dd><p>The distance along the ray to the intersection point. Returns <code>null</code> if there is no intersection with the mesh.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_IntersectRay_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.IntersectRay*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_IntersectRay_Hexa_NET_Mathematics_Ray_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.IntersectRay(Hexa.NET.Mathematics.Ray)">
+  IntersectRay(Ray)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L469"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Intersects the mesh with a ray and returns the index of the closest intersected vertex.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long IntersectRay(Ray ray)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ray</code> <span class="xref">Ray</span></dt>
+    <dd><p>The ray used for intersection.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The index of the closest intersected vertex or -1 if no intersection occurs.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Read_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Read*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Read_System_IO_Stream_HexaEngine_Core_IO_Binary_Meshes_VertexFlags_Hexa_NET_Mathematics_Endianness_HexaEngine_Core_IO_Version_HexaEngine_Core_IO_Binary_Meshes_UVChannelInfo_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Read(System.IO.Stream,HexaEngine.Core.IO.Binary.Meshes.VertexFlags,Hexa.NET.Mathematics.Endianness,HexaEngine.Core.IO.Version,HexaEngine.Core.IO.Binary.Meshes.UVChannelInfo)">
+  Read(Stream, VertexFlags, Endianness, Version, UVChannelInfo)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L175"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MeshLODData Read(Stream stream, VertexFlags flags, Endianness endianness, Version version, UVChannelInfo info)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.VertexFlags.html">VertexFlags</a></dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+    <dt><code>version</code> <a class="xref" href="HexaEngine.Core.IO.Version.html">Version</a></dt>
+    <dd></dd>
+    <dt><code>info</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.UVChannelInfo.html">UVChannelInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.html">MeshLODData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_ReadFrom_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.ReadFrom*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_ReadFrom_System_IO_Stream_HexaEngine_Core_IO_Binary_Meshes_VertexFlags_Hexa_NET_Mathematics_Endianness_HexaEngine_Core_IO_Version_HexaEngine_Core_IO_Binary_Meshes_UVChannelInfo_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.ReadFrom(System.IO.Stream,HexaEngine.Core.IO.Binary.Meshes.VertexFlags,Hexa.NET.Mathematics.Endianness,HexaEngine.Core.IO.Version,HexaEngine.Core.IO.Binary.Meshes.UVChannelInfo)">
+  ReadFrom(Stream, VertexFlags, Endianness, Version, UVChannelInfo)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ReadFrom(Stream stream, VertexFlags flags, Endianness endianness, Version version, UVChannelInfo info)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.VertexFlags.html">VertexFlags</a></dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+    <dt><code>version</code> <a class="xref" href="HexaEngine.Core.IO.Version.html">Version</a></dt>
+    <dd></dd>
+    <dt><code>info</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.UVChannelInfo.html">UVChannelInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Write_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Write*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_Write_System_IO_Stream_HexaEngine_Core_IO_Binary_Meshes_VertexFlags_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.Write(System.IO.Stream,HexaEngine.Core.IO.Binary.Meshes.VertexFlags,Hexa.NET.Mathematics.Endianness)">
+  Write(Stream, VertexFlags, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L272"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Write(Stream stream, VertexFlags flags, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.VertexFlags.html">VertexFlags</a></dt>
+    <dd></dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_WriteIndexBuffer_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.WriteIndexBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_WriteIndexBuffer_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_Buffers_IIndexBuffer_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.WriteIndexBuffer(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.Buffers.IIndexBuffer)">
+  WriteIndexBuffer(IGraphicsContext, IIndexBuffer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L757"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool WriteIndexBuffer(IGraphicsContext context, IIndexBuffer ib)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>ib</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.IIndexBuffer.html">IIndexBuffer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_WriteVertexBuffer_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.WriteVertexBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_MeshLODData_WriteVertexBuffer_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_Buffers_IVertexBuffer_" data-uid="HexaEngine.Core.IO.Binary.Meshes.MeshLODData.WriteVertexBuffer(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.Buffers.IVertexBuffer)">
+  WriteVertexBuffer(IGraphicsContext, IVertexBuffer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L782"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool WriteVertexBuffer(IGraphicsContext context, IVertexBuffer vb)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>vb</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.IVertexBuffer.html">IVertexBuffer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/MeshLODData.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

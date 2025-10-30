@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class SceneRenderer </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class SceneRenderer ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Graphics_Renderers_SceneRenderer.md&amp;value=---%0Auid%3A%20HexaEngine.Graphics.Renderers.SceneRenderer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Graphics.Renderers.SceneRenderer">
+
+
+
+  <h1 id="HexaEngine_Graphics_Renderers_SceneRenderer" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer" class="text-break">
+Class SceneRenderer  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Graphics.html">Graphics</a>.<a class="xref" href="HexaEngine.Graphics.Renderers.html">Renderers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SceneRenderer : ISceneRenderer, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">SceneRenderer</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Scenes.ISceneRenderer.html">ISceneRenderer</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer__ctor_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.#ctor*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer__ctor_HexaEngine_Windows_RendererFlags_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.#ctor(HexaEngine.Windows.RendererFlags)">
+  SceneRenderer(RendererFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SceneRenderer(RendererFlags flags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Windows.RendererFlags.html">RendererFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_Current_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Current*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Current" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Current">
+  Current
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SceneRenderer Current { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Renderers.SceneRenderer.html">SceneRenderer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_DrawFlags_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.DrawFlags*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_DrawFlags" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.DrawFlags">
+  DrawFlags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SceneDrawFlags DrawFlags { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Scenes.SceneDrawFlags.html">SceneDrawFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_EnableProfiling_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.EnableProfiling*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_EnableProfiling" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.EnableProfiling">
+  EnableProfiling
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool EnableProfiling { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_Height_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Height*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Height" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Height">
+  Height
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Height { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_OutputViewport_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.OutputViewport*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_OutputViewport" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.OutputViewport">
+  OutputViewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Viewport OutputViewport { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_RenderGraph_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.RenderGraph*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_RenderGraph" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.RenderGraph">
+  RenderGraph
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RenderGraph RenderGraph { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.RenderGraph.html">RenderGraph</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_RenderGraphExecuter_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.RenderGraphExecuter*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_RenderGraphExecuter" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.RenderGraphExecuter">
+  RenderGraphExecuter
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RenderGraphExecuter RenderGraphExecuter { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.RenderGraphExecuter.html">RenderGraphExecuter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_ResourceBuilder_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.ResourceBuilder*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_ResourceBuilder" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.ResourceBuilder">
+  ResourceBuilder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GraphResourceBuilder ResourceBuilder { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.GraphResourceBuilder.html">GraphResourceBuilder</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_Shading_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Shading*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Shading" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Shading">
+  Shading
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ViewportShading Shading { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.ViewportShading.html">ViewportShading</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_Size_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Size*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Size" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Size">
+  Size
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2 Size { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_Width_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Width*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Width" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Width">
+  Width
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Width { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_Dispose_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Dispose*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Dispose" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L450"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_Dispose_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Dispose*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Dispose_System_Boolean_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L433"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_DrawSettings_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.DrawSettings*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_DrawSettings" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.DrawSettings">
+  DrawSettings()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L324"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DrawSettings()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_Initialize_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Initialize*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Initialize_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Graphics_ISwapChain_HexaEngine_Core_Windows_ICoreWindow_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Initialize(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Graphics.ISwapChain,HexaEngine.Core.Windows.ICoreWindow)">
+  Initialize(IGraphicsDevice, ISwapChain, ICoreWindow)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes the renderer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task Initialize(IGraphicsDevice device, ISwapChain swapChain, ICoreWindow window)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>swapChain</code> <a class="xref" href="HexaEngine.Core.Graphics.ISwapChain.html">ISwapChain</a></dt>
+    <dd></dd>
+    <dt><code>window</code> <a class="xref" href="HexaEngine.Core.Windows.ICoreWindow.html">ICoreWindow</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_Render_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Render*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Render_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Scenes_IScene_HexaEngine_Scenes_Camera_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Render(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Scenes.IScene,HexaEngine.Scenes.Camera)">
+  Render(IGraphicsContext, IScene, Camera)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L253"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Render(IGraphicsContext context, IScene scene, Camera camera)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>scene</code> <a class="xref" href="HexaEngine.Scenes.IScene.html">IScene</a></dt>
+    <dd></dd>
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_RenderTo_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.RenderTo*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_RenderTo_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IRenderTargetView_Hexa_NET_Mathematics_Viewport_HexaEngine_Scenes_IScene_HexaEngine_Scenes_Camera_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.RenderTo(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.IRenderTargetView,Hexa.NET.Mathematics.Viewport,HexaEngine.Scenes.IScene,HexaEngine.Scenes.Camera)">
+  RenderTo(IGraphicsContext, IRenderTargetView, Viewport, IScene, Camera)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L279"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RenderTo(IGraphicsContext context, IRenderTargetView target, Viewport viewport, IScene scene, Camera camera)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>target</code> <a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd></dd>
+    <dt><code>viewport</code> <span class="xref">Viewport</span></dt>
+    <dd></dd>
+    <dt><code>scene</code> <a class="xref" href="HexaEngine.Scenes.IScene.html">IScene</a></dt>
+    <dd></dd>
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Renderers_SceneRenderer_TakeScreenshot_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.TakeScreenshot*"></a>
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_TakeScreenshot_HexaEngine_Core_Graphics_IGraphicsContext_System_String_" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.TakeScreenshot(HexaEngine.Core.Graphics.IGraphicsContext,System.String)">
+  TakeScreenshot(IGraphicsContext, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L304"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void TakeScreenshot(IGraphicsContext context, string path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_OutputViewportChanged" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.OutputViewportChanged">
+  OutputViewportChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static event EventHandler&lt;OutputViewportChangedEventArgs&gt;? OutputViewportChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Graphics.Renderers.OutputViewportChangedEventArgs.html">OutputViewportChangedEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Graphics_Renderers_SceneRenderer_Resized" data-uid="HexaEngine.Graphics.Renderers.SceneRenderer.Resized">
+  Resized
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static event EventHandler&lt;RendererResizedEventArgs&gt;? Resized</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Graphics.Renderers.RendererResizedEventArgs.html">RendererResizedEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Renderers/SceneRenderer.cs/#L40" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
