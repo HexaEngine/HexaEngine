@@ -1,4 +1,4 @@
-#include "../../common.hlsl"
+#include "HexaEngine.Core:shaders/common.hlsl"
 
 #ifndef SSGI_QUALITY
 #define SSGI_QUALITY 1

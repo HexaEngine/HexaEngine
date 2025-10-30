@@ -1,4 +1,4 @@
-#include "../../camera.hlsl"
+#include "HexaEngine.Core:shaders/camera.hlsl"
 
 Texture2D inputTex;
 Texture2D indirectTex;
@@ -22,5 +22,5 @@ float4 main(VertexOut input) : SV_TARGET
 	float3 direct = inputTex.Sample(linearWrapSampler, uv).rgb;
 	float3 indirect = saturate(indirectTex.Sample(linearWrapSampler, uv).rgb);
 
-	return float4(direct + indirect * intensity, 1.0);
+    return float4(direct + indirect * intensity, 1.0);
 }

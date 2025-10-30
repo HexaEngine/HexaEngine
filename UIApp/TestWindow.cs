@@ -10,10 +10,8 @@
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.UI;
     using HexaEngine.UI.Animation;
-    using HexaEngine.UI.Controls;
     using HexaEngine.UI.Graphics;
     using HexaEngine.UI.Markup;
-    using HexaEngine.Windows;
     using System.Numerics;
 
     public sealed class TestWindow : CoreWindow
@@ -24,8 +22,6 @@
         private Texture2D compositionTexture;
 
         private UIWindow window;
-        private IGraphicsDevice graphicsDevice;
-        private IGraphicsContext graphicsContext;
         private ISwapChain swapChain;
         private bool resetTime;
         private bool resize;
@@ -37,8 +33,6 @@
         public override void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {
             base.Initialize(audioDevice, graphicsDevice);
-            this.graphicsDevice = graphicsDevice;
-            graphicsContext = graphicsDevice.Context;
             swapChain = SwapChain;
             renderDispatcher = (ThreadDispatcher)Dispatcher;
 
@@ -46,11 +40,7 @@
             swapChain.LimitFPS = true;
             swapChain.TargetFPS = 165;
 
-            UISystem system = new();
-            system.Awake(null!);
-            UISystem.Current = system;
-
-            uirenderer = new(graphicsDevice);
+            uirenderer = new();
             commandList = new();
 
             compositionTexture = new(swapChain.Backbuffer.Description.Format, Width, Height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
@@ -63,42 +53,7 @@
         private void MakeUI()
         {
             XamlReader reader = new();
-            window = new UIWindow();
-            window.Width = Width;
-            window.Height = Height;
-
-            window.SetInputTransform(Matrix3x2.CreateTranslation(-new Vector2(X, Y)));
-
-            var grid = new Grid();
-
-            grid.ColumnDefinitions.Add(new(new(1, GridUnitType.Star)));
-            grid.ColumnDefinitions.Add(new(new(float.NaN, GridUnitType.Auto)));
-            grid.ColumnDefinitions.Add(new(new(1, GridUnitType.Star)));
-
-            grid.RowDefinitions.Add(new(new(1, GridUnitType.Star)));
-            grid.RowDefinitions.Add(new(new(float.NaN, GridUnitType.Auto)));
-            grid.RowDefinitions.Add(new(new(1, GridUnitType.Star)));
-
-            StackPanel panel = new();
-
-            TextBox textBox = new()
-            {
-                FontSize = 30,
-                MinWidth = 200,
-                MinHeight = 30,
-                AcceptsReturn = true,
-                Background = new SolidColorBrush(new(0x3c3c3cFF)),
-                Foreground = new SolidColorBrush(new(0xFFFFFFFF)),
-            };
-            panel.Children.Add(textBox);
-
-            Grid.SetColumn(panel, 1);
-            Grid.SetRow(panel, 1);
-            grid.Children.Add(panel);
-
-            window.Content = grid;
-
-            //  window.Background = new SolidColorBrush(Colors.Black);
+            window = (UIWindow)reader.Parse("Test.xaml")!;
             window.Show();
             window.OnInvalidateVisual += OnInvalidateVisual;
             window.InvalidateMeasure();
@@ -189,7 +144,7 @@
                 window.Width = args.NewWidth;
                 window.Height = args.NewHeight;
                 compositionTexture.Resize(swapChain.Backbuffer.Description.Format, args.NewWidth, args.NewHeight, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-                window.InvalidateArrange();
+                window.InvalidateMeasure();
             }
 
             resize = true;

@@ -12,8 +12,8 @@
 			<RowDefinition />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<StackPanel Grid.Column="1" Grid.Row="1">
-			<Label Margin="0,0,0,0" Foreground="#FFFFFF"  FontFamilyName="Cascadia Mono">StackItem 1</Label>
+		<StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center">
+			<Label Margin="0,0,0,0" Foreground="#FFFFFF" FontSize="20" FontFamilyName="Cascadia Mono">StackItem 1</Label>
 			<Label Margin="0,0,0,0" Foreground="#FFFFFF"  FontFamilyName="Cascadia Mono">StackItem 2</Label>
 			<Label Margin="0,0,0,0" Foreground="#FFFFFF"  FontFamilyName="Cascadia Mono">StackItem 3</Label>
 			<TextBox MinWidth="100" MinHeight="40" WordWrapping="Wrap" />

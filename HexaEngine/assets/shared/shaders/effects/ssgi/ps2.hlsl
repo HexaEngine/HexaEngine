@@ -1,4 +1,4 @@
-#include "../../common.hlsl"
+#include "HexaEngine.Core:shaders/common.hlsl"
 
 Texture2D inputTex;
 Texture2D<float> depthTex;
@@ -95,7 +95,7 @@ float3 ComputeScreenSpaceGI(float2 uv, float3 viewPos, float3 normal)
 	{
 		float marchDistance = step * SSGI_RAY_STEP;
 
-		float2 randomValues = frac(rand3(float3(uv, step)).xy);
+        float2 randomValues = Hammersley(step, SSGI_RAY_COUNT);
 		float3 rayDir = SampleHemisphere(normal, randomValues);
 
 		float3 newViewPos = viewPos + rayDir * marchDistance;
@@ -105,7 +105,7 @@ float3 ComputeScreenSpaceGI(float2 uv, float3 viewPos, float3 normal)
 
 		float depthSample = depthTex.Sample(linearClampSampler, sampleUV);
 
-		if (depthSample > 1.0f || marchDistance > MAX_MARCH_DISTANCE)
+        if (depthSample > 1.0f || marchDistance > distance)
 		{
 			continue;
 		}
@@ -120,7 +120,6 @@ float3 ComputeScreenSpaceGI(float2 uv, float3 viewPos, float3 normal)
 		float cosemit = clamp(dot(lightDir, -lightNormal), 0.0, 1.0);
 		float coscatch = clamp(dot(lightDir, normal) * 0.5 + 0.5, 0.0, 1.0);
 		float distfall = pow(lenSq(lightPath), 0.1) + 1.0;
-
 		accumulatedGI += (lightColor * cosemit * coscatch / distfall) * (length(lightPos) / 20);
 		numSamples++;
 	}

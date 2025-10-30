@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
+    <Compile Remove="assets\**" />
+    <EmbeddedResource Remove="assets\**" />
+    <None Remove="assets\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,12 +25,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="assets\shared\shaders\part\" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
+    <PackageReference Include="System.IO.Hashing" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
-    <PackageReference Include="System.IO.Hashing" Version="9.0.0" />
+    <ProjectReference Include="..\HexaEngine.D3D11\HexaEngine.D3D11.csproj" />
+    <ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
+    <ProjectReference Include="..\HexaEngine.UI\HexaEngine.UI.csproj" />
   </ItemGroup>
 
 </Project>

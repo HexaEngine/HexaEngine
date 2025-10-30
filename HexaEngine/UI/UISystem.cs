@@ -6,13 +6,10 @@
     using HexaEngine.Scenes;
     using HexaEngine.UI.Animation;
     using HexaEngine.UI.Graphics;
-    using HexaEngine.UI.Graphics.Text;
-    using HexaEngine.Windows;
     using System.Numerics;
 
     public class UISystem : ISceneSystem
     {
-        private TextFactory textFactory = null!;
         private UIWindow? window;
         private readonly UICommandList commandList = new();
         private bool invalidate = true;
@@ -22,8 +19,6 @@
         public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.Unload | SystemFlags.GraphicsUpdate;
 
         public static UISystem? Current { get; set; }
-
-        public TextFactory TextFactory => textFactory;
 
         public UIWindow? Window
         {
@@ -56,7 +51,6 @@
 
         public void Awake(Scene scene)
         {
-            textFactory = new TextFactory(Application.GraphicsDevice);
             Current = this;
 
             SceneRenderer.Resized += SceneRendererResized;
@@ -146,7 +140,6 @@
             SceneRenderer.Resized -= SceneRendererResized;
             Window?.Dispose();
             Current = null;
-            textFactory?.Dispose();
             commandList.Dispose();
         }
     }

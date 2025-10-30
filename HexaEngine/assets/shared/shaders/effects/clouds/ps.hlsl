@@ -1,5 +1,5 @@
-#include "../../weather.hlsl"
-#include "../../camera.hlsl"
+#include "HexaEngine.Core:shaders/weather.hlsl"
+#include "HexaEngine.Core:shaders/camera.hlsl"
 
 SamplerState linearWrapSampler;
 SamplerState pointWrapSampler;
