@@ -82,6 +82,9 @@
 		<None Update="assets\shared\shaders\effects\copy\reverse.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\effects\depth\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\effects\dof\coc.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

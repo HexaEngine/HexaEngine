@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Graph;
     using HexaEngine.PostFx;
     using System.Numerics;
 
@@ -214,6 +214,7 @@
         public override void SetupDependencies(PostFxDependencyBuilder builder)
         {
             builder
+                .RunBefore<LinearDepth>()
                 .RunBefore<ColorGrading>()
                 .RunAfter<HBAO>()
                 .RunAfter<SSGI>()

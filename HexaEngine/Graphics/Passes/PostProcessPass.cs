@@ -49,6 +49,7 @@
             postProcessingManager.Add<UserLUT>();
             postProcessingManager.Add<Grain>();
             postProcessingManager.Add<Vignette>();
+            postProcessingManager.Add<LinearDepth>();
             postProcessingManager.Initialize((int)viewport.Width, (int)viewport.Height, profiler);
             postProcessingManager.Enabled = true;
 

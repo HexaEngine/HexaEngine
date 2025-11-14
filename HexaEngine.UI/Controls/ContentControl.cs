@@ -5,7 +5,6 @@
     using HexaEngine.UI.Markup;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
-    using YamlDotNet.Core.Tokens;
 
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     [ContentProperty("Content")]

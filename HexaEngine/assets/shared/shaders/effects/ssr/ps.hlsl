@@ -1,4 +1,4 @@
-#include "../../camera.hlsl"
+#include "HexaEngine.Core:shaders/camera.hlsl"
 
 // SSR_QUALITY == -1 Custom
 // SSR_QUALITY == 0 Dynamic
@@ -23,7 +23,7 @@ cbuffer SSRParams : register(b0)
 
 #if SSR_QUALITY == 1
 #define SSR_MAX_RAY_COUNT 8
-#define SSR_RAY_STEPS 8
+#define SSR_RAY_STEPS 4
 #define SSR_RAY_STEP 1.80f
 #define SSR_RAY_HIT_THRESHOLD 3.00f
 #endif
@@ -49,6 +49,7 @@ SamplerState linearBorderSampler : register(s2);
 Texture2D inputTex : register(t0);
 Texture2D<float> depthTex : register(t1);
 Texture2D normalTex : register(t2);
+Texture2D<float> linearDepthTex;
 
 struct VertexOut
 {
@@ -56,19 +57,31 @@ struct VertexOut
 	float2 Tex : TEXCOORD;
 };
 
+float4 ProjectUVW(float3 uv)
+{
+    float4 coords = mul(float4(uv, 1.0f), proj);
+    coords.xy /= coords.w;
+    coords.xy = coords.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+    return coords;
+}
+
+float3 GetVSPos(float3 uv)
+{
+    float4 coords = ProjectUVW(uv);
+
+    float depth = depthTex.SampleLevel(pointClampSampler, coords.xy, 0);
+
+    return GetPositionVS(coords.xy, depth);
+}
+
 float4 SSRBinarySearch(float3 vDir, inout float3 vHitCoord)
 {
-	float fDepth;
+
 
 	for (int i = 0; i < SSR_RAY_STEPS; i++)
 	{
-		float4 vProjectedCoord = mul(float4(vHitCoord, 1.0f), proj);
-		vProjectedCoord.xy /= vProjectedCoord.w;
-		vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-
 		// linearize depth here
-		fDepth = depthTex.SampleLevel(pointClampSampler, vProjectedCoord.xy, 0);
-		float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
+        float3 fPositionVS = GetVSPos(vHitCoord);
 		float fDepthDiff = vHitCoord.z - fPositionVS.z;
 
 		if (fDepthDiff <= 0.0f)
@@ -78,16 +91,14 @@ float4 SSRBinarySearch(float3 vDir, inout float3 vHitCoord)
 		vHitCoord -= vDir;
 	}
 
-	float4 vProjectedCoord = mul(float4(vHitCoord, 1.0f), proj);
-	vProjectedCoord.xy /= vProjectedCoord.w;
-	vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+    float4 coords = ProjectUVW(vHitCoord);
+    float depth = depthTex.SampleLevel(pointClampSampler, coords.xy, 0);
 
 	// linearize depth here
-	fDepth = depthTex.SampleLevel(pointClampSampler, vProjectedCoord.xy, 0);
-	float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
+    float3 fPositionVS = GetPositionVS(coords.xy, depth);
 	float fDepthDiff = vHitCoord.z - fPositionVS.z;
 
-	return float4(vProjectedCoord.xy, fDepth, abs(fDepthDiff) < SSR_RAY_HIT_THRESHOLD ? 1.0f : 0.0f);
+    return float4(coords.xy, depth, abs(fDepthDiff) < SSR_RAY_HIT_THRESHOLD ? 1.0f : 0.0f);
 }
 
 float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord)
@@ -118,29 +129,6 @@ float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord)
 	}
 
 	return float4(0.0f, 0.0f, 0.0f, 0.0f);
-}
-
-bool bInsideScreen(in float2 vCoord)
-{
-	return !(vCoord.x < 0 || vCoord.x > 1 || vCoord.y < 0 || vCoord.y > 1);
-}
-
-float3 GetViewNormal(float2 uv)
-{
-	float3 normal = normalTex.Sample(linearBorderSampler, uv).rgb;
-	normal = 2 * normal - 1.0;
-	return normalize(mul(normal, (float3x3)view));
-}
-
-float3 GetViewPos(float2 uv)
-{
-	float depth = depthTex.Sample(linearClampSampler, uv);
-	return GetPositionVS(uv, depth);
-}
-
-float lenSq(float3 v)
-{
-	return pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0);
 }
 
 float4 main(VertexOut pin) : SV_TARGET

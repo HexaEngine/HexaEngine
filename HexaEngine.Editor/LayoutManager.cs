@@ -3,7 +3,6 @@
     using Hexa.NET.ImGui;
     using HexaEngine.Graphics.Renderers;
     using System.Text;
-    using YamlDotNet.Core.Tokens;
 
     public struct LayoutConfig : IEquatable<LayoutConfig>
     {
