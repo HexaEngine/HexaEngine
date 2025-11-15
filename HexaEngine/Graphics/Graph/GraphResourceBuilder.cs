@@ -491,17 +491,17 @@
             group.Add(resource);
         }
 
-        public ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(description.GetHashCode().ToString(), description, (dev, desc) => dev.CreateComputePipelineState(desc), computePipelineStates, computePipelineDescriptors, flags);
         }
 
-        public ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => dev.CreateComputePipelineState(desc), computePipelineStates, computePipelineDescriptors, flags);
         }
 
-        public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
             ConstantBuffer<T> constantBuffer = new(accessFlags, name);
@@ -513,7 +513,7 @@
             return resource;
         }
 
-        public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, T value, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        public ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, T value, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
             ConstantBuffer<T> constantBuffer = new(value, accessFlags, name);
@@ -525,43 +525,43 @@
             return resource;
         }
 
-        public ResourceRef<DepthMipChain> CreateDepthMipChain(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<DepthMipChain> CreateDepthMipChain(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => new DepthMipChain(description), depthMipChains, depthMipChainDescriptors, flags);
         }
 
-        public ResourceRef<DepthStencil> CreateDepthStencilBuffer(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<DepthStencil> CreateDepthStencilBuffer(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => new DepthStencil(description, name), depthStencilBuffers, depthStencilBufferDescriptors, flags);
         }
 
-        public ResourceRef<GBuffer> CreateGBuffer(string name, GBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<GBuffer> CreateGBuffer(string name, GBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => new GBuffer(description, name), gBuffers, gBufferDescriptors, flags);
         }
 
-        public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             string name = description.GetHashCode().ToString();
             return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates, graphicsPipelineStateDescriptors, flags);
         }
 
-        public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<IGraphicsPipelineState> CreateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => dev.CreateGraphicsPipelineState(desc), graphicsPipelineStates, graphicsPipelineStateDescriptors, flags);
         }
 
-        public ResourceRef<ISamplerState> CreateSamplerState(string name, SamplerStateDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All | ResourceCreationFlags.GroupShared)
+        public ResourceRef<ISamplerState> CreateSamplerState(string name, SamplerStateDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default | ResourceCreationFlags.GroupShared)
         {
             return CreateResource(name, description, (dev, desc) => dev.CreateSamplerState(desc), samplerStates, samplerStateDescriptors, flags);
         }
 
-        public ResourceRef<ShadowAtlas> CreateShadowAtlas(string name, ShadowAtlasDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<ShadowAtlas> CreateShadowAtlas(string name, ShadowAtlasDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => new ShadowAtlas(description), shadowAtlas, shadowAtlasDescriptors, flags);
         }
 
-        public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
             StructuredBuffer<T> structuredBuffer = new(accessFlags, name);
@@ -573,7 +573,7 @@
             return resource;
         }
 
-        public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        public ResourceRef<StructuredBuffer<T>> CreateStructuredBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
             StructuredBuffer<T> structuredBuffer = new(initialCapacity, accessFlags, name);
@@ -585,7 +585,7 @@
             return resource;
         }
 
-        public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
             StructuredUavBuffer<T> structuredBuffer = new(accessFlags, uavFlags, srvFlags, name);
@@ -597,7 +597,7 @@
             return resource;
         }
 
-        public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.All) where T : unmanaged
+        public ResourceRef<StructuredUavBuffer<T>> CreateStructuredUavBuffer<T>(string name, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged
         {
             // creation of constant buffers cannot be deferred, because of generics.
             StructuredUavBuffer<T> structuredBuffer = new(initialCapacity, accessFlags, uavFlags, srvFlags, name);
@@ -609,17 +609,17 @@
             return resource;
         }
 
-        public ResourceRef<Texture1D> CreateTexture1D(string name, Texture1DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<Texture1D> CreateTexture1D(string name, Texture1DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => new Texture1D(description, name), textures1d, textures1dDescriptors, flags);
         }
 
-        public ResourceRef<Texture2D> CreateTexture2D(string name, Texture2DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<Texture2D> CreateTexture2D(string name, Texture2DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => new Texture2D(description, name), textures2d, textures2dDescriptors, flags);
         }
 
-        public ResourceRef<Texture3D> CreateTexture3D(string name, Texture3DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.All)
+        public ResourceRef<Texture3D> CreateTexture3D(string name, Texture3DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => new Texture3D(description, name), textures3d, textures3dDescriptors, flags);
         }

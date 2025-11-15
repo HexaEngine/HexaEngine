@@ -17,10 +17,8 @@
 
         protected override void InitWindow(IGraphicsDevice device)
         {
-            string[] brushes = FileSystem.GetFiles("assets/textures/brushes");
-            for (int i = 0; i < brushes.Length; i++)
+            foreach (var brush in FileSystem.GetFiles("assets/textures/brushes"))
             {
-                var brush = brushes[i];
                 masks.Add(new(device, brush));
             }
 

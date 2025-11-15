@@ -79,6 +79,12 @@
 		<None Update="assets\HexaEngine.Core\shaders\effects\blur\gaussian7x7.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\ssr\blend.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\ssr\cs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\HexaEngine.PostFx\shaders\quad.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

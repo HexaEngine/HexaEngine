@@ -417,45 +417,6 @@
         /// </summary>
         /// <param name="path">The path of the file to open.</param>
         /// <returns>A <see cref="VirtualStream"/> for reading the file.</returns>
-        [Obsolete("Use AssetPath overload instead.")]
-        public static VirtualStream OpenRead(string path)
-        {
-            initLock.Wait();
-            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
-            realPath = realPath.Replace(@"\\", @"\");
-
-            if (fileIndices.TryGetValue(realPath, out string? value))
-            {
-                var fs = File.Open(value, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-                return new(fs, 0, fs.Length);
-            }
-            else if (File.Exists(path))
-            {
-                var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-                return new(fs, 0, fs.Length);
-            }
-            else if (!string.IsNullOrWhiteSpace(realPath))
-            {
-                var asset = GetArchiveEntry(realPath);
-
-                if (asset == default)
-                {
-                    throw new FileNotFoundException(realPath);
-                }
-
-                return asset.GetStream();
-            }
-
-            throw new FileNotFoundException(realPath);
-        }
-
-        /// <summary>
-        /// Opens a virtual stream for reading the file at the specified path.
-        /// </summary>
-        /// <param name="path">The path of the file to open.</param>
-        /// <returns>A <see cref="VirtualStream"/> for reading the file.</returns>
         public static VirtualStream OpenRead(AssetPath path)
         {
             initLock.Wait();
@@ -481,49 +442,6 @@
                 }
                 return asset.GetStream();
             }
-        }
-
-        /// <summary>
-        /// Tries to open a virtual stream for reading the file at the specified path.
-        /// </summary>
-        /// <param name="path">The path of the file to open.</param>
-        /// <param name="stream">When this method returns, contains the <see cref="VirtualStream"/> for reading the file, if the file exists; otherwise, the default _value.</param>
-        /// <returns><see langword="true"/> if the file was successfully opened; otherwise, <see langword="false"/>.</returns>
-        public static bool TryOpenRead(string path, [NotNullWhen(true)] out VirtualStream? stream)
-        {
-            initLock.Wait();
-            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
-            realPath = realPath.Replace(@"\\", @"\");
-
-            if (fileIndices.TryGetValue(realPath, out string? value))
-            {
-                var fs = File.OpenRead(value);
-                stream = new(fs, 0, fs.Length);
-                return true;
-            }
-            else if (File.Exists(path))
-            {
-                var fs = File.OpenRead(path);
-                stream = new(fs, 0, fs.Length);
-                return true;
-            }
-            else if (!string.IsNullOrWhiteSpace(realPath))
-            {
-                var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = GetArchiveEntry(rel);
-
-                if (asset == default)
-                {
-                    stream = default;
-                    return false;
-                }
-
-                stream = asset.GetStream();
-                return true;
-            }
-
-            stream = default;
-            return false;
         }
 
         /// <summary>
@@ -599,13 +517,16 @@
         /// </summary>
         /// <param name="path">The path to get the files for.</param>
         /// <returns>An array of file paths.</returns>
-        public static string[] GetFiles(string path)
+        public static IEnumerable<string> GetFiles(AssetPath path)
         {
             initLock.Wait();
-            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
-            realPath = realPath.Replace(@"\\", @"\");
-            //var files = bundles..Where(x => x.PathInArchive.StartsWith(realPath)).Select(x => x.PathInArchive);
-            return fileIndices.Where(x => x.Key.StartsWith(realPath)).Select(x => x.Key).ToArray();
+            foreach (var file in fileIndices)
+            {
+                if (file.Key.StartsWith(path.Raw))
+                {
+                    yield return file.Key;
+                }
+            }
         }
 
         /// <summary>
@@ -614,47 +535,17 @@
         /// <param name="path">The path to get the files for.</param>
         /// <param name="pattern"></param>
         /// <returns>An array of file paths.</returns>
-        public static string[] GetFiles(string path, string pattern)
+        public static IEnumerable<string> GetFiles(AssetPath path, string pattern)
         {
             Regex regex = CreateRegexPattern(pattern);
             initLock.Wait();
-            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
-            realPath = realPath.Replace(@"\\", @"\");
-            //var files = bundleAssets.Where(x => x.PathInArchive.StartsWith(realPath) && regex.IsMatch(x.PathInArchive)).Select(x => x.PathInArchive);
-            return fileIndices.Where(x => x.Key.StartsWith(realPath) && regex.IsMatch(x.Key)).Select(x => x.Key).ToArray();
-        }
-
-        /// <summary>
-        /// Gets the full path of <paramref name="path"/>
-        /// </summary>
-        /// <param name="path">The path to a source.</param>
-        /// <returns>The full path</returns>
-        public static string GetFullPath(string path)
-        {
-            initLock.Wait();
-            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
-            realPath = realPath.Replace(@"\\", @"\");
-
-            if (fileIndices.TryGetValue(realPath, out string? value))
+            foreach (var file in fileIndices)
             {
-                return value;
-            }
-            else if (File.Exists(path))
-            {
-                return path;
-            }
-            else if (!string.IsNullOrWhiteSpace(realPath))
-            {
-                var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = GetArchiveEntry(rel);
-                if (asset == default)
+                if (file.Key.StartsWith(path.Raw) && regex.IsMatch(file.Key))
                 {
-                    throw new FileNotFoundException(realPath);
+                    yield return file.Key;
                 }
-                throw new NotSupportedException();
             }
-
-            throw new FileNotFoundException(realPath);
         }
 
         /// <summary>
@@ -662,8 +553,7 @@
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
         /// <returns>An bundles of lines read from the file.</returns>
-        [Obsolete("Use AssetPath overload instead.")]
-        public static string[] ReadAllLines(string path)
+        public static string[] ReadAllLines(in AssetPath path)
         {
             var fs = OpenRead(path);
             var reader = new StreamReader(fs);
@@ -678,22 +568,7 @@
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
         /// <returns>An bundles of bytes read from the file.</returns>
-        [Obsolete("Use AssetPath overload instead.")]
-        public static byte[] ReadAllBytes(string path)
-        {
-            var fs = OpenRead(path);
-            var buffer = new byte[fs.Length];
-            fs.ReadExactly(buffer, 0, buffer.Length);
-            fs.Close();
-            return buffer;
-        }
-
-        /// <summary>
-        /// Reads all bytes of the file at the specified path.
-        /// </summary>
-        /// <param name="path">The path of the file to read.</param>
-        /// <returns>An bundles of bytes read from the file.</returns>
-        public static byte[] ReadAllBytes(AssetPath path)
+        public static byte[] ReadAllBytes(in AssetPath path)
         {
             var fs = OpenRead(path);
             var buffer = new byte[fs.Length];
@@ -707,8 +582,7 @@
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
         /// <returns>A <see cref="FileBlob"/> containing the file data.</returns>
-        [Obsolete("Use AssetPath overload instead.")]
-        public static unsafe FileBlob ReadBlob(string path)
+        public static unsafe FileBlob ReadBlob(in AssetPath path)
         {
             var fs = OpenRead(path);
             var blob = new FileBlob((nint)fs.Length);
@@ -723,7 +597,7 @@
         /// <param name="path">The path of the file to read.</param>
         /// <param name="lines">When this method returns, contains an bundles of lines read from the file if the file exists; otherwise, the default _value.</param>
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
-        public static bool TryReadAllLines(string path, [NotNullWhen(true)] out string[]? lines)
+        public static bool TryReadAllLines(in AssetPath path, [NotNullWhen(true)] out string[]? lines)
         {
             if (TryOpenRead(path, out var fs))
             {
@@ -735,22 +609,6 @@
 
             lines = null;
             return false;
-        }
-
-        /// <summary>
-        /// Reads all text from the file at the specified path.
-        /// </summary>
-        /// <param name="path">The path of the file to read.</param>
-        /// <returns>The content of the file as a string.</returns>
-        [Obsolete("Use AssetPath overload instead.")]
-        public static string ReadAllText(string path)
-        {
-            var fs = OpenRead(path);
-            var reader = new StreamReader(fs);
-            var result = reader.ReadToEnd();
-            reader.Close();
-            fs.Close();
-            return result;
         }
 
         /// <summary>
@@ -774,7 +632,7 @@
         /// <param name="path">The path of the file to read.</param>
         /// <param name="text">When this method returns, contains the content of the file as a string if the file exists; otherwise, the default _value.</param>
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
-        public static bool TryReadAllText(string path, [NotNullWhen(true)] out string? text)
+        public static bool TryReadAllText(in AssetPath path, [NotNullWhen(true)] out string? text)
         {
             if (TryOpenRead(path, out var fs))
             {
@@ -791,94 +649,11 @@
         /// </summary>
         /// <param name="path">The path of the file to open.</param>
         /// <returns>A <see cref="StreamReader"/> for reading the file.</returns>
-        [Obsolete("Use AssetPath overload instead.")]
-        public static StreamReader OpenText(string path)
-        {
-            var fs = OpenRead(path);
-            var reader = new StreamReader(fs);
-            return reader;
-        }
-
-        /// <summary>
-        /// Opens a <see cref="StreamReader"/> for reading the file at the specified path.
-        /// </summary>
-        /// <param name="path">The path of the file to open.</param>
-        /// <returns>A <see cref="StreamReader"/> for reading the file.</returns>
         public static StreamReader OpenText(in AssetPath path)
         {
             var fs = OpenRead(path);
             var reader = new StreamReader(fs);
             return reader;
-        }
-
-        /// <summary>
-        /// Opens a <see cref="Stream"/> for writing to the file at the specified path.
-        /// </summary>
-        /// <param name="path">The path of the file to open.</param>
-        /// <returns>A <see cref="Stream"/> for writing to the file.</returns>
-        public static Stream OpenWrite(string path)
-        {
-            initLock.Wait();
-            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
-            realPath = realPath.Replace(@"\\", @"\");
-
-            if (fileIndices.TryGetValue(realPath, out string? value))
-            {
-                var fs = File.OpenWrite(value);
-                return fs;
-            }
-            else if (File.Exists(path))
-            {
-                var fs = File.OpenWrite(path);
-                return fs;
-            }
-            else if (!string.IsNullOrWhiteSpace(realPath))
-            {
-                var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = GetArchiveEntry(rel);
-                if (asset == default)
-                {
-                    throw new FileNotFoundException(realPath);
-                }
-                throw new NotSupportedException();
-            }
-
-            throw new FileNotFoundException(realPath);
-        }
-
-        /// <summary>
-        /// Creates a <see cref="Stream"/> for writing a new file at the specified path.
-        /// </summary>
-        /// <param name="path">The path of the file to create.</param>
-        /// <returns>A <see cref="Stream"/> for writing the new file.</returns>
-        public static Stream Create(string path)
-        {
-            initLock.Wait();
-            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
-            realPath = realPath.Replace(@"\\", @"\");
-
-            if (fileIndices.TryGetValue(realPath, out string? value))
-            {
-                var fs = File.Create(value);
-                return fs;
-            }
-            else if (File.Exists(path))
-            {
-                var fs = File.Create(path);
-                return fs;
-            }
-            else if (!string.IsNullOrWhiteSpace(realPath))
-            {
-                var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = GetArchiveEntry(rel);
-                if (asset == default)
-                {
-                    throw new FileNotFoundException(realPath);
-                }
-                throw new NotSupportedException();
-            }
-
-            throw new FileNotFoundException(realPath);
         }
 
         private static AssetArchiveEntry? GetArchiveEntry(string path)

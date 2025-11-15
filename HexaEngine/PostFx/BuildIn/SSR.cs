@@ -4,8 +4,10 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics.Graph;
+    using HexaEngine.Lights;
     using HexaEngine.PostFx;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Screen Space Reflections (SSR) post-processing effect.
@@ -14,8 +16,11 @@
     public class SSR : PostFxBase
     {
 #nullable disable
-        private IGraphicsPipelineState pipelineSSR;
+        private IGraphicsPipelineState blendPSO;
+        private IComputePipelineState computePSO;
         private ConstantBuffer<SSRParams> ssrParamsBuffer;
+        private ResourceRef<Texture2D> temporalBuffer0;
+        private ResourceRef<Texture2D> temporalBuffer1;
 #nullable restore
 
         private SSRQualityPreset qualityPreset = SSRQualityPreset.Medium;
@@ -76,6 +81,11 @@
             public float Intensity;
 
             /// <summary>
+            /// Represents the dimensions as a two-dimensional vector.
+            /// </summary>
+            public Vector2 Dims;
+
+            /// <summary>
             /// Gets or sets the maximum number of rays for SSR.
             /// </summary>
             public int MaxRayCount;
@@ -95,18 +105,20 @@
             /// </summary>
             public float RayHitThreshold;
 
-            private Vector3 padding;
+            private float padding;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="SSRParams"/> struct.
             /// </summary>
             /// <param name="maxRayCount">The maximum number of rays for SSR.</param>
+            /// <param name="dims"></param>
             /// <param name="raySteps">The number of steps for SSR ray tracing.</param>
             /// <param name="rayStep">The step size for SSR ray tracing.</param>
             /// <param name="rayHitThreshold">The threshold for SSR ray hits.</param>
-            public SSRParams(int maxRayCount, int raySteps, float rayStep, float rayHitThreshold)
+            public SSRParams(int maxRayCount, Vector2 dims, int raySteps, float rayStep, float rayHitThreshold)
             {
                 MaxRayCount = maxRayCount;
+                Dims = dims;
                 RaySteps = raySteps;
                 RayStep = rayStep;
                 RayHitThreshold = rayHitThreshold;
@@ -223,7 +235,8 @@
                 .RunBefore<TAA>()
                 .RunBefore<DepthOfField>()
                 .RunBefore<ChromaticAberration>()
-                .RunBefore<Bloom>();
+                .RunBefore<Bloom>()
+                .AddBinding("VelocityBuffer");
         }
 
         /// <inheritdoc/>
@@ -240,27 +253,65 @@
                 shaderMacros.Add(new("SSR_RAY_STEP", rayStep));
                 shaderMacros.Add(new("SSR_RAY_HIT_THRESHOLD", rayHitThreshold));
             }
+            shaderMacros.Add(new("SSR_TEMPORAL", "1"));
 
             SSRParams ssrParams = default;
             ssrParams.Intensity = intensity;
+            ssrParams.Dims = new(width, height);
             ssrParams.MaxRayCount = maxRayCount;
             ssrParams.RaySteps = raySteps;
             ssrParams.RayStep = rayStep;
             ssrParams.RayHitThreshold = rayHitThreshold;
             ssrParamsBuffer = new(ssrParams, CpuAccessFlags.Write);
 
-            pipelineSSR = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            computePSO = device.CreateComputePipelineState(new ComputePipelineDesc()
+            {
+                Path = "HexaEngine.PostFx:shaders/effects/ssr/cs.hlsl",
+                Macros = [.. shaderMacros]
+            });
+
+            blendPSO = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.PostFx:shaders/effects/ssr/ps.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/ssr/blend.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
+
+            temporalBuffer0 = creator.CreateBuffer("SSR_TemporalBuffer0", creationFlags: ResourceCreationFlags.None);
+            temporalBuffer1 = creator.CreateBuffer("SSR_TemporalBuffer1");
         }
 
         public override void UpdateBindings()
         {
-            pipelineSSR.Bindings.SetSRV("inputTex", Input);
-            pipelineSSR.Bindings.SetCBV("SSRParams", ssrParamsBuffer);
+            computePSO.Bindings.SetSRV("inputTex", Input);
+            computePSO.Bindings.SetCBV("SSRParams", ssrParamsBuffer);
+            computePSO.Bindings.SetSRV("temporalBuffer", temporalBuffer0.Value);
+            computePSO.Bindings.SetUAV("outputTex", temporalBuffer1.Value);
+
+            blendPSO.Bindings.SetSRV("inputTex", Input);
+            blendPSO.Bindings.SetSRV("indirectTex", temporalBuffer0.Value);
+        }
+
+        public override void Update(IGraphicsContext context)
+        {
+            if (ssrParamsBuffer != null)
+            {
+                var viewport = temporalBuffer0.Value!.Viewport;
+                SSRParams ssrParams = default;
+                ssrParams.Intensity = intensity;
+                ssrParams.Dims = new(viewport.Width, viewport.Height);
+                ssrParams.MaxRayCount = maxRayCount;
+                ssrParams.RaySteps = raySteps;
+                ssrParams.RayStep = rayStep;
+                ssrParams.RayHitThreshold = rayHitThreshold;
+                ssrParamsBuffer.Update(context, ssrParams);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint CeilDiv(uint x, uint y)
+        {
+            return (x + y - 1) / y;
         }
 
         /// <inheritdoc/>
@@ -271,21 +322,18 @@
                 return;
             }
 
+            var viewport = temporalBuffer0.Value!.Viewport;
+            context.SetComputePipelineState(computePSO);
+            context.Dispatch(CeilDiv((uint)viewport.Width, 32), CeilDiv((uint)viewport.Height, 32), 1);
+            context.SetComputePipelineState(null);
+
+            context.CopyResource(temporalBuffer0.Value!, temporalBuffer1.Value!);
+
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            if (ssrParamsBuffer != null)
-            {
-                SSRParams ssrParams = default;
-                ssrParams.Intensity = intensity;
-                ssrParams.MaxRayCount = maxRayCount;
-                ssrParams.RaySteps = raySteps;
-                ssrParams.RayStep = rayStep;
-                ssrParams.RayHitThreshold = rayHitThreshold;
-                ssrParamsBuffer.Update(context, ssrParams);
-            }
-
-            context.SetGraphicsPipelineState(pipelineSSR);
+            context.SetGraphicsPipelineState(blendPSO);
             context.DrawInstanced(4, 1, 0, 0);
+
             context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
         }
@@ -293,7 +341,10 @@
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
-            pipelineSSR.Dispose();
+            blendPSO?.Dispose();
+            blendPSO = null;
+            computePSO?.Dispose();
+            computePSO = null;
             ssrParamsBuffer?.Dispose();
             ssrParamsBuffer = null;
         }

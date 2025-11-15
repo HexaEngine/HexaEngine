@@ -47,29 +47,22 @@ cbuffer SSRParams : register(b0)
 #define SSR_RAY_HIT_THRESHOLD 2.00f
 #endif
 
-SamplerState pointClampSampler : register(s0);
-SamplerState linearClampSampler : register(s1);
-SamplerState linearBorderSampler : register(s2);
+SamplerState pointClampSampler;
+SamplerState linearClampSampler;
+SamplerState linearBorderSampler;
 
-Texture2D inputTex : register(t0);
-Texture2D<float> depthTex : register(t1);
-Texture2D normalTex : register(t2);
+Texture2D inputTex;
+Texture2D<float> depthTex;
+Texture2D normalTex;
 Texture2D<float> linearDepthTex;
 
 #if SSR_TEMPORAL
-
 Texture2D velocityBufferTex;
 Texture2D temporalBuffer;
-
 #endif
 
-struct VertexOut
-{
-	float4 PosH : SV_POSITION;
-	float2 Tex : TEXCOORD;
-};
+RWTexture2D<float4> outputTex;
 
-// Hash function for temporal jitter
 float hash(uint n)
 {
 	n = (n << 13U) ^ n;
@@ -77,7 +70,6 @@ float hash(uint n)
 	return float(n & 0x7fffffffU) / float(0x7fffffff);
 }
 
-// Generate temporal jitter offset
 float GetTemporalJitter(uint frameIndex, uint2 pixelCoord)
 {
 	uint seed = frameIndex + pixelCoord.x * 1973 + pixelCoord.y * 9277;
@@ -103,8 +95,6 @@ float3 GetVSPos(float3 uv)
 
 float4 SSRBinarySearch(float3 vDir, inout float3 vHitCoord)
 {
-
-
 	for (int i = 0; i < SSR_RAY_STEPS; i++)
 	{
 		// linearize depth here
@@ -134,7 +124,6 @@ float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord, float jitter)
 
 	for (int i = 0; i < SSR_MAX_RAY_COUNT; i++)
 	{
-		// Apply temporal jitter to the step size
 		float stepMultiplier = 1.0f + jitter * 0.5f;
 		vHitCoord += vDir * stepMultiplier;
 
@@ -153,44 +142,56 @@ float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord, float jitter)
 		{
 			return SSRBinarySearch(vDir, vHitCoord);
 		}
-
-		vDir *= SSR_RAY_STEP;
 	}
 
 	return float4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-float4 main(VertexOut pin) : SV_TARGET
+[numthreads(32, 32, 1)]
+void main(uint3 dispatchThreadID : SV_DispatchThreadID)
 {
-	float depth = depthTex.Sample(linearClampSampler, pin.Tex);
+	uint2 pixelCoord = dispatchThreadID.xy;
+    int3 pixel = int3(pixelCoord, 0);
+	
+    if (pixelCoord.x >= dims.x || pixelCoord.y >= dims.y)
+        return;
+
+    float2 uv = pixelCoord / dims;
+    float depth = depthTex.Load(pixel);
 
 #if !SSR_TEMPORAL
-	float4 scene_color = inputTex.SampleLevel(linearClampSampler, pin.Tex, 0);
+    float4 scene_color = inputTex.Load(pixel);
 
 	if (depth == 1)
-		return scene_color;
+	{
+		outputTex[pixelCoord] = scene_color;
+		return;
+	}
 #else
-	
 	if (depth == 1)
-		return float4(0, 0, 0, 0);
+	{
+		outputTex[pixelCoord] = float4(0, 0, 0, 0);
+		return;
+	}
+	
+	float2 velocity = velocityBufferTex.Load(pixel).xy;
+    float2 prevUV = uv - velocity; // Velocity is already in UV space
+    float4 historyReflection = temporalBuffer.SampleLevel(linearClampSampler, prevUV, 0);
 	
 #endif
 
-	float4 normalRoughness = normalTex.Sample(linearBorderSampler, pin.Tex);
+	float4 normalRoughness = normalTex.SampleLevel(linearBorderSampler, uv, 0);
 	float roughness = normalRoughness.a;
 
 	float3 normal = normalRoughness.rgb;
 	normal = 2 * normal - 1.0;
 	normal = normalize(mul(normal, (float3x3)view));
 
-	float3 position = GetPositionVS(pin.Tex, depth);
+	float3 position = GetPositionVS(uv, depth);
 	float3 reflectDir = normalize(reflect(position, normal));
 
-	// Calculate temporal jitter
-	uint2 pixelCoord = uint2(pin.Tex * screenDim);
 	float jitter = GetTemporalJitter(frame, pixelCoord);
 
-	//Raycast with temporal jitter
 	float3 hitPos = position;
     float4 vCoords = SSRRayMarch(reflectDir, hitPos, jitter);
 
@@ -205,30 +206,21 @@ float4 main(VertexOut pin) : SV_TARGET
 
 	float3 reflectionColor = reflectionIntensity * inputTex.SampleLevel(linearClampSampler, vCoords.xy, 0).rgb * intensity;
 	
-#if SSR_TEMPORAL
-
-    float2 velocity = velocityBufferTex.SampleLevel(linearClampSampler, pin.Tex, 0).xy;
-    float2 prevUV = pin.Tex - velocity; // Velocity is already in UV space
-    
-    bool validHistory = all(prevUV > 0.0f) && all(prevUV < 1.0f);
-    
-    float4 historyReflection = temporalBuffer.SampleLevel(linearClampSampler, prevUV, 0);
-    
+#if SSR_TEMPORAL    
     float historyDepth = depthTex.SampleLevel(linearClampSampler, prevUV, 0);
     float depthDiff = abs(depth - historyDepth);
     
     const float depthThreshold = 0.02f;
     bool depthValid = depthDiff < depthThreshold;
     
-    // Adaptive blend factor
+	bool validHistory = all(prevUV > 0.0f) && all(prevUV < 1.0f);
     float blendFactor = (validHistory && depthValid) ? 0.05f : 1.0f;
     
     float3 finalReflection = lerp(historyReflection.rgb, reflectionColor, blendFactor);
-    
-    return float4(finalReflection, 1.0f) * (1 - roughness);
+    float4 output = float4(finalReflection, 1.0f) * (1 - roughness);
 	
+    outputTex[pixelCoord] = output;
 #else
-	
-    return scene_color + (1 - roughness) * max(0, float4(reflectionColor, 1.0f));
+    outputTex[pixelCoord] = scene_color + (1 - roughness) * max(0, float4(reflectionColor, 1.0f));
 #endif
 }

@@ -30,8 +30,10 @@
         GroupShared = 4,
 
         /// <summary>
-        /// Enable all flags.
+        /// Specifies the default behavior, combining lazy initialization and shared instance semantics.
         /// </summary>
-        All = LazyInit | Shared,
+        /// <remarks>This value is typically used when no specific configuration is provided, ensuring
+        /// that the instance is created only when needed and is shared across consumers.</remarks>
+        Default = LazyInit | Shared,
     }
 }
