@@ -346,8 +346,8 @@ namespace HexaEngine.Graphics.Renderers
 
             pso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "internal/imgui/vs.hlsl",
-                PixelShader = "internal/imgui/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/internal/imgui/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/internal/imgui/ps.hlsl",
             }, new()
             {
                 Blend = blendDesc,

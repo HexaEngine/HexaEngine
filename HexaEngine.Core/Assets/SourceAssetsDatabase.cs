@@ -5,6 +5,7 @@
     using HexaEngine.Core.UI;
     using System;
     using System.IO;
+    using System.Threading.Tasks;
 
     public static class FileHandleManager
     {
@@ -278,7 +279,7 @@
             guidToSourceAsset.Remove(metadata.Guid);
         }
 
-        private static void WatcherChanged(object sender, System.IO.FileSystemEventArgs e)
+        private static async void WatcherChanged(object sender, System.IO.FileSystemEventArgs e)
         {
             if (IsIgnored(e.FullPath))
             {
@@ -293,6 +294,8 @@
                     return;
                 }
             }
+
+            await Task.Delay(100);
 
             switch (e.ChangeType)
             {

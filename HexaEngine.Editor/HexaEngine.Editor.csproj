@@ -32,70 +32,70 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="assets\editor\fonts\arial.ttf">
+	  <None Update="assets\HexaEngine.Editor\fonts\arial.ttf">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\fonts\CascadiaMono.ttf">
+	  <None Update="assets\HexaEngine.Editor\fonts\CascadiaMono.ttf">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\fonts\fa-brands-400.ttf">
+	  <None Update="assets\HexaEngine.Editor\fonts\fa-brands-400.ttf">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\fonts\fa-regular-400.ttf">
+	  <None Update="assets\HexaEngine.Editor\fonts\fa-regular-400.ttf">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\fonts\fa-solid-900.ttf">
+	  <None Update="assets\HexaEngine.Editor\fonts\fa-solid-900.ttf">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\fonts\MaterialIcons-Regular.ttf">
+	  <None Update="assets\HexaEngine.Editor\fonts\MaterialIcons-Regular.ttf">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\fonts\MaterialSymbolsRounded.ttf">
+	  <None Update="assets\HexaEngine.Editor\fonts\MaterialSymbolsRounded.ttf">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\animation.png">
+	  <None Update="assets\HexaEngine.Editor\icons\animation.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\audio.png">
+	  <None Update="assets\HexaEngine.Editor\icons\audio.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\camera.png">
+	  <None Update="assets\HexaEngine.Editor\icons\camera.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\csharp.png">
+	  <None Update="assets\HexaEngine.Editor\icons\csharp.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\file.png">
+	  <None Update="assets\HexaEngine.Editor\icons\file.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\folder.png">
+	  <None Update="assets\HexaEngine.Editor\icons\folder.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\icons.xml">
+	  <None Update="assets\HexaEngine.Editor\icons\icons.xml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\image.png">
+	  <None Update="assets\HexaEngine.Editor\icons\image.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\light.png">
+	  <None Update="assets\HexaEngine.Editor\icons\light.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\logo.png">
+	  <None Update="assets\HexaEngine.Editor\icons\logo.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\material.png">
+	  <None Update="assets\HexaEngine.Editor\icons\material.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\model.png">
+	  <None Update="assets\HexaEngine.Editor\icons\model.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\prefab.png">
+	  <None Update="assets\HexaEngine.Editor\icons\prefab.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\scene.png">
+	  <None Update="assets\HexaEngine.Editor\icons\scene.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\editor\icons\terrain.png">
+	  <None Update="assets\HexaEngine.Editor\icons\terrain.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

@@ -39,7 +39,7 @@
             try
             {
                 var serializer = new XmlSerializer(typeof(IconsDescription));
-                var fs = FileSystem.OpenText("icons/icons.xml");
+                var fs = FileSystem.OpenText(new AssetPath("HexaEngine.Editor:icons/icons.xml"));
                 var desc = (IconsDescription)serializer.Deserialize(fs)!;
 
                 var theme = ThemeManager.ThemeName;

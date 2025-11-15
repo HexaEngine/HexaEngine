@@ -1,7 +1,7 @@
 #include "common.hlsl"
-#include "../../camera.hlsl"
-#include "../../shadow.hlsl"
-#include "../../math.hlsl"
+#include "HexaEngine.Core:/shaders/camera.hlsl"
+#include "HexaEngine.Core:/shaders/shadow.hlsl"
+#include "HexaEngine.Core:/shaders/math.hlsl"
 
 #include "directional.hlsl"
 #include "directionalCascades.hlsl"

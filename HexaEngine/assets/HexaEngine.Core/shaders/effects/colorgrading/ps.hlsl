@@ -1,5 +1,5 @@
-#include "../../colorUtils.hlsl"
-#include "../../display.hlsl"
+#include "HexaEngine.Core:shaders/colorUtils.hlsl"
+#include "HexaEngine.Core:shaders/display.hlsl"
 Texture2D inputTex : register(t0);
 Texture1DArray curvesTex : register(t1);
 SamplerState linearClampSampler : register(s0);

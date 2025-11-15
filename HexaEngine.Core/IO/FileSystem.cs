@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.IO
 {
+    using Hexa.NET.Logging;
     using HexaEngine.Core.IO.Binary.Archives;
     using System;
     using System.Buffers.Binary;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
@@ -19,8 +19,8 @@
     public static class FileSystem
     {
         private static readonly List<AssetArchive> bundles = new();
-        private static readonly Dictionary<string, string> fileIndices = new();
-        private static readonly HashSet<string> fileIndicesHashes = new();
+        private static readonly Dictionary<string, string> fileIndices = new(PathComparer.Instance);
+        private static readonly HashSet<string> fileIndicesHashes = new(PathComparer.Instance);
         private static readonly List<string> sources = new();
 
         private static readonly List<FileSystemWatcher> watchers = new();
@@ -127,6 +127,7 @@
             for (int j = 0; j < directories.Length; j++)
             {
                 string dir = directories[j];
+                var name = Path.GetFileName(dir);
                 string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
                 for (int ii = 0; ii < files.Length; ii++)
                 {
@@ -134,12 +135,9 @@
                     var abs = Path.GetFullPath(file);
                     var rel = Path.GetRelativePath(dir, abs);
 
-                    if (!fileIndices.TryAdd(rel, abs))
+                    if (fileIndices.TryAdd(rel, abs))
                     {
-                        fileIndices[rel] = abs;
-                    }
-                    else
-                    {
+                        fileIndices[$"{name}:{rel}"] = abs;
                         fileIndicesHashes.Add(rel);
                     }
                 }
@@ -320,6 +318,7 @@
         /// </summary>
         /// <param name="path">The path of the file for which to calculate the CRC32 hash.</param>
         /// <returns>The CRC32 hash of the file.</returns>
+        [Obsolete("Use AssetPath overload instead.")]
         public static uint GetCrc32Hash(string path)
         {
             initLock.Wait();
@@ -455,7 +454,7 @@
         public static VirtualStream OpenRead(AssetPath path)
         {
             initLock.Wait();
-            
+
             if (fileIndices.TryGetValue(path.Raw, out string? value))
             {
                 var fs = File.Open(value, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -470,7 +469,12 @@
             else
             {
                 var asset = GetArchiveEntry(path);
-                return asset == default ? throw new FileNotFoundException(path.Raw) : asset.GetStream();
+                if (asset == default)
+                {
+                    LoggerFactory.GetLogger(nameof(FileSystem)).Error($"File not found exception: {path.Path}");
+                    throw new FileNotFoundException(path.Raw);
+                }
+                return asset.GetStream();
             }
         }
 
@@ -516,7 +520,6 @@
             stream = default;
             return false;
         }
-
 
         /// <summary>
         /// Tries to open a virtual stream for reading the file at the specified path.
@@ -654,6 +657,7 @@
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
         /// <returns>An bundles of lines read from the file.</returns>
+        [Obsolete("Use AssetPath overload instead.")]
         public static string[] ReadAllLines(string path)
         {
             var fs = OpenRead(path);
@@ -669,6 +673,7 @@
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
         /// <returns>An bundles of bytes read from the file.</returns>
+        [Obsolete("Use AssetPath overload instead.")]
         public static byte[] ReadAllBytes(string path)
         {
             var fs = OpenRead(path);
@@ -697,6 +702,7 @@
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
         /// <returns>A <see cref="FileBlob"/> containing the file data.</returns>
+        [Obsolete("Use AssetPath overload instead.")]
         public static unsafe FileBlob ReadBlob(string path)
         {
             var fs = OpenRead(path);
@@ -731,6 +737,7 @@
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
         /// <returns>The content of the file as a string.</returns>
+        [Obsolete("Use AssetPath overload instead.")]
         public static string ReadAllText(string path)
         {
             var fs = OpenRead(path);
@@ -779,7 +786,20 @@
         /// </summary>
         /// <param name="path">The path of the file to open.</param>
         /// <returns>A <see cref="StreamReader"/> for reading the file.</returns>
+        [Obsolete("Use AssetPath overload instead.")]
         public static StreamReader OpenText(string path)
+        {
+            var fs = OpenRead(path);
+            var reader = new StreamReader(fs);
+            return reader;
+        }
+
+        /// <summary>
+        /// Opens a <see cref="StreamReader"/> for reading the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to open.</param>
+        /// <returns>A <see cref="StreamReader"/> for reading the file.</returns>
+        public static StreamReader OpenText(in AssetPath path)
         {
             var fs = OpenRead(path);
             var reader = new StreamReader(fs);

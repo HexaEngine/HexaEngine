@@ -1,4 +1,4 @@
-#include "../../camera.hlsl"
+#include "HexaEngine.Core:shaders/camera.hlsl"
 
 Texture2D<float> depthTex : register(t0);
 
