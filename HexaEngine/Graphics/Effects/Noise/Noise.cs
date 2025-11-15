@@ -67,8 +67,8 @@
 
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = $"effects/noise/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/noise/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 

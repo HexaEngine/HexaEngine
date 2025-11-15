@@ -243,22 +243,22 @@
 
             downsample = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/bloom/downsample/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/bloom/downsample/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             upsample = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/bloom/upsample/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/bloom/upsample/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             compose = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/bloom/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/bloom/ps.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 

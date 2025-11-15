@@ -40,8 +40,8 @@
             {
                 Pipeline = new()
                 {
-                    PixelShader = "effects/fog/ps.hlsl",
-                    VertexShader = "quad.hlsl",
+                    PixelShader = "HexaEngine.Core:shaders/effects/fog/ps.hlsl",
+                    VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
                 },
                 State = GraphicsPipelineStateDesc.DefaultFullscreen
             });

@@ -43,7 +43,7 @@
         {
             culling = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
-                Path = "compute/culling/culling.hlsl",
+                Path = "HexaEngine.Core:shaders/compute/culling/culling.hlsl",
             });
 
             instanceDataNoCull = new(CpuAccessFlags.Write);

@@ -30,7 +30,7 @@
         {
             computePipelineState = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
-                Path = "filter/reproject/cs.hlsl"
+                Path = "HexaEngine.Core:shaders/filter/reproject/cs.hlsl"
             });
             paramBuffer = new(CpuAccessFlags.Write);
             computePipelineState.Bindings.SetCBV("CBParams", paramBuffer);
@@ -42,7 +42,7 @@
 
             computePipelineState = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
-                Path = "filter/reproject/cs.hlsl"
+                Path = "HexaEngine.Core:shaders/filter/reproject/cs.hlsl"
             });
             paramBuffer = new(CpuAccessFlags.Write);
             computePipelineState.Bindings.SetCBV("CBParams", paramBuffer);

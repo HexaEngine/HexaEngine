@@ -70,8 +70,8 @@
             paramsBuffer = new(CpuAccessFlags.Write);
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/chromaticaberration/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/chromaticaberration/ps.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }
 

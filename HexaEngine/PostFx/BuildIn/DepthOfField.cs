@@ -242,14 +242,14 @@ namespace HexaEngine.PostFx.BuildIn
 
             coc = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/dof/coc.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/dof/coc.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             bokehGenerate = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
-                Path = "compute/bokeh/shader.hlsl",
+                Path = "HexaEngine.Core:shaders/compute/bokeh/shader.hlsl",
                 Macros = macros,
             });
 
@@ -258,16 +258,16 @@ namespace HexaEngine.PostFx.BuildIn
 
             dof = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/dof/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/dof/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             bokehDraw = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                PixelShader = "effects/bokeh/mask.hlsl",
-                GeometryShader = "effects/bokeh/gs.hlsl",
-                VertexShader = "effects/bokeh/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/bokeh/mask.hlsl",
+                GeometryShader = "HexaEngine.Core:shaders/effects/bokeh/gs.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/effects/bokeh/vs.hlsl",
             }, new GraphicsPipelineStateDesc()
             {
                 Topology = PrimitiveTopology.PointList,

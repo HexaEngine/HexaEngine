@@ -26,8 +26,8 @@ namespace HexaEngine.PostFx.BuildIn
             {
                 Pipeline = new()
                 {
-                    PixelShader = AssetShaderPath("effects/depth/ps.hlsl"),
-                    VertexShader = AssetShaderPath("quad.hlsl"),
+                    PixelShader = "HexaEngine.Core:shaders/effects/depth/ps.hlsl",
+                    VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
                 },
                 State = GraphicsPipelineStateDesc.DefaultFullscreen
             });
@@ -44,7 +44,7 @@ namespace HexaEngine.PostFx.BuildIn
             context.SetRenderTarget(buffer.Value!.RTV, null);
             context.SetGraphicsPipelineState(pso.Value!);
             context.SetViewport(Viewport);
-            context.DrawInstanced(4, 1, 0, 0); 
+            context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
             context.SetRenderTarget(null, null);
         }

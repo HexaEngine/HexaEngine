@@ -411,8 +411,8 @@
 
             GraphicsPipelineDescEx pipelineDescForward = new GraphicsPipelineDesc()
             {
-                VertexShader = $"forward/geometry/vs.hlsl",
-                PixelShader = $"forward/geometry/ps.hlsl",
+                VertexShader = $"HexaEngine.Core:shaders/forward/geometry/vs.hlsl",
+                PixelShader = $"HexaEngine.Core:shaders/forward/geometry/ps.hlsl",
                 Macros = macros
             };
 
@@ -426,8 +426,8 @@
 
             GraphicsPipelineDescEx pipelineDescDeferred = new GraphicsPipelineDesc()
             {
-                VertexShader = $"deferred/geometry/vs.hlsl",
-                PixelShader = $"deferred/geometry/ps.hlsl",
+                VertexShader = $"HexaEngine.Core:shaders/deferred/geometry/vs.hlsl",
+                PixelShader = $"HexaEngine.Core:shaders/deferred/geometry/ps.hlsl",
                 Macros = macros
             };
 
@@ -441,7 +441,7 @@
 
             GraphicsPipelineDesc pipelineDescDepthOnly = new()
             {
-                VertexShader = $"deferred/geometry/vs.hlsl",
+                VertexShader = $"HexaEngine.Core:shaders/deferred/geometry/vs.hlsl",
                 Macros = macros
             };
 
@@ -455,14 +455,14 @@
 
             if (tessellation)
             {
-                pipelineDescForward.HullShader = ShaderSource.FromFile($"forward/geometry/hs.hlsl");
-                pipelineDescForward.DomainShader = ShaderSource.FromFile($"forward/geometry/ds.hlsl");
+                pipelineDescForward.HullShader = ShaderSource.FromFile($"HexaEngine.Core:shaders/forward/geometry/hs.hlsl");
+                pipelineDescForward.DomainShader = ShaderSource.FromFile($"HexaEngine.Core:shaders/forward/geometry/ds.hlsl");
 
-                pipelineDescDeferred.HullShader = ShaderSource.FromFile($"deferred/geometry/hs.hlsl");
-                pipelineDescDeferred.DomainShader = ShaderSource.FromFile($"deferred/geometry/ds.hlsl");
+                pipelineDescDeferred.HullShader = ShaderSource.FromFile($"HexaEngine.Core:shaders/deferred/geometry/hs.hlsl");
+                pipelineDescDeferred.DomainShader = ShaderSource.FromFile($"HexaEngine.Core:shaders/deferred/geometry/ds.hlsl");
 
-                pipelineDescDepthOnly.HullShader = $"deferred/geometry/hs.hlsl";
-                pipelineDescDepthOnly.DomainShader = $"deferred/geometry/ds.hlsl";
+                pipelineDescDepthOnly.HullShader = $"HexaEngine.Core:shaders/deferred/geometry/hs.hlsl";
+                pipelineDescDepthOnly.DomainShader = $"HexaEngine.Core:shaders/deferred/geometry/ds.hlsl";
 
                 pipelineStateDescForward.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 pipelineStateDescDeferred.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
@@ -471,24 +471,24 @@
 
             if (alphaTest)
             {
-                pipelineDescDepthOnly.PixelShader = $"deferred/geometry/ps.hlsl";
+                pipelineDescDepthOnly.PixelShader = $"HexaEngine.Core:shaders/deferred/geometry/ps.hlsl";
                 pipelineDescDepthOnly.Macros = [.. macros, new("DEPTH_TEST_ONLY")];
             }
 
             if (hasSurfaceShader)
             {
-                BuildSurfaceShader(material.Guid, surfaceVersion!, surfaceShader!, ref pipelineDescDeferred, "deferred/geometry/surface.hlsl");
-                BuildSurfaceShader(material.Guid, surfaceVersion!, surfaceShader!, ref pipelineDescForward, "forward/geometry/surface.hlsl");
+                BuildSurfaceShader(material.Guid, surfaceVersion!, surfaceShader!, ref pipelineDescDeferred, "HexaEngine.Core:shaders/deferred/geometry/surface.hlsl");
+                BuildSurfaceShader(material.Guid, surfaceVersion!, surfaceShader!, ref pipelineDescForward, "HexaEngine.Core:shaders/forward/geometry/surface.hlsl");
             }
 
             if ((flags & ModelMaterialShaderFlags.Forward) != 0)
             {
-                passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward, true, "forward/geometry/surface.hlsl"));
+                passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward, true, "HexaEngine.Core:shaders/forward/geometry/surface.hlsl"));
             }
 
             if ((flags & ModelMaterialShaderFlags.Deferred) != 0)
             {
-                passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred, true, "deferred/geometry/surface.hlsl"));
+                passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred, true, "HexaEngine.Core:shaders/deferred/geometry/surface.hlsl"));
             }
 
             if ((flags & ModelMaterialShaderFlags.DepthTest) != 0)
@@ -506,9 +506,9 @@
 
                 GraphicsPipelineDesc csmPipelineDesc = new()
                 {
-                    VertexShader = "forward/geometry/csm/vs.hlsl",
-                    GeometryShader = "forward/geometry/csm/gs.hlsl",
-                    PixelShader = "forward/geometry/csm/ps.hlsl",
+                    VertexShader = "HexaEngine.Core:shaders/forward/geometry/csm/vs.hlsl",
+                    GeometryShader = "HexaEngine.Core:shaders/forward/geometry/csm/gs.hlsl",
+                    PixelShader = "HexaEngine.Core:shaders/forward/geometry/csm/ps.hlsl",
                     Macros = shadowMacros
                 };
 
@@ -522,8 +522,8 @@
 
                 GraphicsPipelineDesc osmPipelineDesc = new()
                 {
-                    VertexShader = "forward/geometry/dpsm/vs.hlsl",
-                    PixelShader = "forward/geometry/dpsm/ps.hlsl",
+                    VertexShader = "HexaEngine.Core:shaders/forward/geometry/dpsm/vs.hlsl",
+                    PixelShader = "HexaEngine.Core:shaders/forward/geometry/dpsm/ps.hlsl",
                     Macros = shadowMacros
                 };
 
@@ -537,8 +537,8 @@
 
                 GraphicsPipelineDesc psmPipelineDesc = new()
                 {
-                    VertexShader = "forward/geometry/psm/vs.hlsl",
-                    PixelShader = "forward/geometry/psm/ps.hlsl",
+                    VertexShader = "HexaEngine.Core:shaders/forward/geometry/psm/vs.hlsl",
+                    PixelShader = "HexaEngine.Core:shaders/forward/geometry/psm/ps.hlsl",
                     Macros = shadowMacros
                 };
 

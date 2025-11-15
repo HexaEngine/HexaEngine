@@ -42,8 +42,8 @@
 
             horizontal = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/horizontal.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/blur/horizontal.hlsl",
                 Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
@@ -53,8 +53,8 @@
 
             vertical = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/vertical.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/blur/vertical.hlsl",
                 Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
@@ -83,8 +83,8 @@
 
             horizontal = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/horizontal.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/blur/horizontal.hlsl",
                 Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
@@ -94,8 +94,8 @@
 
             vertical = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/vertical.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/blur/vertical.hlsl",
                 Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
@@ -121,8 +121,8 @@
 
             horizontal = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/horizontal.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/blur/horizontal.hlsl",
                 Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
@@ -132,8 +132,8 @@
 
             vertical = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/vertical.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/blur/vertical.hlsl",
                 Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
@@ -159,8 +159,8 @@
 
             horizontal = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/horizontal.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/blur/horizontal.hlsl",
                 Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {
@@ -170,8 +170,8 @@
 
             vertical = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/blur/vertical.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/blur/vertical.hlsl",
                 Macros = [new ShaderMacro("GAUSSIAN_RADIUS", (int)radius)]
             }, new()
             {

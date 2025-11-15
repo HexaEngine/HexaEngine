@@ -77,10 +77,10 @@
             if (version.Value == MaterialNodeConverter.SurfaceVersion)
             {
                 StringBuilder sb = new();
-                sb.AppendLine($"#include \"../../material.hlsl\"");
-                sb.AppendLine($"#include \"../../geometry.hlsl\"");
+                sb.AppendLine($"#include \"HexaEngine.Core:shaders/material.hlsl\"");
+                sb.AppendLine($"#include \"HexaEngine.Core:shaders/geometry.hlsl\"");
                 sb.AppendLine(shader.Value);
-                sb.AppendLine(FileSystem.ReadAllText(Paths.CurrentShaderPath + baseShader));
+                sb.AppendLine(FileSystem.ReadAllText(new AssetPath(baseShader)));
                 pipelineDesc.PixelShader = ShaderSource.FromCode($"{guid}", sb.ToString(), Path.GetDirectoryName(baseShader));
             }
         }

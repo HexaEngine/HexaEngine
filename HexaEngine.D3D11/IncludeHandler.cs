@@ -24,10 +24,43 @@
 
             if (!assetPath.HasNamespace)
             {
-                assetPath = new(Path.Combine(basePath, fileName));
+                // Count ../ at the beginning
+                int upCount = 0;
+                int fileNameStart = 0;
+                while (fileNameStart + 2 < fileName.Length && fileName[fileNameStart] == '.' && fileName[fileNameStart + 1] == '.' && (fileName[fileNameStart + 2] == '/' || fileName[fileNameStart + 2] == '\\'))
+                {
+                    upCount++;
+                    fileNameStart += 3;
+                }
+
+                // Go back upCount directories from basePath
+                int basePathEnd = basePath.Length;
+                for (int j = 0; j < upCount; j++)
+                {
+                    if (basePathEnd > 0 && (basePath[basePathEnd - 1] == '/' || basePath[basePathEnd - 1] == '\\'))
+                        basePathEnd--;
+                    while (basePathEnd > 0 && basePath[basePathEnd - 1] != '/' && basePath[basePathEnd - 1] != '\\')
+                        basePathEnd--;
+                }
+
+                var baseSpan = basePath.AsSpan(0, basePathEnd);
+                if (baseSpan.EndsWith('/') || baseSpan.EndsWith('\\'))
+                {
+                    baseSpan = baseSpan[..^1];
+                }
+                string absPath = $"{baseSpan}/{fileName.AsSpan(fileNameStart)}";
+                assetPath = new(absPath);
             }
-           
-            var data = FileSystem.ReadAllBytes(assetPath);
+
+            byte[] data;
+            try
+            {
+                data = FileSystem.ReadAllBytes(assetPath);
+            }
+            catch (FileNotFoundException)
+            {
+                data = Encoding.UTF8.GetBytes($"#error File '{assetPath.Raw}' not found");
+            }
 
             paths.Push(basePath);
             var dirName = Path.GetDirectoryName(assetPath.Path);

@@ -1,4 +1,4 @@
-#include "HexaEngine.Core:shaders/camera.hlsl"
+#include "../../camera.hlsl"
 
 Texture2D<float> sourceTex;
 

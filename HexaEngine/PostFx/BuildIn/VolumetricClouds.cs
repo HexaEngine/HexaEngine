@@ -57,8 +57,8 @@
             this.device = device;
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/clouds/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/clouds/ps.hlsl",
             }, new()
             {
                 Blend = BlendDescription.Opaque,

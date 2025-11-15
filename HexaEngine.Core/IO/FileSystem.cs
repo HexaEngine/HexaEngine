@@ -440,7 +440,12 @@
             {
                 var asset = GetArchiveEntry(realPath);
 
-                return asset == default ? throw new FileNotFoundException(realPath) : asset.GetStream();
+                if (asset == default)
+                {
+                    throw new FileNotFoundException(realPath);
+                }
+
+                return asset.GetStream();
             }
 
             throw new FileNotFoundException(realPath);

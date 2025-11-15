@@ -30,8 +30,8 @@
 
             skybox = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "forward/sky/vs.hlsl",
-                PixelShader = "forward/sky/skybox.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/sky/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/sky/skybox.hlsl",
             }, new()
             {
                 Rasterizer = RasterizerDescription.CullNone,
@@ -44,8 +44,8 @@
 
             uniformColorSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "forward/sky/vs.hlsl",
-                PixelShader = "forward/sky/uniformColorSky.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/sky/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/sky/uniformColorSky.hlsl",
             }, new()
             {
                 Rasterizer = RasterizerDescription.CullNone,
@@ -58,8 +58,8 @@
 
             hoseWilkieSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "forward/sky/vs.hlsl",
-                PixelShader = "forward/sky/hoseWilkieSky.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/sky/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/sky/hoseWilkieSky.hlsl",
             }, new()
             {
                 Rasterizer = RasterizerDescription.CullNone,
@@ -72,8 +72,8 @@
 
             preethamSky = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "forward/sky/vs.hlsl",
-                PixelShader = "forward/sky/preethamSky.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/sky/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/sky/preethamSky.hlsl",
             }, new()
             {
                 Rasterizer = RasterizerDescription.CullNone,

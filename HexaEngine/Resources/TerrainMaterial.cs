@@ -176,8 +176,8 @@
 
             GraphicsPipelineDesc pipelineDescForward = new()
             {
-                VertexShader = $"forward/terrain/lit/vs.hlsl",
-                PixelShader = $"forward/terrain/lit/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/terrain/lit/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/terrain/lit/ps.hlsl",
                 Macros = macros,
             };
 
@@ -192,8 +192,8 @@
 
             GraphicsPipelineDesc pipelineDescDeferred = new()
             {
-                VertexShader = $"deferred/terrain/vs.hlsl",
-                PixelShader = $"deferred/terrain/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/deferred/terrain/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/deferred/terrain/ps.hlsl",
                 Macros = macros,
             };
 
@@ -207,8 +207,8 @@
 
             GraphicsPipelineDesc pipelineDescDepth = new()
             {
-                VertexShader = $"forward/terrain/depth/vs.hlsl",
-                PixelShader = $"forward/terrain/depth/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/terrain/depth/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/terrain/depth/ps.hlsl",
                 Macros = macros,
             };
 
@@ -222,24 +222,24 @@
 
             if (tessellate)
             {
-                pipelineDescForward.HullShader = $"forward/terrain/lit/hs.hlsl";
-                pipelineDescForward.DomainShader = $"forward/terrain/lit/ds.hlsl";
+                pipelineDescForward.HullShader = "HexaEngine.Core:shaders/forward/terrain/lit/hs.hlsl";
+                pipelineDescForward.DomainShader = "HexaEngine.Core:shaders/forward/terrain/lit/ds.hlsl";
                 pipelineStateDescForward.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                pipelineDescDeferred.HullShader = $"deferred/terrain/hs.hlsl";
-                pipelineDescDeferred.DomainShader = $"deferred/terrain/ds.hlsl";
+                pipelineDescDeferred.HullShader = "HexaEngine.Core:shaders/deferred/terrain/hs.hlsl";
+                pipelineDescDeferred.DomainShader = "HexaEngine.Core:shaders/deferred/terrain/ds.hlsl";
                 pipelineStateDescDeferred.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                pipelineDescDepth.HullShader = "forward/terrain/depth/hs.hlsl";
-                pipelineDescDepth.DomainShader = "forward/terrain/depth/ds.hlsl";
+                pipelineDescDepth.HullShader = "HexaEngine.Core:shaders/forward/terrain/depth/hs.hlsl";
+                pipelineDescDepth.DomainShader = "HexaEngine.Core:shaders/forward/terrain/depth/ds.hlsl";
             }
 
-            passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward, false, "forward/terrain/surface.hlsl"));
-            passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred, false, "deferred/terrain/surface.hlsl"));
+            passes.Add(new("Forward", pipelineDescForward, pipelineStateDescForward, false, "HexaEngine.Core:shaders/forward/terrain/surface.hlsl"));
+            passes.Add(new("Deferred", pipelineDescDeferred, pipelineStateDescDeferred, false, "HexaEngine.Core:shaders/deferred/terrain/surface.hlsl"));
             passes.Add(new("DepthOnly", pipelineDescDepth, pipelineStateDescDepth, false));
 
             GraphicsPipelineDesc pipelineDescUnlit = new()
             {
-                VertexShader = $"deferred/terrain/unlit/vs.hlsl",
-                PixelShader = $"deferred/terrain/unlit/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/deferred/terrain/unlit/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/deferred/terrain/unlit/ps.hlsl",
                 Macros = macros,
             };
 
@@ -253,9 +253,9 @@
 
             GraphicsPipelineDesc csmPipelineDesc = new()
             {
-                VertexShader = "forward/terrain/csm/vs.hlsl",
-                GeometryShader = "forward/terrain/csm/gs.hlsl",
-                PixelShader = "forward/terrain/csm/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/terrain/csm/vs.hlsl",
+                GeometryShader = "HexaEngine.Core:shaders/forward/terrain/csm/gs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/terrain/csm/ps.hlsl",
                 Macros = shadowMacros,
             };
 
@@ -269,8 +269,8 @@
 
             GraphicsPipelineDesc osmPipelineDesc = new()
             {
-                VertexShader = "forward/terrain/osm/vs.hlsl",
-                PixelShader = "forward/terrain/osm/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/terrain/osm/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/terrain/osm/ps.hlsl",
                 Macros = shadowMacros,
             };
 
@@ -284,8 +284,8 @@
 
             GraphicsPipelineDesc psmPipelineDesc = new()
             {
-                VertexShader = "forward/terrain/psm/vs.hlsl",
-                PixelShader = "forward/terrain/psm/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/terrain/psm/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/terrain/psm/ps.hlsl",
                 Macros = shadowMacros,
             };
 
