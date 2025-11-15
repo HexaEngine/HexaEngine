@@ -1,14 +1,12 @@
 #include "HexaEngine.Core:shaders/camera.hlsl"
 
-Texture2D<float> depthTex : register(t0);
+Texture2D<float> depthTex;
 
-SamplerState linearWrapSampler : register(s0);
+SamplerState linearWrapSampler;
 
 cbuffer VelocityBufferParams
 {
-#ifndef Scale
     float Scale;
-#endif
 };
 
 struct VSOut
@@ -41,7 +39,7 @@ float2 main(VSOut pin) : SV_Target0
 
     prev_clip_space_position /= prev_clip_space_position.w;
 
-    float2 velocity = (clip_space_position - prev_clip_space_position).xy / Scale;
+    float2 velocity = (clip_space_position.xy - prev_clip_space_position.xy) / Scale;
 
     return velocity;
 }

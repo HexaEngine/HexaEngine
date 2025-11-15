@@ -86,8 +86,8 @@
 
         public override void Draw(IGraphicsContext context)
         {
-            context.SetRenderTarget(Velocity.Value?.RTV, null);
-            context.SetViewport(Viewport);
+            context.SetRenderTarget(Velocity.Value!.RTV, null);
+            context.SetViewport(Velocity.Value!.Viewport);
             context.SetGraphicsPipelineState(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
