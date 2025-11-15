@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface ICoreWindow </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface ICoreWindow ">
+      
+      <meta name="description" content="Represents a core window.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Windows_ICoreWindow.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Windows.ICoreWindow%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Windows.ICoreWindow">
+
+
+
+  <h1 id="HexaEngine_Core_Windows_ICoreWindow" data-uid="HexaEngine.Core.Windows.ICoreWindow" class="text-break">
+Interface ICoreWindow  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Windows.html">Windows</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a core window.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface ICoreWindow : IWindow, INativeWindow, IDisposable</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_ContentScale">IWindow.ContentScale</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Bordered">IWindow.Bordered</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Focused">IWindow.Focused</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Height">IWindow.Height</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Hovering">IWindow.Hovering</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_LockCursor">IWindow.LockCursor</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Resizable">IWindow.Resizable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_State">IWindow.State</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Title">IWindow.Title</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Viewport">IWindow.Viewport</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Width">IWindow.Width</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_WindowID">IWindow.WindowID</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_X">IWindow.X</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Y">IWindow.Y</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_BorderSize">IWindow.BorderSize</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Closed">IWindow.Closed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Closing">IWindow.Closing</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Enter">IWindow.Enter</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Exposed">IWindow.Exposed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_FocusGained">IWindow.FocusGained</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_FocusLost">IWindow.FocusLost</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Hidden">IWindow.Hidden</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_HitTest">IWindow.HitTest</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_KeyboardCharInput">IWindow.KeyboardCharInput</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_KeyboardInput">IWindow.KeyboardInput</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Leave">IWindow.Leave</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Maximized">IWindow.Maximized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Minimized">IWindow.Minimized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_MouseButtonInput">IWindow.MouseButtonInput</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_MouseMotionInput">IWindow.MouseMotionInput</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_MouseWheelInput">IWindow.MouseWheelInput</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_TouchInput">IWindow.TouchInput</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_TouchMotionInput">IWindow.TouchMotionInput</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Moved">IWindow.Moved</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Resized">IWindow.Resized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Restored">IWindow.Restored</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Shown">IWindow.Shown</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_SizeChanged">IWindow.SizeChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_DropBegin">IWindow.DropBegin</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_DropFile">IWindow.DropFile</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_DropText">IWindow.DropText</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_DropComplete">IWindow.DropComplete</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_HDRStateChanged">IWindow.HDRStateChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Show">IWindow.Show()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Hide">IWindow.Hide()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Close">IWindow.Close()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_Capture">IWindow.Capture()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_ReleaseCapture">IWindow.ReleaseCapture()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_SetTextInputRect_Hexa_NET_Mathematics_Rectangle_HexaEngine_Core_Windows_CursorType_">IWindow.SetTextInputRect(Rectangle, CursorType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_StopTextInput">IWindow.StopTextInput()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_StartTextInput">IWindow.StartTextInput()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_VulkanCreateSurface_Hexa_NET_SDL3_VkInstance_Hexa_NET_SDL3_VkAllocationCallbacks__Hexa_NET_SDL3_VkSurfaceKHR__">IWindow.VulkanCreateSurface(VkInstance, VkAllocationCallbacks*, VkSurfaceKHR*)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_OpenGLCreateContext">IWindow.OpenGLCreateContext()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_GetWindow">IWindow.GetWindow()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.IWindow.html#HexaEngine_Core_Windows_IWindow_MousePosition">IWindow.MousePosition</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_Kind">INativeWindow.Kind</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_X11">INativeWindow.X11</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_Cocoa">INativeWindow.Cocoa</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_Wayland">INativeWindow.Wayland</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_WinRT">INativeWindow.WinRT</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_UIKit">INativeWindow.UIKit</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_Win32">INativeWindow.Win32</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_Vivante">INativeWindow.Vivante</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_Android">INativeWindow.Android</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_Glfw">INativeWindow.Glfw</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_Sdl">INativeWindow.Sdl</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_DXHandle">INativeWindow.DXHandle</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_EGL">INativeWindow.EGL</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Windows.INativeWindow.html#HexaEngine_Core_Windows_INativeWindow_Native">INativeWindow.Native</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable.dispose">IDisposable.Dispose()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Windows_ICoreWindow_AudioDevice_" data-uid="HexaEngine.Core.Windows.ICoreWindow.AudioDevice*"></a>
+
+  <h3 id="HexaEngine_Core_Windows_ICoreWindow_AudioDevice" data-uid="HexaEngine.Core.Windows.ICoreWindow.AudioDevice">
+  AudioDevice
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the audio device associated with the core window.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IAudioDevice AudioDevice { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IAudioDevice.html">IAudioDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Windows_ICoreWindow_Dispatcher_" data-uid="HexaEngine.Core.Windows.ICoreWindow.Dispatcher*"></a>
+
+  <h3 id="HexaEngine_Core_Windows_ICoreWindow_Dispatcher" data-uid="HexaEngine.Core.Windows.ICoreWindow.Dispatcher">
+  Dispatcher
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the render dispatcher associated with the render window.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IThreadDispatcher Dispatcher { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IThreadDispatcher</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Windows_ICoreWindow_GraphicsContext_" data-uid="HexaEngine.Core.Windows.ICoreWindow.GraphicsContext*"></a>
+
+  <h3 id="HexaEngine_Core_Windows_ICoreWindow_GraphicsContext" data-uid="HexaEngine.Core.Windows.ICoreWindow.GraphicsContext">
+  GraphicsContext
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the graphics context associated with the core window.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsContext GraphicsContext { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Windows_ICoreWindow_GraphicsDevice_" data-uid="HexaEngine.Core.Windows.ICoreWindow.GraphicsDevice*"></a>
+
+  <h3 id="HexaEngine_Core_Windows_ICoreWindow_GraphicsDevice" data-uid="HexaEngine.Core.Windows.ICoreWindow.GraphicsDevice">
+  GraphicsDevice
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the graphics device associated with the core window.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsDevice GraphicsDevice { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Windows_ICoreWindow_RenderViewport_" data-uid="HexaEngine.Core.Windows.ICoreWindow.RenderViewport*"></a>
+
+  <h3 id="HexaEngine_Core_Windows_ICoreWindow_RenderViewport" data-uid="HexaEngine.Core.Windows.ICoreWindow.RenderViewport">
+  RenderViewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the viewport for rendering operations.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Viewport RenderViewport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Windows_ICoreWindow_SwapChain_" data-uid="HexaEngine.Core.Windows.ICoreWindow.SwapChain*"></a>
+
+  <h3 id="HexaEngine_Core_Windows_ICoreWindow_SwapChain" data-uid="HexaEngine.Core.Windows.ICoreWindow.SwapChain">
+  SwapChain
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the swap chain associated with the core window.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ISwapChain SwapChain { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ISwapChain.html">ISwapChain</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Windows_ICoreWindow_WindowViewport_" data-uid="HexaEngine.Core.Windows.ICoreWindow.WindowViewport*"></a>
+
+  <h3 id="HexaEngine_Core_Windows_ICoreWindow_WindowViewport" data-uid="HexaEngine.Core.Windows.ICoreWindow.WindowViewport">
+  WindowViewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the viewport for the window.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Viewport WindowViewport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Windows_ICoreWindow_Initialize_" data-uid="HexaEngine.Core.Windows.ICoreWindow.Initialize*"></a>
+
+  <h3 id="HexaEngine_Core_Windows_ICoreWindow_Initialize_HexaEngine_Core_Audio_IAudioDevice_HexaEngine_Core_Graphics_IGraphicsDevice_" data-uid="HexaEngine.Core.Windows.ICoreWindow.Initialize(HexaEngine.Core.Audio.IAudioDevice,HexaEngine.Core.Graphics.IGraphicsDevice)">
+  Initialize(IAudioDevice, IGraphicsDevice)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes the render window with the specified audio and graphics devices.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>audioDevice</code> <a class="xref" href="HexaEngine.Core.Audio.IAudioDevice.html">IAudioDevice</a></dt>
+    <dd><p>The audio device to use.</p>
+</dd>
+    <dt><code>graphicsDevice</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd><p>The graphics device to use.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Windows_ICoreWindow_Render_" data-uid="HexaEngine.Core.Windows.ICoreWindow.Render*"></a>
+
+  <h3 id="HexaEngine_Core_Windows_ICoreWindow_Render_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Core.Windows.ICoreWindow.Render(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Render(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Renders the graphics using the specified graphics context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Render(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context to use for rendering.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Windows/ICoreWindow.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
