@@ -79,16 +79,76 @@
 		<None Update="assets\HexaEngine.Core\shaders\effects\blur\gaussian7x7.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\HexaEngine.PostFx\shaders\quad.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\bokeh\circle.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\bokeh\cross.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\bokeh\hex.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\bokeh\oct.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.Core\textures\brdflut.raw">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\clouds\cloud.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\clouds\weather.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\clouds\worley.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lens\tex1.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lens\tex2.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lens\tex3.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lens\tex4.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lens\tex5.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lens\tex6.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lens\tex7.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lens\tex8.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lens\tex9.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\lut.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\HexaEngine.PostFx\textures\sun\sunsprite.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\effects\copy\reverse.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\depth\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\depth\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\dof\coc.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\dof\coc.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\compute\volume\shader.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\compute\volume\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\deferred\geometry\ds.hlsl">
@@ -109,13 +169,13 @@
 		<None Update="assets\HexaEngine.Core\shaders\effects\blur\gaussian3x3.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\ssgi\blend.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\ssgi\blend.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\ssgi\denoise.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\ssgi\denoise.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\ssgi\ps2.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\ssgi\ps2.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\filter\clear\cs.hlsl">
@@ -217,76 +277,76 @@
 		<None Update="assets\HexaEngine.Core\shaders\compute\downsample\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\autoexposure\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\autoexposure\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\bentNormals\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\bentNormals\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\bloom\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\bloom\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\chromaticaberration\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\chromaticaberration\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\colorUtils.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\colorgrading\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\colorgrading\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\fog\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\fog\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\grain\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\grain\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\gtao\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\lensflare\blend.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\lensflare\blend.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\lensflare\lens.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\lensflare\lens.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\lensflare\downsample.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\lensflare\downsample.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\temporal.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\temporal.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\ssgi\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\ssgi\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\ssr\dda.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\ssr\dda.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\ssr\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\vignette\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\vignette\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\volumetric\common.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\volumetric\common.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\volumetric\directional.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\volumetric\directional.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\volumetric\directionalCascades.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\volumetric\directionalCascades.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\volumetric\point.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\volumetric\point.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\volumetric\blur.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\volumetric\blur.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\volumetric\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\volumetric\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\volumetric\spot.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\volumetric\spot.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\filter\crossToCube\ps.hlsl">
@@ -334,7 +394,7 @@
 		<None Update="assets\HexaEngine.Core\shaders\math.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\compute\bokeh\shader.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\compute\bokeh\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\compute\copy\drawArgs.hlsl">
@@ -346,10 +406,10 @@
 		<None Update="assets\HexaEngine.Core\shaders\compute\clustered\building.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\compute\lumaAvg\shader.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\compute\lumaAvg\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\compute\luma\shader.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\compute\luma\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\compute\occlusion\sort.hlsl">
@@ -405,88 +465,88 @@
 		<None Update="assets\HexaEngine.Core\shaders\effects\blur\vertical.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\bokeh\gs.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\bokeh\gs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\bokeh\mask.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\bokeh\mask.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\bokeh\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\bokeh\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\bokeh\vs.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\bokeh\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\clouds\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\clouds\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\godrays\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\godrays\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\lut\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\lut\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\motionblur\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\motionblur\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\common.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\common.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\hash1d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\hash1d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\hash3d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\hash3d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\perlin4d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\perlin4d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\perlin3d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\perlin3d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\psrdnoise2d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\psrdnoise2d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\simplex4d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\simplex4d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\simplex3dgrad.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\simplex3dgrad.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\simplex3d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\simplex3d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\simplex2d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\simplex2d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\perlin2d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\perlin2d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\cellular3d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\cellular3d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\cellular2x2x2.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\cellular2x2x2.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\cellular2x2.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\cellular2x2.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\cellular2d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\cellular2d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\blue2d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\blue2d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\ssao\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\ssao\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\taa\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\taa\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\velocity\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\velocity\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\forward\billboard\ps.hlsl">
@@ -549,10 +609,10 @@
 		<None Update="assets\HexaEngine.Core\shaders\forward\sprite\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\sun\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\sun\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\sun\vs.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\sun\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\forward\terrain\csm\defs.hlsl">
@@ -600,7 +660,7 @@
 		<None Update="assets\HexaEngine.Core\shaders\geometry.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\assao\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\assao\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\commonShadows.hlsl">
@@ -615,10 +675,10 @@
 		<None Update="assets\HexaEngine.Core\shaders\compute\hiz\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\dof\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\dof\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\ssr\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\ssr\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\forward\geometry\defs.hlsl">
@@ -729,10 +789,10 @@
 		<None Update="assets\HexaEngine.Core\shaders\deferred\geometry\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\bloom\downsample\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\bloom\downsample\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\bloom\upsample\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\bloom\upsample\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\forward\geometry\csm\defs.hlsl">
@@ -807,19 +867,19 @@
 		<None Update="assets\HexaEngine.Core\shaders\camera.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\blend\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\blend\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\hbao\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\hbao\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\noise\hash2d.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\noise\hash2d.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\effects\blur\box.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\shaders\effects\fxaa\ps.hlsl">
+		<None Update="assets\HexaEngine.PostFx\shaders\effects\fxaa\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\shaders\gbuffer.hlsl">
@@ -864,73 +924,16 @@
 		<None Update="assets\HexaEngine.Core\shaders\forward\sky\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\textures\bokeh\circle.dds">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\bokeh\cross.dds">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\bokeh\hex.dds">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\bokeh\oct.dds">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\brdflut.raw">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="assets\HexaEngine.Core\textures\brushes\single.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\HexaEngine.Core\textures\brushes\spray.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\HexaEngine.Core\textures\clouds\cloud.dds">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\clouds\weather.dds">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\clouds\worley.dds">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="assets\HexaEngine.Core\textures\debugging\heatmap.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\textures\lens\Flare_Hex.dds">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lens\tex1.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lens\tex2.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lens\tex3.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lens\tex4.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lens\tex5.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lens\tex6.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lens\tex7.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lens\tex8.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lens\tex9.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\lut.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\HexaEngine.Core\textures\sun\sunsprite.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

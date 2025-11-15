@@ -35,8 +35,8 @@
 
             copy = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                PixelShader = "effects/copy/ps.hlsl",
-                VertexShader = "quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/copy/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }
 

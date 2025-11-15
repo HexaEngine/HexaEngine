@@ -170,12 +170,12 @@ namespace HexaEngine.PostFx.BuildIn
 
             lumaParams = new(luma, CpuAccessFlags.Write);
 
-            lumaCompute = device.CreateComputePipelineState(new ComputePipelineDesc("compute/luma/shader.hlsl"));
-            lumaAvgCompute = device.CreateComputePipelineState(new ComputePipelineDesc("compute/lumaAvg/shader.hlsl"));
+            lumaCompute = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.PostFx:shaders/compute/luma/shader.hlsl"));
+            lumaAvgCompute = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.PostFx:shaders/compute/lumaAvg/shader.hlsl"));
             compose = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                PixelShader = "HexaEngine.Core:shaders/effects/autoexposure/ps.hlsl",
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/autoexposure/ps.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             histogram = new(device, 256, CpuAccessFlags.None, Format.R32Typeless, BufferUnorderedAccessViewFlags.Raw);

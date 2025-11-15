@@ -134,11 +134,11 @@
                     string file = files[ii];
                     var abs = Path.GetFullPath(file);
                     var rel = Path.GetRelativePath(dir, abs);
+                    var path = $"{name}:{rel}";
 
-                    if (fileIndices.TryAdd(rel, abs))
+                    if (fileIndices.TryAdd(path, abs))
                     {
-                        fileIndices[$"{name}:{rel}"] = abs;
-                        fileIndicesHashes.Add(rel);
+                        fileIndicesHashes.Add(path);
                     }
                 }
             }

@@ -108,8 +108,8 @@
         {
             downsamplePSO = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/lensflare/downsample.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/lensflare/downsample.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
             downsampleCB = new(new DownsampleParams(scale, bias), CpuAccessFlags.Write);
@@ -119,8 +119,8 @@
 
             lensPSO = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/lensflare/lens.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/lensflare/lens.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
             lensCB = new(CpuAccessFlags.Write);
@@ -131,8 +131,8 @@
 
             blendPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/lensflare/blend.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/lensflare/blend.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }

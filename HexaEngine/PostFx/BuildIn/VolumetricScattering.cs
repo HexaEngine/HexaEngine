@@ -160,8 +160,8 @@
 
             godrays = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/godrays/ps.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/godrays/ps.hlsl",
                 Macros = [.. shaderMacros],
             }, new()
             {
@@ -179,8 +179,8 @@
 
             sun = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/effects/sun/vs.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/sun/ps.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/effects/sun/vs.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/sun/ps.hlsl",
                 Macros = macros
             }, new()
             {

@@ -264,22 +264,22 @@
 
             psoSSGI = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/ssgi/ps2.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/ssgi/ps2.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultAdditiveFullscreen);
 
             psoDenoise = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/ssgi/denoise.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/ssgi/denoise.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             psoBlend = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/ssgi/blend.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/ssgi/blend.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 

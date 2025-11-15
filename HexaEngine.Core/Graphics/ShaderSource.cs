@@ -49,7 +49,7 @@ namespace HexaEngine.Core.Graphics
             AssetPath path = new(filePath);
             if (path.HasNamespace)
             {
-                return Encoding.UTF8.GetBytes(FileSystem.ReadAllText(path.Raw));
+                return Encoding.UTF8.GetBytes(FileSystem.ReadAllText(path));
             }
             return Encoding.UTF8.GetBytes(FileSystem.ReadAllText(Paths.CurrentShaderPath + filePath));
         }

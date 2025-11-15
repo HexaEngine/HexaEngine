@@ -102,8 +102,8 @@
 
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/motionblur/ps.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/motionblur/ps.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 

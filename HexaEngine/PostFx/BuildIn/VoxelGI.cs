@@ -48,9 +48,9 @@ namespace HexaEngine.PostFx.BuildIn
         {
             voxelize = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                PixelShader = "HexaEngine.Core:shaders/gi/VoxelizePS.hlsl",
-                GeometryShader = "HexaEngine.Core:shaders/gi/VoxelizeGS.hlsl",
-                VertexShader = "HexaEngine.Core:shaders/gi/VoxelizeVS.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/gi/VoxelizePS.hlsl",
+                GeometryShader = "HexaEngine.PostFx:shaders/gi/VoxelizeGS.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/gi/VoxelizeVS.hlsl",
             }, new()
             {
                 Rasterizer = RasterizerDescription.CullNone

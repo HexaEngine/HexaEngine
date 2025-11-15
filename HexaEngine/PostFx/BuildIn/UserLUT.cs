@@ -65,8 +65,8 @@
         {
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/lut/ps.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/lut/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
             paramsBuffer = new(new LUTParams(), CpuAccessFlags.Write);

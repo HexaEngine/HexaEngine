@@ -63,7 +63,7 @@
             }
 
             paths.Push(basePath);
-            var dirName = Path.GetDirectoryName(assetPath.Path);
+            var dirName = Path.GetDirectoryName(assetPath.Raw);
             basePath = dirName.ToString();
 
             *ppData = AllocCopyT(data);

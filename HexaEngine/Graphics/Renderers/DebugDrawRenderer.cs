@@ -60,8 +60,8 @@
 
             pso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "internal/debugdraw/vs.hlsl",
-                PixelShader = "internal/debugdraw/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/internal/debugdraw/vs.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/internal/debugdraw/ps.hlsl",
             }, new()
             {
                 DepthStencil = DepthStencilDescription.DepthRead,

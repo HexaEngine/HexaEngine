@@ -251,8 +251,8 @@
 
             pipelineSSR = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/ssr/ps.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/ssr/ps.hlsl",
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }

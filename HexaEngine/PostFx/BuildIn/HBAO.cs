@@ -115,8 +115,8 @@ namespace HexaEngine.PostFx.BuildIn
 
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/hbao/ps.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/hbao/ps.hlsl",
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             var cameraObj = CameraManager.Current;

@@ -22,7 +22,7 @@
                 var b = y[i];
                 if (a == '\\') a = '/';
                 if (b == '\\') b = '/';
-                if (char.ToLowerInvariant(a) != char.ToLowerInvariant(b)) return false;
+                if (a != b) return false;
             }
 
             return true;
@@ -54,7 +54,6 @@
             {
                 var c = obj[i];
                 if (c == '\\') c = '/';
-                c = char.ToLowerInvariant(c);
                 hash ^= c;
                 hash *= prime;
             }

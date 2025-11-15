@@ -57,8 +57,8 @@
             this.device = device;
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/clouds/ps.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/clouds/ps.hlsl",
             }, new()
             {
                 Blend = BlendDescription.Opaque,
@@ -66,9 +66,9 @@
                 Topology = PrimitiveTopology.TriangleStrip
             });
 
-            weatherTex = new(new TextureFileDescription(new("HexaEngine.Core:textures/clouds/weather.dds")));
-            cloudTex = new(new TextureFileDescription(new("HexaEngine.Core:textures/clouds/cloud.dds")));
-            worleyTex = new(new TextureFileDescription(new("HexaEngine.Core:textures/clouds/worley.dds")));
+            weatherTex = new(new TextureFileDescription(new("HexaEngine.PostFx:textures/clouds/weather.dds")));
+            cloudTex = new(new TextureFileDescription(new("HexaEngine.PostFx:textures/clouds/cloud.dds")));
+            worleyTex = new(new TextureFileDescription(new("HexaEngine.PostFx:textures/clouds/worley.dds")));
 
             intermediateTex = new(Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             gaussianBlur = new(creator, "VOLUMETRIC_CLOUDS", alphaBlend: true);

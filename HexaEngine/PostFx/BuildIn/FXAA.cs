@@ -37,8 +37,8 @@ namespace HexaEngine.PostFx.BuildIn
         {
             pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/effects/fxaa/ps.hlsl",
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/fxaa/ps.hlsl",
                 Macros = macros
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
         }
