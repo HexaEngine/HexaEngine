@@ -4,59 +4,6 @@
     using System;
     using System.Collections.Generic;
 
-    public unsafe struct D3D11VariableListRange
-    {
-        public ShaderStage Stage;
-        public UnsafeList<D3D11VariableList> Lists;
-
-        public D3D11VariableListRange(ShaderStage stage, UnsafeList<D3D11VariableList> lists)
-        {
-            Stage = stage;
-            Lists = lists;
-        }
-
-        public void TrySetByName<T>(string name, in T value) where T : unmanaged
-        {
-            for (int i = 0; i < Lists.Count; i++)
-            {
-                Lists.GetPointer(i)->TrySetByName(name, in value);
-            }
-        }
-
-        public void TrySetByName<T>(string name, T* values, uint count) where T : unmanaged
-        {
-            for (int i = 0; i < Lists.Count; i++)
-            {
-                Lists.GetPointer(i)->TrySetByName(name, values, count);
-            }
-        }
-
-        public void TrySetByName<T>(string name, ReadOnlySpan<T> span) where T : unmanaged
-        {
-            fixed (T* ptr = span)
-            {
-                TrySetByName(name, ptr, (uint)span.Length);
-            }
-        }
-
-        public void TrySetUnbound<T>(in T value) where T : unmanaged
-        {
-            for (int i = 0; i < Lists.Count; i++)
-            {
-                Lists.GetPointer(i)->TrySetUnbound(in value);
-            }
-        }
-
-        public void Release()
-        {
-            for (int i = 0; i < Lists.Count; i++)
-            {
-                Lists[i].Release();
-            }
-            Lists.Release();
-        }
-    }
-
     public unsafe class D3D11ResourceBindingList : DisposableBase, IResourceBindingList
     {
         private readonly IPipeline pipeline;
@@ -262,6 +209,14 @@
         public void SetVariable<T>(string name, ShaderStage stage, in T value) where T : unmanaged
         {
             rangesVariables[(int)stage].TrySetByName(name, value);
+        }
+
+        public void UploadState(IGraphicsContext context)
+        {
+            for (int i = 0; i < rangesVariables.Count; i++)
+            {
+                rangesVariables.GetPointer(i)->Upload(context);
+            }
         }
 
         private D3D11GraphicsDevice GetDevice()

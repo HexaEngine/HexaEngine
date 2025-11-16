@@ -27,6 +27,12 @@
         void SetUAV(string name, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1));
 
         void SetUAV(string name, ShaderStage stage, IUnorderedAccessView? uav, uint initialCount = unchecked((uint)-1));
+
+        void SetVariable<T>(string name, in T value) where T : unmanaged;
+
+        void SetVariable<T>(string name, ShaderStage stage, in T value) where T : unmanaged;
+
+        void UploadState(IGraphicsContext context);
     }
 
     public enum ShaderParameterType

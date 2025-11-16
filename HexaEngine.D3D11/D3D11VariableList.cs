@@ -116,6 +116,7 @@ namespace HexaEngine.D3D11
             cb->GetDesc(ref desc);
             int num = (int)desc.Variables;
             ConstantVariable* variables = AllocT<ConstantVariable>(num);
+            ZeroMemoryT(variables, num);
 
             for (uint i = 0; i < num; ++i)
             {

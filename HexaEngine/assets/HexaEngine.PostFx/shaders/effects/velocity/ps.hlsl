@@ -1,4 +1,5 @@
 #include "HexaEngine.Core:shaders/camera.hlsl"
+#include "HexaEngine.Core:shaders/math.hlsl"
 
 Texture2D<float> depthTex;
 
@@ -40,6 +41,12 @@ float2 main(VSOut pin) : SV_Target0
     prev_clip_space_position /= prev_clip_space_position.w;
 
     float2 velocity = (clip_space_position.xy - prev_clip_space_position.xy) / Scale;
+    
+    if (abs(velocity.x) < EPSILON)
+        velocity.x = 0.0f;
+    
+    if (abs(velocity.y) < EPSILON)
+        velocity.y = 0.0f;
 
     return velocity;
 }

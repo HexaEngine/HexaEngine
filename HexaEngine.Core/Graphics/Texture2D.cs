@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using Hexa.NET.Mathematics;
+    using Hexa.NET.SDL3;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO;
     using System.Runtime.CompilerServices;
@@ -12,6 +13,9 @@
         private int mipLevels;
         private int arraySize;
         private SampleDescription sampleDescription;
+        private List<IShaderResourceView>? srvs;
+        private List<IRenderTargetView>? rtvs;
+        private List<IUnorderedAccessView>? uavs;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Texture2D"/> class using the specified <see cref="TextureFileDescription"/>.
@@ -239,6 +243,38 @@
             }
         }
 
+        public IShaderResourceView CreateSRV(Format format = Format.Unknown, int mostDetailedMip = 0, int mipLevels = -1, int firstArraySlice = 0, int arraySize = -1)
+        {
+            bool ms = sampleDescription.Count > 1;
+            ShaderResourceViewDimension dim = ms ? ShaderResourceViewDimension.Texture2DMultisampledArray : ShaderResourceViewDimension.Texture2DArray;
+            ShaderResourceViewDescription desc = new(texture, dim, format, mostDetailedMip, mipLevels, firstArraySlice, arraySize);
+            var srv = Application.GraphicsDevice.CreateShaderResourceView(texture, desc);
+            srvs ??= [];
+            srvs.Add(srv);
+            return srv;
+        }
+
+        public IRenderTargetView CreateRTV(Format format = Format.Unknown, int mipSlice = 0, int firstArraySlice = 0, int arraySize = -1)
+        {
+            bool ms = sampleDescription.Count > 1;
+            RenderTargetViewDimension dim = ms ? RenderTargetViewDimension.Texture2DMultisampledArray : RenderTargetViewDimension.Texture2DArray;
+            RenderTargetViewDescription desc = new(texture, dim, format, mipSlice, firstArraySlice, arraySize);
+            var rtv = Application.GraphicsDevice.CreateRenderTargetView(texture, desc);
+            rtvs ??= [];
+            rtvs.Add(rtv);
+            return rtv;
+        }
+
+        public IUnorderedAccessView CreateUAV(Format format = Format.Unknown, int mipSlice = 0, int firstArraySlice = 0, int arraySize = -1)
+        {
+            UnorderedAccessViewDimension dim = UnorderedAccessViewDimension.Texture2DArray;
+            UnorderedAccessViewDescription desc = new(texture, dim, format, mipSlice, firstArraySlice, arraySize);
+            var uav = Application.GraphicsDevice.CreateUnorderedAccessView(texture, desc);
+            uavs ??= [];
+            uavs.Add(uav);
+            return uav;
+        }
+
         private void Update()
         {
             format = description.Format;
@@ -420,6 +456,35 @@
         public static Texture2D LoadFromAssets(AssetRef assetRef, TextureDimension forceDim)
         {
             return new(new TextureFileDescription(assetRef, forceDim));
+        }
+
+        protected override void DisposeCore()
+        {
+            base.DisposeCore();
+            if (srvs != null)
+            {
+                foreach (var srv in srvs)
+                {
+                    srv.Dispose();
+                }
+                srvs = null;
+            }
+            if (rtvs != null)
+            {
+                foreach (var rtv in rtvs)
+                {
+                    rtv.Dispose();
+                }
+                rtvs = null;
+            }
+            if (uavs != null)
+            {
+                foreach (var uav in uavs)
+                {
+                    uav.Dispose();
+                }
+                uavs = null;
+            }
         }
     }
 }

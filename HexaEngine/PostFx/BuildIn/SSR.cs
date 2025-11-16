@@ -16,11 +16,15 @@
     public class SSR : PostFxBase
     {
 #nullable disable
+        private IGraphicsPipelineState copyPSO;
+        private IGraphicsPipelineState downsamplePSO;
         private IGraphicsPipelineState blendPSO;
+        private int mipLevels;
         private IComputePipelineState computePSO;
         private ConstantBuffer<SSRParams> ssrParamsBuffer;
-        private ResourceRef<Texture2D> temporalBuffer0;
-        private ResourceRef<Texture2D> temporalBuffer1;
+        private ResourceRef<Texture2D> temporalBuffer;
+        private ResourceRef<Texture2D> temporalSwapBuffer;
+        private ResourceRef<Texture2D> mipChain;
 #nullable restore
 
         private SSRQualityPreset qualityPreset = SSRQualityPreset.Medium;
@@ -29,6 +33,8 @@
         private int raySteps = 16;
         private float rayStep = 1.60f;
         private float rayHitThreshold = 2.00f;
+        private IShaderResourceView[] mipSrvs = [];
+        private IRenderTargetView[] mipRtvs = [];
 
         /// <inheritdoc/>
         public override string Name { get; } = "SSR";
@@ -86,6 +92,14 @@
             public Vector2 Dims;
 
             /// <summary>
+            /// Specifies the maximum mipmap level to use when sampling a texture.
+            /// </summary>
+            /// <remarks>A lower value restricts sampling to higher-resolution mip levels, while a
+            /// higher value allows access to lower-resolution (smaller) mip levels. The value should be non-negative
+            /// and within the range supported by the texture.</remarks>
+            public float MaxMipLevel;
+
+            /// <summary>
             /// Gets or sets the maximum number of rays for SSR.
             /// </summary>
             public int MaxRayCount;
@@ -104,8 +118,6 @@
             /// Gets or sets the threshold for SSR ray hits.
             /// </summary>
             public float RayHitThreshold;
-
-            private float padding;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="SSRParams"/> struct.
@@ -255,14 +267,28 @@
             }
             shaderMacros.Add(new("SSR_TEMPORAL", "1"));
 
+            mipLevels = Math.Min(TextureHelper.ComputeMipLevels(width, height), 6);
             SSRParams ssrParams = default;
             ssrParams.Intensity = intensity;
             ssrParams.Dims = new(width, height);
+            ssrParams.MaxMipLevel = mipLevels;
             ssrParams.MaxRayCount = maxRayCount;
             ssrParams.RaySteps = raySteps;
             ssrParams.RayStep = rayStep;
             ssrParams.RayHitThreshold = rayHitThreshold;
             ssrParamsBuffer = new(ssrParams, CpuAccessFlags.Write);
+
+            copyPSO = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            {
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/effects/copy/ps.hlsl"
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
+
+            downsamplePSO = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            {
+                VertexShader = "HexaEngine.PostFx:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.PostFx:shaders/effects/ssr/downsample.hlsl"
+            }, GraphicsPipelineStateDesc.DefaultFullscreen.WithFlags(PipelineStateFlags.ReflectVariables));
 
             computePSO = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
@@ -277,29 +303,45 @@
                 Macros = [.. shaderMacros]
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
-            temporalBuffer0 = creator.CreateBuffer("SSR_TemporalBuffer0", creationFlags: ResourceCreationFlags.None);
-            temporalBuffer1 = creator.CreateBuffer("SSR_TemporalBuffer1", gpuAccessFlags: GpuAccessFlags.All);
+            temporalBuffer = creator.CreateBuffer("SSR_TemporalBuffer", creationFlags: ResourceCreationFlags.None);
+            temporalSwapBuffer = creator.CreateBuffer("SSR_TemporalBuffer_Swap", gpuAccessFlags: GpuAccessFlags.All);
+            mipChain = creator.CreateBuffer("SSR_MipChain", mipLevels: mipLevels);
         }
 
         public override void UpdateBindings()
         {
-            computePSO.Bindings.SetSRV("inputTex", Input);
+            copyPSO.Bindings.SetSRV("sourceTex", Input);
+
+            computePSO.Bindings.SetSRV("inputTex", mipChain.Value);
             computePSO.Bindings.SetCBV("SSRParams", ssrParamsBuffer);
-            computePSO.Bindings.SetSRV("temporalBuffer", temporalBuffer0.Value);
-            computePSO.Bindings.SetUAV("outputTex", temporalBuffer1.Value);
+            computePSO.Bindings.SetSRV("temporalBuffer", temporalBuffer.Value);
+            computePSO.Bindings.SetUAV("outputTex", temporalSwapBuffer.Value);
 
             blendPSO.Bindings.SetSRV("inputTex", Input);
-            blendPSO.Bindings.SetSRV("indirectTex", temporalBuffer0.Value);
+            blendPSO.Bindings.SetSRV("indirectTex", temporalBuffer.Value);
+
+            if (mipChain.HasValue)
+            {
+                var tex = mipChain.Value!;
+                mipSrvs = new IShaderResourceView[mipLevels - 1];
+                mipRtvs = new IRenderTargetView[mipLevels - 1];
+                for (int i = 0; i < mipLevels - 1; ++i)
+                {
+                    mipSrvs[i] = tex.CreateSRV(mostDetailedMip: i, mipLevels: 1);
+                    mipRtvs[i] = tex.CreateRTV(mipSlice: i + 1);
+                }
+            }
         }
 
         public override void Update(IGraphicsContext context)
         {
             if (ssrParamsBuffer != null)
             {
-                var viewport = temporalBuffer0.Value!.Viewport;
+                var viewport = temporalBuffer.Value!.Viewport;
                 SSRParams ssrParams = default;
                 ssrParams.Intensity = intensity;
                 ssrParams.Dims = new(viewport.Width, viewport.Height);
+                ssrParams.MaxMipLevel = mipLevels;
                 ssrParams.MaxRayCount = maxRayCount;
                 ssrParams.RaySteps = raySteps;
                 ssrParams.RayStep = rayStep;
@@ -322,12 +364,30 @@
                 return;
             }
 
-            var viewport = temporalBuffer0.Value!.Viewport;
+            context.SetRenderTarget(mipChain.Value!, null);
+            context.SetViewport(Viewport);
+            context.SetGraphicsPipelineState(copyPSO);
+            context.DrawInstanced(4, 1, 0, 0);
+
+            Vector2 size = Viewport.Size;
+            for (int i = 0; i < mipLevels - 1; ++i)
+            {
+                size *= 0.5f;
+                context.SetViewport(new(Vector2.Zero, size));
+                context.SetRenderTarget(mipRtvs[i], null);
+                downsamplePSO.Bindings.SetSRV("srcTexture", mipSrvs[i]);
+                context.SetGraphicsPipelineState(downsamplePSO);
+                context.DrawInstanced(4, 1, 0, 0);
+                context.SetGraphicsPipelineState(null);
+                context.SetRenderTarget(null, null);
+            }
+
+            var viewport = temporalBuffer.Value!.Viewport;
             context.SetComputePipelineState(computePSO);
             context.Dispatch(CeilDiv((uint)viewport.Width, 32), CeilDiv((uint)viewport.Height, 32), 1);
             context.SetComputePipelineState(null);
 
-            context.CopyResource(temporalBuffer0.Value!, temporalBuffer1.Value!);
+            context.CopyResource(temporalBuffer.Value!, temporalSwapBuffer.Value!);
 
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
@@ -341,6 +401,10 @@
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
+            copyPSO?.Dispose();
+            copyPSO = null;
+            downsamplePSO?.Dispose();
+            downsamplePSO = null;
             blendPSO?.Dispose();
             blendPSO = null;
             computePSO?.Dispose();

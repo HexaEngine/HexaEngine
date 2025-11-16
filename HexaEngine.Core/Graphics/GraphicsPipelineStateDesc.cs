@@ -107,6 +107,60 @@
         /// </summary>
         public static GraphicsPipelineStateDesc DefaultAlphaBlendFullscreen => new() { DepthStencil = DepthStencilDescription.None, Rasterizer = RasterizerDescription.CullBack, Blend = BlendDescription.AlphaBlend, Topology = PrimitiveTopology.TriangleStrip, BlendFactor = default, SampleMask = int.MaxValue };
 
+        public GraphicsPipelineStateDesc WithRasterizer(RasterizerDescription rasterizer)
+        {
+            Rasterizer = rasterizer;
+            return this;
+        }
+
+        public GraphicsPipelineStateDesc WithDepthStencil(DepthStencilDescription depthStencil)
+        {
+            DepthStencil = depthStencil;
+            return this;
+        }
+
+        public GraphicsPipelineStateDesc WithBlend(BlendDescription blend)
+        {
+            Blend = blend;
+            return this;
+        }
+
+        public GraphicsPipelineStateDesc WithTopology(PrimitiveTopology topology)
+        {
+            Topology = topology;
+            return this;
+        }
+
+        public GraphicsPipelineStateDesc WithBlendFactor(Vector4 blendFactor)
+        {
+            BlendFactor = blendFactor;
+            return this;
+        }
+
+        public GraphicsPipelineStateDesc WithSampleMask(uint sampleMask)
+        {
+            SampleMask = sampleMask;
+            return this;
+        }
+
+        public GraphicsPipelineStateDesc WithStencilRef(uint stencilRef)
+        {
+            StencilRef = stencilRef;
+            return this;
+        }
+
+        public GraphicsPipelineStateDesc WithInputElements(InputElementDescription[]? inputElements)
+        {
+            InputElements = inputElements;
+            return this;
+        }
+
+        public GraphicsPipelineStateDesc WithFlags(PipelineStateFlags flags)
+        {
+            Flags = flags;
+            return this;
+        }
+
         /// <inheritdoc/>
         public override readonly bool Equals(object? obj)
         {

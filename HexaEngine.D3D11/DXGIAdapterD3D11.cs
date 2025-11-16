@@ -33,7 +33,6 @@
 
         public DXGIAdapterD3D11(IWindow source, bool debug)
         {
-            debug = false;
             if (debug)
             {
                 DXGI.GetDebugInterface1(0, out IDXGIDebug);

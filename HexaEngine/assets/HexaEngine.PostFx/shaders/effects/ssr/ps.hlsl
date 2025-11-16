@@ -1,4 +1,5 @@
 #include "HexaEngine.Core:shaders/camera.hlsl"
+#include "HexaEngine.Core:shaders/math.hlsl"
 
 // SSR_QUALITY == -1 Custom
 // SSR_QUALITY == 0 Dynamic

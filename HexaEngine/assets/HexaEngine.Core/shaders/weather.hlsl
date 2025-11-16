@@ -1,7 +1,7 @@
 #ifndef WEATHER_H_INCLUDED
 #define WEATHER_H_INCLUDED
 
-cbuffer WeatherBuffer : register(b2)
+cbuffer GlobalWeatherBuffer : register(b2)
 {
 	float4 light_dir;
 	float4 light_color;

@@ -1,4 +1,5 @@
 #include "HexaEngine.Core:shaders/camera.hlsl"
+#include "HexaEngine.Core:shaders/math.hlsl"
 
 // SSR_QUALITY == -1 Custom
 // SSR_QUALITY == 0 Dynamic
@@ -11,13 +12,14 @@
 #endif
 
 #ifndef SSR_TEMPORAL
-#define SSR_TEMPORAL 0
+#define SSR_TEMPORAL 1
 #endif
 
 cbuffer SSRParams : register(b0)
 {
 	float intensity;
     float2 dims;
+    float maxMipLevel;
 #if SSR_QUALITY == 0
 	int SSR_MAX_RAY_COUNT;
 	int SSR_RAY_STEPS;
@@ -49,6 +51,7 @@ cbuffer SSRParams : register(b0)
 
 SamplerState pointClampSampler;
 SamplerState linearClampSampler;
+SamplerState ansiotropicClampSampler;
 SamplerState linearBorderSampler;
 
 Texture2D inputTex;
@@ -93,6 +96,29 @@ float3 GetVSPos(float3 uv)
     return GetPositionVS(coords.xy, depth);
 }
 
+// Cone-traced mip selection for PBR roughness
+float ComputeConeMipLevel(float3 originVS, float3 hitVS, float roughness)
+{
+    float dist = max(length(hitVS - originVS), 1e-4f);
+
+    // GGX-like mapping: use roughness^2 and cap to ~45deg at roughness=1
+    float alpha = max(roughness * roughness, 1e-4f);
+    float coneAngle = alpha * (PI * 0.25f);
+
+    // Cone radius at hit point in view space
+    float coneRadius = dist * tan(coneAngle);
+
+    // Project to pixel footprint using projection scale
+    float z = max(abs(hitVS.z), 1e-4f);
+    float2 projScale = float2(proj[0][0], proj[1][1]);
+    float2 pixelsPerMeter = (dims * 0.5f) * projScale / z;
+    float radiusPixels = coneRadius * max(pixelsPerMeter.x, pixelsPerMeter.y);
+
+    // Convert footprint to mip LOD and clamp to available mips from current texture size
+    float lod = log2(max(radiusPixels, 1.0f));
+    return clamp(lod, 0.0f, maxMipLevel);
+}
+
 float4 SSRBinarySearch(float3 vDir, inout float3 vHitCoord)
 {
 	for (int i = 0; i < SSR_RAY_STEPS; i++)
@@ -125,7 +151,7 @@ float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord, float jitter)
 	for (int i = 0; i < SSR_MAX_RAY_COUNT; i++)
 	{
 		float stepMultiplier = 1.0f + jitter * 0.5f;
-		vHitCoord += vDir * stepMultiplier;
+        vHitCoord += vDir * stepMultiplier;
 
 		float4 vProjectedCoord = mul(float4(vHitCoord, 1.0f), proj);
 		vProjectedCoord.xy /= vProjectedCoord.w;
@@ -142,7 +168,9 @@ float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord, float jitter)
 		{
 			return SSRBinarySearch(vDir, vHitCoord);
 		}
-	}
+		
+        vDir *= SSR_RAY_STEP;
+    }
 
 	return float4(0.0f, 0.0f, 0.0f, 0.0f);
 }
@@ -151,13 +179,12 @@ float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord, float jitter)
 void main(uint3 dispatchThreadID : SV_DispatchThreadID)
 {
 	uint2 pixelCoord = dispatchThreadID.xy;
-    int3 pixel = int3(pixelCoord, 0);
 	
     if (pixelCoord.x >= dims.x || pixelCoord.y >= dims.y)
         return;
 
-    float2 uv = pixelCoord / dims;
-    float depth = depthTex.Load(pixel);
+    float2 uv = (pixelCoord + 0.5f) / dims;
+    float depth = depthTex.SampleLevel(linearClampSampler, uv, 0);
 
 #if !SSR_TEMPORAL
     float4 scene_color = inputTex.Load(pixel);
@@ -174,7 +201,7 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
 		return;
 	}
 	
-	float2 velocity = velocityBufferTex.Load(pixel).xy;
+    float2 velocity = velocityBufferTex.SampleLevel(linearClampSampler, uv, 0).xy;
     float2 prevUV = uv - velocity; // Velocity is already in UV space
     float4 historyReflection = temporalBuffer.SampleLevel(linearClampSampler, prevUV, 0);
 	
@@ -204,7 +231,9 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
 			* (vCoords.w) // / 2 + 0.5f) // rayhit binary fade
 			);
 
-	float3 reflectionColor = reflectionIntensity * inputTex.SampleLevel(linearClampSampler, vCoords.xy, 0).rgb * intensity;
+    // Cone-traced mip selection for rough PBR reflections
+    float mipLevel = ComputeConeMipLevel(position, hitPos, roughness);
+    float3 reflectionColor = reflectionIntensity * inputTex.SampleLevel(ansiotropicClampSampler, vCoords.xy, mipLevel).rgb * intensity;
 	
 #if SSR_TEMPORAL    
     float historyDepth = depthTex.SampleLevel(linearClampSampler, prevUV, 0);

@@ -152,8 +152,10 @@ namespace HexaEngine.Graphics.Passes
         {
             dev = creator.Device;
 
-            dev.SetGlobalCBV("CameraBuffer", camera.Value);
-            dev.SetGlobalCBV("WeatherBuffer", weather.Value);
+            dev.SetGlobalCBV("CameraBuffer", camera.Value); // Legacy name, remove later
+            dev.SetGlobalCBV("WeatherBuffer", weather.Value); // Legacy name, remove later
+            dev.SetGlobalCBV("GlobalCameraBuffer", camera.Value);
+            dev.SetGlobalCBV("GlobalWeatherBuffer", weather.Value);
             dev.SetGlobalCBV("ForwardLightParams", lightParamsBuffer.Value);
 
             dev.SetGlobalSampler("pointClampSampler", pointClampSampler.Value);
