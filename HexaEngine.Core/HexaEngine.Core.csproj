@@ -16,8 +16,8 @@
 		<IsAotCompatible>true</IsAotCompatible>
 
 		<PackageId>HexaEngine.Core</PackageId>
-		<AssemblyVersion>1.0.0</AssemblyVersion>
-		<PackageVersion>1.0.0-alpha1</PackageVersion>
+		<AssemblyVersion>1.0.0.1</AssemblyVersion>
+		<PackageVersion>1.0.0.1</PackageVersion>
 		<Description>HexaEngine.Core is the core module of the HexaEngine game engine. It provides the fundamental systems required for building high-performance, cross-platform 3D games and tools. This library implements low-level runtime features such as resource management, rendering interfaces, input handling, math utilities, scripting integration, and engine infrastructure.</Description>
 		<PackageTags>HexaEngine;game engine;engine core;graphics;rendering;3D;C#;dotnet;cross-platform;runtime;math;input;ImGui;SDL;shader;systems</PackageTags>
 		<Authors>Juna Meinhold</Authors>

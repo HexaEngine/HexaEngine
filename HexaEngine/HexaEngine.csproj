@@ -16,8 +16,8 @@
 		<AnalysisLevel>latest</AnalysisLevel>
 
 		<PackageId>HexaEngine</PackageId>
-		<AssemblyVersion>1.0.0</AssemblyVersion>
-		<PackageVersion>1.0.0-alpha1</PackageVersion>
+		<AssemblyVersion>1.0.0.1</AssemblyVersion>
+		<PackageVersion>1.0.0.1</PackageVersion>
 		<Description>HexaEngine is a high-performance, cross-platform 3D game engine and editor built with C# and .NET. It provides a comprehensive suite of tools and systems for developing modern games and interactive applications, including advanced rendering techniques, physics simulation, input handling, scripting support, and an intuitive editor interface.</Description>
 		<PackageTags>HexaEngine;game engine;3D;graphics;rendering;game development;C#;dotnet;cross-platform;editor;tools;physics;input;scripting;ImGui;SDL</PackageTags>
 		<Authors>Juna Meinhold</Authors>
