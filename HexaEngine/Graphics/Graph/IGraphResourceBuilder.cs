@@ -29,9 +29,9 @@
 
         ResourceRef<T> AddResource<T>(string name) where T : class, IDisposable;
 
-        ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.Default);
+        ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default);
 
-        ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.Default);
+        ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default);
 
         ResourceRef<ConstantBuffer<T>> CreateConstantBuffer<T>(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged;
 
@@ -111,7 +111,7 @@
 
         bool TryGetResource<T>(string name, [NotNullWhen(true)] out ResourceRef<T>? resourceRef) where T : class, IDisposable;
 
-        void UpdateComputePipelineState(string name, ComputePipelineDesc desc);
+        void UpdateComputePipelineState(string name, ComputePipelineStateDescEx desc);
 
         void UpdateDepthMipChain(string name, DepthStencilBufferDescription description);
 

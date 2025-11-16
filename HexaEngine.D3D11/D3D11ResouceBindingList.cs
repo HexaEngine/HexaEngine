@@ -2,525 +2,86 @@
 {
     using HexaEngine.Core.Graphics;
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
 
-    public unsafe struct ShaderParameterState
+    public unsafe struct D3D11VariableListRange
     {
-        public ShaderParameterType Type;
-        public void* Resource;
-        public uint InitialCount; // only used by UAVs
-    }
-
-    public unsafe struct ShaderParameter
-    {
-        public char* Name;
-        public uint Hash;
-        public uint Index;
-        public uint Size;
         public ShaderStage Stage;
-        public ShaderParameterType Type;
-    }
+        public UnsafeList<D3D11VariableList> Lists;
 
-    public unsafe struct D3D11DescriptorRange : IEnumerable<BindingValuePair>
-    {
-        public D3D11DescriptorRange(ShaderStage stage, ShaderParameterType type, List<ShaderParameter> parameters)
+        public D3D11VariableListRange(ShaderStage stage, UnsafeList<D3D11VariableList> lists)
         {
             Stage = stage;
-            Type = type;
+            Lists = lists;
+        }
 
-            bucketCount = parameters.Count;
-            if (bucketCount > 0) // just allocate if we really need it.
+        public void TrySetByName<T>(string name, in T value) where T : unmanaged
+        {
+            for (int i = 0; i < Lists.Count; i++)
             {
-                buckets = AllocT<ShaderParameter>(bucketCount);
-                ZeroMemoryT(buckets, bucketCount);
-            }
-
-            uint startSlot = uint.MaxValue;
-            uint maxSlot = 0;
-            foreach (ShaderParameter parameter in parameters)
-            {
-                startSlot = Math.Min(startSlot, parameter.Index);
-                maxSlot = Math.Max(maxSlot, parameter.Index);
-                var param = Find(buckets, parameters.Count, parameter.Hash, parameter.Name);
-                *param = parameter;
-            }
-
-            uint rangeWidth = parameters.Count == 0 ? 0 : (maxSlot + 1) - startSlot;
-
-            StartSlot = startSlot;
-            Count = rangeWidth;
-
-            if (bucketCount == 0)
-            {
-                return;
-            }
-            Resources = (void**)AllocT<nint>(rangeWidth);
-            ZeroMemory(Resources, rangeWidth * sizeof(nint));
-
-            if (type == ShaderParameterType.UAV)
-            {
-                InitialCounts = (uint*)Alloc(rangeWidth * sizeof(uint));
-                for (uint i = 0; i < rangeWidth; i++)
-                {
-                    InitialCounts[i] = uint.MaxValue;
-                }
+                Lists.GetPointer(i)->TrySetByName(name, in value);
             }
         }
 
-        private readonly ShaderParameter* Find(ShaderParameter* buckets, int capacity, uint hash, char* key)
+        public void TrySetByName<T>(string name, T* values, uint count) where T : unmanaged
         {
-            uint index = (uint)(hash % capacity);
-            bool exit = false;
-            while (true)
+            for (int i = 0; i < Lists.Count; i++)
             {
-                var entry = &buckets[index];
-                if (entry->Hash == 0)
-                {
-                    return entry;
-                }
-                else if (entry->Hash == hash && StrCmp(key, entry->Name) == 0)
-                {
-                    return entry;
-                }
-
-                index++;
-                if (index == capacity)
-                {
-                    if (exit)
-                    {
-                        break;
-                    }
-
-                    index = 0;
-                    exit = true;
-                }
-            }
-
-            return null; // return null means not found and full.
-        }
-
-        private readonly ShaderStage Stage;
-        private readonly ShaderParameterType Type;
-        private readonly uint StartSlot;
-        private readonly uint Count;
-        private void** Resources;
-        private uint* InitialCounts;
-
-        private UnsafeList<ResourceRange> Ranges;
-        private ShaderParameter* buckets;
-        private int bucketCount;
-
-        public struct ResourceRange
-        {
-            public void** Start;
-            public int Length;
-        }
-
-        private readonly ShaderParameter GetByName(string name)
-        {
-            if (bucketCount == 0)
-            {
-                // special case, check ahead to avoid unnecessary steps.
-                throw new KeyNotFoundException();
-            }
-
-            uint hash = (uint)name.GetHashCode();
-            fixed (char* pName = name)
-            {
-                var pEntry = Find(buckets, bucketCount, hash, pName);
-                if (pEntry != null && pEntry->Hash == hash)
-                {
-                    return *pEntry;
-                }
-                throw new KeyNotFoundException();
+                Lists.GetPointer(i)->TrySetByName(name, values, count);
             }
         }
 
-        private readonly bool TryGetByName(string name, out ShaderParameter parameter)
+        public void TrySetByName<T>(string name, ReadOnlySpan<T> span) where T : unmanaged
         {
-            if (bucketCount == 0)
+            fixed (T* ptr = span)
             {
-                // special case, check ahead to avoid unnecessary steps.
-                parameter = default;
-                return false;
-            }
-
-            uint hash = (uint)name.GetHashCode();
-            fixed (char* pName = name)
-            {
-                var pEntry = Find(buckets, bucketCount, hash, pName);
-                if (pEntry != null && pEntry->Hash == hash)
-                {
-                    parameter = *pEntry;
-                    return true;
-                }
-                parameter = default;
-                return false;
+                TrySetByName(name, ptr, (uint)span.Length);
             }
         }
 
-        public void SetByName(string name, void* resource)
+        public void TrySetUnbound<T>(in T value) where T : unmanaged
         {
-            var parameter = GetByName(name);
-            var old = Resources[parameter.Index - StartSlot];
-            Resources[parameter.Index - StartSlot] = resource;
-            if (old != null ^ resource != null)
+            for (int i = 0; i < Lists.Count; i++)
             {
-                UpdateRanges(parameter.Index - StartSlot, resource == null);
-            }
-        }
-
-        public bool TrySetByName(string name, void* resource, uint initialValue = unchecked((uint)-1))
-        {
-            if (TryGetByName(name, out var parameter))
-            {
-                var index = parameter.Index - StartSlot;
-                var old = Resources[index];
-                Resources[index] = resource;
-                if (InitialCounts != null)
-                {
-                    InitialCounts[index] = initialValue;
-                }
-                if (old != null ^ resource != null)
-                {
-                    UpdateRanges(index, resource == null);
-                }
-
-                return true;
-            }
-            return false;
-        }
-
-        public void UpdateByName(string name, void* oldState, void* state, uint initialValue = unchecked((uint)-1))
-        {
-            if (TryGetByName(name, out var parameter))
-            {
-                var index = parameter.Index - StartSlot;
-                var old = Resources[index];
-
-                if (old != oldState) // indicates that the state was overwritten locally so don't update.
-                {
-                    return;
-                }
-
-                Resources[index] = state;
-                if (InitialCounts != null)
-                {
-                    InitialCounts[index] = initialValue;
-                }
-                if (old != null ^ state != null)
-                {
-                    UpdateRanges(index, state == null);
-                }
-            }
-        }
-
-        private void UpdateRanges(uint idx, bool clear)
-        {
-            if (clear)
-            {
-                // Resource is set to null; remove or adjust the range
-                for (int i = 0; i < Ranges.Count; i++)
-                {
-                    ResourceRange* range = Ranges.GetPointer(i);
-                    int rangeStart = (int)(range->Start - Resources);
-                    int rangeEnd = rangeStart + range->Length - 1;
-
-                    if (idx >= rangeStart && idx <= rangeEnd)
-                    {
-                        // The null resource falls within this range
-                        if (range->Length == 1)
-                        {
-                            // The range has only this single entry; remove the range
-                            Ranges.RemoveAt(i);
-                        }
-                        else if (idx == rangeStart)
-                        {
-                            // Adjust the range to start after the null entry
-                            range->Start++;
-                            range->Length--;
-                        }
-                        else if (idx == rangeEnd)
-                        {
-                            // Adjust the range to end before the null entry
-                            range->Length--;
-                        }
-                        else
-                        {
-                            // Split the range into two separate ranges
-                            var newRange = new ResourceRange
-                            {
-                                Start = range->Start + (idx - rangeStart + 1),
-                                Length = rangeEnd - (int)idx
-                            };
-
-                            range->Length = (int)(idx - rangeStart);
-                            Ranges.Insert(i + 1, newRange);
-                        }
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                // Handle setting a non-null resource
-                for (int i = 0; i < Ranges.Count; i++)
-                {
-                    ResourceRange* range = Ranges.GetPointer(i);
-                    int rangeStart = (int)(range->Start - Resources);
-                    int rangeEnd = rangeStart + range->Length - 1;
-
-                    if (idx == rangeStart - 1)
-                    {
-                        // Extend the range at the beginning
-                        range->Start--;
-                        range->Length++;
-
-                        // Check if we need to merge with the previous range
-                        if (i > 0)
-                        {
-                            ResourceRange* previousRange = Ranges.GetPointer(i - 1);
-                            if (previousRange->Start + previousRange->Length == range->Start)
-                            {
-                                previousRange->Length += range->Length;
-                                Ranges.RemoveAt(i);
-                            }
-                        }
-                        return;
-                    }
-                    else if (idx == rangeEnd + 1)
-                    {
-                        // Extend the range at the end
-                        range->Length++;
-
-                        // Check if we need to merge with the next range
-                        if (i < Ranges.Count - 1)
-                        {
-                            ResourceRange* nextRange = Ranges.GetPointer(i + 1);
-                            if (range->Start + range->Length == nextRange->Start)
-                            {
-                                range->Length += nextRange->Length;
-                                Ranges.RemoveAt(i + 1);
-                            }
-                        }
-                        return;
-                    }
-                    else if (idx < rangeStart)
-                    {
-                        // Insert a new range before this one
-                        var newRange = new ResourceRange { Start = Resources + idx, Length = 1 };
-                        Ranges.Insert(i, newRange);
-
-                        // Check if we need to merge with the next range
-                        if (i < Ranges.Count - 1)
-                        {
-                            ResourceRange* nextRange = Ranges.GetPointer(i + 1);
-                            if (newRange.Start + newRange.Length == nextRange->Start)
-                            {
-                                newRange.Length += nextRange->Length;
-                                Ranges.RemoveAt(i + 1);
-                            }
-                        }
-                        return;
-                    }
-                }
-
-                // If no existing range is found, add a new one at the end
-                var endRange = new ResourceRange { Start = Resources + idx, Length = 1 };
-                Ranges.Add(endRange);
-
-                // Check if we need to merge with the previous range
-                if (Ranges.Count > 1)
-                {
-                    ResourceRange* previousRange = Ranges.GetPointer(Ranges.Count - 2);
-                    if (previousRange->Start + previousRange->Length == endRange.Start)
-                    {
-                        previousRange->Length += endRange.Length;
-                        Ranges.RemoveAt(Ranges.Count - 1);
-                    }
-                }
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Bind(ComPtr<ID3D11DeviceContext3> context, void* func)
-        {
-            var function = (delegate*<ID3D11DeviceContext3*, uint, uint, void**, void>)func;
-            for (int i = 0; i < Ranges.Count; i++)
-            {
-                ResourceRange range = Ranges[i];
-
-                if (range.Length > 0)
-                {
-                    void** resources = range.Start;
-                    var start = (uint)(range.Start - Resources);
-                    function(context, StartSlot + start, (uint)range.Length, resources);
-                }
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void BindUAV(ComPtr<ID3D11DeviceContext3> context)
-        {
-            for (int i = 0; i < Ranges.Count; i++)
-            {
-                ResourceRange range = Ranges[i];
-
-                if (range.Length > 0)
-                {
-                    void** resources = range.Start;
-                    var start = (uint)(range.Start - Resources);
-                    context.CSSetUnorderedAccessViews(StartSlot + start, (uint)range.Length, (ID3D11UnorderedAccessView**)resources, InitialCounts);
-                }
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Unbind(ComPtr<ID3D11DeviceContext3> context, void* func)
-        {
-            nint* resources = stackalloc nint[256];
-            var function = (delegate*<ID3D11DeviceContext3*, uint, uint, void**, void>)func;
-            for (int i = 0; i < Ranges.Count; i++)
-            {
-                ResourceRange range = Ranges[i];
-
-                if (range.Length > 0)
-                {
-                    var start = (uint)(range.Start - Resources);
-                    function(context, StartSlot + start, (uint)range.Length, (void**)resources);
-                }
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UnbindUAV(ComPtr<ID3D11DeviceContext3> context)
-        {
-            nint* resources = stackalloc nint[256];
-            for (int i = 0; i < Ranges.Count; i++)
-            {
-                ResourceRange range = Ranges[i];
-
-                if (range.Length > 0)
-                {
-                    var start = (uint)(range.Start - Resources);
-                    context.CSSetUnorderedAccessViews(StartSlot + start, (uint)range.Length, (ID3D11UnorderedAccessView**)resources, InitialCounts + start);
-                }
+                Lists.GetPointer(i)->TrySetUnbound(in value);
             }
         }
 
         public void Release()
         {
-            if (Resources != null)
+            for (int i = 0; i < Lists.Count; i++)
             {
-                Free(Resources);
-                Resources = null;
+                Lists[i].Release();
             }
-            if (InitialCounts != null)
-            {
-                Free(InitialCounts);
-                InitialCounts = null;
-            }
-            if (buckets != null)
-            {
-                for (int i = 0; i < bucketCount; i++)
-                {
-                    Free(buckets[i].Name);
-                }
-                Free(buckets);
-                buckets = null;
-                bucketCount = 0;
-            }
-            Ranges.Release();
-        }
-
-        public readonly IEnumerator<BindingValuePair> GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
-
-        readonly IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public struct Enumerator : IEnumerator<BindingValuePair>
-        {
-            private readonly D3D11DescriptorRange descriptorRange;
-            private BindingValuePair current;
-            private ShaderParameter* currentBucket;
-
-            public Enumerator(D3D11DescriptorRange descriptorRange)
-            {
-                this.descriptorRange = descriptorRange;
-            }
-
-            public readonly BindingValuePair Current => current;
-
-            readonly object IEnumerator.Current => Current;
-
-            public void Dispose()
-            {
-                // Nothing to do here.
-            }
-
-            public bool MoveNext()
-            {
-                if (currentBucket == null)
-                {
-                    currentBucket = descriptorRange.buckets;
-                    if (currentBucket == null) return false;
-                    ReadFromBucket();
-                    return true;
-                }
-
-                var index = currentBucket - descriptorRange.buckets;
-                if (index == descriptorRange.bucketCount - 1)
-                {
-                    return false;
-                }
-                currentBucket++;
-                ReadFromBucket();
-                return true;
-            }
-
-            private void ReadFromBucket()
-            {
-                current.Name = new(currentBucket->Name);
-                current.Stage = descriptorRange.Stage;
-                current.Type = currentBucket->Type;
-                current.Value = descriptorRange.Resources[currentBucket->Index];
-            }
-
-            public void Reset()
-            {
-                currentBucket = null;
-            }
+            Lists.Release();
         }
     }
 
     public unsafe class D3D11ResourceBindingList : DisposableBase, IResourceBindingList
     {
         private readonly IPipeline pipeline;
+        private readonly PipelineStateFlags flags;
         private UnsafeList<D3D11DescriptorRange> rangesSRVs;
         private UnsafeList<D3D11DescriptorRange> rangesUAVs;
         private UnsafeList<D3D11DescriptorRange> rangesCBVs;
         private UnsafeList<D3D11DescriptorRange> rangesSamplers;
+        private UnsafeList<D3D11VariableListRange> rangesVariables;
 
-        public D3D11ResourceBindingList(D3D11GraphicsPipeline pipeline)
+        public D3D11ResourceBindingList(D3D11GraphicsPipeline pipeline, PipelineStateFlags flags)
         {
             pipeline.AddRef();
             pipeline.OnCompile += OnPipelineCompile;
             this.pipeline = pipeline;
+            this.flags = flags;
             OnPipelineCompile(pipeline);
         }
 
-        public D3D11ResourceBindingList(D3D11ComputePipeline pipeline)
+        public D3D11ResourceBindingList(D3D11ComputePipeline pipeline, PipelineStateFlags flags)
         {
             pipeline.AddRef();
             pipeline.OnCompile += OnPipelineCompile;
             this.pipeline = pipeline;
+            this.flags = flags;
             OnPipelineCompile(pipeline);
         }
 
@@ -539,7 +100,7 @@
             D3D11GlobalResourceList.StateChanged += GlobalStateChanged;
         }
 
-        private void GlobalStateChanged(string name, ShaderParameterState oldState, ShaderParameterState state)
+        private void GlobalStateChanged(string name, D3D11ShaderParameterState oldState, D3D11ShaderParameterState state)
         {
             switch (state.Type)
             {
@@ -666,6 +227,14 @@
             }
         }
 
+        public void SetVariable<T>(string name, in T value) where T : unmanaged
+        {
+            for (int i = 0; i < rangesVariables.Count; i++)
+            {
+                rangesVariables.GetPointer(i)->TrySetByName(name, value);
+            }
+        }
+
         public void SetSRV(string name, ShaderStage stage, IShaderResourceView? srv)
         {
             var p = srv?.NativePointer ?? 0;
@@ -690,14 +259,34 @@
             rangesSamplers[(int)stage].TrySetByName(name, (void*)p);
         }
 
+        public void SetVariable<T>(string name, ShaderStage stage, in T value) where T : unmanaged
+        {
+            rangesVariables[(int)stage].TrySetByName(name, value);
+        }
+
+        private D3D11GraphicsDevice GetDevice()
+        {
+            if (pipeline is D3D11GraphicsPipeline graphicsPipeline)
+            {
+                return graphicsPipeline.Device;
+            }
+            else if (pipeline is D3D11ComputePipeline computePipeline)
+            {
+                return computePipeline.Device;
+            }
+
+            throw new InvalidOperationException("Pipeline is not a D3D11 pipeline.");
+        }
+
         private void Reflect(Shader* shader, ShaderStage stage)
         {
             if (shader == null)
             {
-                rangesSRVs.Add(new(stage, ShaderParameterType.SRV, new()));
-                rangesUAVs.Add(new(stage, ShaderParameterType.UAV, new()));
-                rangesCBVs.Add(new(stage, ShaderParameterType.CBV, new()));
-                rangesSamplers.Add(new(stage, ShaderParameterType.Sampler, new()));
+                rangesSRVs.Add(new(stage, ShaderParameterType.SRV, []));
+                rangesUAVs.Add(new(stage, ShaderParameterType.UAV, []));
+                rangesCBVs.Add(new(stage, ShaderParameterType.CBV, []));
+                rangesSamplers.Add(new(stage, ShaderParameterType.Sampler, []));
+                rangesVariables.Add(new(stage, []));
                 return;
             }
 
@@ -706,14 +295,14 @@
             ShaderDesc shaderDesc;
             reflection.GetDesc(&shaderDesc).ThrowIf();
 
-            List<ShaderParameter> shaderParametersInStage = new();
-            Dictionary<string, ShaderParameter> shaderParametersByNameInStage = new();
+            List<D3D11ShaderParameter> shaderParametersInStage = [];
+            Dictionary<string, D3D11ShaderParameter> shaderParametersByNameInStage = [];
 
             for (uint i = 0; i < shaderDesc.BoundResources; i++)
             {
                 ShaderInputBindDesc shaderInputBindDesc;
                 reflection.GetResourceBindingDesc(i, &shaderInputBindDesc);
-                ShaderParameter parameter;
+                D3D11ShaderParameter parameter;
 
                 parameter.Index = shaderInputBindDesc.BindPoint;
                 parameter.Size = shaderInputBindDesc.BindCount;
@@ -746,10 +335,36 @@
                 shaderParametersByNameInStage.Add(name, parameter);
             }
 
-            rangesSRVs.PushBack(new(stage, ShaderParameterType.SRV, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.SRV).ToList()));
-            rangesUAVs.PushBack(new(stage, ShaderParameterType.UAV, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.UAV).ToList()));
-            rangesCBVs.PushBack(new(stage, ShaderParameterType.CBV, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.CBV).ToList()));
-            rangesSamplers.PushBack(new(stage, ShaderParameterType.Sampler, shaderParametersInStage.Where(x => x.Type == ShaderParameterType.Sampler).ToList()));
+            rangesSRVs.PushBack(new(stage, ShaderParameterType.SRV, [.. shaderParametersInStage.Where(x => x.Type == ShaderParameterType.SRV)]));
+            rangesUAVs.PushBack(new(stage, ShaderParameterType.UAV, [.. shaderParametersInStage.Where(x => x.Type == ShaderParameterType.UAV)]));
+            rangesCBVs.PushBack(new(stage, ShaderParameterType.CBV, [.. shaderParametersInStage.Where(x => x.Type == ShaderParameterType.CBV)]));
+            rangesSamplers.PushBack(new(stage, ShaderParameterType.Sampler, [.. shaderParametersInStage.Where(x => x.Type == ShaderParameterType.Sampler)]));
+
+            if ((flags & PipelineStateFlags.ReflectVariables) != 0)
+            {
+                var device = GetDevice();
+                var numCbs = shaderDesc.ConstantBuffers;
+                UnsafeList<D3D11VariableList> variableLists = [];
+                for (uint i = 0; i < numCbs; ++i)
+                {
+                    var cb = reflection.GetConstantBufferByIndex(i);
+                    ShaderBufferDesc cbDesc;
+                    cb->GetDesc(&cbDesc);
+                    var name = ToStringFromUTF8(cbDesc.Name) ?? throw new Exception("Name cannot be null, check your shader code ensure all resources are named!");
+
+                    if (name.StartsWith("Global"))
+                    {
+                        continue;
+                    }
+
+                    var list = D3D11VariableList.CreateFrom(device, stage, cb);
+                    variableLists.PushBack(list);
+
+                    SetCBV(name, list.Buffer.Handle);
+                }
+
+                rangesVariables.PushBack(new(stage, variableLists));
+            }
 
             reflection.Release();
         }
@@ -776,6 +391,11 @@
                 rangesSamplers[i].Release();
             }
             rangesSamplers.Release();
+            for (int i = 0; i < rangesVariables.Count; i++)
+            {
+                rangesVariables[i].Release();
+            }
+            rangesVariables.Release();
         }
 
         public void BindGraphics(ComPtr<ID3D11DeviceContext3> context)

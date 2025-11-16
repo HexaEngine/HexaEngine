@@ -5,12 +5,12 @@
 
     public class D3D11GlobalResourceList
     {
-        private static readonly Dictionary<string, ShaderParameterState> states = new();
+        private static readonly Dictionary<string, D3D11ShaderParameterState> states = new();
         private static readonly SemaphoreSlim semaphore = new(1);
 
         public static event StateChangedEventHandler? StateChanged;
 
-        public delegate void StateChangedEventHandler(string name, ShaderParameterState oldState, ShaderParameterState state);
+        public delegate void StateChangedEventHandler(string name, D3D11ShaderParameterState oldState, D3D11ShaderParameterState state);
 
         public static void SetSRV(string name, IShaderResourceView? srv)
         {
@@ -54,7 +54,7 @@
                 {
                     states.TryGetValue(name, out var oldState);
 
-                    ShaderParameterState state = new()
+                    D3D11ShaderParameterState state = new()
                     {
                         Type = type,
                         Resource = (void*)pointer, // Cast nint to void*

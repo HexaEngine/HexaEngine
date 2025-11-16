@@ -44,13 +44,19 @@
             float screenWidth = creator.Viewport.Width;
             float screenHeight = creator.Viewport.Height;
 
-            clusterBuilding = creator.CreateComputePipelineState(new ComputePipelineDesc()
+            clusterBuilding = creator.CreateComputePipelineState(new()
             {
-                Path = AssetShaderPath("compute/clustered/building.hlsl")
+                Pipeline = new()
+                {
+                    Path = AssetShaderPath("compute/clustered/building.hlsl")
+                }
             });
-            clusterCulling = creator.CreateComputePipelineState(new ComputePipelineDesc()
+            clusterCulling = creator.CreateComputePipelineState(new()
             {
-                Path = AssetShaderPath("compute/clustered/culling.hlsl")
+                Pipeline = new()
+                {
+                    Path = AssetShaderPath("compute/clustered/culling.hlsl")
+                }
             });
 
             lightParamsBuffer = creator.CreateConstantBuffer<CullLightParams>("CBCullLightParams", CpuAccessFlags.Write);

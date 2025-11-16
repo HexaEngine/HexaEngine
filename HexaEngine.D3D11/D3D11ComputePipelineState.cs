@@ -10,14 +10,14 @@
 
         internal ComPtr<ID3D11ComputeShader> cs;
 
-        public D3D11ComputePipelineState(D3D11ComputePipeline pipeline, string dbgName = "")
+        public D3D11ComputePipelineState(D3D11ComputePipeline pipeline, ComputePipelineStateDesc desc, string dbgName = "")
         {
             pipeline.AddRef();
             this.pipeline = pipeline;
             this.dbgName = dbgName;
             PipelineStateManager.Register(this);
 
-            resourceBindingList = new(pipeline);
+            resourceBindingList = new(pipeline, desc.Flags);
 
             pipeline.OnCompile += OnPipelineCompile;
             cs = pipeline.cs;

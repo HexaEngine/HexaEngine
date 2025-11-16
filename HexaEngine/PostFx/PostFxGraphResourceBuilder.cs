@@ -187,7 +187,7 @@
             return resourceBuilder.TryGetResource(name, out resourceRef);
         }
 
-        public void UpdateComputePipelineState(string name, ComputePipelineDesc desc)
+        public void UpdateComputePipelineState(string name, ComputePipelineStateDescEx desc)
         {
             resourceBuilder.UpdateComputePipelineState(name, desc);
         }
@@ -262,12 +262,12 @@
             resourceBuilder.UpdateResource(name, desc, constructor, group);
         }
 
-        public ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return resourceBuilder.CreateComputePipelineState(description, flags);
         }
 
-        public ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return resourceBuilder.CreateComputePipelineState(name, description, flags);
         }

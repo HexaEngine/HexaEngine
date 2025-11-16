@@ -115,7 +115,7 @@
         /// <summary>
         /// Gets a viewport with the dimensions of the texture.
         /// </summary>
-        public Viewport Viewport => new(0, 0, width, height, 0, depth);
+        public Viewport Viewport => new(0, 0, width, height, 0, 1);
 
         protected override IRenderTargetView CreateRTV(IGraphicsDevice device, ITexture3D resource, Texture3DDescription desc)
         {

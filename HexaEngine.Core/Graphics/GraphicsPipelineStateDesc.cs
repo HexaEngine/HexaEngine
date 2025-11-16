@@ -58,6 +58,11 @@
         public InputElementDescription[]? InputElements;
 
         /// <summary>
+        /// Specifies the set of flags that describe the current state of the pipeline.
+        /// </summary>
+        public PipelineStateFlags Flags;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsPipelineStateDesc"/> struct with default values.
         /// </summary>
         public GraphicsPipelineStateDesc()

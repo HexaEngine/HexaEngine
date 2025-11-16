@@ -50,6 +50,8 @@
 
         public event Action<IPipeline>? OnCompile;
 
+        public D3D11GraphicsDevice Device => device;
+
         public void Recompile()
         {
             initialized = false;

@@ -136,9 +136,9 @@
             return new D3D11ComputePipeline(this, desc, $"({nameof(D3D11ComputePipeline)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
-        public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, ComputePipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new D3D11ComputePipelineState((D3D11ComputePipeline)pipeline, $"({nameof(D3D11ComputePipelineState)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11ComputePipelineState((D3D11ComputePipeline)pipeline, desc, $"({nameof(D3D11ComputePipelineState)} : {Path.GetFileNameWithoutExtension(filename)}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
@@ -649,13 +649,13 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline)
         {
-            return new D3D11ResourceBindingList((D3D11GraphicsPipeline)pipeline);
+            return new D3D11ResourceBindingList((D3D11GraphicsPipeline)pipeline, PipelineStateFlags.None);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)
         {
-            return new D3D11ResourceBindingList((D3D11ComputePipeline)pipeline);
+            return new D3D11ResourceBindingList((D3D11ComputePipeline)pipeline, PipelineStateFlags.None);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

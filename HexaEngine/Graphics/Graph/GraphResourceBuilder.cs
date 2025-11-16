@@ -58,7 +58,7 @@
         private readonly List<ResourceDescriptor<GraphicsPipelineStateDescEx>> graphicsPipelineStateDescriptors = new();
 
         private readonly List<IComputePipelineState> computePipelineStates = new();
-        private readonly List<ResourceDescriptor<ComputePipelineDesc>> computePipelineDescriptors = new();
+        private readonly List<ResourceDescriptor<ComputePipelineStateDescEx>> computePipelineDescriptors = new();
 
         public IGraphicsDevice Device => device;
 
@@ -237,6 +237,21 @@
 
             container?.AddResource(resource);
             return new(resource);
+        }
+
+        public T GetOrAddResourceRef<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T, TDesc>(string name, in TDesc desc) where T : ResourceRef, IDisposable
+        {
+            if (nameToResource.TryGetValue(name, out var resource))
+            {
+                return (T)resource;
+            }
+
+            var resourceT = (T?)Activator.CreateInstance(typeof(T), this, name, desc)!;
+            nameToResource.Add(name, resourceT);
+            resources.Add(resourceT);
+
+            container?.AddResource(resourceT);
+            return resourceT;
         }
 
         public ResourceRef? GetResource(string name)
@@ -463,7 +478,7 @@
             return GetOrAddResource<IGraphicsPipelineState>(name);
         }
 
-        public void UpdateComputePipelineState(string name, ComputePipelineDesc desc)
+        public void UpdateComputePipelineState(string name, ComputePipelineStateDescEx desc)
         {
             UpdateResource(name, desc, (dev, desc) => dev.CreateComputePipelineState(desc, name), computePipelineStates);
         }
@@ -491,12 +506,12 @@
             group.Add(resource);
         }
 
-        public ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(description.GetHashCode().ToString(), description, (dev, desc) => dev.CreateComputePipelineState(desc), computePipelineStates, computePipelineDescriptors, flags);
         }
 
-        public ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineDesc description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
+        public ResourceRef<IComputePipelineState> CreateComputePipelineState(string name, ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)
         {
             return CreateResource(name, description, (dev, desc) => dev.CreateComputePipelineState(desc), computePipelineStates, computePipelineDescriptors, flags);
         }

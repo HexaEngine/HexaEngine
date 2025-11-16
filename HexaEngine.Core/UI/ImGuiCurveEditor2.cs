@@ -829,7 +829,7 @@
                 {
                     for (int ii = 0, j = pointCount - 1; ii < j; ii++, j--)
                     {
-                        SwapT(&points[ii], &points[j]);
+                        Swap(&points[ii], &points[j]);
                     }
                     for (i = 0; i < pointCount; ++i)
                     {

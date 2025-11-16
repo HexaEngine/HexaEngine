@@ -1,7 +1,7 @@
 #ifndef CAMERA_H_INCLUDED
 #define CAMERA_H_INCLUDED
 
-cbuffer CameraBuffer : register(b1)
+cbuffer GlobalCameraBuffer : register(b1)
 {
 	float4x4 view;
 	float4x4 proj;

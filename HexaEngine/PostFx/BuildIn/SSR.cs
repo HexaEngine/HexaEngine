@@ -278,7 +278,7 @@
             }, GraphicsPipelineStateDesc.DefaultFullscreen);
 
             temporalBuffer0 = creator.CreateBuffer("SSR_TemporalBuffer0", creationFlags: ResourceCreationFlags.None);
-            temporalBuffer1 = creator.CreateBuffer("SSR_TemporalBuffer1");
+            temporalBuffer1 = creator.CreateBuffer("SSR_TemporalBuffer1", gpuAccessFlags: GpuAccessFlags.All);
         }
 
         public override void UpdateBindings()

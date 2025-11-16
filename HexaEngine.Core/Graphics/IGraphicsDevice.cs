@@ -407,24 +407,38 @@
         /// Creates a graphics pipeline state object.
         /// </summary>
         /// <param name="pipeline">The graphics pipeline containing shaders.</param>
+        /// <param name="desc">The description of the compute pipeline state.</param>
         /// <param name="filename">The file path of the caller (automatically provided).</param>
         /// <param name="line">The line number of the caller (automatically provided).</param>
         /// <returns>The created graphics pipeline state object.</returns>
-        IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
+        IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, ComputePipelineStateDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         /// <summary>
         /// Creates a graphics pipeline state object.
         /// </summary>
-        /// <param name="desc">The description of the compute pipeline.</param>
+        /// <param name="pipelineDesc">The description of the compute pipeline.</param>
+        /// <param name="desc">The description of the compute pipeline state.</param>
         /// <param name="filename">The file path of the caller (automatically provided).</param>
         /// <param name="line">The line number of the caller (automatically provided).</param>
         /// <returns>The created graphics pipeline state object.</returns>
-        IComputePipelineState CreateComputePipelineState(ComputePipelineDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        IComputePipelineState CreateComputePipelineState(ComputePipelineDescEx pipelineDesc, ComputePipelineStateDesc desc = default, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            var pipeline = CreateComputePipeline(desc, filename, line);
-            var pso = CreateComputePipelineState(pipeline, filename, line);
+            var pipeline = CreateComputePipeline(pipelineDesc, filename, line);
+            var pso = CreateComputePipelineState(pipeline, desc, filename, line);
             pipeline.Dispose();
             return pso;
+        }
+
+        /// <summary>
+        /// Creates a compute pipeline state based on the provided combined description.
+        /// </summary>
+        /// <param name="desc">The combined description of the compute pipeline and its state.</param>
+        /// <param name="filename">The file path of the caller.</param>
+        /// <param name="line">The line number of the caller.</param>
+        /// <returns>The created compute pipeline state.</returns>
+        IComputePipelineState CreateComputePipelineState(ComputePipelineStateDescEx desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            return CreateComputePipelineState(desc.Pipeline, desc.State, filename, line);
         }
 
         /// <summary>

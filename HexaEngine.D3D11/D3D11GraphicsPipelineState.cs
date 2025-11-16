@@ -99,7 +99,7 @@
                   isValid = false;
               }*/
 
-            resourceBindingList = new(pipeline);
+            resourceBindingList = new(pipeline, desc.Flags);
             primitiveTopology = Helper.Convert(desc.Topology);
         }
 

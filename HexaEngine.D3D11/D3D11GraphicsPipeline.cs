@@ -52,6 +52,8 @@
 
         public event Action<IGraphicsPipeline, InputElementDescription[]?, Blob>? OnCreateLayout;
 
+        public D3D11GraphicsDevice Device => device;
+
         public void Recompile()
         {
             initialized = false;

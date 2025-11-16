@@ -27,7 +27,10 @@
             depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
             downsample = creator.CreateComputePipelineState(new()
             {
-                Path = AssetShaderPath("compute/hiz/shader.hlsl"),
+                Pipeline = new()
+                {
+                    Path = AssetShaderPath("compute/hiz/shader.hlsl")
+                },
             });
 
             copy = creator.CreateGraphicsPipelineState(new(new()

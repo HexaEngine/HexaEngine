@@ -6,7 +6,7 @@
 #define COLORSPACE_RGB_FULL_G22_None_P709 0
 #define COLORSPACE_RGB_FULL_G2084_None_P2020 1
 
-cbuffer DisplayBuffer
+cbuffer GlobalDisplayBuffer
 {
 	float SDRContentWhitePoint;
 	float DisplayMaxNits;
