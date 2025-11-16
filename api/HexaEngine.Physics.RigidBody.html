@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class RigidBody </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class RigidBody ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Physics_RigidBody.md&amp;value=---%0Auid%3A%20HexaEngine.Physics.RigidBody%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Physics.RigidBody">
+
+
+
+  <h1 id="HexaEngine_Physics_RigidBody" data-uid="HexaEngine.Physics.RigidBody" class="text-break">
+Class RigidBody  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Physics.html">Physics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OldName(&quot;HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null&quot;, &quot;HexaEngine.Components.Physics.RigidBody&quot;)]
+[EditorCategory(&quot;Physics&quot;, null)]
+[EditorComponent&lt;RigidBody&gt;(&quot;Rigid Body&quot;, Icon = &quot;&quot;)]
+public class RigidBody : Actor, INotifyPropertyChanged, INotifyPropertyChanging, IRigidBodyComponent, IActorComponent, IComponent</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html">EntityNotifyBase</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.Component.html">Component</a></div>
+      <div><a class="xref" href="HexaEngine.Physics.Actor.html">Actor</a></div>
+      <div><span class="xref">RigidBody</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanging">INotifyPropertyChanging</a></div>
+      <div><a class="xref" href="HexaEngine.Physics.IRigidBodyComponent.html">IRigidBodyComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Physics.IActorComponent.html">IActorComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.IComponent.html">IComponent</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_scene">Actor.scene</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_type">Actor.type</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_isUpdating">Actor.isUpdating</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_Type">Actor.Type</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_DisableGravity">Actor.DisableGravity</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_SendSleepNotifies">Actor.SendSleepNotifies</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_DominanceGroup">Actor.DominanceGroup</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_Flags">Actor.Flags</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_OnRecreate">Actor.OnRecreate</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_IsStatic_HexaEngine_Physics_RigidBody_">Actor.IsStatic(RigidBody)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_IsDynamic_HexaEngine_Physics_RigidBody_">Actor.IsDynamic(RigidBody)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_NotifyOnRecreate">Actor.NotifyOnRecreate()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_Awake">Actor.Awake()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_Destroy">Actor.Destroy()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Physics.Actor.html#HexaEngine_Physics_Actor_GetWorldBounds_System_Single_">Actor.GetWorldBounds(float)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.Component.html#HexaEngine_Scenes_Component_Guid">Component.Guid</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.Component.html#HexaEngine_Scenes_Component_GameObject">Component.GameObject</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.Component.html#HexaEngine_Scenes_Component_IsSerializable">Component.IsSerializable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanging">EntityNotifyBase.PropertyChanging</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanged">EntityNotifyBase.PropertyChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanging_System_String_">EntityNotifyBase.OnPropertyChanging(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanged_System_String_">EntityNotifyBase.OnPropertyChanged(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotify__1___0____0_System_String_">EntityNotifyBase.SetAndNotify&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithRefEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithRefEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Physics_RigidBody__ctor_" data-uid="HexaEngine.Physics.RigidBody.#ctor*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody__ctor" data-uid="HexaEngine.Physics.RigidBody.#ctor">
+  RigidBody()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RigidBody()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Physics_RigidBody_actor" data-uid="HexaEngine.Physics.RigidBody.actor">
+  actor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected PxRigidActor* actor</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">PxRigidActor</span>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Physics_RigidBody_pose" data-uid="HexaEngine.Physics.RigidBody.pose">
+  pose
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected PxTransform pose</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">PxTransform</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Physics_RigidBody_AngularDamping_" data-uid="HexaEngine.Physics.RigidBody.AngularDamping*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_AngularDamping" data-uid="HexaEngine.Physics.RigidBody.AngularDamping">
+  AngularDamping
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L279"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Limits&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Angular Damping&quot;, EditorPropertyMode.Default)]
+public float AngularDamping { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_AngularVelocity_" data-uid="HexaEngine.Physics.RigidBody.AngularVelocity*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_AngularVelocity" data-uid="HexaEngine.Physics.RigidBody.AngularVelocity">
+  AngularVelocity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L419"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public Vector3 AngularVelocity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_CharacterController_" data-uid="HexaEngine.Physics.RigidBody.CharacterController*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_CharacterController" data-uid="HexaEngine.Physics.RigidBody.CharacterController">
+  CharacterController
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L871"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="HexaEngine.Physics.CharacterController.html">CharacterController</a> associated with the <a class="xref" href="HexaEngine.Physics.RigidBody.html">RigidBody</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public CharacterController? CharacterController { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Physics.CharacterController.html">CharacterController</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="HexaEngine_Physics_RigidBody_CharacterController_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Returns null if no <a class="xref" href="HexaEngine.Physics.CharacterController.html">CharacterController</a> is associated.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_Colliders_" data-uid="HexaEngine.Physics.RigidBody.Colliders*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_Colliders" data-uid="HexaEngine.Physics.RigidBody.Colliders">
+  Colliders
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L864"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public IReadOnlyList&lt;IColliderComponent&gt; Colliders { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Physics.IColliderComponent.html">IColliderComponent</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_ContactReportThreshold_" data-uid="HexaEngine.Physics.RigidBody.ContactReportThreshold*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_ContactReportThreshold" data-uid="HexaEngine.Physics.RigidBody.ContactReportThreshold">
+  ContactReportThreshold
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L384"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Contacts&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Contact Report Threshold&quot;, EditorPropertyMode.Default)]
+public float ContactReportThreshold { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_ContactSlopCoefficient_" data-uid="HexaEngine.Physics.RigidBody.ContactSlopCoefficient*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_ContactSlopCoefficient" data-uid="HexaEngine.Physics.RigidBody.ContactSlopCoefficient">
+  ContactSlopCoefficient
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L815"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Contacts&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Contact Slop Coefficient&quot;, EditorPropertyMode.Default)]
+public float ContactSlopCoefficient { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_EnableCCD_" data-uid="HexaEngine.Physics.RigidBody.EnableCCD*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_EnableCCD" data-uid="HexaEngine.Physics.RigidBody.EnableCCD">
+  EnableCCD
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L566"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+[EditorCategory(&quot;CCD&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Enable CCD&quot;, EditorPropertyMode.Default)]
+public bool EnableCCD { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_EnableCCDFriction_" data-uid="HexaEngine.Physics.RigidBody.EnableCCDFriction*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_EnableCCDFriction" data-uid="HexaEngine.Physics.RigidBody.EnableCCDFriction">
+  EnableCCDFriction
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L602"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+[EditorCategory(&quot;CCD&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Enable CCD Friction&quot;, EditorPropertyMode.Default)]
+public bool EnableCCDFriction { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_EnableCCDMaxContactImpulse_" data-uid="HexaEngine.Physics.RigidBody.EnableCCDMaxContactImpulse*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_EnableCCDMaxContactImpulse" data-uid="HexaEngine.Physics.RigidBody.EnableCCDMaxContactImpulse">
+  EnableCCDMaxContactImpulse
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L638"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+[EditorCategory(&quot;CCD&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Enable CCD Max Contact Impulse&quot;, EditorPropertyMode.Default)]
+public bool EnableCCDMaxContactImpulse { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_EnableSpeculativeCCD_" data-uid="HexaEngine.Physics.RigidBody.EnableSpeculativeCCD*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_EnableSpeculativeCCD" data-uid="HexaEngine.Physics.RigidBody.EnableSpeculativeCCD">
+  EnableSpeculativeCCD
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L674"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+[EditorCategory(&quot;CCD&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Enable Speculative CCD&quot;, EditorPropertyMode.Default)]
+public bool EnableSpeculativeCCD { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_InternalIslandNodeIndex_" data-uid="HexaEngine.Physics.RigidBody.InternalIslandNodeIndex*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_InternalIslandNodeIndex" data-uid="HexaEngine.Physics.RigidBody.InternalIslandNodeIndex">
+  InternalIslandNodeIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L850"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public PxNodeIndex InternalIslandNodeIndex { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">PxNodeIndex</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_InvMass_" data-uid="HexaEngine.Physics.RigidBody.InvMass*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_InvMass" data-uid="HexaEngine.Physics.RigidBody.InvMass">
+  InvMass
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L515"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public float InvMass { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_IsSleeping_" data-uid="HexaEngine.Physics.RigidBody.IsSleeping*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_IsSleeping" data-uid="HexaEngine.Physics.RigidBody.IsSleeping">
+  IsSleeping
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public bool IsSleeping { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_LinearDamping_" data-uid="HexaEngine.Physics.RigidBody.LinearDamping*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_LinearDamping" data-uid="HexaEngine.Physics.RigidBody.LinearDamping">
+  LinearDamping
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L244"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Limits&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Linear Damping&quot;, EditorPropertyMode.Default)]
+public float LinearDamping { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_LinearVelocity_" data-uid="HexaEngine.Physics.RigidBody.LinearVelocity*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_LinearVelocity" data-uid="HexaEngine.Physics.RigidBody.LinearVelocity">
+  LinearVelocity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L443"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public Vector3 LinearVelocity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_Mass_" data-uid="HexaEngine.Physics.RigidBody.Mass*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_Mass" data-uid="HexaEngine.Physics.RigidBody.Mass">
+  Mass
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L492"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public float Mass { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_MassSpaceInertiaTensor_" data-uid="HexaEngine.Physics.RigidBody.MassSpaceInertiaTensor*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_MassSpaceInertiaTensor" data-uid="HexaEngine.Physics.RigidBody.MassSpaceInertiaTensor">
+  MassSpaceInertiaTensor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L529"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public Vector3 MassSpaceInertiaTensor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_MassSpaceInvInertiaTensor_" data-uid="HexaEngine.Physics.RigidBody.MassSpaceInvInertiaTensor*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_MassSpaceInvInertiaTensor" data-uid="HexaEngine.Physics.RigidBody.MassSpaceInvInertiaTensor">
+  MassSpaceInvInertiaTensor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L552"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public Vector3 MassSpaceInvInertiaTensor { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_MaxAngularVelocity_" data-uid="HexaEngine.Physics.RigidBody.MaxAngularVelocity*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_MaxAngularVelocity" data-uid="HexaEngine.Physics.RigidBody.MaxAngularVelocity">
+  MaxAngularVelocity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L349"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Limits&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Max Angular Velocity&quot;, EditorPropertyMode.Default)]
+public float MaxAngularVelocity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_MaxContactImpulse_" data-uid="HexaEngine.Physics.RigidBody.MaxContactImpulse*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_MaxContactImpulse" data-uid="HexaEngine.Physics.RigidBody.MaxContactImpulse">
+  MaxContactImpulse
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L780"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Contacts&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Max Contact Impulse&quot;, EditorPropertyMode.Default)]
+public float MaxContactImpulse { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_MaxDepenetrationVelocity_" data-uid="HexaEngine.Physics.RigidBody.MaxDepenetrationVelocity*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_MaxDepenetrationVelocity" data-uid="HexaEngine.Physics.RigidBody.MaxDepenetrationVelocity">
+  MaxDepenetrationVelocity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L745"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Contacts&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Max Depenetration Velocity&quot;, EditorPropertyMode.Default)]
+public float MaxDepenetrationVelocity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_MaxLinearVelocity_" data-uid="HexaEngine.Physics.RigidBody.MaxLinearVelocity*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_MaxLinearVelocity" data-uid="HexaEngine.Physics.RigidBody.MaxLinearVelocity">
+  MaxLinearVelocity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Limits&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Max Linear Velocity&quot;, EditorPropertyMode.Default)]
+public float MaxLinearVelocity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_MinCCDAdvanceCoefficient_" data-uid="HexaEngine.Physics.RigidBody.MinCCDAdvanceCoefficient*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_MinCCDAdvanceCoefficient" data-uid="HexaEngine.Physics.RigidBody.MinCCDAdvanceCoefficient">
+  MinCCDAdvanceCoefficient
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L710"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;CCD&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Min CCD Advance Coefficient&quot;, EditorPropertyMode.Default)]
+public float MinCCDAdvanceCoefficient { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_SleepThreshold_" data-uid="HexaEngine.Physics.RigidBody.SleepThreshold*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_SleepThreshold" data-uid="HexaEngine.Physics.RigidBody.SleepThreshold">
+  SleepThreshold
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L175"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Sleep Threshold&quot;, EditorPropertyMode.Default)]
+public float SleepThreshold { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_StabilizationThreshold_" data-uid="HexaEngine.Physics.RigidBody.StabilizationThreshold*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_StabilizationThreshold" data-uid="HexaEngine.Physics.RigidBody.StabilizationThreshold">
+  StabilizationThreshold
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L209"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Limits&quot;, null)]
+[EditorPropertyCondition&lt;RigidBody&gt;(&quot;IsDynamic&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Stabilization Threshold&quot;, EditorPropertyMode.Default)]
+public float StabilizationThreshold { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_WakeCounter_" data-uid="HexaEngine.Physics.RigidBody.WakeCounter*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_WakeCounter" data-uid="HexaEngine.Physics.RigidBody.WakeCounter">
+  WakeCounter
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L467"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public float WakeCounter { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Physics_RigidBody_AddForce_" data-uid="HexaEngine.Physics.RigidBody.AddForce*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_AddForce_System_Numerics_Vector3_HexaEngine_Physics_ForceMode_System_Boolean_" data-uid="HexaEngine.Physics.RigidBody.AddForce(System.Numerics.Vector3,HexaEngine.Physics.ForceMode,System.Boolean)">
+  AddForce(Vector3, ForceMode, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L898"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddForce(Vector3 force, ForceMode mode, bool autoAwake = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>force</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>mode</code> <a class="xref" href="HexaEngine.Physics.ForceMode.html">ForceMode</a></dt>
+    <dd></dd>
+    <dt><code>autoAwake</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_AddTorque_" data-uid="HexaEngine.Physics.RigidBody.AddTorque*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_AddTorque_System_Numerics_Vector3_HexaEngine_Physics_ForceMode_System_Boolean_" data-uid="HexaEngine.Physics.RigidBody.AddTorque(System.Numerics.Vector3,HexaEngine.Physics.ForceMode,System.Boolean)">
+  AddTorque(Vector3, ForceMode, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L908"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddTorque(Vector3 torque, ForceMode mode, bool autoAwake = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>torque</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>mode</code> <a class="xref" href="HexaEngine.Physics.ForceMode.html">ForceMode</a></dt>
+    <dd></dd>
+    <dt><code>autoAwake</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_AwakeCore_" data-uid="HexaEngine.Physics.RigidBody.AwakeCore*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_AwakeCore" data-uid="HexaEngine.Physics.RigidBody.AwakeCore">
+  AwakeCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void AwakeCore()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_BeginUpdate_" data-uid="HexaEngine.Physics.RigidBody.BeginUpdate*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_BeginUpdate" data-uid="HexaEngine.Physics.RigidBody.BeginUpdate">
+  BeginUpdate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L143"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void BeginUpdate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_ClearForce_" data-uid="HexaEngine.Physics.RigidBody.ClearForce*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_ClearForce_HexaEngine_Physics_ForceMode_" data-uid="HexaEngine.Physics.RigidBody.ClearForce(HexaEngine.Physics.ForceMode)">
+  ClearForce(ForceMode)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L918"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ClearForce(ForceMode mode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>mode</code> <a class="xref" href="HexaEngine.Physics.ForceMode.html">ForceMode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_ClearTorque_" data-uid="HexaEngine.Physics.RigidBody.ClearTorque*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_ClearTorque_HexaEngine_Physics_ForceMode_" data-uid="HexaEngine.Physics.RigidBody.ClearTorque(HexaEngine.Physics.ForceMode)">
+  ClearTorque(ForceMode)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L928"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ClearTorque(ForceMode mode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>mode</code> <a class="xref" href="HexaEngine.Physics.ForceMode.html">ForceMode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_CreateActor_" data-uid="HexaEngine.Physics.RigidBody.CreateActor*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_CreateActor_MagicPhysX_PxPhysics__MagicPhysX_PxScene__" data-uid="HexaEngine.Physics.RigidBody.CreateActor(MagicPhysX.PxPhysics*,MagicPhysX.PxScene*)">
+  CreateActor(PxPhysics*, PxScene*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override PxActor* CreateActor(PxPhysics* physics, PxScene* scene)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>physics</code> <span class="xref">PxPhysics</span>*</dt>
+    <dd></dd>
+    <dt><code>scene</code> <span class="xref">PxScene</span>*</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">PxActor</span>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_DestroyActor_" data-uid="HexaEngine.Physics.RigidBody.DestroyActor*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_DestroyActor" data-uid="HexaEngine.Physics.RigidBody.DestroyActor">
+  DestroyActor()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void DestroyActor()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_DestroyCore_" data-uid="HexaEngine.Physics.RigidBody.DestroyCore*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_DestroyCore" data-uid="HexaEngine.Physics.RigidBody.DestroyCore">
+  DestroyCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void DestroyCore()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_EndUpdate_" data-uid="HexaEngine.Physics.RigidBody.EndUpdate*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_EndUpdate" data-uid="HexaEngine.Physics.RigidBody.EndUpdate">
+  EndUpdate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void EndUpdate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_GetCMassLocalPose_" data-uid="HexaEngine.Physics.RigidBody.GetCMassLocalPose*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_GetCMassLocalPose_System_Numerics_Vector3__System_Numerics_Quaternion__" data-uid="HexaEngine.Physics.RigidBody.GetCMassLocalPose(System.Numerics.Vector3@,System.Numerics.Quaternion@)">
+  GetCMassLocalPose(out Vector3, out Quaternion)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L1007"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetCMassLocalPose(out Vector3 position, out Quaternion rotation)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>rotation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.quaternion">Quaternion</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_GetKinematicTarget_" data-uid="HexaEngine.Physics.RigidBody.GetKinematicTarget*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_GetKinematicTarget_System_Numerics_Vector3__System_Numerics_Quaternion__" data-uid="HexaEngine.Physics.RigidBody.GetKinematicTarget(System.Numerics.Vector3@,System.Numerics.Quaternion@)">
+  GetKinematicTarget(out Vector3, out Quaternion)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L959"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetKinematicTarget(out Vector3 targetPosition, out Quaternion targetRotation)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>targetPosition</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>targetRotation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.quaternion">Quaternion</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_GetSolverIterationCounts_" data-uid="HexaEngine.Physics.RigidBody.GetSolverIterationCounts*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_GetSolverIterationCounts_System_UInt32__System_UInt32__" data-uid="HexaEngine.Physics.RigidBody.GetSolverIterationCounts(System.UInt32@,System.UInt32@)">
+  GetSolverIterationCounts(out uint, out uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L982"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetSolverIterationCounts(out uint minPositionIters, out uint minVelocityIters)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>minPositionIters</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>minVelocityIters</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_PutToSleep_" data-uid="HexaEngine.Physics.RigidBody.PutToSleep*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_PutToSleep" data-uid="HexaEngine.Physics.RigidBody.PutToSleep">
+  PutToSleep()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L888"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PutToSleep()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_SetCMassLocalPose_" data-uid="HexaEngine.Physics.RigidBody.SetCMassLocalPose*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_SetCMassLocalPose_System_Numerics_Vector3_System_Numerics_Quaternion_" data-uid="HexaEngine.Physics.RigidBody.SetCMassLocalPose(System.Numerics.Vector3,System.Numerics.Quaternion)">
+  SetCMassLocalPose(Vector3, Quaternion)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L996"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCMassLocalPose(Vector3 position, Quaternion rotation)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>rotation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.quaternion">Quaternion</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_SetForceAndTorque_" data-uid="HexaEngine.Physics.RigidBody.SetForceAndTorque*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_SetForceAndTorque_System_Numerics_Vector3_System_Numerics_Vector3_HexaEngine_Physics_ForceMode_" data-uid="HexaEngine.Physics.RigidBody.SetForceAndTorque(System.Numerics.Vector3,System.Numerics.Vector3,HexaEngine.Physics.ForceMode)">
+  SetForceAndTorque(Vector3, Vector3, ForceMode)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L938"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetForceAndTorque(Vector3 force, Vector3 torque, ForceMode mode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>force</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>torque</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>mode</code> <a class="xref" href="HexaEngine.Physics.ForceMode.html">ForceMode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_SetKinematicTarget_" data-uid="HexaEngine.Physics.RigidBody.SetKinematicTarget*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_SetKinematicTarget_System_Numerics_Vector3_System_Numerics_Quaternion_" data-uid="HexaEngine.Physics.RigidBody.SetKinematicTarget(System.Numerics.Vector3,System.Numerics.Quaternion)">
+  SetKinematicTarget(Vector3, Quaternion)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L948"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetKinematicTarget(Vector3 targetPosition, Quaternion targetRotation)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>targetPosition</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>targetRotation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.quaternion">Quaternion</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_SetSolverIterationCounts_" data-uid="HexaEngine.Physics.RigidBody.SetSolverIterationCounts*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_SetSolverIterationCounts_System_UInt32_System_UInt32_" data-uid="HexaEngine.Physics.RigidBody.SetSolverIterationCounts(System.UInt32,System.UInt32)">
+  SetSolverIterationCounts(uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L972"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetSolverIterationCounts(uint minPositionIters, uint minVelocityIters = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>minPositionIters</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>minVelocityIters</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Physics_RigidBody_WakeUp_" data-uid="HexaEngine.Physics.RigidBody.WakeUp*"></a>
+
+  <h3 id="HexaEngine_Physics_RigidBody_WakeUp" data-uid="HexaEngine.Physics.RigidBody.WakeUp">
+  WakeUp()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L878"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void WakeUp()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Physics_RigidBody_OnSleep" data-uid="HexaEngine.Physics.RigidBody.OnSleep">
+  OnSleep
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L876"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action? OnSleep</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Physics_RigidBody_OnWakeUp" data-uid="HexaEngine.Physics.RigidBody.OnWakeUp">
+  OnWakeUp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L874"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action? OnWakeUp</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Physics/RigidBody.cs/#L10" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

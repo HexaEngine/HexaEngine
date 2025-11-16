@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class IndexBuffer&lt;T&gt; </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class IndexBuffer&lt;T&gt; ">
+      
+      <meta name="description" content="Represents an index buffer in graphics programming with support for different index types (uint or ushort).">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_Buffers_IndexBuffer_1.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.Buffers.IndexBuffer%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1" class="text-break">
+Class IndexBuffer&lt;T&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a>.<a class="xref" href="HexaEngine.Core.Graphics.Buffers.html">Buffers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents an index buffer in graphics programming with support for different index types (uint or ushort).</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class IndexBuffer&lt;T&gt; : IIndexBuffer&lt;T&gt;, IIndexBuffer, IBuffer, IResource, IDeviceChild, INative, IDisposable where T : unmanaged</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of indices in the buffer (must be unmanaged and either uint or ushort).</p>
+</dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">IndexBuffer&lt;T&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.Buffers.IIndexBuffer-1.html">IIndexBuffer</a>&lt;T&gt;</div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.Buffers.IIndexBuffer.html">IIndexBuffer</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html">IDeviceChild</a></div>
+      <div><span class="xref">INative</span></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetAs__1_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetAs&lt;T&gt;(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetPointer_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetPointer(IDeviceChild?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1__ctor_HexaEngine_Core_Graphics_CpuAccessFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.#ctor(HexaEngine.Core.Graphics.CpuAccessFlags,System.String,System.Int32)">
+  IndexBuffer(CpuAccessFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.IndexBuffer-1.html">IndexBuffer&lt;T&gt;</a> class with the specified graphics device, CPU access flags, filename, and line number.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IndexBuffer(CpuAccessFlags flags, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags indicating the intended usage of the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The filename of the source code file calling this constructor (for debugging purposes).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file calling this constructor (for debugging purposes).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>Thrown if the type parameter is not uint or ushort.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1__ctor_System_UInt32_HexaEngine_Core_Graphics_CpuAccessFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.#ctor(System.UInt32,HexaEngine.Core.Graphics.CpuAccessFlags,System.String,System.Int32)">
+  IndexBuffer(uint, CpuAccessFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.IndexBuffer-1.html">IndexBuffer&lt;T&gt;</a> class with the specified graphics device, capacity, CPU access flags, filename, and line number.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IndexBuffer(uint capacity, CpuAccessFlags flags, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>capacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial capacity of the index buffer.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags indicating the intended usage of the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The filename of the source code file calling this constructor (for debugging purposes).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file calling this constructor (for debugging purposes).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>Thrown if the type parameter is not uint or ushort.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1__ctor__0__System_UInt32_HexaEngine_Core_Graphics_CpuAccessFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.#ctor(`0*,System.UInt32,HexaEngine.Core.Graphics.CpuAccessFlags,System.String,System.Int32)">
+  IndexBuffer(T*, uint, CpuAccessFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.IndexBuffer-1.html">IndexBuffer&lt;T&gt;</a> class with the specified graphics device, indices pointer, count, CPU access flags, filename, and line number.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IndexBuffer(T* indices, uint count, CpuAccessFlags flags, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>indices</code> T*</dt>
+    <dd><p>The pointer to the initial indices to populate the buffer with.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of indices pointed to by the indices pointer.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags indicating the intended usage of the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The filename of the source code file calling this constructor (for debugging purposes).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file calling this constructor (for debugging purposes).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>Thrown if the type parameter is not uint or ushort.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1__ctor__0___HexaEngine_Core_Graphics_CpuAccessFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.#ctor(`0[],HexaEngine.Core.Graphics.CpuAccessFlags,System.String,System.Int32)">
+  IndexBuffer(T[], CpuAccessFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.IndexBuffer-1.html">IndexBuffer&lt;T&gt;</a> class with the specified graphics device, indices, CPU access flags, filename, and line number.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IndexBuffer(T[] indices, CpuAccessFlags flags, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>indices</code> T[]</dt>
+    <dd><p>The initial indices to populate the buffer with.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags indicating the intended usage of the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The filename of the source code file calling this constructor (for debugging purposes).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file calling this constructor (for debugging purposes).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>Thrown if the type parameter is not uint or ushort.</p>
+</dd>
+  </dl>
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Capacity_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Capacity*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Capacity" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Capacity">
+  Capacity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L268"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the capacity of the index buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint Capacity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>Thrown if the specified capacity is less than the current count.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Count_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Count*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Count" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Count">
+  Count
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L262"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the number of indices in the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint Count { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_DebugName_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.DebugName*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_DebugName" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.DebugName">
+  DebugName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L325"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the debug name of the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? DebugName { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Description_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Description*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Description" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Description">
+  Description
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L305"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the description of the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BufferDescription Description { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferDescription.html">BufferDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Dimension_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Dimension*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Dimension" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Dimension">
+  Dimension
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L315"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the resource dimension of the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceDimension Dimension { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ResourceDimension.html">ResourceDimension</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Format_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Format*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Format" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Format">
+  Format
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L300"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the index buffer format.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IndexFormat Format { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.IndexFormat.html">IndexFormat</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_IsDisposed_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.IsDisposed*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_IsDisposed" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.IsDisposed">
+  IsDisposed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L330"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the underlying buffer is disposed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsDisposed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Item_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Item*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Item_System_UInt32_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Item(System.UInt32)">
+  this[uint]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L337"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the value at the specified index in the index buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T this[uint index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The index of the value to get or set.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>The value at the specified index.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Length_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Length*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Length" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Length">
+  Length
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L310"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the length of the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Length { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_NativePointer_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.NativePointer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_NativePointer" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.NativePointer">
+  NativePointer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L320"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the native pointer of the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public nint NativePointer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Add_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Add*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Add__0_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Add(`0)">
+  Add(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L392"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a single index to the index buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(T value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd><p>The index value to add.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Add_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Add*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Add__0___" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Add(`0[])">
+  Add(params T[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L407"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds multiple indices to the index buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(params T[] indices)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>indices</code> T[]</dt>
+    <dd><p>The indices to add.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Bind_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Bind*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Bind_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Bind(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Bind(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L469"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Binds the index buffer to the specified graphics context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Bind(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context to bind the index buffer to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Bind_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Bind*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Bind_HexaEngine_Core_Graphics_IGraphicsContext_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Bind(HexaEngine.Core.Graphics.IGraphicsContext,System.Int32)">
+  Bind(IGraphicsContext, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L479"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Binds the index buffer to the specified graphics context with the specified offset.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Bind(IGraphicsContext context, int offset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context to bind the index buffer to.</p>
+</dd>
+    <dt><code>offset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The offset within the index buffer to bind.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Clear_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Clear*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Clear" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Clear">
+  Clear()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L451"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the index buffer, resetting the index count to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_CopyTo_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.CopyTo*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_CopyTo_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IBuffer_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.CopyTo(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.IBuffer)">
+  CopyTo(IGraphicsContext, IBuffer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L498"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies the content of the index buffer to another buffer in the specified graphics context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CopyTo(IGraphicsContext context, IBuffer buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used for the copy operation.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The destination buffer to copy the content to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Dispose_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Dispose" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L506"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Disposes of the index buffer and releases associated resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_EnsureCapacity_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.EnsureCapacity*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_EnsureCapacity_System_UInt32_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.EnsureCapacity(System.UInt32)">
+  EnsureCapacity(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L362"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Ensures that the index buffer has at least the specified capacity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EnsureCapacity(uint capacity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>capacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The minimum capacity to ensure.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_FlushMemory_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.FlushMemory*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_FlushMemory" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.FlushMemory">
+  FlushMemory()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L460"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flushes the memory associated with the index buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FlushMemory()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_RemoveAt_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.RemoveAt*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_RemoveAt_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.RemoveAt(System.Int32)">
+  RemoveAt(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L425"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes the index at the specified position in the index buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveAt(int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The position of the index to remove.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_ResetCounter_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.ResetCounter*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_ResetCounter" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.ResetCounter">
+  ResetCounter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L352"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resets the counter of indices to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ResetCounter()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Unbind_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Unbind*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Unbind_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Unbind(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Unbind(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L488"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Unbinds the index buffer from the specified graphics context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Unbind(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context to unbind the index buffer from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Update_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Update*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_Update_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.Update(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Update(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L437"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the index buffer in the graphics context if it is marked as dirty.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Update(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used for the update.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the index buffer was updated; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_IndexBuffer_1_OnDisposed" data-uid="HexaEngine.Core.Graphics.Buffers.IndexBuffer`1.OnDisposed">
+  OnDisposed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L246"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Occurs when the index buffer is disposed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler? OnDisposed</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/IndexBuffer.cs/#L10" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

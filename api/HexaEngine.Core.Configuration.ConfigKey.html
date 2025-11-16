@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ConfigKey </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ConfigKey ">
+      
+      <meta name="description" content="Represents a configuration key that can contain values and subkeys.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Configuration_ConfigKey.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Configuration.ConfigKey%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Configuration.ConfigKey">
+
+
+
+  <h1 id="HexaEngine_Core_Configuration_ConfigKey" data-uid="HexaEngine.Core.Configuration.ConfigKey" class="text-break">
+Class ConfigKey  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Configuration.html">Configuration</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a configuration key that can contain values and subkeys.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ConfigKey</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ConfigKey</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey__ctor_" data-uid="HexaEngine.Core.Configuration.ConfigKey.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey__ctor_System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.#ctor(System.String)">
+  ConfigKey(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a> class with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigKey(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the configuration key.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_Keys_" data-uid="HexaEngine.Core.Configuration.ConfigKey.Keys*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_Keys" data-uid="HexaEngine.Core.Configuration.ConfigKey.Keys">
+  Keys
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a list of subkeys contained within this configuration key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;ConfigKey&gt; Keys { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_Name_" data-uid="HexaEngine.Core.Configuration.ConfigKey.Name*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_Name" data-uid="HexaEngine.Core.Configuration.ConfigKey.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the name of the configuration key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_SyncObject_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SyncObject*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_SyncObject" data-uid="HexaEngine.Core.Configuration.ConfigKey.SyncObject">
+  SyncObject
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an object used for synchronization to protect concurrent access to the key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public object SyncObject { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_Values_" data-uid="HexaEngine.Core.Configuration.ConfigKey.Values*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_Values" data-uid="HexaEngine.Core.Configuration.ConfigKey.Values">
+  Values
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a list of configuration values associated with this key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;ConfigValue&gt; Values { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_AddKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.AddKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_AddKey_System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.AddKey(System.String)">
+  AddKey(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a subkey to this configuration key with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigKey AddKey(string path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the subkey to add.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a></dt>
+    <dd><p>The newly added subkey.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_AddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.AddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_AddValue_System_String_HexaEngine_Core_Configuration_DataType_System_String_System_Boolean_" data-uid="HexaEngine.Core.Configuration.ConfigKey.AddValue(System.String,HexaEngine.Core.Configuration.DataType,System.String,System.Boolean)">
+  AddValue(string, DataType, string?, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L295"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a configuration value to the list of values in this configuration key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddValue(string key, DataType type, string? value, bool isReadOnly)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the configuration value to add.</p>
+</dd>
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Core.Configuration.DataType.html">DataType</a></dt>
+    <dd><p>The data type of the configuration value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The value to set for the configuration value.</p>
+</dd>
+    <dt><code>isReadOnly</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value indicating whether the configuration value is read-only.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_AddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.AddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_AddValue_System_String_HexaEngine_Core_Configuration_DataType_System_String_System_Boolean_System_Type_" data-uid="HexaEngine.Core.Configuration.ConfigKey.AddValue(System.String,HexaEngine.Core.Configuration.DataType,System.String,System.Boolean,System.Type)">
+  AddValue(string, DataType, string?, bool, Type?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a configuration value to the list of values in this configuration key with an associated enum type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue AddValue(string key, DataType type, string? value, bool isReadOnly, Type? enumType)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the configuration value to add.</p>
+</dd>
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Core.Configuration.DataType.html">DataType</a></dt>
+    <dd><p>The data type of the configuration value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The value to set for the configuration value.</p>
+</dd>
+    <dt><code>isReadOnly</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value indicating whether the configuration value is read-only.</p>
+</dd>
+    <dt><code>enumType</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd><p>The enum type associated with the configuration value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The newly created config value key</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_ContainsKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.ContainsKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_ContainsKey_System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.ContainsKey(System.String)">
+  ContainsKey(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L253"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether this configuration key contains a subkey with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ContainsKey(string key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the subkey to check for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if a subkey with the specified name exists; otherwise, <code>false</code></p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_Find_" data-uid="HexaEngine.Core.Configuration.ConfigKey.Find*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_Find_System_Collections_Generic_List_HexaEngine_Core_Configuration_ConfigKey__System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.Find(System.Collections.Generic.List{HexaEngine.Core.Configuration.ConfigKey},System.String)">
+  Find(List&lt;ConfigKey&gt;, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L903"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Searches for a subkey with the specified name in the provided list of subkeys.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ConfigKey? Find(List&lt;ConfigKey&gt; keys, string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>keys</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a>&gt;</dt>
+    <dd><p>The list of subkeys to search within.</p>
+</dd>
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the subkey to find.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a></dt>
+    <dd><p>The subkey with the specified name, or null if it is not found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_Find_" data-uid="HexaEngine.Core.Configuration.ConfigKey.Find*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_Find_System_Collections_Generic_List_HexaEngine_Core_Configuration_ConfigValue__System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.Find(System.Collections.Generic.List{HexaEngine.Core.Configuration.ConfigValue},System.String)">
+  Find(List&lt;ConfigValue&gt;, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L275"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Finds a configuration value in the provided list of values with the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ConfigValue? Find(List&lt;ConfigValue&gt; values, string key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a>&gt;</dt>
+    <dd><p>The list of configuration values to search in.</p>
+</dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look for in the list of values.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The configuration value with the specified key, or <code>null</code> if not found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GenerateSubKeyAuto_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GenerateSubKeyAuto*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GenerateSubKeyAuto__1___0_System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GenerateSubKeyAuto``1(``0,System.String)">
+  GenerateSubKeyAuto&lt;T&gt;(T, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L881"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Generates a subkey automatically based on a provided object's public properties and the subkey name.
+If a subkey with the same name already exists, it will be updated; otherwise, a new subkey will be added.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigKey GenerateSubKeyAuto&lt;T&gt;(T t, string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>t</code> <span class="xref">T</span></dt>
+    <dd><p>The object used to initialize the subkey's structure.</p>
+</dd>
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the subkey.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a></dt>
+    <dd><p>The generated or updated subkey.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the provided object, which determines the subkey's structure.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_System_String_System_Boolean_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue(System.String,System.Boolean)">
+  GetOrAddValue(string, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L430"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the boolean value associated with the specified key. If the key does not exist,
+it adds a new boolean value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool GetOrAddValue(string key, bool defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>The default boolean value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>The boolean value associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_System_String_System_Double_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue(System.String,System.Double)">
+  GetOrAddValue(string, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L405"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the double floating-point value associated with the specified key. If the key does not exist,
+it adds a new floating-point value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double GetOrAddValue(string key, double defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The default double floating-point value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The double floating-point value associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_System_String_System_Int32_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue(System.String,System.Int32)">
+  GetOrAddValue(string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L355"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the integer value associated with the specified key. If the key does not exist,
+it adds a new integer value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetOrAddValue(string key, int defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The default integer value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The integer value associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_System_String_System_Numerics_Vector2_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue(System.String,System.Numerics.Vector2)">
+  GetOrAddValue(string, Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L455"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a Vector2 value associated with the specified key. If the key does not exist,
+it adds a new Vector2 value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2 GetOrAddValue(string key, Vector2 defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd><p>The default Vector2 value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd><p>The Vector2 value associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_System_String_System_Numerics_Vector3_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue(System.String,System.Numerics.Vector3)">
+  GetOrAddValue(string, Vector3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L481"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a Vector3 value associated with the specified key. If the key does not exist,
+it adds a new Vector3 value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3 GetOrAddValue(string key, Vector3 defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The default Vector3 value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The Vector3 value associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_System_String_System_Numerics_Vector4_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue(System.String,System.Numerics.Vector4)">
+  GetOrAddValue(string, Vector4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L507"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a Vector4 value associated with the specified key. If the key does not exist,
+it adds a new Vector4 value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector4 GetOrAddValue(string key, Vector4 defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The default Vector4 value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The Vector4 value associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_System_String_System_Single_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue(System.String,System.Single)">
+  GetOrAddValue(string, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L380"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the floating-point value associated with the specified key. If the key does not exist,
+it adds a new floating-point value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float GetOrAddValue(string key, float defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The default floating-point value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The floating-point value associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_System_String_System_Boolean_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey(System.String,System.Boolean)">
+  GetOrAddValueKey(string, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L624"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an value associated with the specified key. If the key does not exist,
+it adds a new value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue GetOrAddValueKey(string key, bool defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>The default value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The value key associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_System_String_System_Double_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey(System.String,System.Double)">
+  GetOrAddValueKey(string, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L604"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an value associated with the specified key. If the key does not exist,
+it adds a new value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue GetOrAddValueKey(string key, double defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The default value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The value key associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_System_String_System_Int32_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey(System.String,System.Int32)">
+  GetOrAddValueKey(string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L564"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an value associated with the specified key. If the key does not exist,
+it adds a new value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue GetOrAddValueKey(string key, int defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The default value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The value key associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_System_String_System_Numerics_Vector2_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey(System.String,System.Numerics.Vector2)">
+  GetOrAddValueKey(string, Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L644"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an value associated with the specified key. If the key does not exist,
+it adds a new value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue GetOrAddValueKey(string key, Vector2 defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd><p>The default value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The value key associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_System_String_System_Numerics_Vector3_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey(System.String,System.Numerics.Vector3)">
+  GetOrAddValueKey(string, Vector3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L664"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an value associated with the specified key. If the key does not exist,
+it adds a new value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue GetOrAddValueKey(string key, Vector3 defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The default value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The value key associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_System_String_System_Numerics_Vector4_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey(System.String,System.Numerics.Vector4)">
+  GetOrAddValueKey(string, Vector4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L684"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an value associated with the specified key. If the key does not exist,
+it adds a new value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue GetOrAddValueKey(string key, Vector4 defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The default value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The value key associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_System_String_System_Single_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey(System.String,System.Single)">
+  GetOrAddValueKey(string, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L584"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an value associated with the specified key. If the key does not exist,
+it adds a new value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue GetOrAddValueKey(string key, float defaultValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The default value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The value key associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValueKey__1_System_String___0_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValueKey``1(System.String,``0)">
+  GetOrAddValueKey&lt;T&gt;(string, T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L704"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an value associated with the specified key. If the key does not exist,
+it adds a new value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue GetOrAddValueKey&lt;T&gt;(string key, T defaultValue) where T : struct, Enum</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <span class="xref">T</span></dt>
+    <dd><p>The default value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>The value key associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue__1_System_String___0_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue``1(System.String,``0)">
+  GetOrAddValue&lt;T&gt;(string, T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L534"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an enum value associated with the specified key. If the key does not exist,
+it adds a new enum value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T GetOrAddValue&lt;T&gt;(string key, T defaultValue) where T : struct, Enum</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <span class="xref">T</span></dt>
+    <dd><p>The default enum value to add if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>The enum value associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The enum type.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrAddValue__1_System_String___0_HexaEngine_Core_Configuration_DataType_System_Func_System_String___0__System_Func___0_System_String__" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrAddValue``1(System.String,``0,HexaEngine.Core.Configuration.DataType,System.Func{System.String,``0},System.Func{``0,System.String})">
+  GetOrAddValue&lt;T&gt;(string, T, DataType, Func&lt;string?, T&gt;, Func&lt;T, string?&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L728"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value associated with the specified key and applies custom conversion functions.
+If the key does not exist, it adds a new value with the provided default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T GetOrAddValue&lt;T&gt;(string key, T defaultValue, DataType type, Func&lt;string?, T&gt; convert, Func&lt;T, string?&gt; convertBack)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key to look up or add.</p>
+</dd>
+    <dt><code>defaultValue</code> <span class="xref">T</span></dt>
+    <dd><p>The default value to add if the key doesn't exist.</p>
+</dd>
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Core.Configuration.DataType.html">DataType</a></dt>
+    <dd><p>The data type of the configuration value.</p>
+</dd>
+    <dt><code>convert</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;</dt>
+    <dd><p>A function to convert a string to the target value type.</p>
+</dd>
+    <dt><code>convertBack</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;T, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd><p>A function to convert the target value type back to a string.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>The value associated with the key or the default value if the key doesn't exist.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of value to retrieve or add.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_GetOrCreateKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrCreateKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_GetOrCreateKey_System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.GetOrCreateKey(System.String)">
+  GetOrCreateKey(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or creates a subkey within this configuration key with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigKey GetOrCreateKey(string path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the subkey to get or create.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a></dt>
+    <dd><p>The subkey with the specified name, creating it if it doesn't exist.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_InitAuto_" data-uid="HexaEngine.Core.Configuration.ConfigKey.InitAuto*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_InitAuto__1___0_System_Boolean_" data-uid="HexaEngine.Core.Configuration.ConfigKey.InitAuto``1(``0,System.Boolean)">
+  InitAuto&lt;T&gt;(T, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L1269"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Automatically initializes and populates ConfigValue objects based on the public properties of the specified object of type T.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void InitAuto&lt;T&gt;(T t, bool allowReadOnly = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>t</code> <span class="xref">T</span></dt>
+    <dd><p>The object for which ConfigValue objects will be initialized.</p>
+</dd>
+    <dt><code>allowReadOnly</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Specifies whether to include read-only properties in the initialization (default is false).</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the object for which ConfigValue objects will be initialized.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_RemoveKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.RemoveKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_RemoveKey_System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.RemoveKey(System.String)">
+  RemoveKey(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes a subkey from this configuration key with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveKey(string path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the subkey to remove.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the subkey was removed; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_RemoveValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.RemoveValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_RemoveValue_System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.RemoveValue(System.String)">
+  RemoveValue(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L331"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes a configuration value from this configuration key with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveValue(string key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the configuration value to remove.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the configuration value was removed; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_SetValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_SetValue_System_String_System_Double_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue(System.String,System.Double)">
+  SetValue(string, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L763"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a double value associated with the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValue(string key, double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key for which to set the value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The double value to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_SetValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_SetValue_System_String_System_Numerics_Vector2_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue(System.String,System.Numerics.Vector2)">
+  SetValue(string, Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L795"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a Vector2 value associated with the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValue(string key, Vector2 value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key for which to set the value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd><p>The Vector2 value to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_SetValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_SetValue_System_String_System_Numerics_Vector3_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue(System.String,System.Numerics.Vector3)">
+  SetValue(string, Vector3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L811"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a Vector3 value associated with the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValue(string key, Vector3 value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key for which to set the value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd><p>The Vector3 value to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_SetValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_SetValue_System_String_System_Numerics_Vector4_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue(System.String,System.Numerics.Vector4)">
+  SetValue(string, Vector4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L827"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a Vector4 value associated with the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValue(string key, Vector4 value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key for which to set the value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The Vector4 value to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_SetValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_SetValue_System_String_System_Single_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue(System.String,System.Single)">
+  SetValue(string, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L779"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a float value associated with the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValue(string key, float value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key for which to set the value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The float value to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_SetValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_SetValue_System_String_System_String_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue(System.String,System.String)">
+  SetValue(string, string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L747"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a string value associated with the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValue(string key, string? value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key for which to set the value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string value to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_SetValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_SetValue__1_System_String_System_Nullable___0__" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue``1(System.String,System.Nullable{``0})">
+  SetValue&lt;T&gt;(string, T?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L861"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets an enum value associated with the specified key. This overload is used for nullable enum value types.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValue&lt;T&gt;(string key, T? value) where T : struct, Enum</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key for which to set the value.</p>
+</dd>
+    <dt><code>value</code> T?</dt>
+    <dd><p>The enum value to set.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The enum type of the value to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_SetValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_SetValue__1_System_String___0_" data-uid="HexaEngine.Core.Configuration.ConfigKey.SetValue``1(System.String,``0)">
+  SetValue&lt;T&gt;(string, T?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L844"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a value associated with the specified key. This overload is used for nullable value types.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValue&lt;T&gt;(string key, T? value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The key for which to set the value.</p>
+</dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd><p>The value to set.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of value to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_Sort_" data-uid="HexaEngine.Core.Configuration.ConfigKey.Sort*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_Sort" data-uid="HexaEngine.Core.Configuration.ConfigKey.Sort">
+  Sort()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sorts the configuration values and subkeys of this key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Sort()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_Sort_" data-uid="HexaEngine.Core.Configuration.ConfigKey.Sort*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_Sort_System_Collections_Generic_IComparer_HexaEngine_Core_Configuration_ConfigKey__System_Collections_Generic_IComparer_HexaEngine_Core_Configuration_ConfigValue__" data-uid="HexaEngine.Core.Configuration.ConfigKey.Sort(System.Collections.Generic.IComparer{HexaEngine.Core.Configuration.ConfigKey},System.Collections.Generic.IComparer{HexaEngine.Core.Configuration.ConfigValue})">
+  Sort(IComparer&lt;ConfigKey&gt;, IComparer&lt;ConfigValue&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sorts the configuration values and subkeys of this key using custom comparers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Sort(IComparer&lt;ConfigKey&gt; keyComparer, IComparer&lt;ConfigValue&gt; valueComparer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>keyComparer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icomparer-1">IComparer</a>&lt;<a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a>&gt;</dt>
+    <dd><p>The comparer to use for sorting subkeys.</p>
+</dd>
+    <dt><code>valueComparer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icomparer-1">IComparer</a>&lt;<a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a>&gt;</dt>
+    <dd><p>The comparer to use for sorting values.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_TryAddKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryAddKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_TryAddKey_System_String_HexaEngine_Core_Configuration_ConfigKey__" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryAddKey(System.String,HexaEngine.Core.Configuration.ConfigKey@)">
+  TryAddKey(string, out ConfigKey?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to add a new configuration key with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryAddKey(string path, out ConfigKey? key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The path of the key to add.</p>
+</dd>
+    <dt><code>key</code> <a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a></dt>
+    <dd><p>When this method returns, contains the added <a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a> if successful; otherwise, <code>null</code>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the key was added successfully; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_TryGetKey_" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetKey*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_TryGetKey_System_String_HexaEngine_Core_Configuration_ConfigKey__" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetKey(System.String,HexaEngine.Core.Configuration.ConfigKey@)">
+  TryGetKey(string, out ConfigKey?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to get a subkey by name within this configuration key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetKey(string path, out ConfigKey? key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the subkey to find.</p>
+</dd>
+    <dt><code>key</code> <a class="xref" href="HexaEngine.Core.Configuration.ConfigKey.html">ConfigKey</a></dt>
+    <dd><p>When this method returns, contains the subkey if found; otherwise, <code>null</code>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the subkey was found; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_TryGetKeyValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetKeyValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_TryGetKeyValue_System_String_HexaEngine_Core_Configuration_ConfigValue__" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetKeyValue(System.String,HexaEngine.Core.Configuration.ConfigValue@)">
+  TryGetKeyValue(string, out ConfigValue?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L192"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to get the configuration value associated with a key within this configuration key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetKeyValue(string key, out ConfigValue? value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the key to find.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>When this method returns, contains the configuration value if found; otherwise, <code>null</code>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the key was found and has a configuration value; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_TryGetOrAddKeyValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetOrAddKeyValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_TryGetOrAddKeyValue_System_String_System_String_HexaEngine_Core_Configuration_DataType_System_Boolean_HexaEngine_Core_Configuration_ConfigValue__" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetOrAddKeyValue(System.String,System.String,HexaEngine.Core.Configuration.DataType,System.Boolean,HexaEngine.Core.Configuration.ConfigValue@)">
+  TryGetOrAddKeyValue(string, string?, DataType, bool, out ConfigValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L209"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to get a configuration value by key, creating it if it doesn't exist.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void TryGetOrAddKeyValue(string key, string? defaultValue, DataType type, bool isReadOnly, out ConfigValue value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the key to find or create.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The default value to set if the key doesn't exist.</p>
+</dd>
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Core.Configuration.DataType.html">DataType</a></dt>
+    <dd><p>The data type of the configuration value.</p>
+</dd>
+    <dt><code>isReadOnly</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value indicating whether the configuration value is read-only.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a></dt>
+    <dd><p>When this method returns, contains the configuration value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_TryGetOrAddValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetOrAddValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_TryGetOrAddValue_System_String_System_String_HexaEngine_Core_Configuration_DataType_System_Boolean_System_String__" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetOrAddValue(System.String,System.String,HexaEngine.Core.Configuration.DataType,System.Boolean,System.String@)">
+  TryGetOrAddValue(string, string?, DataType, bool, out string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L233"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to get a value by key, creating it if it doesn't exist.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetOrAddValue(string key, string? defaultValue, DataType type, bool isReadOnly, out string? value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the key to find or create.</p>
+</dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The default value to set if the key doesn't exist.</p>
+</dd>
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Core.Configuration.DataType.html">DataType</a></dt>
+    <dd><p>The data type of the value.</p>
+</dd>
+    <dt><code>isReadOnly</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value indicating whether the value is read-only.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>When this method returns, contains the value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the value was found or created; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigKey_TryGetValue_" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigKey_TryGetValue_System_String_System_String__" data-uid="HexaEngine.Core.Configuration.ConfigKey.TryGetValue(System.String,System.String@)">
+  TryGetValue(string, out string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to get the value associated with a key within this configuration key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetValue(string key, out string? value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the key to find.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>When this method returns, contains the value if found; otherwise, <code>null</code>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the key was found and has a value; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigKey.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
