@@ -57,6 +57,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="HexaEngine.UI" Version="1.0.0.1" />
 		<PackageReference Include="MagicPhysX" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -970,7 +971,6 @@
 		<ProjectReference Include="..\HexaEngine.D3D12\HexaEngine.D3D12.csproj" />
 		<ProjectReference Include="..\HexaEngine.Dotnet\HexaEngine.Dotnet.csproj" />
 		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
-		<ProjectReference Include="..\HexaEngine.UI\HexaEngine.UI.csproj" />
 		<ProjectReference Include="..\HexaEngine.Vulkan\HexaEngine.Vulkan.csproj" />
 		<ProjectReference Include="..\HexaEngine.XAudio\HexaEngine.XAudio.csproj" />
 	</ItemGroup>

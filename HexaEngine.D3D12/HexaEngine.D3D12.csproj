@@ -6,6 +6,31 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Platforms>AnyCPU;x64</Platforms>
+
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+		<EnableAotAnalyzer>true</EnableAotAnalyzer>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisLevel>latest</AnalysisLevel>
+
+		<PackageId>HexaEngine.D3D12</PackageId>
+		<AssemblyVersion>1.0.0.1</AssemblyVersion>
+		<PackageVersion>1.0.0.1</PackageVersion>
+		<Description>Direct3D 12 rendering module for HexaEngine. Provides a high-performance D3D12 backend with resource lifetime management, command list orchestration and shader pipeline setup.</Description>
+		<PackageTags>HexaEngine;graphics;d3d12;rendering;direct3d;engine;windows;gpu</PackageTags>
+		<Authors>Juna Meinhold</Authors>
+		<Copyright>Copyright (c) 2022 Juna Meinhold</Copyright>
+		<PackageProjectUrl>https://github.com/HexaEngine/HexaEngine</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/HexaEngine/HexaEngine</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>icon.png</PackageIcon>
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -18,6 +43,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="../LICENSE.txt" Pack="true" PackagePath="\" />
+		<Content Include="../README.md" Pack="true" PackagePath="\" />
+		<Content Include="../icon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>

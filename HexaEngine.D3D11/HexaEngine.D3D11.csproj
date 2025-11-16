@@ -8,6 +8,31 @@
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<DefineConstants>$(DefineConstants)TRACE;TRACELEAK</DefineConstants>
 		<Platforms>AnyCPU;x64</Platforms>
+
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+		<EnableAotAnalyzer>true</EnableAotAnalyzer>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisLevel>latest</AnalysisLevel>
+
+		<PackageId>HexaEngine.D3D11</PackageId>
+		<AssemblyVersion>1.0.0.1</AssemblyVersion>
+		<PackageVersion>1.0.0.1</PackageVersion>
+		<Description>Direct3D 11 rendering module for HexaEngine. Implements rendering backend, resource management and shader integration for D3D11-based platforms.</Description>
+		<PackageTags>HexaEngine;graphics;d3d11;rendering;direct3d;engine;windows</PackageTags>
+		<Authors>Juna Meinhold</Authors>
+		<Copyright>Copyright (c) 2022 Juna Meinhold</Copyright>
+		<PackageProjectUrl>https://github.com/HexaEngine/HexaEngine</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/HexaEngine/HexaEngine</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>icon.png</PackageIcon>
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,6 +46,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="../LICENSE.txt" Pack="true" PackagePath="\" />
+		<Content Include="../README.md" Pack="true" PackagePath="\" />
+		<Content Include="../icon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>

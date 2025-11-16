@@ -15,9 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="output.xsd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Test.xaml">
       <Generator></Generator>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
