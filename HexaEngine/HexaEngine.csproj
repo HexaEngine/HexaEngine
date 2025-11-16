@@ -5,17 +5,34 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Configurations>Debug;Release;TraceLeak;</Configurations>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-		<NoWarn>CS1591</NoWarn>
+		<Platforms>AnyCPU;x64</Platforms>
+		<Configurations>Debug;Release;TraceLeak;</Configurations>
 
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
 		<EnableAotAnalyzer>true</EnableAotAnalyzer>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
-		<Platforms>AnyCPU;x64</Platforms>
+
+		<PackageId>HexaEngine</PackageId>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<PackageVersion>1.0.0-alpha1</PackageVersion>
+		<Description>HexaEngine is a high-performance, cross-platform 3D game engine and editor built with C# and .NET. It provides a comprehensive suite of tools and systems for developing modern games and interactive applications, including advanced rendering techniques, physics simulation, input handling, scripting support, and an intuitive editor interface.</Description>
+		<PackageTags>HexaEngine;game engine;3D;graphics;rendering;game development;C#;dotnet;cross-platform;editor;tools;physics;input;scripting;ImGui;SDL</PackageTags>
+		<Authors>Juna Meinhold</Authors>
+		<Copyright>Copyright (c) 2022 Juna Meinhold</Copyright>
+		<PackageProjectUrl>https://github.com/HexaEngine/HexaEngine</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/HexaEngine/HexaEngine</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>icon.png</PackageIcon>
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -973,5 +990,11 @@
 
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="../LICENSE.txt" Pack="true" PackagePath="\" />
+		<Content Include="../README.md" Pack="true" PackagePath="\" />
+		<Content Include="../icon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 </Project>
