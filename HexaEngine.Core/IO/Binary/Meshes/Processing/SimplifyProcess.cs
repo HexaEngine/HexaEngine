@@ -71,7 +71,7 @@
 
             for (int i = 0; i < outputMesh.VertexCount; i++)
             {
-                outputData.Positions[i] = outputMesh.Vertices[i];
+                outputData.Positions[i] = new((float)outputMesh.Vertices[i].X, (float)outputMesh.Vertices[i].Y, (float)outputMesh.Vertices[i].Z);
             }
 
             for (int i = 0; i < UVChannelInfo.MaxChannels; i++)

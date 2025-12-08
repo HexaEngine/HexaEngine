@@ -30,74 +30,13 @@
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>
+	
+	<Target Name="GenerateAssets" BeforeTargets="BeforeBuild">
+		<Exec Command="HexaAssetTool.exe -m MultiCreate -p &quot;./&quot;" WorkingDirectory="$(ProjectDir)assets" />
+	</Target>
 
 	<ItemGroup>
-	  <None Update="assets\HexaEngine.Editor\fonts\arial.ttf">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\fonts\CascadiaMono.ttf">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\fonts\fa-brands-400.ttf">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\fonts\fa-regular-400.ttf">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\fonts\fa-solid-900.ttf">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\fonts\MaterialIcons-Regular.ttf">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\fonts\MaterialSymbolsRounded.ttf">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\animation.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\audio.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\camera.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\csharp.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\file.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\folder.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\icons.xml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\image.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\light.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\logo.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\material.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\model.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\prefab.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\scene.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\HexaEngine.Editor\icons\terrain.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+		<None Update="assets\*.assets" CopyToOutputDirectory="Always" />
 	</ItemGroup>
 
 </Project>

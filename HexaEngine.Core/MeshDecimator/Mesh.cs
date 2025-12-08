@@ -403,9 +403,9 @@ namespace HexaEngine.Core.MeshDecimator
                     uint i1 = indices[i + 1];
                     uint i2 = indices[i + 2];
 
-                    Vector3 v0 = vertices[i0];
-                    Vector3 v1 = vertices[i1];
-                    Vector3 v2 = vertices[i2];
+                    Vector3 v0 = new((float)vertices[i0].X, (float)vertices[i0].Y, (float)vertices[i0].Z);
+                    Vector3 v1 = new((float)vertices[i1].X, (float)vertices[i1].Y, (float)vertices[i1].Z);
+                    Vector3 v2 = new((float)vertices[i2].X, (float)vertices[i2].Y, (float)vertices[i2].Z);
 
                     Vector3 nx = v1 - v0;
                     Vector3 ny = v2 - v0;

@@ -63,17 +63,17 @@
             };
 
             ImGuiFontBuilder defaultBuilder = new(fonts);
-            defaultBuilder.AddFontFromFileTTF("assets/HexaEngine.Editor/fonts/arial.ttf", 15 * scale)
+            defaultBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/arial.ttf", 15 * scale)
                           .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
-                          .AddFontFromFileTTF("assets/HexaEngine.Editor/fonts/fa-solid-900.ttf", 14 * scale, glyphRanges)
-                          .AddFontFromFileTTF("assets/HexaEngine.Editor/fonts/fa-brands-400.ttf", 14 * scale, glyphRanges);
+                          .AddFontFromAsset("HexaEngine.Editor:fonts/fa-solid-900.ttf", 14 * scale, glyphRanges)
+                          .AddFontFromAsset("HexaEngine.Editor:fonts/fa-brands-400.ttf", 14 * scale, glyphRanges);
             aliasToFont.Add("Default", defaultBuilder.Font);
             defaultBuilder.Destroy();
 
             ImGuiFontBuilder iconsRegularBuilder = new(fonts);
-            iconsRegularBuilder.AddFontFromFileTTF("assets/HexaEngine.Editor/fonts/arial.ttf", 15 * scale)
+            iconsRegularBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/arial.ttf", 15 * scale)
                                .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
-                               .AddFontFromFileTTF("assets/HexaEngine.Editor/fonts/fa-regular-400.ttf", 14 * scale, glyphRanges);
+                               .AddFontFromAsset("HexaEngine.Editor:fonts/fa-regular-400.ttf", 14 * scale, glyphRanges);
             aliasToFont.Add("Icons-Regular", iconsRegularBuilder.Font);
             iconsRegularBuilder.Destroy();
 
@@ -84,16 +84,16 @@
             };
 
             ImGuiFontBuilder widgetsFontBuilder = new(fonts);
-            widgetsFontBuilder.AddFontFromFileTTF("assets/HexaEngine.Editor/fonts/arial.ttf", size: 16 * scale)
+            widgetsFontBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/arial.ttf", size: 16 * scale)
                                  .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
-                                 .AddFontFromFileTTF("assets/HexaEngine.Editor/fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges);
+                                 .AddFontFromAsset("HexaEngine.Editor:fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges);
             aliasToFont.Add("WidgetsFont", widgetsFontBuilder.Font);
             widgetsFontBuilder.Destroy();
 
             ImGuiFontBuilder textEditorFontBuilder = new(fonts);
-            textEditorFontBuilder.AddFontFromFileTTF("assets/HexaEngine.Editor/fonts/CascadiaMono.ttf", size: 16 * scale)
+            textEditorFontBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/CascadiaMono.ttf", size: 16 * scale)
                                  .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
-                                 .AddFontFromFileTTF("assets/HexaEngine.Editor/fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges)
+                                 .AddFontFromAsset("HexaEngine.Editor:fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges)
                                  ;
             aliasToFont.Add("TextEditorFont", textEditorFontBuilder.Font);
             textEditorFontBuilder.Destroy();
@@ -191,14 +191,14 @@
             style.ScaleAllSizes(scale);
 
             ImGuiImplSDL3.SetCurrentContext(guiContext);
-            ImGuiImplSDL3.SDL3InitForD3D((Hexa.NET.ImGui.Backends.SDL3.SDLWindow*)window.GetWindow());
+            ImGuiImplSDL3.SDL3InitForD3D((SDLWindow*)window.GetWindow());
             ImGuiRenderer.Init(device, context);
             Application.RegisterHook(EventHook);
         }
 
         private unsafe bool EventHook(Hexa.NET.SDL3.SDLEvent @event)
         {
-            return ImGuiImplSDL3.SDL3ProcessEvent((Hexa.NET.ImGui.Backends.SDL3.SDLEvent*)&@event);
+            return ImGuiImplSDL3.SDL3ProcessEvent((SDLEvent*)&@event);
         }
 
         public unsafe void NewFrame()

@@ -172,7 +172,8 @@ namespace HexaEngine.Graphics.Renderers
                         }
                         else
                         {
-                            Marshal.GetDelegateForFunctionPointer<UserCallback>((nint)cmd.UserCallback)(cmdList, &cmd);
+                            delegate* <ImDrawList*, ImDrawCmd*, void> callback = (delegate* <ImDrawList*, ImDrawCmd*, void>)cmd.UserCallback;
+                            callback(cmdList, &cmd);
                         }
                     }
                     else

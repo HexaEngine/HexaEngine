@@ -11,9 +11,9 @@
 
         public SpriteData(Sprite sprite)
         {
-            ScreenPos = sprite.ScreenPos;
-            AltasPos = sprite.AltasPos;
-            Size = sprite.Size;
+            ScreenPos = new((uint)sprite.ScreenPos.X, (uint)sprite.ScreenPos.Y);
+            AltasPos = new((uint)sprite.AltasPos.X, (uint)sprite.AltasPos.Y);
+            Size = new((uint)sprite.Size.X, (uint)sprite.Size.Y);
             Layer = sprite.Layer;
         }
     }

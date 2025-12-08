@@ -39,7 +39,6 @@ namespace Editor
         {
             Flags = RendererFlags.None;
             Title = $"Editor ({Application.GraphicsBackend})";
-            TitleBar = new TitleBar();
         }
 
         private bool firstTime = true;
@@ -103,6 +102,7 @@ namespace Editor
 
                 editorInitialized = true;
             });
+            TitleBar = new TitleBar();
         }
 
 #if SINGLE_THREADED
