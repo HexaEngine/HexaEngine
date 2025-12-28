@@ -23,7 +23,6 @@ namespace HexaEngine.Graphics.Renderers
         private static IBuffer indexBuffer;
         private static IBuffer constantBuffer;
         private static ISamplerState fontSampler;
-        private static IShaderResourceView fontTextureView;
         private static int vertexBufferSize = 5000, indexBufferSize = 10000;
         private static SRVWrapper srvWrapper = new(0);
 
@@ -450,7 +449,6 @@ namespace HexaEngine.Graphics.Renderers
 
             pso.Dispose();
             fontSampler.Dispose();
-            fontTextureView.Dispose();
             indexBuffer.Dispose();
             vertexBuffer.Dispose();
             constantBuffer.Dispose();
