@@ -355,19 +355,19 @@
 
                 if (ImGui.BeginPopupContextItem("##LockPosition"u8))
                 {
-                    if (ImGuiP.CheckboxFlags("\xf023 Axis-X Position"u8, ref flags, (int)TransformFlags.LockPositionX))
+                    if (ImGui.CheckboxFlags("\xf023 Axis-X Position"u8, ref flags, (int)TransformFlags.LockPositionX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Y Position"u8, ref flags, (int)TransformFlags.LockPositionY))
+                    if (ImGui.CheckboxFlags("\xf023 Axis-Y Position"u8, ref flags, (int)TransformFlags.LockPositionY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Z Position"u8, ref flags, (int)TransformFlags.LockPositionZ))
+                    if (ImGui.CheckboxFlags("\xf023 Axis-Z Position"u8, ref flags, (int)TransformFlags.LockPositionZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Position", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
@@ -411,19 +411,19 @@
 
                 if (ImGui.BeginPopupContextItem("##LockRotation"u8))
                 {
-                    if (ImGuiP.CheckboxFlags("\xf023 Axis-X Rotation", ref flags, (int)TransformFlags.LockRotationX))
+                    if (ImGui.CheckboxFlags("\xf023 Axis-X Rotation", ref flags, (int)TransformFlags.LockRotationX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Y Rotation"u8, ref flags, (int)TransformFlags.LockRotationY))
+                    if (ImGui.CheckboxFlags("\xf023 Axis-Y Rotation"u8, ref flags, (int)TransformFlags.LockRotationY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Z Rotation"u8, ref flags, (int)TransformFlags.LockRotationZ))
+                    if (ImGui.CheckboxFlags("\xf023 Axis-Z Rotation"u8, ref flags, (int)TransformFlags.LockRotationZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Rotation", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
@@ -466,19 +466,19 @@
 
                 if (ImGui.BeginPopupContextItem("##LockScale"u8))
                 {
-                    if (ImGuiP.CheckboxFlags("\xf023 Axis-X Scale"u8, ref flags, (int)TransformFlags.LockScaleX))
+                    if (ImGui.CheckboxFlags("\xf023 Axis-X Scale"u8, ref flags, (int)TransformFlags.LockScaleX))
                     {
                         History.Default.Do("Lock/Unlock Axis-X Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Y Scale"u8, ref flags, (int)TransformFlags.LockScaleY))
+                    if (ImGui.CheckboxFlags("\xf023 Axis-Y Scale"u8, ref flags, (int)TransformFlags.LockScaleY))
                     {
                         History.Default.Do("Lock/Unlock Axis-Y Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;
                     }
 
-                    if (ImGuiP.CheckboxFlags("\xf023 Axis-Z Scale"u8, ref flags, (int)TransformFlags.LockScaleZ))
+                    if (ImGui.CheckboxFlags("\xf023 Axis-Z Scale"u8, ref flags, (int)TransformFlags.LockScaleZ))
                     {
                         History.Default.Do("Lock/Unlock Axis-Z Scale", transform, (TransformFlags)oldFlags, (TransformFlags)flags, SetFlags, RestoreFlags);
                         changed = true;

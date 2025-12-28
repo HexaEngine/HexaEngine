@@ -39,7 +39,7 @@
             }
 
             var flags = (int)manager.CullingFlags;
-            if (ImGuiP.CheckboxFlags("Enable"u8, ref flags, (int)CullingFlags.Debug))
+            if (ImGui.CheckboxFlags("Enable"u8, ref flags, (int)CullingFlags.Debug))
             {
                 manager.CullingFlags |= CullingFlags.Debug;
                 return; // we have to skip this frame.
@@ -91,8 +91,8 @@
             ImGui.Text(builder);
 
             bool changed = false;
-            changed |= ImGuiP.CheckboxFlags("Frustum Culling"u8, ref flags, (int)CullingFlags.Frustum);
-            changed |= ImGuiP.CheckboxFlags("Occlusion Culling"u8, ref flags, (int)CullingFlags.Occlusion);
+            changed |= ImGui.CheckboxFlags("Frustum Culling"u8, ref flags, (int)CullingFlags.Frustum);
+            changed |= ImGui.CheckboxFlags("Occlusion Culling"u8, ref flags, (int)CullingFlags.Occlusion);
             if (changed)
             {
                 manager.CullingFlags = (CullingFlags)flags;

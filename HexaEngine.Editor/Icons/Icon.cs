@@ -195,7 +195,7 @@
         /// <param name="size">The size of the image.</param>
         public void Image(Vector2 size)
         {
-            ImGui.Image(this, size, uv0, uv1, tint);
+            ImGui.ImageWithBg(this, size, uv0, uv1, Vector4.Zero, tint);
         }
 
         /// <summary>
@@ -209,7 +209,7 @@
             var imageHeight = size.Y;
 
             ImGui.SetCursorPosY((windowHeight - imageHeight) * 0.5f);
-            ImGui.Image(this, size, uv0, uv1, tint);
+            ImGui.ImageWithBg(this, size, uv0, uv1, Vector4.Zero, tint);
         }
 
         /// <summary>
@@ -222,7 +222,7 @@
             var imageWidth = size.X;
 
             ImGui.SetCursorPosX((windowWidth - imageWidth) * 0.5f);
-            ImGui.Image(this, size, uv0, uv1, tint);
+            ImGui.ImageWithBg(this, size, uv0, uv1, Vector4.Zero, tint);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@
             var windowSize = ImGui.GetWindowSize();
 
             ImGui.SetCursorPos((windowSize - size) * 0.5f);
-            ImGui.Image(this, size, uv0, uv1, tint);
+            ImGui.ImageWithBg(this, size, uv0, uv1, Vector4.Zero, tint);
         }
 
         public void AddImage(ImDrawListPtr drawListPtr, Vector2 min, Vector2 max)

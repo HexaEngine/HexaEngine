@@ -3,6 +3,42 @@
     using Hexa.NET.Logging;
     using System;
 
+    public static class StringExt
+    {
+        public unsafe static int CountLines(this string str)
+        {
+            if (str.Length == 0)
+                return 0;
+            fixed (char* ppStr = str)
+            {
+                char* pStr = ppStr;
+                char* pEnd = pStr + str.Length;
+                int lineCount = 0;
+                while (pStr < pEnd)
+                {
+                    var c = *pStr;
+                    bool cr = c == '\r';
+                    if (cr || c == '\n')
+                    {
+                        int width = 1;
+                        if (cr && pStr + 1 != pEnd && pStr[1] == '\n')
+                        {
+                            width = 2;
+                        }
+                        lineCount++;
+                        pStr += width;
+                    }
+                    else
+                    {
+                        ++pStr;
+                    }
+                }
+
+                return lineCount + 1;
+            }
+        }
+    }
+
     /// <summary>
     /// Represents a console message with formatting and timestamp information.
     /// </summary>
@@ -29,6 +65,11 @@
         public string Timestamp;
 
         /// <summary>
+        /// Gets or sets the height value.
+        /// </summary>
+        public int Lines;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ConsoleMessage"/> struct with specified foreground and background colors, message, and timestamp.
         /// </summary>
         /// <param name="foregroundColor">The foreground color of the message.</param>
@@ -41,6 +82,7 @@
             BackgroundColor = backgroundColor;
             Message = message;
             Timestamp = timestamp;
+            Lines = message.CountLines();
         }
 
         /// <summary>
@@ -55,6 +97,7 @@
             BackgroundColor = backgroundColor;
             Message = message;
             Timestamp = DateTime.Now.ToShortTimeString();
+            Lines = message.CountLines();
         }
 
         /// <summary>

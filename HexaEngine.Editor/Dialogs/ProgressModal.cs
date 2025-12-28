@@ -119,7 +119,7 @@
                 Vector2 size = mainViewport.Size;
                 pos.Y += offsetY;
                 pos.X += offsetX;
-                ImGuiP.SetWindowPos(winPos = pos);
+                ImGui.SetWindowPos(winPos = pos);
             }
             else if ((progressFlags & ProgressFlags.BottomLeft) != 0)
             {
@@ -127,13 +127,13 @@
                 Vector2 size = mainViewport.Size;
                 pos.Y += size.Y - windowSize.Y - offsetY;
                 pos.X += offsetX;
-                ImGuiP.SetWindowPos(winPos = pos);
+                ImGui.SetWindowPos(winPos = pos);
             }
             else
             {
                 Vector2 mainViewportPos = mainViewport.Pos;
                 var s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
-                ImGuiP.SetWindowPos(winPos = mainViewportPos + (s / 2 - windowSize / 2));
+                ImGui.SetWindowPos(winPos = mainViewportPos + (s / 2 - windowSize / 2));
             }
 
             if (type == ProgressType.Spinner)

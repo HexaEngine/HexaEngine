@@ -421,7 +421,7 @@
 
                     ImGui.BeginChild(editor.Name, new Vector2(400, 120), flags);
 
-                    if (ImGui.IsWindowHovered() && ImGuiP.IsMouseClicked(ImGuiMouseButton.Left))
+                    if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
                     {
                         EditorConfig.Default.SelectedExternalTextEditor = i;
                     }

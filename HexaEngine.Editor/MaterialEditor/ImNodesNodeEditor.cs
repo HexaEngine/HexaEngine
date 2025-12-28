@@ -197,7 +197,7 @@
             int nodeIdHovered = 0;
             if (ImNodes.IsNodeHovered(ref nodeIdHovered))
             {
-                if (ImGuiP.IsMouseClicked(ImGuiMouseButton.Right))
+                if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
                 {
                     var node = GetNode(nodeIdHovered)!;
                 }
@@ -222,7 +222,7 @@
             {
                 GetLink(idLink)?.Destroy();
             }
-            if (ImGuiP.IsKeyPressed(ImGuiKey.Delete))
+            if (ImGui.IsKeyPressed(ImGuiKey.Delete))
             {
                 int numLinks = ImNodes.NumSelectedLinks();
                 if (numLinks != 0)

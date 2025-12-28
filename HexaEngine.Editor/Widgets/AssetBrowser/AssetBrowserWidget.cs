@@ -336,10 +336,10 @@
 
             if (ImGui.IsWindowHovered())
             {
-                if (ImGuiP.IsMouseClicked(ImGuiMouseButton.Left))
+                if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
                 {
                     AssetFileInfo info = new(dir.Path, dir.Metadata);
-                    if (ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl))
+                    if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
                     {
                         SelectionCollection.Global.AddSelection(info);
                     }
@@ -348,7 +348,7 @@
                         SelectionCollection.Global.AddOverwriteSelection(info);
                     }
 
-                    if (ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                    if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
                     {
                         SetFolder(dir.Path);
                     }
@@ -618,8 +618,8 @@
             if (clicked)
             {
                 AssetFileInfo info = file;
-                bool shift = ImGuiP.IsKeyDown(ImGuiKey.LeftShift);
-                bool ctrl = ImGuiP.IsKeyDown(ImGuiKey.LeftCtrl);
+                bool shift = ImGui.IsKeyDown(ImGuiKey.LeftShift);
+                bool ctrl = ImGui.IsKeyDown(ImGuiKey.LeftCtrl);
 
                 if (shift)
                 {
@@ -661,12 +661,12 @@
                 }
             }
 
-            if (ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+            if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
             {
                 Designer.OpenFile(file.Path);
             }
 
-            if (ImGuiP.IsMouseClicked(ImGuiMouseButton.Right))
+            if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
             {
                 ImGui.OpenPopup(file.Path);
 
@@ -998,11 +998,11 @@
 
                 if (ImGui.IsWindowHovered(ImGuiHoveredFlags.ChildWindows | ImGuiHoveredFlags.RootWindow))
                 {
-                    if (ImGuiP.IsMouseClicked((ImGuiMouseButton)3))
+                    if (ImGui.IsMouseClicked((ImGuiMouseButton)3))
                     {
                         TryGoBack();
                     }
-                    if (ImGuiP.IsMouseClicked((ImGuiMouseButton)4))
+                    if (ImGui.IsMouseClicked((ImGuiMouseButton)4))
                     {
                         TryGoForward();
                     }
@@ -1042,7 +1042,7 @@
                     refreshLock.Exit();
                 }
 
-                if (!isContentHovered && ImGui.IsWindowHovered() && ImGuiP.IsMouseClicked(0))
+                if (!isContentHovered && ImGui.IsWindowHovered() && ImGui.IsMouseClicked(0))
                 {
                     SelectionCollection.Global.Clear();
                 }

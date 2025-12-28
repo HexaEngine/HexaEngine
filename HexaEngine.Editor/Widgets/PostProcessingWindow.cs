@@ -117,11 +117,11 @@
                 ImGui.Text("Reloading");
             }
 
-            ImGuiP.CheckboxFlags("HDR", ref flags, (int)PostProcessingFlags.HDR);
+            ImGui.CheckboxFlags("HDR", ref flags, (int)PostProcessingFlags.HDR);
             ImGui.SameLine();
-            ImGuiP.CheckboxFlags("Debug", ref flags, (int)PostProcessingFlags.Debug);
+            ImGui.CheckboxFlags("Debug", ref flags, (int)PostProcessingFlags.Debug);
             ImGui.SameLine();
-            ImGuiP.CheckboxFlags("Force Dynamic", ref flags, (int)PostProcessingFlags.ForceDynamic);
+            ImGui.CheckboxFlags("Force Dynamic", ref flags, (int)PostProcessingFlags.ForceDynamic);
 
             ImGui.BeginTable("PostProcess", 3, ImGuiTableFlags.SizingFixedFit);
             ImGui.TableSetupColumn("");

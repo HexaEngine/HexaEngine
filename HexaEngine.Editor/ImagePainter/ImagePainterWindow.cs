@@ -300,12 +300,12 @@
                         zoom_changed = true;
                     }
 
-                    if (ImGuiP.IsKeyPressed(ImGuiKey.KeypadAdd))
+                    if (ImGui.IsKeyPressed(ImGuiKey.KeypadAdd))
                     {
                         new_zoom = zoom * zoom_step;
                         zoom_changed = true;
                     }
-                    if (ImGuiP.IsKeyPressed(ImGuiKey.KeypadSubtract))
+                    if (ImGui.IsKeyPressed(ImGuiKey.KeypadSubtract))
                     {
                         new_zoom = zoom / zoom_step;
                         zoom_changed = true;
@@ -320,20 +320,20 @@
 
                     var new_mouse_position_on_list = mouse_position_on_list * (size * new_zoom);
                     var new_scroll = new_mouse_position_on_list - mouse_position_on_window;
-                    ImGuiP.SetScrollX(new_scroll.X);
-                    ImGuiP.SetScrollY(new_scroll.Y);
+                    ImGui.SetScrollX(new_scroll.X);
+                    ImGui.SetScrollY(new_scroll.Y);
                     zoom = new_zoom;
                 }
 
-                if (ImGuiP.IsMouseDown(ImGuiMouseButton.Middle))
+                if (ImGui.IsMouseDown(ImGuiMouseButton.Middle))
                 {
                     if (delta.X != 0.0f)
                     {
-                        ImGuiP.SetScrollX(ImGui.GetScrollX() + delta.X);
+                        ImGui.SetScrollX(ImGui.GetScrollX() + delta.X);
                     }
                     if (delta.Y != 0.0f)
                     {
-                        ImGuiP.SetScrollY(ImGui.GetScrollY() + delta.Y);
+                        ImGui.SetScrollY(ImGui.GetScrollY() + delta.Y);
                     }
                 }
             }
@@ -372,7 +372,7 @@
                     var curPos = ImGui.GetMousePos() / zoom - curPosGlob / zoom;
                     var curPosD = curPos - lastpos;
                     lastpos = curPos;
-                    var changed = ImGuiP.IsMouseDown(ImGuiMouseButton.Left);
+                    var changed = ImGui.IsMouseDown(ImGuiMouseButton.Left);
                     var first = false;
                     var moved = ImGui.IsMouseDragging(ImGuiMouseButton.Left) && curPosD != Vector2.Zero;
 

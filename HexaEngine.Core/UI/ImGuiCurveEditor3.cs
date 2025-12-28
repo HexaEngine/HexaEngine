@@ -93,7 +93,7 @@
                     point.Pos = pos;
                     curve.Points[currentSelection] = point;
                 }
-                else if (!ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
+                else if (!ImGui.IsMouseDown(ImGuiMouseButton.Left))
                 {
                     currentSelection = -1;
                 }
@@ -169,7 +169,7 @@
 
                     color = 0xFF00FFFF;
 
-                    if (ImGuiP.IsMouseDown(ImGuiMouseButton.Left) && currentSelection == -1)
+                    if (ImGui.IsMouseDown(ImGuiMouseButton.Left) && currentSelection == -1)
                     {
                         currentSelection = i;
                     }
@@ -178,7 +178,7 @@
                 drawList->AddCircleFilled(pos, pointRadiusInPixels, color);
             }
 
-            if (hovered && ImGuiP.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+            if (hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
             {
                 if (currentSelection == -1 && !draggingPoint)
                 {

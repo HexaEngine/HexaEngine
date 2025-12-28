@@ -287,7 +287,7 @@
                 DrawList.AddCircleFilled(p1, 5, sclCol);
             }
 
-            if (ImGui.IsMouseHoveringRect(pos, pos + new Vector2(size.X, 70)) && ImGuiP.IsMouseClicked(ImGuiMouseButton.Left) && !isPopupOpen)
+            if (ImGui.IsMouseHoveringRect(pos, pos + new Vector2(size.X, 70)) && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !isPopupOpen)
             {
                 var mousePos = ImGui.GetMousePos();
                 mousePos -= pos;

@@ -218,7 +218,8 @@
             ImGuizmo.BeginFrame();
 
             ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
-            DockSpaceId = ImGui.DockSpaceOverViewport(null, ImGuiDockNodeFlags.PassthruCentralNode);
+            DockSpaceId = ImGui.DockSpaceOverViewport(null, ImGuiDockNodeFlags.PassthruCentralNode, null);
+            ImGui.PopStyleColor(1);
 
             if (resetLayout)
             {
@@ -226,8 +227,6 @@
 
                 resetLayout = false;
             }
-
-            ImGui.PopStyleColor(1);
         }
 
         public static unsafe void ResetLayout()

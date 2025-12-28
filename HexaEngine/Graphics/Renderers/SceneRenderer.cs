@@ -426,7 +426,7 @@
 
             if (ImGui.CollapsingHeader(debugName))
             {
-                ImGui.Image((ulong)srv, size, tint);
+                ImGui.ImageWithBg((ulong)srv, size, Vector2.Zero, tint);
             }
         }
 

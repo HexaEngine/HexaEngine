@@ -122,7 +122,7 @@
 
                     float distanceToCenter = Vector2.Distance(center, mousePos);
 
-                    if (distanceToCenter < radius && ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
+                    if (distanceToCenter < radius && ImGui.IsMouseDown(ImGuiMouseButton.Left))
                     {
                         Vector2 relativeMousePos = mousePos - center;
 
@@ -163,7 +163,7 @@
 
                 Vector2 handle_center = slider_center;
 
-                if (ImGui.IsMouseHoveringRect(slider_bb.Min, slider_bb.Max) && ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
+                if (ImGui.IsMouseHoveringRect(slider_bb.Min, slider_bb.Max) && ImGui.IsMouseDown(ImGuiMouseButton.Left))
                 {
                     Vector2 relativeMousePos = ImGui.GetMousePos() - handle_center;
                     handle_center.X += relativeMousePos.X;
@@ -329,7 +329,7 @@
 
                     float distanceToCenter = Vector2.Distance(center, mousePos);
 
-                    if (distanceToCenter < radius && ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
+                    if (distanceToCenter < radius && ImGui.IsMouseDown(ImGuiMouseButton.Left))
                     {
                         Vector2 relativeMousePos = mousePos - center;
 
@@ -370,7 +370,7 @@
 
                 Vector2 handle_center = slider_center;
 
-                if (ImGui.IsMouseHoveringRect(slider_bb.Min, slider_bb.Max) && ImGuiP.IsMouseDown(ImGuiMouseButton.Left))
+                if (ImGui.IsMouseHoveringRect(slider_bb.Min, slider_bb.Max) && ImGui.IsMouseDown(ImGuiMouseButton.Left))
                 {
                     Vector2 relativeMousePos = ImGui.GetMousePos() - handle_center;
                     handle_center.X += relativeMousePos.X;

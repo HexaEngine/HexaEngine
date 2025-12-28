@@ -13,12 +13,19 @@
     {
         private static readonly Dictionary<Type, IObjectEditor> editors = new();
         private static readonly List<IPropertyEditorFactory> factories = new();
+        private static readonly Lock _lock = new();
 
         /// <summary>
         /// Static constructor for initializing the ObjectEditorFactory.
         /// </summary>
         static ObjectEditorFactory()
         {
+        }
+
+        public static void Reset()
+        {
+            editors.Clear();
+            factories.Clear();
         }
 
         /// <summary>
@@ -84,7 +91,7 @@
         /// <param name="type">The type.</param>
         public static void DestroyEditor(Type type)
         {
-            lock (editors)
+            lock (_lock)
             {
                 if (editors.TryGetValue(type, out var editor))
                 {

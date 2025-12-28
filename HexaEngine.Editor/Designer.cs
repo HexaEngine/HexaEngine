@@ -10,11 +10,16 @@ namespace HexaEngine.Editor
     using HexaEngine.Editor.Editors;
     using HexaEngine.Editor.Factories;
     using HexaEngine.Editor.Icons;
+    using HexaEngine.Editor.ImagePainter;
+    using HexaEngine.Editor.MaterialEditor;
+    using HexaEngine.Editor.PoseEditor;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.TerrainEditor;
+    using HexaEngine.Editor.TextEditor;
     using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Editor.Widgets.AssetBrowser;
     using HexaEngine.PostFx.BuildIn;
     using HexaEngine.Profiling;
     using HexaEngine.Scripts;
@@ -32,13 +37,60 @@ namespace HexaEngine.Editor
             IconManager.Init();
             WindowManager.Init(device);
 #if !BypassLauncher
-            PopupManager.Show<LauncherWindow>();
+            WindowManager.ShowWindow<LauncherWindow>();
 #endif
             if (!EditorConfig.Default.SetupDone)
             {
                 PopupManager.Show<SetupWindow>();
             }
+        }
 
+        public static bool IsLaunchpadActive { get; set; } = true;
+
+        public static void InitEditor()
+        {
+            IsLaunchpadActive = false;
+            ImGuiConsole.IsDisplayed = true;
+
+            WindowManager.Reset();
+
+            WindowManager.Register<OutputWidget>();
+
+            WindowManager.Register<PreferencesWidget>();
+            WindowManager.Register<PipelineWidget>();
+            WindowManager.Register<AssetBrowserWidget>();
+            WindowManager.Register<GitWidget>();
+            WindowManager.Register<HierarchyWidget>();
+            WindowManager.Register<PropertiesWidget>();
+
+            WindowManager.Register<MixerWidget>();
+            WindowManager.Register<PublishProjectWindow>();
+            WindowManager.Register<SceneVariablesWindow>();
+            WindowManager.Register<DebugWindow>();
+            WindowManager.Register<ProfilerWindow>();
+            WindowManager.Register<DeepProfilerWindow>();
+            WindowManager.Register<PoseEditorWindow>();
+            WindowManager.Register<MaterialEditorWindow>();
+            WindowManager.Register<PostProcessWindow>();
+            WindowManager.Register<InputWindow>();
+            WindowManager.Register<TextEditorWindow>();
+            WindowManager.Register<ImagePainterWindow>();
+            WindowManager.Register<WeatherWidget>();
+            WindowManager.Register<RenderGraphWidget>();
+            WindowManager.Register<RendererWidget>();
+            WindowManager.Register<MemoryWidget>();
+            WindowManager.Register<NativeMemoryWidget>();
+            WindowManager.Register<InputManagerWindow>();
+            WindowManager.Register<PackageManagerWidget>();
+            WindowManager.Register<ErrorListWidget>();
+            WindowManager.Register<CullingWidget>();
+            WindowManager.Register<BundlerWidget>();
+
+            WindowManager.Register<GraphicsDebugger>();
+
+            WindowManager.Register<BakeWindow>();
+
+            ObjectEditorFactory.Reset();
             ObjectEditorFactory.AddFactory<GameObjectReferenceEditorFactory>();
             ObjectEditorFactory.AddFactory<MaterialMappingPropertyEditorFactory>();
             ObjectEditorFactory.AddFactory<AssetRefPropertyEditorFactory>();
@@ -56,12 +108,15 @@ namespace HexaEngine.Editor
             ObjectEditorFactory.AddFactory<QuaternionPropertyEditorFactory>();
             ObjectEditorFactory.AddFactory(new SubTypePropertyFactory());
 
+            PropertyObjectEditorRegistry.Reset();
             PropertyObjectEditorRegistry.RegisterEditor<GameObjectEditor>();
             PropertyObjectEditorRegistry.RegisterEditor<AssetFileEditor>();
 
             ObjectEditorFactory.RegisterEditor<ScriptComponent>(new ScriptBehaviourEditor());
             ObjectEditorFactory.RegisterEditor<TerrainRendererComponent>(new TerrainObjectEditor());
             ObjectEditorFactory.RegisterEditor<Volume>(new VolumeObjectEditor());
+
+            PostProcessingEditorFactory.Reset();
             PostProcessingEditorFactory.RegisterEditor<ColorGrading, ColorGradingObjectEditor>();
         }
 

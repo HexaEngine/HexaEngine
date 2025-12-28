@@ -55,11 +55,11 @@
 	<ItemGroup>
 		<PackageReference Include="Hardware.Info" Version="101.0.0" />
 		<PackageReference Include="Hexa.NET.FreeType" Version="1.1.1" />
-		<PackageReference Include="Hexa.NET.ImGui" Version="2.2.6" />
-		<PackageReference Include="Hexa.NET.ImGuizmo" Version="2.2.6" />
-		<PackageReference Include="Hexa.NET.ImNodes" Version="2.2.6" />
-		<PackageReference Include="Hexa.NET.ImPlot" Version="2.2.6" />
-		<PackageReference Include="Hexa.NET.ImGui.Backends.SDL3" Version="1.0.14-preview" />
+		<PackageReference Include="Hexa.NET.ImGui" Version="2.2.7" />
+		<PackageReference Include="Hexa.NET.ImGuizmo" Version="2.2.7" />
+		<PackageReference Include="Hexa.NET.ImNodes" Version="2.2.7" />
+		<PackageReference Include="Hexa.NET.ImPlot" Version="2.2.7" />
+		<PackageReference Include="Hexa.NET.ImGui.Backends.SDL3" Version="1.0.15" />
 		<PackageReference Include="Hexa.NET.SDL3" Version="1.2.13" />
 
 		<PackageReference Include="Hexa.NET.Assimp" Version="1.0.3" />
@@ -75,7 +75,7 @@
 		<PackageReference Include="Hexa.NET.Utilities" Version="2.2.4" />
 		<PackageReference Include="Hexa.NET.DebugDraw" Version="2.3.2" />
 		<PackageReference Include="Hexa.NET.Logging" Version="2.0.0" />
-		<PackageReference Include="HexaGen.Runtime" Version="1.1.17" />
+		<PackageReference Include="HexaGen.Runtime" Version="1.1.18" />
 
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 		<PackageReference Include="System.Text.Json" Version="9.0.0" />

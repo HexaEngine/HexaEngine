@@ -35,7 +35,7 @@
 
         public void AddItem(Vector2 size)
         {
-            cursor.X += size.X * DpiScale; 
+            cursor.X += size.X * DpiScale;
         }
 
         public void NewFrame(ImRect area)
@@ -203,9 +203,8 @@
 
             ImRect rect = new(pos, pos + size);
 
-
             bool isHovered = rect.Contains(mousePos);
-            bool isMouseDown = ImGuiP.IsMouseDown(ImGuiMouseButton.Left) && isHovered;
+            bool isMouseDown = ImGui.IsMouseDown(ImGuiMouseButton.Left) && isHovered;
 
             if (!isHovered && context.HoveredId == id)
             {
@@ -250,7 +249,7 @@
                 context.DrawList.AddRectFilled(rect.Min, rect.Max, color);
             }
 
-            bool clicked = ImGuiP.IsMouseReleased(ImGuiMouseButton.Left);
+            bool clicked = ImGui.IsMouseReleased(ImGuiMouseButton.Left);
             var textSizeClose = ImGui.CalcTextSize(label);
             var midpoint = rect.Midpoint() - textSizeClose / 2;
             context.DrawList.AddText(midpoint, context.ForegroundColor, label);
@@ -454,7 +453,7 @@
         {
             builder.AddElement(new TitleBarMainMenuBar(MainMenuBar.Draw));
             builder.AddTitle();
-          
+
             builder.RightAlign();
 
             builder.AddButton($"{MaterialIcons.Remove}", 0x1CCCCCCC, 0x1CCCCCCC, null, _ => RequestMinimize());
@@ -478,7 +477,7 @@
         public virtual void Draw()
         {
             var viewport = ImGui.GetMainViewport();
-            draw = ImGuiP.GetForegroundDrawList(viewport);
+            draw = ImGui.GetForegroundDrawList(viewport);
 
             var scale = viewport.DpiScale;
 

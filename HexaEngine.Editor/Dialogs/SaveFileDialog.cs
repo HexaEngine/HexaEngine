@@ -233,7 +233,7 @@
                                 selectedFile = file.Filename;
                             }
 
-                            if (ImGui.IsItemClicked(0) && ImGuiP.IsMouseDoubleClicked(0))
+                            if (ImGui.IsItemClicked(0) && ImGui.IsMouseDoubleClicked(0))
                             {
                                 Result = SaveFileResult.Ok;
                                 ImGui.EndChild();

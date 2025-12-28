@@ -184,7 +184,7 @@ namespace HexaEngine.Core.UI
                 window->StateStorage.SetFloat((int)StorageValues.WIDTH, width);
                 window->StateStorage.SetFloat((int)StorageValues.HEIGHT, height);
             }
-            if (ImGuiP.IsMouseReleased((ImGuiMouseButton)1))
+            if (ImGui.IsMouseReleased((ImGuiMouseButton)1))
             {
                 window->StateStorage.SetBool((int)StorageValues.IS_PANNING, false);
             }
@@ -255,7 +255,7 @@ namespace HexaEngine.Core.UI
                     }
 
                     bool changed = false;
-                    if (ImGui.IsItemActive() && ImGuiP.IsMouseClicked(0))
+                    if (ImGui.IsItemActive() && ImGui.IsMouseClicked(0))
                     {
                         window->StateStorage.SetFloat((int)StorageValues.POINT_START_X, pos.X);
                         window->StateStorage.SetFloat((int)StorageValues.POINT_START_Y, pos.Y);
@@ -396,7 +396,7 @@ namespace HexaEngine.Core.UI
 
             ImGui.InvisibleButton("bg", inner_bb.Max - inner_bb.Min);
 
-            if (ImGui.IsItemActive() && ImGuiP.IsMouseDoubleClicked(0) && newCount != null)
+            if (ImGui.IsItemActive() && ImGui.IsMouseDoubleClicked(0) && newCount != null)
             {
                 Vector2 mp = ImGui.GetMousePos();
                 Vector2 new_p = invTransform(mp);
@@ -431,7 +431,7 @@ namespace HexaEngine.Core.UI
                 }
             }
 
-            if (hovered_idx >= 0 && ImGuiP.IsMouseDoubleClicked(0) && (newCount != null) && pointsCount > 2)
+            if (hovered_idx >= 0 && ImGui.IsMouseDoubleClicked(0) && (newCount != null) && pointsCount > 2)
             {
                 Vector2* points = (Vector2*)values;
                 --*newCount;

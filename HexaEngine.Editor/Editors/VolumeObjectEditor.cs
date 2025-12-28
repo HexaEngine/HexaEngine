@@ -14,7 +14,19 @@
     public static class PostProcessingEditorFactory
     {
         private static readonly Dictionary<Type, IPostProcessingEditor> editors = [];
-        private static readonly object _lock = new();
+        private static readonly Lock _lock = new();
+
+        public static void Reset()
+        {
+            lock (_lock)
+            {
+                foreach (var editor in editors.Values)
+                {
+                    editor.Dispose();
+                }
+                editors.Clear();
+            }
+        }
 
         public static void RegisterEditor(Type type, IPostProcessingEditor editor)
         {

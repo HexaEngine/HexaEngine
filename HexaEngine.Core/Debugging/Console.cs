@@ -16,8 +16,8 @@
     /// </summary>
     public static class ImGuiConsole
     {
-        private static readonly List<ConsoleMessage> messages = new(maxMessages + 1);
-        private static readonly List<string> history = new();
+        private static readonly ConsoleMessageBuffer messages = new(maxMessages);
+        private static readonly List<string> history = [];
         private static readonly ConsoleLogWriter logListener = new();
         private static readonly Dictionary<string, Action<string[]>> commands = new();
         private static bool timeStamps;
@@ -120,10 +120,6 @@
 
                 semaphore.Wait();
                 messages.Add(message);
-                if (messages.Count > maxMessages)
-                {
-                    messages.Remove(messages[0]);
-                }
                 semaphore.Release();
                 ScrollToBottom();
             }
@@ -137,10 +133,6 @@
 
                 await semaphore.WaitAsync();
                 messages.Add(message);
-                if (messages.Count > maxMessages)
-                {
-                    messages.Remove(messages[0]);
-                }
                 semaphore.Release();
                 ScrollToBottom();
             }
@@ -255,10 +247,6 @@
                 messages.Add(new(foregroundColor, backgroundColor, message ?? "<null>"));
             }
 
-            if (messages.Count > maxMessages)
-            {
-                messages.Remove(messages[0]);
-            }
             semaphore.Release();
             scrollToBottom = true;
         }
@@ -277,10 +265,6 @@
         {
             semaphore.Wait();
             messages.Add(new(foregroundColor, backgroundColor, $"{msg}{Environment.NewLine}"));
-            if (messages.Count > maxMessages)
-            {
-                messages.Remove(messages[0]);
-            }
             semaphore.Release();
             scrollToBottom = true;
         }
@@ -307,6 +291,10 @@
         [Profiling.Profile]
         public static void Draw()
         {
+            if (!consoleOpen)
+            {
+                return;
+            }
             ImGui.PushStyleVar(ImGuiStyleVar.Alpha, windowAlpha);
             if (!ImGui.Begin(consoleName, ref consoleOpen, ImGuiWindowFlags.MenuBar))
             {
@@ -362,22 +350,32 @@
                 int endLine = (int)MathF.Ceiling(avail.Y / lineHeight) + startLine;
 
                 startLine = Math.Max(startLine, 0);
-                endLine = Math.Min(endLine, messages.Count);
 
-                Vector2 cursor = ImGui.GetCursorPos();
+                int startIdx = messages.FindIndexForLine(startLine);
+                int endIdx = messages.FindIndexForLine(endLine);
 
-                ImGui.Dummy(new(1, startLine * lineHeight));
-                ImGui.SetCursorPos(cursor + new Vector2(0, startLine * lineHeight));
+                int startOffsetLines = messages.GetLineOffset(startIdx);
+                int endOffsetLines = messages.GetLineOffset(endIdx);
+                int bottomDummyLines = messages.TotalLineCount - endOffsetLines;
+
+                if (startOffsetLines > 0)
+                {
+                    ImGui.Dummy(new(1, startOffsetLines * lineHeight));
+                }
 
                 // Display colored command output.
                 Vector2 size = default;
                 ImGui.CalcTextSize(ref size, "00:00:00:0000");    // Timestamp.
-                float timestamp_width = size.X;
+                float timestampWidth = size.X;
 
+                var enumerator = messages.GetEnumerator();
+                enumerator.Skip(startIdx);
+                int range = endIdx - startIdx;
+                int it = 0;
                 // Display items.
-                for (int i = startLine; i < endLine; i++)
+                while (enumerator.MoveNext() && it++ < range)
                 {
-                    var item = messages[i];
+                    var item = enumerator.Current;
 
                     // Exit if word is filtered.
                     if (textFilter.Length != 0 && !item.Message.Contains(textFilter))
@@ -387,7 +385,7 @@
 
                     if (timeStamps)
                     {
-                        ImGui.PushTextWrapPos(ImGui.GetColumnWidth() - timestamp_width);
+                        ImGui.PushTextWrapPos(ImGui.GetColumnWidth() - timestampWidth);
                     }
 
                     // Items.
@@ -409,7 +407,7 @@
                         ImGui.PopTextWrapPos();
 
                         // Right align.
-                        ImGui.SameLine(ImGui.GetColumnWidth(-1) - timestamp_width);
+                        ImGui.SameLine(ImGui.GetColumnWidth(-1) - timestampWidth);
 
                         // Draw time stamp.
                         ImGui.PushStyleColor(ImGuiCol.Text, consoleColorPalette[ConsoleColor.Gray]);
@@ -418,7 +416,10 @@
                     }
                 }
 
-                ImGui.Dummy(new(1, (messages.Count - endLine) * lineHeight));
+                if (bottomDummyLines > 0)
+                {
+                    ImGui.Dummy(new(1, bottomDummyLines * lineHeight));
+                }
 
                 // Stop wrapping since we are done displaying console items.
                 if (!timeStamps)
@@ -429,7 +430,7 @@
                 // Auto-scroll logs.
                 if (scrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || autoScroll))
                 {
-                    ImGuiP.SetScrollY(messages.Count * lineHeight);
+                    ImGui.SetScrollY(messages.Count * lineHeight);
 
                     scrollToBottom = false;
                 }
@@ -475,7 +476,7 @@
                     // Run command line input.
                     if (commands.TryGetValue(args[0], out var command))
                     {
-                        command(args.Skip(1).ToArray());
+                        command([.. args.Skip(1)]);
                     }
                     else
                     {
@@ -492,10 +493,7 @@
                 // Keep focus.
                 reclaimFocus = true;
 
-                if (history.Contains(buffer))
-                {
-                    history.Remove(buffer);
-                }
+                history.Remove(buffer);
 
                 history.Add(buffer);
                 historyIndex = history.Count;

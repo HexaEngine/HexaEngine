@@ -64,6 +64,11 @@
                 return;
             }
 
+            if (Designer.IsLaunchpadActive)
+            {
+                return;
+            }
+
             byte* buffer = stackalloc byte[2048];
             StrBuilder builder = new(buffer, 2048);
 
@@ -183,24 +188,24 @@
                 }
 
                 var drawLights = (int)Inspector.DrawLights;
-                if (ImGuiP.CheckboxFlags("Draw Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.DrawLights))
+                if (ImGui.CheckboxFlags("Draw Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.DrawLights))
                 {
                     Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                 }
 
                 if (ImGui.BeginPopupContextItem())
                 {
-                    if (ImGuiP.CheckboxFlags("No Directional Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.NoDirectionalLights))
+                    if (ImGui.CheckboxFlags("No Directional Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.NoDirectionalLights))
                     {
                         Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                     }
 
-                    if (ImGuiP.CheckboxFlags("No Point Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.NoPointLights))
+                    if (ImGui.CheckboxFlags("No Point Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.NoPointLights))
                     {
                         Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                     }
 
-                    if (ImGuiP.CheckboxFlags("No Spot Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.NoSpotLights))
+                    if (ImGui.CheckboxFlags("No Spot Lights"u8, ref drawLights, (int)EditorDrawLightsFlags.NoSpotLights))
                     {
                         Inspector.DrawLights = (EditorDrawLightsFlags)drawLights;
                     }

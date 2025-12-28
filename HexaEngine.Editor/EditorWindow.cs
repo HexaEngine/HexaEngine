@@ -2,6 +2,7 @@
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Graphics.Renderers;
 
     public abstract class EditorWindow : IEditorWindow
     {
@@ -11,6 +12,7 @@
         protected bool wasShown;
         protected bool initialized;
         protected bool isShown;
+        protected bool isEmbedded;
 
         protected abstract string Name { get; }
 
@@ -34,11 +36,19 @@
         {
         }
 
-        public virtual void DrawWindow(IGraphicsContext context)
+        public unsafe virtual void DrawWindow(IGraphicsContext context)
         {
             if (!IsShown)
             {
                 return;
+            }
+
+            if (isEmbedded)
+            {
+                ImGuiWindowClass windowClass;
+                windowClass.DockNodeFlagsOverrideSet = (ImGuiDockNodeFlags)ImGuiDockNodeFlagsPrivate.NoTabBar;
+                ImGui.SetNextWindowClass(&windowClass);
+                ImGui.SetNextWindowDockID(ImGuiManager.DockSpaceId);
             }
 
             if (!ImGui.Begin(Name, ref isShown, Flags))

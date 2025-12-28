@@ -5,15 +5,8 @@
     using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.ImagePainter;
-    using HexaEngine.Editor.MaterialEditor;
-    using HexaEngine.Editor.PoseEditor;
-    using HexaEngine.Editor.TextEditor;
-    using HexaEngine.Editor.Widgets;
-    using HexaEngine.Editor.Widgets.AssetBrowser;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Profiling;
-    using HexaEngine.Windows;
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
@@ -28,42 +21,6 @@
         static WindowManager()
         {
             categories.Add(Default);
-
-            Register<OutputWidget>();
-
-            Register<PreferencesWidget>();
-            Register<PipelineWidget>();
-            Register<AssetBrowserWidget>();
-            Register<GitWidget>();
-            Register<HierarchyWidget>();
-            Register<PropertiesWidget>();
-
-            Register<MixerWidget>();
-            Register<PublishProjectWindow>();
-            Register<SceneVariablesWindow>();
-            Register<DebugWindow>();
-            Register<ProfilerWindow>();
-            Register<DeepProfilerWindow>();
-            Register<PoseEditorWindow>();
-            Register<MaterialEditorWindow>();
-            Register<PostProcessWindow>();
-            Register<InputWindow>();
-            Register<TextEditorWindow>();
-            Register<ImagePainterWindow>();
-            Register<WeatherWidget>();
-            Register<RenderGraphWidget>();
-            Register<RendererWidget>();
-            Register<MemoryWidget>();
-            Register<NativeMemoryWidget>();
-            Register<InputManagerWindow>();
-            Register<PackageManagerWidget>();
-            Register<ErrorListWidget>();
-            Register<CullingWidget>();
-            Register<BundlerWidget>();
-
-            Register<GraphicsDebugger>();
-
-            Register<BakeWindow>();
         }
 
         public static IReadOnlyList<IEditorWindow> Windows => windows;
@@ -358,6 +315,12 @@
             }
 
             windows.Clear();
+        }
+
+        public static void Reset()
+        {
+            Dispose();
+            categories.Add(Default);
         }
     }
 }

@@ -8,7 +8,16 @@
     {
         private static readonly List<IPropertyObjectEditor> editors = new();
         private static readonly Dictionary<Type, IPropertyObjectEditor> lookupTable = new();
-        private static readonly object _lock = new();
+        private static readonly Lock _lock = new();
+
+        public static void Reset()
+        {
+            lock (_lock)
+            {
+                editors.Clear();
+                lookupTable.Clear();
+            }
+        }
 
         public static void RegisterEditor(IPropertyObjectEditor editor)
         {
