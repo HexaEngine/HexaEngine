@@ -1,5 +1,4 @@
 ﻿//based on https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_dx11.cpp
-#nullable disable
 
 namespace HexaEngine.Graphics.Renderers
 {
@@ -16,20 +15,20 @@ namespace HexaEngine.Graphics.Renderers
 
     public static class ImGuiRenderer
     {
-        private static IGraphicsDevice device;
-        private static IGraphicsContext context;
-        private static IGraphicsPipelineState pso;
-        private static IBuffer vertexBuffer;
-        private static IBuffer indexBuffer;
-        private static IBuffer constantBuffer;
-        private static ISamplerState fontSampler;
+        private static IGraphicsDevice device = null!;
+        private static IGraphicsContext context = null!;
+        private static IGraphicsPipelineState pso = null!;
+        private static IBuffer vertexBuffer = null!;
+        private static IBuffer indexBuffer = null!;
+        private static IBuffer constantBuffer = null!;
+        private static ISamplerState fontSampler = null!;
         private static int vertexBufferSize = 5000, indexBufferSize = 10000;
         private static SRVWrapper srvWrapper = new(0);
 
         public class ImTexture
         {
-            public ITexture2D Texture;
-            public IShaderResourceView TextureView;
+            public ITexture2D Texture = null!;
+            public IShaderResourceView TextureView = null!;
         }
 
         /// <summary>
@@ -212,7 +211,7 @@ namespace HexaEngine.Graphics.Renderers
                         var texId = cmd.TexRef.GetTexID();
                         srvWrapper.NativePointer = (nint)texId.Handle;
                         pso.Bindings.SetSRV("fontTex", srvWrapper);
-                        if (Samplers.TryGetValue(texId, out ISamplerState sampler))
+                        if (Samplers.TryGetValue(texId, out var sampler))
                         {
                             pso.Bindings.SetSampler("fontSampler", sampler);
                         }
@@ -242,15 +241,23 @@ namespace HexaEngine.Graphics.Renderers
 
         private static readonly ImTextureID ImTextureID_Invalid = new(0);
 
+        private static unsafe ImTexture? GetImTexture(ImTextureData* tex)
+        {
+            if (tex->BackendUserData == null)
+            {
+                return null;
+            }
+            return (ImTexture?)GCHandle.FromIntPtr((nint)tex->BackendUserData).Target;
+        }
+
         private static unsafe void DestroyTexture(ImTextureData* tex)
         {
-            if (tex->BackendUserData != null)
+            var backendTex = GetImTexture(tex);
+            if (backendTex != null)
             {
-                GCHandle handle = GCHandle.FromIntPtr((nint)tex->BackendUserData);
-                ImTexture backendTex = (ImTexture)handle.Target;
                 backendTex.TextureView.Dispose();
                 backendTex.Texture.Dispose();
-                handle.Free();
+                GCHandle.FromIntPtr((nint)tex->BackendUserData).Free();
                 tex->SetTexID(ImTextureID_Invalid);
                 tex->BackendUserData = null;
             }
@@ -304,8 +311,7 @@ namespace HexaEngine.Graphics.Renderers
             {
                 // Update selected blocks. We only ever write to textures regions which have never been used before!
                 // This backend choose to use tex->Updates[] but you can use tex->UpdateRect to upload a single region.
-                GCHandle handle = GCHandle.FromIntPtr((nint)tex->BackendUserData);
-                ImTexture backendTex = (ImTexture)handle.Target;
+                ImTexture backendTex = GetImTexture(tex)!;
 
                 Debug.Assert(backendTex.TextureView.NativePointer == tex->TexID);
                 var rects = tex->Updates.Data;
@@ -336,11 +342,11 @@ namespace HexaEngine.Graphics.Renderers
 
             public nint NativePointer { get; set; }
 
-            public string DebugName { get; set; }
+            public string? DebugName { get; set; }
 
             public bool IsDisposed { get; }
 
-            public event EventHandler OnDisposed;
+            public event EventHandler? OnDisposed;
 
             public void Dispose()
             {
@@ -522,23 +528,41 @@ namespace HexaEngine.Graphics.Renderers
         /// </summary>
         private class ViewportData
         {
-            public ISwapChain SwapChain;
-            public IRenderTargetView RTView;
+            public ISwapChain SwapChain = null!;
+            public IRenderTargetView RTView = null!;
         };
 
-        private struct ViewportDataHandle
+        private static unsafe ViewportData AllocateViewportData(ImGuiViewport* vp)
         {
-            private nint size;
+            ViewportData vd = new();
+            GCHandle handle = GCHandle.Alloc(vd, GCHandleType.Normal);
+            vp->RendererUserData = (void*)(nint)handle;
+            return vd;
         }
 
-        private static readonly Dictionary<Pointer<ViewportDataHandle>, ViewportData> viewportData = new();
+        private static unsafe ViewportData? GetViewportData(ImGuiViewport* vp)
+        {
+            if (vp->RendererUserData == null)
+            {
+                return null;
+            }
+            return (ViewportData?)GCHandle.FromIntPtr((nint)vp->RendererUserData).Target;
+        }
+
+        private static unsafe void FreeViewportData(ImGuiViewport* vp)
+        {
+            if (vp->RendererUserData == null)
+            {
+                return;
+            }
+            GCHandle handle = GCHandle.FromIntPtr((nint)vp->RendererUserData);
+            handle.Free();
+            vp->RendererUserData = null;
+        }
 
         private static unsafe void CreateWindow(ImGuiViewport* viewport)
         {
-            ViewportData vd = new();
-            ViewportDataHandle* vh = AllocT<ViewportDataHandle>();
-            viewportData.Add(vh, vd);
-            viewport->RendererUserData = vh;
+            ViewportData vd = AllocateViewportData(viewport);
 
             // PlatformHandleRaw should always be a HWND, whereas PlatformHandle might be a higher-level handle (e.g. GLFWWindow*, SDL_Window*).
             // Some backends will leave PlatformHandleRaw == 0, in which case we assume PlatformHandle will contain the HWND.
@@ -573,25 +597,23 @@ namespace HexaEngine.Graphics.Renderers
         private static unsafe void DestroyWindow(ImGuiViewport* viewport)
         {
             // The main viewport (owned by the application) will always have RendererUserData == nullptr since we didn't create the data for it.
-            ViewportDataHandle* vh = (ViewportDataHandle*)viewport->RendererUserData;
-            if (vh != null)
+            var vd = GetViewportData(viewport);
+            if (vd != null)
             {
-                ViewportData vd = viewportData[vh];
                 vd.SwapChain?.Dispose();
-                vd.SwapChain = null;
-                vd.RTView = null;
-                viewportData.Remove(vh);
-                Free(vh);
+                vd.SwapChain = null!;
+                vd.RTView = null!;
+                GCHandle handle = GCHandle.FromIntPtr((nint)viewport->RendererUserData);
+                handle.Free();
             }
             viewport->RendererUserData = null;
         }
 
         private static unsafe void SetWindowSize(ImGuiViewport* viewport, Vector2 size)
         {
-            ViewportDataHandle* vh = (ViewportDataHandle*)viewport->RendererUserData;
-            ViewportData vd = viewportData[vh];
+            var vd = GetViewportData(viewport)!;
 
-            vd.RTView = null;
+            vd.RTView = null!;
 
             if (vd.SwapChain != null)
             {
@@ -605,8 +627,7 @@ namespace HexaEngine.Graphics.Renderers
 
         private static unsafe void RenderWindow(ImGuiViewport* viewport, void* userdata)
         {
-            ViewportDataHandle* vh = (ViewportDataHandle*)viewport->RendererUserData;
-            ViewportData vd = viewportData[vh];
+            var vd = GetViewportData(viewport)!;
             context.SetRenderTarget(vd.RTView, null);
             if ((viewport->Flags & ImGuiViewportFlags.NoRendererClear) != 0)
             {
@@ -618,19 +639,18 @@ namespace HexaEngine.Graphics.Renderers
 
         private static unsafe void SwapBuffers(ImGuiViewport* viewport, void* userdata)
         {
-            ViewportDataHandle* vh = (ViewportDataHandle*)viewport->RendererUserData;
-            ViewportData vd = viewportData[vh];
+            var vd = GetViewportData(viewport)!;
             vd.SwapChain.Present(false); // Present without vsync
         }
 
         private static unsafe void InitPlatformInterface()
         {
-            ImGuiPlatformIOPtr platform_io = ImGui.GetPlatformIO();
-            platform_io.RendererCreateWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererCreateWindow>(CreateWindow);
-            platform_io.RendererDestroyWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererDestroyWindow>(DestroyWindow);
-            platform_io.RendererSetWindowSize = (void*)Marshal.GetFunctionPointerForDelegate<RendererSetWindowSize>(SetWindowSize);
-            platform_io.RendererRenderWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererRenderWindow>(RenderWindow);
-            platform_io.RendererSwapBuffers = (void*)Marshal.GetFunctionPointerForDelegate<RendererSwapBuffers>(SwapBuffers);
+            ImGuiPlatformIOPtr platformIo = ImGui.GetPlatformIO();
+            platformIo.RendererCreateWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererCreateWindow>(CreateWindow);
+            platformIo.RendererDestroyWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererDestroyWindow>(DestroyWindow);
+            platformIo.RendererSetWindowSize = (void*)Marshal.GetFunctionPointerForDelegate<RendererSetWindowSize>(SetWindowSize);
+            platformIo.RendererRenderWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererRenderWindow>(RenderWindow);
+            platformIo.RendererSwapBuffers = (void*)Marshal.GetFunctionPointerForDelegate<RendererSwapBuffers>(SwapBuffers);
         }
 
         private static unsafe void ShutdownPlatformInterface()
