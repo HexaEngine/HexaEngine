@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
     using Hexa.NET.ImGui;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using System.Numerics;
@@ -43,7 +44,7 @@
 
         public void DrawPreview(Vector2 size)
         {
-            ImGui.Image((ulong)_shaderResourceView.NativePointer, size);
+            ImGui.Image(_shaderResourceView.ToTexRef(), size);
         }
 
         protected virtual void Dispose(bool disposing)

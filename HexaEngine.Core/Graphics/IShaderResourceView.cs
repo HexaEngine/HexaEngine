@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Core.Graphics
+﻿using Hexa.NET.ImGui;
+
+namespace HexaEngine.Core.Graphics
 {
     /// <summary>
     /// Represents a shader resource view (SRV) in graphics programming, which provides access to a resource from a shader.

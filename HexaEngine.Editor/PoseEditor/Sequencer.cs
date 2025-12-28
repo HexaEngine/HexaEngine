@@ -311,7 +311,9 @@
             scrollPos.Y += size.Y - Style.ScrollbarSize;
             Vector2 scrollSize = new(size.X, Style.ScrollbarSize);
             var scrollRect = new ImRect() { Min = scrollPos, Max = scrollPos + scrollSize };
-            ImGuiP.ScrollbarEx(scrollRect, 10, ImGuiAxis.X, ref scroll, (long)size.X, (long)maxWidth, ImDrawFlags.None);
+            var s = scroll;
+            ImGuiP.ScrollbarEx(scrollRect, 10, ImGuiAxis.X, &s, (long)size.X, (long)maxWidth, ImDrawFlags.None);
+            scroll = s;
 
             ImGui.PopID();
 

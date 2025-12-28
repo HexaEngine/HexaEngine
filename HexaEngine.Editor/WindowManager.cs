@@ -280,7 +280,7 @@
 
             ImGui.EndDisabled();
 
-            ImGuiManager.PushFont("WidgetsFont");
+            ImGuiManager.PushFont("WidgetsFont", 16);
             DialogManager.Draw();
             MessageBoxes.Draw();
             //AnimationManager.Tick();

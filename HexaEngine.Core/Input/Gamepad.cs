@@ -40,11 +40,11 @@
         {
             for (int i = 0; i < axes.Length; i++)
             {
-                axisNames[i] = SDL.GetGamepadStringForAxisS(Helper.ConvertBack(axes[i]));
+                axisNames[i] = axes[i].ToString();
             }
             for (int i = 0; i < buttons.Length; i++)
             {
-                buttonNames[i] = SDL.GetGamepadStringForButtonS(Helper.ConvertBack(buttons[i]));
+                buttonNames[i] = buttons[i].ToString();
             }
         }
 

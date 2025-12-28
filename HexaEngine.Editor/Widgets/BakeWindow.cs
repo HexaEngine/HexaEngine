@@ -4,6 +4,7 @@
     using Hexa.NET.Logging;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Objects;
@@ -51,7 +52,7 @@
 
             for (int i = 0; i < 6; i++)
             {
-                ImGui.Image((ulong)baker.Texture.SRVArraySlices![i].NativePointer, new(256));
+                ImGui.Image(baker.Texture.SRVArraySlices![i].ToTexRef(), new(256));
                 if (i < 5)
                 {
                     ImGui.SameLine();
@@ -60,7 +61,7 @@
 
             for (int i = 0; i < 6; i++)
             {
-                ImGui.Image((ulong)baker.TextureFinal.SRVArraySlices![i].NativePointer, new(256));
+                ImGui.Image(baker.TextureFinal.SRVArraySlices![i].ToTexRef(), new(256));
                 if (i < 5)
                 {
                     ImGui.SameLine();

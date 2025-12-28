@@ -7,6 +7,8 @@
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using Box = Core.Graphics.Box;
+    using D3D11Box = Hexa.NET.D3D11.Box;
     using Format = Core.Graphics.Format;
     using MapMode = Core.Graphics.MapMode;
     using MappedSubresource = Core.Graphics.MappedSubresource;
@@ -483,7 +485,20 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource)
         {
-            DeviceContext.UpdateSubresource((ID3D11Resource*)resource.NativePointer, (uint)destSubresource, (Box*)null, subresource.PData, subresource.RowPitch, subresource.DepthPitch);
+            DeviceContext.UpdateSubresource((ID3D11Resource*)resource.NativePointer, (uint)destSubresource, (D3D11Box*)null, subresource.PData, subresource.RowPitch, subresource.DepthPitch);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void UpdateSubresource(IResource resource, int destSubresource, Box? box, MappedSubresource subresource)
+        {
+            D3D11Box* pBox = null;
+            if (box.HasValue)
+            {
+                var b = box.Value;
+                D3D11Box d3dBox = new() { Top = b.Top, Right = b.Right, Bottom = b.Bottom, Left = b.Left, Front = b.Front, Back = b.Back };
+                pBox = &d3dBox;
+            }
+            DeviceContext.UpdateSubresource((ID3D11Resource*)resource.NativePointer, (uint)destSubresource, pBox, subresource.PData, subresource.RowPitch, subresource.DepthPitch);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

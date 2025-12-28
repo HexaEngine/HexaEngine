@@ -3,6 +3,7 @@
     using Hexa.NET.ImGui;
     using Hexa.NET.Logging;
     using HexaEngine.Core;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Input;
@@ -411,7 +412,7 @@
                     context.ClearState();
                 }
 
-                ImGui.Image((ulong)overlay.SRV.NativePointer, size * zoom);
+                ImGui.Image(overlay.SRV.ToTexRef(), size * zoom);
                 var focusedTmp = focused;
                 focused = ImGui.IsWindowFocused();
                 gotFocus = focused && !focusedTmp;

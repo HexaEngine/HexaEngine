@@ -3,6 +3,7 @@
     using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Graphics.Filters;
 
@@ -118,7 +119,7 @@
                     ImGui.TextColored(new(0, 1, 0, 1), $"Filtering...");
                 }
 
-                ImGui.Image((ulong)dstTex.SRV!.NativePointer, new(128, 128));
+                ImGui.Image(dstTex.SRV!.ToTexRef(), new(128, 128));
             }
 
             if (compute)

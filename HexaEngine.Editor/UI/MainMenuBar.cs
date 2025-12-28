@@ -24,7 +24,7 @@
 
         public override void Draw(TitleBarContext context)
         {
-            ImGuiManager.PushFont("Default");
+            ImGuiManager.PushFont("Default", 16);
             ImGui.PushStyleColor(ImGuiCol.MenuBarBg, context.BackgroundColor);
             if (ImGui.BeginMainMenuBar())
             {

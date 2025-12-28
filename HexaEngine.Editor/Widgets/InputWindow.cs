@@ -189,7 +189,7 @@
                     ImPlot.SetNextAxesLimits(short.MinValue, short.MaxValue, short.MinValue, short.MaxValue);
                     if (ImPlot.BeginPlot("Analog"u8, new Vector2(512, 512), ImPlotFlags.NoInputs))
                     {
-                        ImPlot.PlotScatter("Pos"u8, ref leftX, ref leftY, 1);
+                        ImPlot.PlotScatter("Pos"u8, &leftX, &leftY, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -201,7 +201,7 @@
                     if (ImPlot.BeginPlot("Throttle"u8, new Vector2(128, 512), ImPlotFlags.NoInputs))
                     {
                         short x = 0;
-                        ImPlot.PlotScatter("Pos"u8, ref x, ref throttle, 1);
+                        ImPlot.PlotScatter("Pos"u8, &x, &throttle, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -360,7 +360,7 @@
                     ImPlot.SetNextAxesLimits(short.MinValue, short.MaxValue, short.MinValue, short.MaxValue);
                     if (ImPlot.BeginPlot("Left Analog"u8, new Vector2(256, 256), ImPlotFlags.NoInputs))
                     {
-                        ImPlot.PlotScatter("Pos"u8, ref leftX, ref leftY, 1);
+                        ImPlot.PlotScatter("Pos"u8, &leftX, &leftY, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -370,7 +370,7 @@
                     ImPlot.SetNextAxesLimits(short.MinValue, short.MaxValue, short.MinValue, short.MaxValue);
                     if (ImPlot.BeginPlot("Right Analog"u8, new Vector2(256, 256), ImPlotFlags.NoInputs))
                     {
-                        ImPlot.PlotScatter("Pos"u8, ref rightX, ref rightY, 1);
+                        ImPlot.PlotScatter("Pos"u8, &rightX, &rightY, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -381,7 +381,7 @@
                     if (ImPlot.BeginPlot("Left Trigger"u8, new Vector2(128, 256), ImPlotFlags.NoInputs))
                     {
                         short x = 0;
-                        ImPlot.PlotScatter("Pos"u8, ref x, ref leftTrigger, 1);
+                        ImPlot.PlotScatter("Pos"u8, &x, &leftTrigger, 1);
                         ImPlot.EndPlot();
                     }
                 }
@@ -392,7 +392,7 @@
                     if (ImPlot.BeginPlot("Right Trigger"u8, new Vector2(128, 256), ImPlotFlags.NoInputs))
                     {
                         short x = 0;
-                        ImPlot.PlotScatter("Pos"u8, ref x, ref rightTrigger, 1);
+                        ImPlot.PlotScatter("Pos"u8, &x, &rightTrigger, 1);
                         ImPlot.EndPlot();
                     }
                 }

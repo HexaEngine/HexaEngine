@@ -3,6 +3,7 @@
     using Hexa.NET.ImGui;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Graphics.Filters;
@@ -133,7 +134,7 @@
 
                 for (int i = 0; i < 6; i++)
                 {
-                    ImGui.Image((ulong)dstTex.SRVArraySlices![i].NativePointer, new(128, 128));
+                    ImGui.Image(dstTex.SRVArraySlices![i].ToTexRef(), new(128, 128));
                     if (i != 5)
                     {
                         ImGui.SameLine();

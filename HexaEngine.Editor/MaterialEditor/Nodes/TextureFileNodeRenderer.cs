@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.IO.Binary.Materials;
     using HexaEngine.Core.UI;
     using HexaEngine.Materials.Nodes.Textures;
@@ -78,7 +79,7 @@
 
         protected override void DrawContent(TextureFileNode node)
         {
-            ImGui.Image((ulong)(image?.Value?.SRV?.NativePointer ?? 0), size);
+            ImGui.Image(image?.Value?.SRV.ToTexRef() ?? default, size);
 
             ImGui.PushItemWidth(100);
 

@@ -6,7 +6,7 @@
     /// <summary>
     /// A helper class for working with ImGui images
     /// </summary>
-    public static class ImageHelper
+    public static unsafe class ImageHelper
     {
         /// <summary>
         /// Displays an image centered vertically in the window with the specified size.
@@ -19,7 +19,7 @@
             var imageHeight = size.Y;
 
             ImGui.SetCursorPosY((windowHeight - imageHeight) * 0.5f);
-            ImGui.Image(image, size);
+            ImGui.Image(new ImTextureRef(texId: image), size);
         }
 
         /// <summary>
@@ -33,7 +33,7 @@
             var imageWidth = size.X;
 
             ImGui.SetCursorPosX((windowWidth - imageWidth) * 0.5f);
-            ImGui.Image(image, size);
+            ImGui.Image(new ImTextureRef(texId: image), size);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@
             var windowSize = ImGui.GetWindowSize();
 
             ImGui.SetCursorPos((windowSize - size) * 0.5f);
-            ImGui.Image(image, size);
+            ImGui.Image(new ImTextureRef(texId: image), size);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@
             var imageHeight = size.Y;
 
             ImGui.SetCursorPosY((windowHeight - imageHeight) * 0.5f);
-            ImGui.Image(image, size, uv0, uv1);
+            ImGui.Image(new ImTextureRef(texId: image), size, uv0, uv1);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@
             var imageWidth = size.X;
 
             ImGui.SetCursorPosX((windowWidth - imageWidth) * 0.5f);
-            ImGui.Image(image, size, uv0, uv1);
+            ImGui.Image(new ImTextureRef(texId: image), size, uv0, uv1);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@
             var windowSize = ImGui.GetWindowSize();
 
             ImGui.SetCursorPos((windowSize - size) * 0.5f);
-            ImGui.Image(image, size, uv0, uv1);
+            ImGui.Image(new ImTextureRef(texId: image), size, uv0, uv1);
         }
     }
 }

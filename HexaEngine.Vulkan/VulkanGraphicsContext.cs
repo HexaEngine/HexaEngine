@@ -556,5 +556,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public void UpdateSubresource(IResource resource, int destSubresource, Box? box, MappedSubresource subresource)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

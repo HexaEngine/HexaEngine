@@ -247,6 +247,11 @@
             return (ulong)icon.icon.SRV!.NativePointer;
         }
 
+        public unsafe static implicit operator ImTextureRef(Icon icon)
+        {
+            return new ImTextureRef(texId: new ImTextureID((ulong)icon.icon.SRV!.NativePointer));
+        }
+
         public static implicit operator nint(Icon icon)
         {
             return icon.icon.SRV!.NativePointer;

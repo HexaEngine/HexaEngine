@@ -120,7 +120,7 @@
         private static unsafe void SetIniString(string value)
         {
             var byteCount = Encoding.UTF8.GetByteCount(value);
-            var str = (byte*)ImGui.MemAlloc((ulong)(byteCount + 1));
+            var str = (byte*)ImGui.MemAlloc((nuint)(byteCount + 1));
             fixed (char* pValue = value)
             {
                 Encoding.UTF8.GetBytes(pValue, value.Length, str, byteCount);

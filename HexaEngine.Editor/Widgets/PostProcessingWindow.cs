@@ -261,7 +261,7 @@
                 {
                     size.Y = size.X * aspect;
                 }
-                ImGui.Image((ulong)buffer.SRV!.NativePointer, size);
+                ImGui.Image(buffer.SRV!.ToTexRef(), size);
             }
 
             ImGui.EndTable();

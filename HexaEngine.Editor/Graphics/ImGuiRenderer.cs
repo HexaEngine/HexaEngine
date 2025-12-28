@@ -27,6 +27,12 @@ namespace HexaEngine.Graphics.Renderers
         private static int vertexBufferSize = 5000, indexBufferSize = 10000;
         private static SRVWrapper srvWrapper = new(0);
 
+        public class ImTexture
+        {
+            public ITexture2D Texture;
+            public IShaderResourceView TextureView;
+        }
+
         /// <summary>
         /// Renderer data
         /// </summary>
@@ -79,6 +85,20 @@ namespace HexaEngine.Graphics.Renderers
 #endif
 
             IGraphicsContext ctx = context;
+
+            if (data->Textures != null)
+            {
+                var textures = data->Textures->Data;
+                var textureCount = data->Textures->Size;
+                for (int i = 0; i < textureCount; i++)
+                {
+                    ImTextureData* tex = textures[i];
+                    if (tex->Status != ImTextureStatus.Ok)
+                    {
+                        UpdateTexture(tex);
+                    }
+                }
+            }
 
             // Create and grow vertex/index buffers if needed
             if (vertexBuffer == null || vertexBufferSize < data->TotalVtxCount)
@@ -172,7 +192,7 @@ namespace HexaEngine.Graphics.Renderers
                         }
                         else
                         {
-                            delegate* <ImDrawList*, ImDrawCmd*, void> callback = (delegate* <ImDrawList*, ImDrawCmd*, void>)cmd.UserCallback;
+                            delegate*<ImDrawList*, ImDrawCmd*, void> callback = (delegate*<ImDrawList*, ImDrawCmd*, void>)cmd.UserCallback;
                             callback(cmdList, &cmd);
                         }
                     }
@@ -190,9 +210,10 @@ namespace HexaEngine.Graphics.Renderers
                         ctx.SetScissorRect((int)clip_min.X, (int)clip_min.Y, (int)clip_max.X, (int)clip_max.Y);
 
                         // Bind texture, Draw
-                        srvWrapper.NativePointer = (nint)cmd.TextureId.Handle;
+                        var texId = cmd.TexRef.GetTexID();
+                        srvWrapper.NativePointer = (nint)texId.Handle;
                         pso.Bindings.SetSRV("fontTex", srvWrapper);
-                        if (Samplers.TryGetValue(cmd.TextureId, out ISamplerState sampler))
+                        if (Samplers.TryGetValue(texId, out ISamplerState sampler))
                         {
                             pso.Bindings.SetSampler("fontSampler", sampler);
                         }
@@ -220,6 +241,91 @@ namespace HexaEngine.Graphics.Renderers
 #endif
         }
 
+        private static readonly ImTextureID ImTextureID_Invalid = new(0);
+
+        private static unsafe void DestroyTexture(ImTextureData* tex)
+        {
+            if (tex->BackendUserData != null)
+            {
+                GCHandle handle = GCHandle.FromIntPtr((nint)tex->BackendUserData);
+                ImTexture backendTex = (ImTexture)handle.Target;
+                backendTex.TextureView.Dispose();
+                backendTex.Texture.Dispose();
+                handle.Free();
+                tex->SetTexID(ImTextureID_Invalid);
+                tex->BackendUserData = null;
+            }
+
+            tex->SetStatus(ImTextureStatus.Destroyed);
+        }
+
+        private static unsafe void UpdateTexture(ImTextureData* tex)
+        {
+            if (tex->Status == ImTextureStatus.WantCreate)
+            {
+                // Create and upload new texture to graphics system
+                //IMGUI_DEBUG_LOG("UpdateTexture #%03d: WantCreate %dx%d\n", tex->UniqueID, tex->Width, tex->Height);
+                Debug.Assert(tex->TexID == ImTextureID_Invalid && tex->BackendUserData == null);
+                Debug.Assert(tex->Format == ImTextureFormat.Rgba32);
+                uint* pixels = (uint*)tex->GetPixels();
+                ImTexture backendTex = new();
+                GCHandle handle = GCHandle.Alloc(backendTex, GCHandleType.Normal);
+
+                // Create texture
+                Texture2DDescription desc = default;
+                desc.Width = tex->Width;
+                desc.Height = tex->Height;
+                desc.MipLevels = 1;
+                desc.ArraySize = 1;
+                desc.Format = Format.R8G8B8A8UNorm;
+                desc.SampleDescription.Count = 1;
+                desc.Usage = Usage.Default;
+                desc.BindFlags = BindFlags.ShaderResource;
+                desc.CPUAccessFlags = 0;
+                SubresourceData subResource;
+                subResource.DataPointer = (nint)pixels;
+                subResource.RowPitch = desc.Width * 4;
+                subResource.SlicePitch = 0;
+                backendTex.Texture = device.CreateTexture2D(desc, [subResource]);
+
+                // Create texture view
+                ShaderResourceViewDescription srvDesc = default;
+                srvDesc.Format = Format.R8G8B8A8UNorm;
+                srvDesc.ViewDimension = ShaderResourceViewDimension.Texture2D;
+                srvDesc.Texture2D.MipLevels = desc.MipLevels;
+                srvDesc.Texture2D.MostDetailedMip = 0;
+                backendTex.TextureView = device.CreateShaderResourceView(backendTex.Texture, srvDesc);
+
+                // Store identifiers
+                tex->SetTexID((ImTextureID)backendTex.TextureView.NativePointer);
+                tex->SetStatus(ImTextureStatus.Ok);
+                tex->BackendUserData = (void*)(nint)handle;
+            }
+            else if (tex->Status == ImTextureStatus.WantUpdates)
+            {
+                // Update selected blocks. We only ever write to textures regions which have never been used before!
+                // This backend choose to use tex->Updates[] but you can use tex->UpdateRect to upload a single region.
+                GCHandle handle = GCHandle.FromIntPtr((nint)tex->BackendUserData);
+                ImTexture backendTex = (ImTexture)handle.Target;
+
+                Debug.Assert(backendTex.TextureView.NativePointer == tex->TexID);
+                var rects = tex->Updates.Data;
+                var rectCount = tex->Updates.Size;
+                for (int i = 0; i < rectCount; ++i)
+                {
+                    var r = rects[i];
+                    Box box = new() { Left = r.X, Top = r.Y, Right = (uint)(r.X + r.W), Bottom = (uint)(r.Y + r.H), Front = 0, Back = 1 };
+                    MappedSubresource mappedResource = new(tex->GetPixelsAt(r.X, r.Y), (uint)tex->GetPitch(), 0);
+                    context.UpdateSubresource(backendTex.Texture, 0, box, mappedResource);
+                }
+                tex->SetStatus(ImTextureStatus.Ok);
+            }
+            if (tex->Status == ImTextureStatus.WantDestroy && tex->UnusedFrames > 0)
+            {
+                DestroyTexture(tex);
+            }
+        }
+
         private class SRVWrapper : IShaderResourceView
         {
             public SRVWrapper(nint p)
@@ -244,45 +350,6 @@ namespace HexaEngine.Graphics.Renderers
 
         private static unsafe void CreateFontsTexture()
         {
-            var io = ImGui.GetIO();
-            byte* pixels;
-            int width;
-            int height;
-            ImGui.GetTexDataAsRGBA32(io.Fonts, &pixels, &width, &height, null);
-
-            var texDesc = new Texture2DDescription
-            {
-                Width = width,
-                Height = height,
-                MipLevels = 1,
-                ArraySize = 1,
-                Format = Format.R8G8B8A8UNorm,
-                SampleDescription = new SampleDescription { Count = 1 },
-                Usage = Usage.Default,
-                BindFlags = BindFlags.ShaderResource,
-                CPUAccessFlags = CpuAccessFlags.None
-            };
-
-            var subResource = new SubresourceData
-            {
-                DataPointer = (nint)pixels,
-                RowPitch = texDesc.Width * 4,
-                SlicePitch = 0
-            };
-
-            var texture = device.CreateTexture2D(texDesc, new[] { subResource });
-
-            var resViewDesc = new ShaderResourceViewDescription
-            {
-                Format = Format.R8G8B8A8UNorm,
-                ViewDimension = ShaderResourceViewDimension.Texture2D,
-                Texture2D = new Texture2DShaderResourceView { MipLevels = texDesc.MipLevels, MostDetailedMip = 0 }
-            };
-            fontTextureView = device.CreateShaderResourceView(texture, resViewDesc);
-            texture.Dispose();
-
-            io.Fonts.TexID = (ulong)fontTextureView.NativePointer;
-
             var samplerDesc = new SamplerStateDescription
             {
                 Filter = Filter.MinMagMipLinear,
@@ -297,7 +364,6 @@ namespace HexaEngine.Graphics.Renderers
             fontSampler = device.CreateSamplerState(samplerDesc);
 
             pso.Bindings.SetSampler("fontSampler", fontSampler);
-            pso.Bindings.SetSRV("fontTex", fontTextureView);
         }
 
         private static unsafe void CreateDeviceObjects()
@@ -370,8 +436,18 @@ namespace HexaEngine.Graphics.Renderers
             CreateFontsTexture();
         }
 
-        private static void InvalidateDeviceObjects()
+        private unsafe static void InvalidateDeviceObjects()
         {
+            var textures = ImGui.GetPlatformIO().Textures;
+            for (int i = 0; i < textures.Size; i++)
+            {
+                ImTextureData* tex = textures.Data[i];
+                if (tex->RefCount == 1)
+                {
+                    DestroyTexture(tex);
+                }
+            }
+
             pso.Dispose();
             fontSampler.Dispose();
             fontTextureView.Dispose();
@@ -390,7 +466,11 @@ namespace HexaEngine.Graphics.Renderers
             io.BackendRendererUserData = bd;
             io.BackendRendererName = "ImGui_Generic_Renderer".ToUTF8Ptr();
             io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset; // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
+            io.BackendFlags |= ImGuiBackendFlags.RendererHasTextures;   // We can honor ImGuiPlatformIO::Textures[] requests during render.
             io.BackendFlags |= ImGuiBackendFlags.RendererHasViewports; // We can create multi-viewports on the Renderer side (optional)
+
+            var platformIo = ImGui.GetPlatformIO();
+            platformIo.RendererTextureMaxHeight = platformIo.RendererTextureMaxWidth = 16384;
 
             ImGuiRenderer.device = device;
             ImGuiRenderer.context = context;
@@ -410,13 +490,15 @@ namespace HexaEngine.Graphics.Renderers
             RendererData* bd = GetBackendData();
             Trace.Assert(bd != null, "No renderer backend to shutdown, or already shutdown?");
             var io = ImGui.GetIO();
+            var platformIo = ImGui.GetPlatformIO();
 
             ShutdownPlatformInterface();
             InvalidateDeviceObjects();
 
             io.BackendRendererName = null;
             io.BackendRendererUserData = null;
-            io.BackendFlags &= ~(ImGuiBackendFlags.RendererHasVtxOffset | ImGuiBackendFlags.RendererHasViewports);
+            io.BackendFlags &= ~(ImGuiBackendFlags.RendererHasVtxOffset | ImGuiBackendFlags.RendererHasTextures | ImGuiBackendFlags.RendererHasViewports);
+            //platformIo.ClearRendererHandlers();
             Free(bd);
         }
 
@@ -462,7 +544,7 @@ namespace HexaEngine.Graphics.Renderers
 
             // PlatformHandleRaw should always be a HWND, whereas PlatformHandle might be a higher-level handle (e.g. GLFWWindow*, SDL_Window*).
             // Some backends will leave PlatformHandleRaw == 0, in which case we assume PlatformHandle will contain the HWND.
-            SDLWindow* window = (SDLWindow*)SDL.GetWindowFromID((uint)viewport->PlatformHandle);
+            SDLWindow* window = SDL.GetWindowFromID((uint)viewport->PlatformHandle);
             int w, h;
             SDL.GetWindowSize(window, &w, &h);
 

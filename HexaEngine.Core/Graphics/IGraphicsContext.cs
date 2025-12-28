@@ -359,6 +359,8 @@
         /// <param name="subresource">The subresource data containing the update.</param>
         void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource);
 
+        void UpdateSubresource(IResource resource, int destSubresource, Box? box, MappedSubresource subresource);
+
         /// <summary>
         /// Sets render targets for rendering using an array of views and an optional depth-stencil view.
         /// </summary>

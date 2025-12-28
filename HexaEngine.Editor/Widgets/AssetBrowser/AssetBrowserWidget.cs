@@ -7,6 +7,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Assets;
     using HexaEngine.Core.Configuration;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
@@ -543,7 +544,7 @@
 
             if (file.Thumbnail != null && !file.Thumbnail.IsNull)
             {
-                drawList->AddImage((ulong)file.Thumbnail.Value!.SRV!.NativePointer, imgMin, imgMax);
+                drawList->AddImage(file.Thumbnail.Value!.SRV!.ToTexRef(), imgMin, imgMax);
             }
             else
             {

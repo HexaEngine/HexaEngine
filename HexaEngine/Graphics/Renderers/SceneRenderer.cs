@@ -396,7 +396,7 @@
             }
         }
 
-        private static void Image(Vector2 size, Viewport viewport, string debugName, nint srv)
+        private unsafe static void Image(Vector2 size, Viewport viewport, string debugName, nint srv)
         {
             float aspect = viewport.Height / viewport.Width;
             size.X = MathF.Min(viewport.Width, size.X);
@@ -409,11 +409,11 @@
 
             if (ImGui.CollapsingHeader(debugName))
             {
-                ImGui.Image((ulong)srv, size);
+                ImGui.Image(new ImTextureRef(texId: new((ulong)srv)), size);
             }
         }
 
-        private static void Image(Vector2 size, Viewport viewport, string debugName, nint srv, Vector4 tint)
+        private unsafe static void Image(Vector2 size, Viewport viewport, string debugName, nint srv, Vector4 tint)
         {
             float aspect = viewport.Height / viewport.Width;
             size.X = MathF.Min(viewport.Width, size.X);
@@ -426,7 +426,7 @@
 
             if (ImGui.CollapsingHeader(debugName))
             {
-                ImGui.ImageWithBg((ulong)srv, size, Vector2.Zero, tint);
+                ImGui.ImageWithBg(new ImTextureRef(texId: new((ulong)srv)), size, Vector2.Zero, tint);
             }
         }
 

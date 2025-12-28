@@ -332,7 +332,7 @@
 
             if (!entry.Pinned)
             {
-                ImGuiManager.PushFont("Icons-Regular");
+                ImGuiManager.PushFont("Icons-Regular", 16);
             }
             if (ImGui.SmallButton(builder.BuildLabelId(UwU.Bookmark, entry.Path)))
             {
@@ -409,7 +409,7 @@
                 }
                 if (!entry.Pinned)
                 {
-                    ImGuiManager.PushFont("Icons-Regular");
+                    ImGuiManager.PushFont("Icons-Regular", 16);
                 }
                 if (!entry.Pinned && ImGui.MenuItem(builder.BuildLabel(UwU.Bookmark, " Pin"u8)))
                 {

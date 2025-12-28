@@ -50,10 +50,10 @@
             io.ConfigErrorRecoveryEnableDebugLog = true;
             io.ConfigErrorRecovery = true;
             io.ConfigErrorRecoveryEnableAssert = false;
+            io.ConfigDpiScaleFonts = true;
+            io.ConfigDpiScaleViewports = true;
 
             var fonts = io.Fonts;
-            fonts.FontBuilderFlags = (uint)ImFontAtlasFlags.NoPowerOfTwoHeight;
-            fonts.TexDesiredWidth = 2048;
 
             uint* glyphRanges = stackalloc uint[]
             {
@@ -97,8 +97,6 @@
                                  ;
             aliasToFont.Add("TextEditorFont", textEditorFontBuilder.Font);
             textEditorFontBuilder.Destroy();
-
-            fonts.Build();
 
             var style = ImGui.GetStyle();
             var colors = style.Colors;
@@ -188,17 +186,18 @@
                 style.Colors[(int)ImGuiCol.WindowBg].W = 1.0f;
             }
 
+            style.FontScaleDpi = scale;
             style.ScaleAllSizes(scale);
 
             ImGuiImplSDL3.SetCurrentContext(guiContext);
-            ImGuiImplSDL3.SDL3InitForD3D((SDLWindow*)window.GetWindow());
+            ImGuiImplSDL3.InitForD3D((SDLWindow*)window.GetWindow());
             ImGuiRenderer.Init(device, context);
             Application.RegisterHook(EventHook);
         }
 
         private unsafe bool EventHook(Hexa.NET.SDL3.SDLEvent @event)
         {
-            return ImGuiImplSDL3.SDL3ProcessEvent((SDLEvent*)&@event);
+            return ImGuiImplSDL3.ProcessEvent((SDLEvent*)&@event);
         }
 
         public unsafe void NewFrame()
@@ -213,7 +212,7 @@
 
             LayoutManager.NewFrame();
 
-            ImGuiImplSDL3.SDL3NewFrame();
+            ImGuiImplSDL3.NewFrame();
             ImGui.NewFrame();
             ImGuizmo.BeginFrame();
 
@@ -279,7 +278,7 @@
         {
             Application.UnregisterHook(EventHook);
             ImGuiRenderer.Shutdown();
-            ImGuiImplSDL3.SDL3Shutdown();
+            ImGuiImplSDL3.Shutdown();
             ImGuiImplSDL3.SetCurrentContext(null);
 
             ImGui.SetCurrentContext(null);
@@ -296,20 +295,20 @@
         private static int fontPushes = 0;
         private bool resetLayout = true;
 
-        public static void PushFont(string name)
+        public static void PushFont(string name, float fontSize)
         {
             if (aliasToFont.TryGetValue(name, out ImFontPtr fontPtr))
             {
-                ImGui.PushFont(fontPtr);
+                ImGui.PushFont(fontPtr, fontSize);
                 fontPushes++;
             }
         }
 
-        public static void PushFont(string name, bool condition)
+        public static void PushFont(string name, float fontSize, bool condition)
         {
             if (condition && aliasToFont.TryGetValue(name, out ImFontPtr fontPtr))
             {
-                ImGui.PushFont(fontPtr);
+                ImGui.PushFont(fontPtr, fontSize);
                 fontPushes++;
             }
         }

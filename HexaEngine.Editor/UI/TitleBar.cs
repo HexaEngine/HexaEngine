@@ -339,7 +339,7 @@
 
         public void Draw(TitleBarContext context)
         {
-            ImGuiManager.PushFont("WidgetsFont");
+            ImGuiManager.PushFont("WidgetsFont", 16);
             var bg = ImGui.GetBackgroundDrawList();
             bg.AddRectFilled(context.Area.Min, context.Area.Max, context.BackgroundColor);
 
