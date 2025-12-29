@@ -325,6 +325,7 @@
         public void SetComputePipelineState(IComputePipelineState? state)
         {
             currentState?.UnsetState(DeviceContext);
+            currentState?.Dispose();
             currentState = null;
             if (state == null)
             {
@@ -333,6 +334,7 @@
 
             ((D3D11ComputePipelineState)state).SetState(DeviceContext);
             currentState = (D3D11ComputePipelineState)state;
+            currentState.AddRef();
         }
 
         private D3D11PipelineState? currentState;
@@ -341,6 +343,7 @@
         public void SetGraphicsPipelineState(IGraphicsPipelineState? state)
         {
             currentState?.UnsetState(DeviceContext);
+            currentState?.Dispose();
             currentState = null;
             if (state == null)
             {
@@ -349,6 +352,7 @@
 
             ((D3D11GraphicsPipelineState)state).SetState(DeviceContext);
             currentState = (D3D11GraphicsPipelineState)state;
+            currentState.AddRef();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics.Primitives
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using System;
 
     /// <summary>
@@ -9,6 +10,7 @@
     public interface IPrimitive : IDisposable
     {
         uint VertexCount { get; }
+
         uint IndexCount { get; }
 
         /// <summary>
@@ -39,5 +41,11 @@
         /// </summary>
         /// <param name="context">The graphics context.</param>
         void EndDraw(IGraphicsContext context);
+
+        IVertexBuffer? VertexBuffer { get; }
+
+        IIndexBuffer? IndexBuffer { get; }
+
+        InputElementDescription[] InputElements { get; }
     }
 }

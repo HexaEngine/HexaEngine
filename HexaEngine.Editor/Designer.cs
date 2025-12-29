@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Editor
 {
+    using Hexa.NET.ImGui;
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
@@ -20,6 +21,8 @@ namespace HexaEngine.Editor
     using HexaEngine.Editor.Tools;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Editor.Widgets.AssetBrowser;
+    using HexaEngine.Graphics.Overlays;
+    using HexaEngine.Graphics.Renderers;
     using HexaEngine.PostFx.BuildIn;
     using HexaEngine.Profiling;
     using HexaEngine.Scripts;
@@ -31,25 +34,21 @@ namespace HexaEngine.Editor
     {
         private static Task? task;
 
-        public static void Init(IGraphicsDevice device)
+        public unsafe static void Init(IGraphicsDevice device)
         {
+            var io = ImGui.GetIO();
+            io.IniFilename = null;
             MainMenuBar.Init(device);
             IconManager.Init();
             WindowManager.Init(device);
 #if !BypassLauncher
-            WindowManager.ShowWindow<LauncherWindow>();
+            PopupManager.Show<LauncherWindow>();
 #endif
             if (!EditorConfig.Default.SetupDone)
             {
                 PopupManager.Show<SetupWindow>();
             }
-        }
 
-        public static bool IsLaunchpadActive { get; set; } = true;
-
-        public static void InitEditor()
-        {
-            IsLaunchpadActive = false;
             ImGuiConsole.IsDisplayed = true;
 
             WindowManager.Reset();
@@ -118,6 +117,8 @@ namespace HexaEngine.Editor
 
             PostProcessingEditorFactory.Reset();
             PostProcessingEditorFactory.RegisterEditor<ColorGrading, ColorGradingObjectEditor>();
+
+            OverlayManager.Current.Add(new EditorSelectionOverlay());
         }
 
         public static void Dispose()

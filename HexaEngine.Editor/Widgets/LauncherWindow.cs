@@ -4,7 +4,6 @@
     using Hexa.NET.ImGui.Widgets.Dialogs;
     using Hexa.NET.Utilities.Text;
     using HexaEngine.Core;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Extensions;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
@@ -12,24 +11,30 @@
     using System;
     using System.Numerics;
 
-    public class LauncherWindow : EditorWindow
+    public class LauncherWindow : HexaEngine.Editor.Dialogs.Modal
     {
         private string searchString = string.Empty;
         private HistoryEntry historyEntry;
+        private bool first = false;
 
         private bool createProjectDialog;
 
         public LauncherWindow()
         {
-            isEmbedded = true;
-            Flags = ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar;
-            Show();
         }
 
-        protected override string Name { get; } = "Open Project";
+        public override string Name { get; } = "Open Project";
 
-        public override unsafe void DrawWindow(IGraphicsContext context)
-        {/*
+        protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoTitleBar;
+
+        public override unsafe void Draw()
+        {
+            if (!shown || signalClose)
+            {
+                base.Draw();
+                return;
+            }
+
             if (ImGui.BeginPopupModal("DeleteNonExistingProject"))
             {
                 ImGui.Text("The selected Project doesn't exist, do you want to remove it from the History?");
@@ -47,25 +52,44 @@
                 }
 
                 ImGui.EndPopup();
-            }*/
+            }
 
-            base.DrawWindow(context);
+            var vp = ImGui.GetMainViewport();
+            Vector2 vpPos = vp.Pos;
+            Vector2 vpSize = vp.Size;
+            ImGui.SetNextWindowPos(vpPos);
+            ImGui.SetNextWindowSize(vpSize);
+            ImGui.SetNextWindowBgAlpha(0.9f);
+            ImGui.Begin("Overlay", null, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoInputs);
+            ImGui.End();
+
+            if (first)
+            {
+                Vector2 size = new Vector2(1280, 720) * vp.DpiScale;
+                Vector2 mainViewportPos = vpPos;
+                Vector2 s = vpSize;
+
+                ImGui.SetNextWindowSize(size);
+                ImGui.SetNextWindowPos(mainViewportPos + (s - size) * 0.5f);
+                first = false;
+            }
+
+            base.Draw();
         }
 
         public override void Show()
         {
+            first = true;
             CreateProjectDialogReset();
             base.Show();
         }
 
-        public override void Close()
+        protected override unsafe void DrawContent()
         {
-            Designer.InitEditor();
-            base.Close();
-        }
+            var window = ImGuiP.GetCurrentWindow();
+            ImGuiP.BringWindowToDisplayFront(window);
+            ImGui.Separator();
 
-        public override unsafe void DrawContent(IGraphicsContext context)
-        {
             Vector2 pos = ImGui.GetCursorPos();
             Vector2 padding = ImGui.GetStyle().CellPadding;
             Vector2 spacing = ImGui.GetStyle().ItemSpacing;
@@ -427,6 +451,11 @@
 
                 ImGui.EndPopup();
             }
+        }
+
+        public override void Reset()
+        {
+            CreateProjectDialogReset();
         }
     }
 }

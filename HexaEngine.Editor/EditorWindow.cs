@@ -43,14 +43,6 @@
                 return;
             }
 
-            if (isEmbedded)
-            {
-                ImGuiWindowClass windowClass;
-                windowClass.DockNodeFlagsOverrideSet = (ImGuiDockNodeFlags)ImGuiDockNodeFlagsPrivate.NoTabBar;
-                ImGui.SetNextWindowClass(&windowClass);
-                ImGui.SetNextWindowDockID(ImGuiManager.DockSpaceId);
-            }
-
             if (!ImGui.Begin(Name, ref isShown, Flags))
             {
                 if (wasShown)

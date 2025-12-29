@@ -64,11 +64,6 @@
                 return;
             }
 
-            if (Designer.IsLaunchpadActive)
-            {
-                return;
-            }
-
             byte* buffer = stackalloc byte[2048];
             StrBuilder builder = new(buffer, 2048);
 

@@ -15,15 +15,19 @@ namespace HexaEngine.Graphics.Renderers
 
     public static class ImGuiRenderer
     {
-        private static IGraphicsDevice device = null!;
-        private static IGraphicsContext context = null!;
-        private static IGraphicsPipelineState pso = null!;
-        private static IBuffer vertexBuffer = null!;
-        private static IBuffer indexBuffer = null!;
-        private static IBuffer constantBuffer = null!;
-        private static ISamplerState fontSampler = null!;
-        private static int vertexBufferSize = 5000, indexBufferSize = 10000;
-        private static SRVWrapper srvWrapper = new(0);
+        private static readonly SRVWrapper srvWrapper = new(0);
+
+        private class RendererData
+        {
+            public IGraphicsDevice device = null!;
+            public IGraphicsContext context = null!;
+            public IGraphicsPipelineState pso = null!;
+            public IBuffer vertexBuffer = null!;
+            public IBuffer indexBuffer = null!;
+            public IBuffer constantBuffer = null!;
+            public ISamplerState fontSampler = null!;
+            public int vertexBufferSize = 5000, indexBufferSize = 10000;
+        }
 
         public class ImTexture
         {
@@ -31,31 +35,49 @@ namespace HexaEngine.Graphics.Renderers
             public IShaderResourceView TextureView = null!;
         }
 
-        /// <summary>
-        /// Renderer data
-        /// </summary>
-        private struct RendererData
-        {
-            public int Dummy;
-        }
-
         // Backend data stored in io.BackendRendererUserData to allow support for multiple Dear ImGui contexts
         // It is STRONGLY preferred that you use docking branch with multi-viewports (== single Dear ImGui context + multiple windows) instead of multiple Dear ImGui contexts.
-        private static unsafe RendererData* GetBackendData()
+        private static unsafe RendererData? GetBackendData()
         {
-            return !ImGui.GetCurrentContext().IsNull ? (RendererData*)ImGui.GetIO().BackendRendererUserData : null;
+            if (ImGui.GetCurrentContext().IsNull)
+            {
+                return null;
+            }
+            var handle = GCHandle.FromIntPtr((nint)ImGui.GetIO().BackendRendererUserData);
+            return (RendererData?)handle.Target;
+        }
+
+        private static unsafe RendererData AllocateRenderData(ImGuiIO* io)
+        {
+            RendererData bd = new();
+            GCHandle handle = GCHandle.Alloc(bd, GCHandleType.Normal);
+            io->BackendRendererUserData = (void*)(nint)handle;
+            return bd;
+        }
+
+        private static unsafe void FreeRendererData(ImGuiIO* io)
+        {
+            if (io->BackendRendererUserData == null)
+            {
+                return;
+            }
+            GCHandle handle = GCHandle.FromIntPtr((nint)io->BackendRendererUserData);
+            handle.Free();
+            io->BackendRendererUserData = null;
         }
 
         private static unsafe void SetupRenderState(ImDrawData* drawData, IGraphicsContext ctx)
         {
-            var viewport = new Viewport(drawData->DisplaySize.X, drawData->DisplaySize.Y);
+            var bd = GetBackendData()!;
+            Viewport viewport = new(drawData->DisplaySize.X, drawData->DisplaySize.Y);
 
             uint stride = (uint)sizeof(ImDrawVert);
             uint offset = 0;
-            ctx.SetGraphicsPipelineState(pso);
+
+            ctx.SetGraphicsPipelineState(bd.pso);
             ctx.SetViewport(viewport);
-            ctx.SetVertexBuffer(vertexBuffer, stride, offset);
-            ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
+            ctx.SetVertexBuffer(bd.vertexBuffer, stride, offset);
+            ctx.SetIndexBuffer(bd.indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
             ctx.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
         }
 
@@ -78,11 +100,12 @@ namespace HexaEngine.Graphics.Renderers
                 return;
             }
 
-#if DEBUG
-            context.BeginEvent("ImGuiRenderer");
-#endif
+            var bd = GetBackendData()!;
+            var ctx = bd.context;
 
-            IGraphicsContext ctx = context;
+#if DEBUG
+            ctx.BeginEvent("ImGuiRenderer");
+#endif
 
             if (data->Textures != null)
             {
@@ -99,33 +122,33 @@ namespace HexaEngine.Graphics.Renderers
             }
 
             // Create and grow vertex/index buffers if needed
-            if (vertexBuffer == null || vertexBufferSize < data->TotalVtxCount)
+            if (bd.vertexBuffer == null || bd.vertexBufferSize < data->TotalVtxCount)
             {
-                vertexBuffer?.Dispose();
-                vertexBufferSize = data->TotalVtxCount + 5000;
+                bd.vertexBuffer?.Dispose();
+                bd.vertexBufferSize = data->TotalVtxCount + 5000;
                 BufferDescription desc = new();
                 desc.Usage = Usage.Dynamic;
-                desc.ByteWidth = vertexBufferSize * sizeof(ImDrawVert);
+                desc.ByteWidth = bd.vertexBufferSize * sizeof(ImDrawVert);
                 desc.BindFlags = BindFlags.VertexBuffer;
                 desc.CPUAccessFlags = CpuAccessFlags.Write;
-                vertexBuffer = device.CreateBuffer(desc);
+                bd.vertexBuffer = bd.device.CreateBuffer(desc);
             }
 
-            if (indexBuffer == null || indexBufferSize < data->TotalIdxCount)
+            if (bd.indexBuffer == null || bd.indexBufferSize < data->TotalIdxCount)
             {
-                indexBuffer?.Dispose();
-                indexBufferSize = data->TotalIdxCount + 10000;
+                bd.indexBuffer?.Dispose();
+                bd.indexBufferSize = data->TotalIdxCount + 10000;
                 BufferDescription desc = new();
                 desc.Usage = Usage.Dynamic;
-                desc.ByteWidth = indexBufferSize * sizeof(ImDrawIdx);
+                desc.ByteWidth = bd.indexBufferSize * sizeof(ImDrawIdx);
                 desc.BindFlags = BindFlags.IndexBuffer;
                 desc.CPUAccessFlags = CpuAccessFlags.Write;
-                indexBuffer = device.CreateBuffer(desc);
+                bd.indexBuffer = bd.device.CreateBuffer(desc);
             }
 
             // Upload vertex/index data into a single contiguous GPU buffer
-            var vertexResource = ctx.Map(vertexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
-            var indexResource = ctx.Map(indexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
+            var vertexResource = ctx.Map(bd.vertexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
+            var indexResource = ctx.Map(bd.indexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
             var vertexResourcePointer = (ImDrawVert*)vertexResource.PData;
             var indexResourcePointer = (ImDrawIdx*)indexResource.PData;
             for (int n = 0; n < data->CmdListsCount; n++)
@@ -141,13 +164,13 @@ namespace HexaEngine.Graphics.Renderers
                 vertexResourcePointer += cmdlList.VtxBuffer.Size;
                 indexResourcePointer += cmdlList.IdxBuffer.Size;
             }
-            ctx.Unmap(vertexBuffer, 0);
-            ctx.Unmap(indexBuffer, 0);
+            ctx.Unmap(bd.vertexBuffer, 0);
+            ctx.Unmap(bd.indexBuffer, 0);
 
             // Setup orthographic projection matrix into our constant buffer
             // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
             {
-                var mappedResource = ctx.Map(constantBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
+                var mappedResource = ctx.Map(bd.constantBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
                 Matrix4x4* constant_buffer = (Matrix4x4*)mappedResource.PData;
 
                 float L = data->DisplayPos.X;
@@ -162,7 +185,7 @@ namespace HexaEngine.Graphics.Renderers
                      (R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f
                      );
                 Buffer.MemoryCopy(&mvp, constant_buffer, sizeof(Matrix4x4), sizeof(Matrix4x4));
-                ctx.Unmap(constantBuffer, 0);
+                ctx.Unmap(bd.constantBuffer, 0);
             }
 
             // Setup desired state
@@ -210,17 +233,17 @@ namespace HexaEngine.Graphics.Renderers
                         // Bind texture, Draw
                         var texId = cmd.TexRef.GetTexID();
                         srvWrapper.NativePointer = (nint)texId.Handle;
-                        pso.Bindings.SetSRV("fontTex", srvWrapper);
+                        bd.pso.Bindings.SetSRV("fontTex", srvWrapper);
                         if (Samplers.TryGetValue(texId, out var sampler))
                         {
-                            pso.Bindings.SetSampler("fontSampler", sampler);
+                            bd.pso.Bindings.SetSampler("fontSampler", sampler);
                         }
                         else
                         {
-                            pso.Bindings.SetSampler("fontSampler", fontSampler);
+                            bd.pso.Bindings.SetSampler("fontSampler", bd.fontSampler);
                         }
 
-                        ctx.SetGraphicsPipelineState(pso);
+                        ctx.SetGraphicsPipelineState(bd.pso);
                         ctx.DrawIndexedInstanced(cmd.ElemCount, 1, (uint)(cmd.IdxOffset + global_idx_offset), (int)(cmd.VtxOffset + global_vtx_offset), 0);
                     }
                 }
@@ -235,7 +258,7 @@ namespace HexaEngine.Graphics.Renderers
             ctx.SetPrimitiveTopology(PrimitiveTopology.Undefined);
 
 #if DEBUG
-            context.EndEvent();
+            ctx.EndEvent();
 #endif
         }
 
@@ -267,6 +290,7 @@ namespace HexaEngine.Graphics.Renderers
 
         private static unsafe void UpdateTexture(ImTextureData* tex)
         {
+            var bd = GetBackendData()!;
             if (tex->Status == ImTextureStatus.WantCreate)
             {
                 // Create and upload new texture to graphics system
@@ -292,7 +316,7 @@ namespace HexaEngine.Graphics.Renderers
                 subResource.DataPointer = (nint)pixels;
                 subResource.RowPitch = desc.Width * 4;
                 subResource.SlicePitch = 0;
-                backendTex.Texture = device.CreateTexture2D(desc, [subResource]);
+                backendTex.Texture = bd.device.CreateTexture2D(desc, [subResource]);
 
                 // Create texture view
                 ShaderResourceViewDescription srvDesc = default;
@@ -300,7 +324,7 @@ namespace HexaEngine.Graphics.Renderers
                 srvDesc.ViewDimension = ShaderResourceViewDimension.Texture2D;
                 srvDesc.Texture2D.MipLevels = desc.MipLevels;
                 srvDesc.Texture2D.MostDetailedMip = 0;
-                backendTex.TextureView = device.CreateShaderResourceView(backendTex.Texture, srvDesc);
+                backendTex.TextureView = bd.device.CreateShaderResourceView(backendTex.Texture, srvDesc);
 
                 // Store identifiers
                 tex->SetTexID((ImTextureID)backendTex.TextureView.NativePointer);
@@ -321,7 +345,7 @@ namespace HexaEngine.Graphics.Renderers
                     var r = rects[i];
                     Box box = new() { Left = r.X, Top = r.Y, Right = (uint)(r.X + r.W), Bottom = (uint)(r.Y + r.H), Front = 0, Back = 1 };
                     MappedSubresource mappedResource = new(tex->GetPixelsAt(r.X, r.Y), (uint)tex->GetPitch(), 0);
-                    context.UpdateSubresource(backendTex.Texture, 0, box, mappedResource);
+                    bd.context.UpdateSubresource(backendTex.Texture, 0, box, mappedResource);
                 }
                 tex->SetStatus(ImTextureStatus.Ok);
             }
@@ -353,26 +377,9 @@ namespace HexaEngine.Graphics.Renderers
             }
         }
 
-        private static unsafe void CreateFontsTexture()
-        {
-            var samplerDesc = new SamplerStateDescription
-            {
-                Filter = Filter.MinMagMipLinear,
-                AddressU = TextureAddressMode.Wrap,
-                AddressV = TextureAddressMode.Wrap,
-                AddressW = TextureAddressMode.Wrap,
-                MipLODBias = 0f,
-                ComparisonFunction = ComparisonFunction.Always,
-                MinLOD = 0f,
-                MaxLOD = 0f
-            };
-            fontSampler = device.CreateSamplerState(samplerDesc);
-
-            pso.Bindings.SetSampler("fontSampler", fontSampler);
-        }
-
         private static unsafe void CreateDeviceObjects()
         {
+            var bd = GetBackendData()!;
             var blendDesc = new BlendDescription
             {
                 AlphaToCoverageEnable = false
@@ -416,7 +423,7 @@ namespace HexaEngine.Graphics.Renderers
                 new InputElementDescription( "COLOR",    0, Format.R8G8B8A8UNorm, 16, 0, InputClassification.PerVertexData, 0 ),
             };
 
-            pso = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
+            bd.pso = bd.device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
                 VertexShader = "HexaEngine.Core:shaders/internal/imgui/vs.hlsl",
                 PixelShader = "HexaEngine.Core:shaders/internal/imgui/ps.hlsl",
@@ -435,14 +442,28 @@ namespace HexaEngine.Graphics.Renderers
                 BindFlags = BindFlags.ConstantBuffer,
                 CPUAccessFlags = CpuAccessFlags.Write,
             };
-            constantBuffer = device.CreateBuffer(constBufferDesc);
-            pso.Bindings.SetCBV("matrixBuffer", constantBuffer);
+            bd.constantBuffer = bd.device.CreateBuffer(constBufferDesc);
+            bd.pso.Bindings.SetCBV("matrixBuffer", bd.constantBuffer);
 
-            CreateFontsTexture();
+            var samplerDesc = new SamplerStateDescription
+            {
+                Filter = Filter.MinMagMipLinear,
+                AddressU = TextureAddressMode.Wrap,
+                AddressV = TextureAddressMode.Wrap,
+                AddressW = TextureAddressMode.Wrap,
+                MipLODBias = 0f,
+                ComparisonFunction = ComparisonFunction.Always,
+                MinLOD = 0f,
+                MaxLOD = 0f
+            };
+            bd.fontSampler = bd.device.CreateSamplerState(samplerDesc);
+
+            bd.pso.Bindings.SetSampler("fontSampler", bd.fontSampler);
         }
 
         private unsafe static void InvalidateDeviceObjects()
         {
+            var bd = GetBackendData()!;
             var textures = ImGui.GetPlatformIO().Textures;
             for (int i = 0; i < textures.Size; i++)
             {
@@ -453,11 +474,11 @@ namespace HexaEngine.Graphics.Renderers
                 }
             }
 
-            pso.Dispose();
-            fontSampler.Dispose();
-            indexBuffer.Dispose();
-            vertexBuffer.Dispose();
-            constantBuffer.Dispose();
+            bd.pso.Dispose();
+            bd.fontSampler.Dispose();
+            bd.indexBuffer.Dispose();
+            bd.vertexBuffer.Dispose();
+            bd.constantBuffer.Dispose();
         }
 
         public static unsafe bool Init(IGraphicsDevice device, IGraphicsContext context)
@@ -466,8 +487,7 @@ namespace HexaEngine.Graphics.Renderers
             Trace.Assert(io.BackendRendererUserData == null, "Already initialized a renderer backend!");
 
             // Setup backend capabilities flags
-            var bd = AllocT<RendererData>();
-            io.BackendRendererUserData = bd;
+            var bd = AllocateRenderData(io);
             io.BackendRendererName = "ImGui_Generic_Renderer".ToUTF8Ptr();
             io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset; // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
             io.BackendFlags |= ImGuiBackendFlags.RendererHasTextures;   // We can honor ImGuiPlatformIO::Textures[] requests during render.
@@ -476,8 +496,8 @@ namespace HexaEngine.Graphics.Renderers
             var platformIo = ImGui.GetPlatformIO();
             platformIo.RendererTextureMaxHeight = platformIo.RendererTextureMaxWidth = 16384;
 
-            ImGuiRenderer.device = device;
-            ImGuiRenderer.context = context;
+            bd.device = device;
+            bd.context = context;
 
             CreateDeviceObjects();
 
@@ -491,7 +511,7 @@ namespace HexaEngine.Graphics.Renderers
 
         public static unsafe void Shutdown()
         {
-            RendererData* bd = GetBackendData();
+            var bd = GetBackendData();
             Trace.Assert(bd != null, "No renderer backend to shutdown, or already shutdown?");
             var io = ImGui.GetIO();
             var platformIo = ImGui.GetPlatformIO();
@@ -503,15 +523,15 @@ namespace HexaEngine.Graphics.Renderers
             io.BackendRendererUserData = null;
             io.BackendFlags &= ~(ImGuiBackendFlags.RendererHasVtxOffset | ImGuiBackendFlags.RendererHasTextures | ImGuiBackendFlags.RendererHasViewports);
             //platformIo.ClearRendererHandlers();
-            Free(bd);
+            FreeRendererData(io);
         }
 
         public static unsafe void NewFrame()
         {
-            RendererData* bd = GetBackendData();
-            Trace.Assert(bd != null, "Did you call ImGui_ImplDX11_Init()?");
+            var bd = GetBackendData();
+            Trace.Assert(bd != null, "Did you call Init()?");
 
-            if (fontSampler == null)
+            if (bd.fontSampler == null)
             {
                 CreateDeviceObjects();
             }
@@ -562,7 +582,8 @@ namespace HexaEngine.Graphics.Renderers
 
         private static unsafe void CreateWindow(ImGuiViewport* viewport)
         {
-            ViewportData vd = AllocateViewportData(viewport);
+            var bd = GetBackendData()!;
+            var vd = AllocateViewportData(viewport);
 
             // PlatformHandleRaw should always be a HWND, whereas PlatformHandle might be a higher-level handle (e.g. GLFWWindow*, SDL_Window*).
             // Some backends will leave PlatformHandleRaw == 0, in which case we assume PlatformHandle will contain the HWND.
@@ -585,7 +606,7 @@ namespace HexaEngine.Graphics.Renderers
             };
 
             // Create swap chain
-            vd.SwapChain = device.CreateSwapChain(window);
+            vd.SwapChain = bd.device.CreateSwapChain(window);
 
             // Create the render target
             if (vd.SwapChain != null)
@@ -627,11 +648,12 @@ namespace HexaEngine.Graphics.Renderers
 
         private static unsafe void RenderWindow(ImGuiViewport* viewport, void* userdata)
         {
+            var bd = GetBackendData()!;
             var vd = GetViewportData(viewport)!;
-            context.SetRenderTarget(vd.RTView, null);
+            bd.context.SetRenderTarget(vd.RTView, null);
             if ((viewport->Flags & ImGuiViewportFlags.NoRendererClear) != 0)
             {
-                context.ClearRenderTargetView(vd.RTView, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+                bd.context.ClearRenderTargetView(vd.RTView, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }
 
             RenderDrawData(viewport->DrawData);

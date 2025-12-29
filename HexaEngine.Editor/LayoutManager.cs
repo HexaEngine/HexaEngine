@@ -53,6 +53,7 @@
         private static readonly string defaultPath = Path.Combine(basePath, "default.ini");
         private static readonly List<LayoutConfig> layouts = [];
         private static bool changed = false;
+        private static bool initialized = false;
 
         static LayoutManager()
         {
@@ -89,25 +90,39 @@
 
         internal static unsafe bool Init()
         {
+            var io = ImGui.GetIO();
+            io.WantSaveIniSettings = false;
+            initialized = true;
             var layout = SelectedLayout!;
-            SetIniString(layout);
-
             if (File.Exists(layout))
             {
+                ImGuiP.ClearIniSettings();
                 ImGui.LoadIniSettingsFromDisk(layout);
                 return true;
             }
+
             return false;
         }
 
         internal static void NewFrame()
         {
+            if (!initialized)
+            {
+                return;
+            }
             if (changed)
             {
                 var layout = SelectedLayout!;
                 ImGui.LoadIniSettingsFromDisk(layout);
-                SetIniString(layout);
+                //SetIniString(layout);
                 changed = false;
+            }
+
+            var io = ImGui.GetIO();
+            if (io.WantSaveIniSettings)
+            {
+                ImGui.SaveIniSettingsToDisk(SelectedLayout!);
+                io.WantSaveIniSettings = false;
             }
         }
 

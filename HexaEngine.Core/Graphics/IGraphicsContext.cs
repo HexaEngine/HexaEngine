@@ -438,4 +438,29 @@
         /// <param name="value">The value that the device context is waiting for the fence to reach or exceed. So when <seealso cref="IFence.GetCompletedValue"/> is greater than or equal to Value, the wait is terminated.</param>
         void Wait(IFence fence, ulong value);
     }
+
+    public static class IGraphicsContextExtensions
+    {
+        public struct EventScope : IDisposable
+        {
+            private IGraphicsContext? context;
+
+            public EventScope(IGraphicsContext? context)
+            {
+                this.context = context;
+            }
+
+            public void Dispose()
+            {
+                context?.EndEvent();
+                context = null;
+            }
+        }
+
+        public static EventScope BeginEventScope(this IGraphicsContext context, string name)
+        {
+            context.BeginEvent(name);
+            return new EventScope(context);
+        }
+    }
 }

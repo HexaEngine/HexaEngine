@@ -136,10 +136,6 @@
 
         public static unsafe void Draw()
         {
-            if (Designer.IsLaunchpadActive)
-            {
-                return;
-            }
             ImGuiWindowFlags flags = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar;
 
             if (UnsavedChanges)

@@ -37,6 +37,17 @@
 
         public uint IndexCount => indexBuffer?.Count ?? 0;
 
+        public IVertexBuffer? VertexBuffer => vertexBuffer;
+
+        public IIndexBuffer? IndexBuffer => indexBuffer;
+
+        public static readonly InputElementDescription[] PrimInputElements = [new("POSITION", 0, Format.R32G32B32Float, InputElementDescription.AppendAligned, 0, InputClassification.PerVertexData, 0),
+                                                                                new("TEXCOORD", 0, Format.R32G32Float, InputElementDescription.AppendAligned, 0, InputClassification.PerVertexData, 0),
+                                                                                 new("NORMAL", 0, Format.R32G32B32Float, InputElementDescription.AppendAligned, 0, InputClassification.PerVertexData, 0),
+                                                                                 new("TANGENT", 0, Format.R32G32B32Float,InputElementDescription.AppendAligned, 0, InputClassification.PerVertexData, 0)];
+
+        public InputElementDescription[] InputElements => PrimInputElements;
+
         /// <summary>
         /// Initializes the mesh by creating vertex and index buffers.
         /// </summary>

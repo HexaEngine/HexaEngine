@@ -3,6 +3,7 @@
     using Hexa.NET.Logging;
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Editor;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO.Binary.Materials;
@@ -16,7 +17,7 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
-    public abstract class PrimitiveRenderComponent : BaseDrawableComponent
+    public abstract class PrimitiveRenderComponent : BaseDrawableComponent, IEditorHighlightable
     {
         protected AssetRef materialAsset;
         private static PrimitiveRenderer renderer = null!;
@@ -163,6 +164,22 @@
         protected abstract IPrimitive CreatePrimitive();
 
         protected abstract BoundingBox GetBoundingBox();
+
+        public void DrawHighlight(EditorHighlightContext context)
+        {
+            if (model == null)
+            {
+                return;
+            }
+
+            var prim = model.Prim;
+            context.Begin(model.Prim.InputElements, PrimitiveTopology.TriangleList);
+            context.SetTransform(GameObject.Transform.Global);
+            context.SetVertexBuffer(prim.VertexBuffer!);
+            context.SetIndexBuffer(prim.IndexBuffer!, 0);
+            context.DrawIndexedInstanced(prim.IndexCount);
+            context.End();
+        }
 
         protected virtual void SetAndUpdateModel<T>(ref T target, T value, ModelUpdateFlags updateFlags = ModelUpdateFlags.Mesh, [CallerMemberName] string propertyName = "")
         {
