@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor
+﻿namespace HexaEngine.Editor.Overlays
 {
     using Hexa.NET.Mathematics;
     using HexaEngine.Core;

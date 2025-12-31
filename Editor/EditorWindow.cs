@@ -11,6 +11,7 @@ namespace Editor
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
+    using HexaEngine.Editor.Graphics;
     using HexaEngine.Editor.UI;
     using HexaEngine.Graphics.Overlays;
     using HexaEngine.Graphics.Renderers;

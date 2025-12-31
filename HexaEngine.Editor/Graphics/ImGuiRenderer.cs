@@ -425,8 +425,8 @@ namespace HexaEngine.Editor.Graphics
 
             bd.pso = bd.device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "HexaEngine.Core:shaders/internal/imgui/vs.hlsl",
-                PixelShader = "HexaEngine.Core:shaders/internal/imgui/ps.hlsl",
+                VertexShader = "HexaEngine.Editor:shaders/imgui/vs.hlsl",
+                PixelShader = "HexaEngine.Editor:shaders/imgui/ps.hlsl",
             }, new()
             {
                 Blend = blendDesc,

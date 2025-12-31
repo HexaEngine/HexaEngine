@@ -57,21 +57,6 @@
 
             manager.Draw(context, creator.Viewport, postFxBuffer, depthStencil);
 
-            if (Application.InEditorMode && enabled)
-            {
-                profiler?.Begin("DebugDraw");
-                context.SetRenderTarget(postFxBuffer.Value, depthStencil.Value);
-                DebugDraw.SetViewport(creator.Viewport.Offset, creator.Viewport.Size);
-                profiler?.Begin("DebugDraw.EndDraw");
-                DebugDrawRenderer.EndDraw();
-                profiler?.End("DebugDraw.EndDraw");
-                context.SetViewport(creator.Viewport);
-                profiler?.Begin("DebugDraw.BeginDraw");
-                DebugDrawRenderer.BeginDraw();
-                profiler?.End("DebugDraw.BeginDraw");
-                profiler?.End("DebugDraw");
-            }
-
             context.SetRenderTarget(creator.Output, null);
             context.SetViewport(creator.OutputViewport);
             context.SetGraphicsPipelineState(copyPipeline.Value);

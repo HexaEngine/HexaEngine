@@ -25,7 +25,7 @@ float4 main(VertexOut input) : SV_TARGET
     float3 indirect = saturate(indirectTex.Sample(linearClampSampler, uv).rgb);
     float3 baseColor = GBufferA.SampleLevel(linearClampSampler, uv, 0).rgb;
     float ao = ssao.Sample(linearClampSampler, uv).r;
-    float3 finalIndirect = indirect * baseColor * ao;
+    float3 finalIndirect = indirect * baseColor * ao * intensity;
     
-    return float4(direct + finalIndirect * intensity, 1.0);
+    return float4(direct + finalIndirect, 1.0);
 }

@@ -13,6 +13,7 @@ namespace HexaEngine.Editor
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.MaterialEditor;
+    using HexaEngine.Editor.Overlays;
     using HexaEngine.Editor.PoseEditor;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.Properties;
@@ -119,6 +120,7 @@ namespace HexaEngine.Editor
             PostProcessingEditorFactory.RegisterEditor<ColorGrading, ColorGradingObjectEditor>();
 
             OverlayManager.Current.Add(new EditorSelectionOverlay());
+            OverlayManager.Current.Add(new DebugDrawOverlay());
         }
 
         public static void Dispose()
