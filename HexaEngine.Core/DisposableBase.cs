@@ -43,7 +43,7 @@
     public abstract class DisposableRefBase : IDisposableRef
     {
         private bool disposedValue;
-        private long counter;
+        private long counter = 1;
 
         public DisposableRefBase()
         {
