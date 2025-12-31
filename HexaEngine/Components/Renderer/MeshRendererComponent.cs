@@ -3,6 +3,7 @@
     using Hexa.NET.Logging;
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Assets;
+    using HexaEngine.Core.Editor;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Binary.Meshes;
     using HexaEngine.Editor.Attributes;
@@ -12,13 +13,14 @@
     using HexaEngine.Jobs;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
+    using HexaEngine.Resources;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System.Numerics;
 
     [EditorCategory("Renderer")]
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer", Icon = "\xf5ee")]
-    public class MeshRendererComponent : BaseDrawableComponent, ILODRendererComponent, ISelectableHitTest
+    public class MeshRendererComponent : BaseDrawableComponent, ILODRendererComponent, ISelectableHitTest, IEditorHighlightable
     {
         private Model? model;
         private AssetRef modelAsset;
@@ -226,6 +228,38 @@
             }
 
             return false;
+        }
+
+        public void DrawHighlight(EditorHighlightContext context)
+        {
+            if (model == null)
+            {
+                return;
+            }
+
+            var drawTypes = model.DrawTypes;
+            var meshes = model.Meshes;
+
+            for (uint i = 0; i < drawTypes.Length; i++)
+            {
+                DrawType drawType = drawTypes[i];
+                Mesh mesh = meshes[i];
+                if (mesh == null)
+                {
+                    continue;
+                }
+                context.Begin(mesh.InputElements, PrimitiveTopology.TriangleList);
+                mesh.BeginDraw(context.GraphicsContext);
+
+                foreach (var instance in drawType.Instances)
+                {
+                    context.SetTransform(instance.Transform, false);
+                    context.DrawIndexedInstanced(mesh.IndexCount);
+                }
+
+                mesh.EndDraw(context.GraphicsContext);
+                context.End();
+            }
         }
 
         private void OnChanged(MaterialAssetMapping mapping)

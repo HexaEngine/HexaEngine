@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.UI
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Editor.Graphics;
     using System.Numerics;
 
     public delegate void DrawMainMenuBar(TitleBarContext context);

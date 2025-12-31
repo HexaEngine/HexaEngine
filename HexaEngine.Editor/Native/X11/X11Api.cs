@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Hexa.NET.KittyUI.Native.X11
+namespace HexaEngine.Editor.Native.X11
 {
     public static unsafe class X11Api
     {

@@ -2,14 +2,14 @@
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.ImGui.Widgets;
-    using Hexa.NET.KittyUI.Native.Windows;
-    using Hexa.NET.KittyUI.Native.X11;
     using Hexa.NET.SDL3;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.UI;
     using HexaEngine.Editor.Extensions;
-    using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Editor.Graphics;
+    using HexaEngine.Editor.Native.Windows;
+    using HexaEngine.Editor.Native.X11;
     using System;
     using System.Numerics;
     using System.Runtime.InteropServices;

@@ -58,6 +58,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Analyzers.Annota
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaAssetTool", "HexaAssetTool\HexaAssetTool.csproj", "{08A5F12D-7B4F-1661-C423-76959AE859B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaEngine.Sdk", "HexaEngine.Sdk\HexaEngine.Sdk.csproj", "{278412C4-0F46-F8F5-875D-EF7E17D192B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -472,6 +474,26 @@ Global
 		{08A5F12D-7B4F-1661-C423-76959AE859B8}.TraceLeak|Any CPU.Build.0 = TraceLeak|Any CPU
 		{08A5F12D-7B4F-1661-C423-76959AE859B8}.TraceLeak|x64.ActiveCfg = TraceLeak|x64
 		{08A5F12D-7B4F-1661-C423-76959AE859B8}.TraceLeak|x64.Build.0 = TraceLeak|x64
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.Debug|x64.Build.0 = Debug|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.MinSizeRel|Any CPU.ActiveCfg = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.MinSizeRel|Any CPU.Build.0 = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.MinSizeRel|x64.ActiveCfg = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.MinSizeRel|x64.Build.0 = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.Release|x64.ActiveCfg = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.Release|x64.Build.0 = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.RelWithDebInfo|Any CPU.ActiveCfg = Debug|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.RelWithDebInfo|Any CPU.Build.0 = Debug|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.RelWithDebInfo|x64.ActiveCfg = Debug|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.RelWithDebInfo|x64.Build.0 = Debug|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.TraceLeak|Any CPU.ActiveCfg = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.TraceLeak|Any CPU.Build.0 = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.TraceLeak|x64.ActiveCfg = Release|Any CPU
+		{278412C4-0F46-F8F5-875D-EF7E17D192B2}.TraceLeak|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

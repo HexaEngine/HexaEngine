@@ -12,7 +12,7 @@ namespace HexaEngine.Core.Editor
 
         public abstract void End();
 
-        public abstract void SetTransform(Matrix4x4 transform);
+        public abstract void SetTransform(Matrix4x4 transform, bool transpose = true);
 
         public virtual void DrawInstanced(uint vertexCount, uint instanceCount = 1, uint vertexOffset = 0, uint instanceOffset = 0)
         {

@@ -23,7 +23,7 @@
         {
             computePipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
-                Path = "tools/image/grabber/cs.hlsl"
+                Path = "HexaEngine.ImagePainter:shaders/grabber/cs.hlsl"
             });
             mousePosBuffer = new(CpuAccessFlags.Write);
             resultBuffer = new(1, CpuAccessFlags.Read);

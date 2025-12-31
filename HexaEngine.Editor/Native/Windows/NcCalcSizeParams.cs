@@ -1,4 +1,4 @@
-﻿namespace Hexa.NET.KittyUI.Native.Windows
+﻿namespace HexaEngine.Editor.Native.Windows
 {
     using Hexa.NET.Mathematics;
     using System.Runtime.InteropServices;

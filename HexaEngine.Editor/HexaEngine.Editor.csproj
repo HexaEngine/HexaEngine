@@ -31,12 +31,4 @@
 		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>
 	
-	<Target Name="GenerateAssets" BeforeTargets="BeforeBuild">
-		<Exec Command="HexaAssetTool.exe -m MultiCreate -p &quot;./&quot;" WorkingDirectory="$(ProjectDir)assets" />
-	</Target>
-
-	<ItemGroup>
-		<None Update="assets\*.assets" CopyToOutputDirectory="Always" />
-	</ItemGroup>
-
 </Project>

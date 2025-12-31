@@ -35,7 +35,7 @@
 // Fresnel functions
 #define SPECULAR_F_SCHLICK          0
 
-#define BRDF_DIFFUSE                0
+#define BRDF_DIFFUSE                1
 
 #if SHADING_QUALITY < SHADING_QUALITY_HIGH
 #define BRDF_SPECULAR_D             0

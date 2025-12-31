@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+
+		<PackageId>HexaEngine.Sdk</PackageId>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<PackageVersion>1.0.0.0</PackageVersion>
+		<Description>MSBuild SDK package for HexaEngine that provides automatic asset packing and packaging functionality. This development dependency includes tools to compile and package game assets (shaders, textures, models, etc.) into optimized .assets files during build time, with support for transitive dependencies through NuGet packages.</Description>
+		<PackageTags>HexaEngine;SDK;MSBuild;build-tools;asset-pipeline;game-assets;shader-compilation;development-dependency;build-automation;game-development</PackageTags>
+		<Authors>Juna Meinhold</Authors>
+		<Copyright>Copyright (c) 2025 Juna Meinhold</Copyright>
+		<PackageProjectUrl>https://github.com/HexaEngine/HexaEngine</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/HexaEngine/HexaEngine</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>icon.png</PackageIcon>
+
+		<DevelopmentDependency>true</DevelopmentDependency>
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<NoWarn>NU5128</NoWarn>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="targets\HexaEngine.Sdk.targets" Pack="true" PackagePath="build\;buildTransitive\" />
+		<Content Include="tools\**\*" Pack="true" PackagePath="tools\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="../LICENSE.txt" Pack="true" PackagePath="\" />
+		<Content Include="../README.md" Pack="true" PackagePath="\" />
+		<Content Include="../icon.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>
+

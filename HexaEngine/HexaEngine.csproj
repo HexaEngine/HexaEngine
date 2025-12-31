@@ -45,6 +45,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="HexaEngine.Sdk" Version="1.0.0" />
 		<PackageReference Include="HexaEngine.UI" Version="1.0.0.1" />
 		<PackageReference Include="MagicPhysX" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
@@ -73,12 +74,4 @@
 		<Content Include="../icon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
-	<!-- Target to run HexaAssetTool before build -->
-	<Target Name="GenerateAssets" BeforeTargets="BeforeBuild">
-		<Exec Command="HexaAssetTool.exe -m MultiCreate -p &quot;./&quot;" WorkingDirectory="$(ProjectDir)assets" />
-	</Target>
-
-	<ItemGroup>
-		<None Update="assets\*.assets" CopyToOutputDirectory="Always" />
-	</ItemGroup>
 </Project>

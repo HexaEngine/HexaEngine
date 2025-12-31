@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Graphics.Renderers
 {
     using Hexa.NET.Mathematics;
+    using HexaEngine.Core.Editor;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;

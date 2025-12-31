@@ -31,8 +31,8 @@
             };
             brushPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "tools/image/brush/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.ImagePainter:shaders/brush/ps.hlsl",
             }, new()
             {
                 Blend = BlendDescription.AlphaBlend,

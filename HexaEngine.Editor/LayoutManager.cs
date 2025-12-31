@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using Hexa.NET.ImGui;
-    using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Editor.Graphics;
     using System.Text;
 
     public struct LayoutConfig : IEquatable<LayoutConfig>

@@ -5,7 +5,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Extensions;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Graphics.Filters;
+    using HexaEngine.Editor.ImagePainter.Filters;
 
     public class IBLBRDFLUTDialog : Modal
     {

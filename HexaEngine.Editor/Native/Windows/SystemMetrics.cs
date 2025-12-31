@@ -1,4 +1,4 @@
-﻿namespace Hexa.NET.KittyUI.Native.Windows
+﻿namespace HexaEngine.Editor.Native.Windows
 {
     public enum SystemMetrics : int
     {

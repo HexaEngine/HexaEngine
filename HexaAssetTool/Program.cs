@@ -51,7 +51,7 @@
                 case Mode.Create:
                     if (Directory.Exists(options.Path))
                     {
-                        CreateArchive(options.Path, options.DeleteOriginal);
+                        CreateArchive(options.Path, options.Output, options.DeleteOriginal);
                     }
                     else
                     {
@@ -65,7 +65,7 @@
                         var dirs = Directory.GetDirectories(options.Path);
                         foreach (var dir in dirs)
                         {
-                            CreateArchive(dir, options.DeleteOriginal);
+                            CreateArchive(dir, options.Output, options.DeleteOriginal);
                         }
                     }
                     else
@@ -274,10 +274,21 @@
             Console.WriteLine("  AssetsBundler --mode extract --path ./archive.assets");
         }
 
-        private static AssetArchive CreateArchive(string path, bool deleteSource)
+        private static AssetArchive CreateArchive(string path, string outputDir, bool deleteSource)
         {
             string name = Path.GetFileName(path);
-            using AssetArchive bundle = new(Path.Combine(Path.GetDirectoryName(path)!, $"{name}.assets"), AssetArchiveMode.Create);
+
+            string outputDirectory = string.IsNullOrEmpty(outputDir) ? Path.GetDirectoryName(path)! : outputDir;
+
+            if (!Directory.Exists(outputDirectory))
+            {
+                Directory.CreateDirectory(outputDirectory);
+            }
+
+            string outputPath = Path.Combine(outputDirectory, $"{name}.assets");
+            Console.WriteLine($"Packing: {name} -> {outputPath}");
+
+            using AssetArchive bundle = new(outputPath, AssetArchiveMode.Create);
             var ns = bundle.AddNamespace(name);
             foreach (var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
             {

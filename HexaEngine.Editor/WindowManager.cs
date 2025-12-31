@@ -5,7 +5,7 @@
     using Hexa.NET.ImGui.Widgets.Dialogs;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Graphics.Renderers;
+    using HexaEngine.Editor.Graphics;
     using HexaEngine.Profiling;
     using System;
     using System.Diagnostics.CodeAnalysis;

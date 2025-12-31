@@ -1,0 +1,167 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<!-- =========================
+       Resolve Runtime ID
+       ========================= -->
+	<PropertyGroup>
+		<_HexaEngineSdkRid Condition="'$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</_HexaEngineSdkRid>
+		<_HexaEngineSdkRid Condition="'$(_HexaEngineSdkRid)' == '' and '$(OS)' == 'Windows_NT' and '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">win-x64</_HexaEngineSdkRid>
+		<_HexaEngineSdkRid Condition="'$(_HexaEngineSdkRid)' == '' and '$(OS)' == 'Windows_NT' and '$(PROCESSOR_ARCHITECTURE)' == 'ARM64'">win-arm64</_HexaEngineSdkRid>
+		<_HexaEngineSdkRid Condition="'$(_HexaEngineSdkRid)' == '' and '$(OS)' != 'Windows_NT'">linux-x64</_HexaEngineSdkRid>
+
+		<HexaEngineSdkTargetsGeneration Condition="'$(HexaEngineSdkTargetsGeneration)' == ''">true</HexaEngineSdkTargetsGeneration>
+		<HexaEngineSdkPackAssets Condition="'$(HexaEngineSdkPackAssets)' == ''">true</HexaEngineSdkPackAssets>
+
+		<HexaEngineSdkToolRoot>$(MSBuildThisFileDirectory)..\tools\$(_HexaEngineSdkRid)</HexaEngineSdkToolRoot>
+		<HexaEngineSdkToolExe>$(HexaEngineSdkToolRoot)\HexaAssetTool.exe</HexaEngineSdkToolExe>
+		<HexaEngineSdkStateFile>$(IntermediateOutputPath)HexaEngineSdk.state</HexaEngineSdkStateFile>
+		<HexaEngineSdkInputDir>$(ProjectDir)assets</HexaEngineSdkInputDir>
+		<HexaEngineSdkIntermediateDir>$(IntermediateOutputPath)HexaEngineSdk</HexaEngineSdkIntermediateDir>
+		<HexaEngineSdkPackageDir>$(MSBuildThisFileDirectory)assets</HexaEngineSdkPackageDir>
+		<HexaEngineSdkGeneratedTargetsFile>$(IntermediateOutputPath)$(MSBuildProjectName).Assets.g.targets</HexaEngineSdkGeneratedTargetsFile>
+	</PropertyGroup>
+
+	<!-- =========================
+       Validate tool exists
+       ========================= -->
+	<Target Name="HexaEngineSdkValidate" BeforeTargets="HexaEngineSdkPackAssets" Condition="!Exists('$(HexaEngineSdkToolExe)')">
+		<Error Text="HexaAssetTool not found for RID '$(_HexaEngineSdkRid)' at path '$(HexaEngineSdkToolExe)'." />
+	</Target>
+
+	<!-- =========================
+       Ensure directories exist
+       ========================= -->
+	<Target Name="HexaEngineSdkEnsureDir" BeforeTargets="HexaEngineSdkPackAssets" Condition="Exists('$(HexaEngineSdkInputDir)')">
+		<MakeDir Directories="$(IntermediateOutputPath)" Condition="!Exists('$(IntermediateOutputPath)')" />
+	</Target>
+
+	<!-- =========================
+       Check if assets need packing
+       ========================= -->
+	<Target Name="HexaEngineSdkCheckUpToDate" BeforeTargets="HexaEngineSdkPackAssets" Condition="Exists('$(HexaEngineSdkInputDir)')">
+		<ItemGroup>
+			<_HexaAssetInputFiles Include="$(HexaEngineSdkInputDir)\**\*" Exclude="$(HexaEngineSdkInputDir)\*.assets" />
+		</ItemGroup>
+
+		<PropertyGroup>
+			<_HexaEngineSdkNeedsPacking Condition="!Exists('$(HexaEngineSdkStateFile)')">true</_HexaEngineSdkNeedsPacking>
+			<_HexaEngineSdkNeedsPacking Condition="'$(_HexaEngineSdkNeedsPacking)' == ''">false</_HexaEngineSdkNeedsPacking>
+		</PropertyGroup>
+	</Target>
+
+	<!-- =========================
+       Generate assets
+       ========================= -->
+	<Target Name="HexaEngineSdkPackAssets"
+			BeforeTargets="BeforeBuild"
+			DependsOnTargets="HexaEngineSdkCheckUpToDate"
+			Condition="'$(HexaEngineSdkPackAssets)' == 'true' and Exists('$(HexaEngineSdkInputDir)')">
+
+		<!-- Clean intermediate directory before packing -->
+		<ItemGroup>
+			<_IntermediateFilesToDelete Include="$(HexaEngineSdkIntermediateDir)\**\*" />
+		</ItemGroup>
+		<Delete Files="@(_IntermediateFilesToDelete)" Condition="Exists('$(HexaEngineSdkIntermediateDir)')" />
+		<RemoveDir Directories="$(HexaEngineSdkIntermediateDir)" Condition="Exists('$(HexaEngineSdkIntermediateDir)')" />
+		<MakeDir Directories="$(HexaEngineSdkIntermediateDir)" />
+
+		<Message Importance="High" Text="Packing assets..." />
+		<Exec Command="&quot;$(HexaEngineSdkToolExe)&quot; -m MultiCreate -p &quot;$(HexaEngineSdkInputDir)&quot; -o &quot;$(HexaEngineSdkIntermediateDir)&quot;" />
+		<Touch Files="$(HexaEngineSdkStateFile)" AlwaysCreate="true" />
+	</Target>
+
+	<!-- =========================
+       Copy asset outputs to build output directory
+       ========================= -->
+	<Target Name="CopyAssetsToOutput"
+			AfterTargets="Build"
+			Condition="'$(HexaEngineSdkPackAssets)' == 'true' and Exists('$(HexaEngineSdkIntermediateDir)')">
+		<ItemGroup>
+			<_AssetFilesToCopy Include="$(HexaEngineSdkIntermediateDir)\*.assets" />
+		</ItemGroup>
+
+		<MakeDir Directories="$(OutputPath)assets" Condition="!Exists('$(OutputPath)assets')" />
+
+		<Copy SourceFiles="@(_AssetFilesToCopy)"
+			  DestinationFolder="$(OutputPath)assets"
+			  SkipUnchangedFiles="true"
+			  Condition="'@(_AssetFilesToCopy)' != ''" />
+	</Target>
+
+	<!-- =========================
+       Provide transitive content - hook into AssignTargetPaths
+       ========================= -->
+	<Target Name="HexaEngineSdkGetCopyToOutputDirectoryItems"
+			BeforeTargets="AssignTargetPaths"
+			Condition="'$(HexaEngineSdkPackAssets)' == 'true' and '$(HexaEngineSdkItemsAdded)' != 'true'">
+		<PropertyGroup>
+			<HexaEngineSdkItemsAdded>true</HexaEngineSdkItemsAdded>
+		</PropertyGroup>
+
+		<ItemGroup>
+			<!-- Add items from intermediate directory if building locally -->
+			<_AssetFilesForTransitive Include="$(HexaEngineSdkIntermediateDir)\*.assets" Condition="Exists('$(HexaEngineSdkIntermediateDir)')" />
+
+			<!-- ALWAYS add items from package directory if it exists -->
+			<_AssetFilesForTransitive Include="$(HexaEngineSdkPackageDir)\*.assets" Condition="Exists('$(HexaEngineSdkPackageDir)')" />
+
+			<!-- Add as None items with proper metadata for copying -->
+			<None Include="@(_AssetFilesForTransitive)">
+				<Link>assets\%(Filename)%(Extension)</Link>
+				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+				<Visible>false</Visible>
+			</None>
+		</ItemGroup>
+	</Target>
+
+	<!-- =========================
+       Generate package-specific targets file
+       ========================= -->
+	<Target Name="HexaEngineSdkGeneratePackageTargets"
+			BeforeTargets="_GetPackageFiles"
+			DependsOnTargets="HexaEngineSdkPackAssets"
+			Condition="'$(HexaEngineSdkPackAssets)' == 'true' and '$(HexaEngineSdkTargetsGeneration)' == 'true' and '$(IsPackable)' != 'false' and Exists('$(HexaEngineSdkIntermediateDir)')">
+
+		<ItemGroup>
+			<_AssetFilesForPackage Include="$(HexaEngineSdkIntermediateDir)\*.assets" />
+		</ItemGroup>
+
+		<PropertyGroup>
+			<_TargetsContent>
+				<![CDATA[<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<None Include="%24(MSBuildThisFileDirectory)..\contentFiles\any\any\assets\*.assets">
+			<Link>assets\%25(Filename)%25(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Visible>false</Visible>
+		</None>
+	</ItemGroup>
+</Project>]]>
+			</_TargetsContent>
+		</PropertyGroup>
+
+		<WriteLinesToFile File="$(HexaEngineSdkGeneratedTargetsFile)" Lines="$(_TargetsContent)" Overwrite="true" />
+
+		<ItemGroup>
+			<!-- Include the generated targets file in the package -->
+			<None Include="$(HexaEngineSdkGeneratedTargetsFile)"
+				  Pack="true"
+				  PackagePath="build\$(MSBuildProjectName).targets;buildTransitive\$(MSBuildProjectName).targets"
+				  Visible="false" />
+
+			<!-- Include asset files in the package -->
+			<None Include="@(_AssetFilesForPackage)"
+				  Pack="true"
+				  PackagePath="contentFiles\any\any\assets"
+				  Visible="false" />
+		</ItemGroup>
+	</Target>
+
+	<!-- =========================
+       Visual Studio up-to-date checking
+       ========================= -->
+	<ItemGroup>
+		<UpToDateCheckInput Include="$(HexaEngineSdkInputDir)\**\*" Exclude="$(HexaEngineSdkInputDir)\*.assets" Set="HexaEngineSdk" Condition="Exists('$(HexaEngineSdkInputDir)')" />
+		<UpToDateCheckOutput Include="$(HexaEngineSdkStateFile)" Set="HexaEngineSdk" Condition="Exists('$(HexaEngineSdkInputDir)')" />
+	</ItemGroup>
+</Project>

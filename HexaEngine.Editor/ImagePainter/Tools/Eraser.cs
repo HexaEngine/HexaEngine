@@ -35,8 +35,8 @@
             BlendDescription blendDescription = new(Blend.SourceAlpha, Blend.InverseSourceAlpha, Blend.SourceAlpha, Blend.InverseSourceAlpha);
             brushPipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "tools/image/eraser/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.ImagePainter:shaders/eraser/ps.hlsl",
             }, new GraphicsPipelineStateDesc()
             {
                 Blend = blendDescription,

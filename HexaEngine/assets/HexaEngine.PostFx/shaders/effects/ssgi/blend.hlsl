@@ -2,8 +2,10 @@
 
 Texture2D inputTex;
 Texture2D indirectTex;
+Texture2D GBufferA;
+Texture2D<float> ssao;
 
-SamplerState linearWrapSampler;
+SamplerState linearClampSampler;
 
 cbuffer SSGIParams : register(b0)
 {
@@ -19,8 +21,11 @@ struct VertexOut
 float4 main(VertexOut input) : SV_TARGET
 {
 	float2 uv = input.Tex;
-	float3 direct = inputTex.Sample(linearWrapSampler, uv).rgb;
-	float3 indirect = saturate(indirectTex.Sample(linearWrapSampler, uv).rgb);
-
-    return float4(direct + indirect * intensity, 1.0);
+    float3 direct = inputTex.Sample(linearClampSampler, uv).rgb;
+    float3 indirect = saturate(indirectTex.Sample(linearClampSampler, uv).rgb);
+    float3 baseColor = GBufferA.SampleLevel(linearClampSampler, uv, 0).rgb;
+    float ao = ssao.Sample(linearClampSampler, uv).r;
+    float3 finalIndirect = indirect * baseColor * ao;
+    
+    return float4(direct + finalIndirect * intensity, 1.0);
 }

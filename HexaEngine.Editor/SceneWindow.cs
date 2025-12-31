@@ -8,6 +8,7 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Extensions;
+    using HexaEngine.Editor.Graphics;
     using HexaEngine.Editor.Projects;
     using HexaEngine.Graphics.Renderers;
     using HexaEngine.Lights;

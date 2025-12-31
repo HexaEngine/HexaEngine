@@ -1,6 +1,6 @@
 ﻿//based on https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_dx11.cpp
 
-namespace HexaEngine.Graphics.Renderers
+namespace HexaEngine.Editor.Graphics
 {
     using Hexa.NET.ImGui;
     using Hexa.NET.Mathematics;

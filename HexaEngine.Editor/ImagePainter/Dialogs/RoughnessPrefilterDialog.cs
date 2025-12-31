@@ -6,8 +6,8 @@
     using HexaEngine.Core.Extensions;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
-    using HexaEngine.Graphics.Filters;
     using System;
+    using HexaEngine.Editor.ImagePainter.Filters;
 
     public class RoughnessPrefilterDialog : Modal
     {

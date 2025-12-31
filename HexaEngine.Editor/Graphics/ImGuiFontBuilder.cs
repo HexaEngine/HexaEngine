@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Graphics.Renderers
+﻿namespace HexaEngine.Editor.Graphics
 {
     using Hexa.NET.ImGui;
     using HexaEngine.Core.IO;

@@ -4,7 +4,12 @@ Texture2D inputTex;
 Texture2D<float> depthTex;
 Texture2D normalTex;
 
+Texture2D velocityBufferTex;
+Texture2D prevTex;
+
+
 SamplerState linearClampSampler;
+SamplerState pointClampSampler;
 
 cbuffer SSGIParams : register(b0)
 {
@@ -15,10 +20,6 @@ cbuffer SSGIParams : register(b0)
 	float SSGI_RAY_STEP;
 	float SSGI_DEPTH_BIAS;
 };
-
-#define NUM_SAMPLES 16
-#define MAX_MARCH_DISTANCE 0.5f
-#define RAY_MARCH_STEP 0.1f
 
 float3 GetViewPos(float2 coord)
 {
@@ -35,18 +36,6 @@ float3 GetViewNormal(float2 coord)
 float lenSq(float3 v)
 {
 	return pow(v.x, 2.0) + pow(v.y, 2.0) + pow(v.z, 2.0);
-}
-
-float3 rand3(float3 c)
-{
-	float j = 4096.0 * sin(dot(c, float3(17.0, 59.4, 15.0)));
-	float3 r;
-	r.z = frac(512.0 * j);
-	j *= .125;
-	r.x = frac(512.0 * j);
-	j *= .125;
-	r.y = frac(512.0 * j);
-	return (r - 0.5);
 }
 
 // ----------------------------------------------------------------------------
@@ -67,64 +56,81 @@ float2 Hammersley(uint i, uint N)
 	return float2(float(i) / float(N), RadicalInverse_VdC(i));
 }
 
-float3 SampleHemisphere(float3 normal, float2 random)
+float3 SampleCosineHemisphere(float3 n, float2 u)
 {
-	// Create a local coordinate system based on the normal
-	float3 up = abs(normal.z) < 0.999 ? float3(0, 0, 1) : float3(1, 0, 0);
-	float3 tangent = normalize(cross(up, normal));
-	float3 bitangent = cross(normal, tangent);
+    float phi = 2.0 * PI * u.x;
+    float cosTheta = sqrt(1.0 - u.y);
+    float sinTheta = sqrt(u.y);
 
-	// Cosine-weighted hemisphere sampling
-	float phi = 2.0 * PI * random.x;
-	float cosTheta = sqrt(random.y);
-	float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+    float3 local = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 
-	float3 sampleDir = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+    float3 up = abs(n.z) < 0.999 ? float3(0, 0, 1) : float3(1, 0, 0);
+    float3 t = normalize(cross(up, n));
+    float3 b = cross(n, t);
+    return t * local.x + b * local.y + n * local.z;
+}
 
-	// Transform to world space
-	return tangent * sampleDir.x + bitangent * sampleDir.y + normal * sampleDir.z;
+uint Hash(uint x)
+{
+    x ^= x >> 16u;
+    x *= 0x7feb352du;
+    x ^= x >> 15u;
+    x *= 0x846ca68bu;
+    x ^= x >> 16u;
+    return x;
 }
 
 float3 ComputeScreenSpaceGI(float2 uv, float3 viewPos, float3 normal)
 {
-	float3 accumulatedGI = float3(0.0f, 0.0f, 0.0f);
-	int numSamples = 0;
-
+    float thickness = 0.05;
+    float falloff = 1.0 / distance;
+    float3 accumulatedGI = 0;
+    int validSamples = 0;
+    uint pixelIndex = asuint(uv.x * 65536) + asuint(uv.y * 65536) * 65536;
+	
 	[loop]
-	for (int step = 0; step < SSGI_RAY_COUNT; ++step)
-	{
-		float marchDistance = step * SSGI_RAY_STEP;
+    for (int ray = 0; ray < SSGI_RAY_COUNT; ray++)
+    {
+        float t = 0.0f;
 
-        float2 randomValues = Hammersley(step, SSGI_RAY_COUNT);
-		float3 rayDir = SampleHemisphere(normal, randomValues);
+		[loop]
+        for (int step = 0; step < SSGI_RAY_STEPS; step++)
+        {
+            t += SSGI_RAY_STEP;
 
-		float3 newViewPos = viewPos + rayDir * marchDistance;
-		float2 sampleUV = ProjectUV(newViewPos);
+            uint seed = pixelIndex * 9781u + frame * 6271u + ray * 26699u + step * 31847u;
+            float2 xi = float2(RadicalInverse_VdC(Hash(seed)), RadicalInverse_VdC(Hash(seed ^ 0xA511E9B3u)));
+            float3 rayDir = SampleCosineHemisphere(normal, xi);
+            
+            float3 p = viewPos + rayDir * t;
+            float2 suv = ProjectUV(p);
+            if (any(suv < 0) || any(suv > 1))
+                break;
 
-		sampleUV = clamp(sampleUV, float2(0.0f, 0.0f), float2(1.0f, 1.0f));
+            float sceneDepth = depthTex.Sample(pointClampSampler, suv);
+            if (sceneDepth >= 1.0)
+                break;
 
-		float depthSample = depthTex.Sample(linearClampSampler, sampleUV);
+            float3 scenePos = GetPositionVS(suv, sceneDepth);
 
-        if (depthSample > 1.0f || marchDistance > distance)
-		{
-			continue;
-		}
+            if (abs(p.z - scenePos.z) < thickness)
+            {
+                float3 lightColor = inputTex.Sample(linearClampSampler, suv).rgb;
+                float3 lightNormal = GetViewNormal(suv);
 
-		float3 lightColor = inputTex.Sample(linearClampSampler, sampleUV).rgb;
-		float3 lightNormal = GetViewNormal(sampleUV);
-		float3 lightPos = GetViewPos(sampleUV);
+                float NoL = saturate(dot(normal, rayDir));
+                float LoN = saturate(dot(-rayDir, lightNormal));
 
-		float3 lightPath = lightPos - viewPos;
-		float3 lightDir = normalize(lightPath);
+                float weight = NoL * LoN * exp(-t * falloff);
 
-		float cosemit = clamp(dot(lightDir, -lightNormal), 0.0, 1.0);
-		float coscatch = clamp(dot(lightDir, normal) * 0.5 + 0.5, 0.0, 1.0);
-		float distfall = pow(lenSq(lightPath), 0.1) + 1.0;
-		accumulatedGI += (lightColor * cosemit * coscatch / distfall) * (length(lightPos) / 20);
-		numSamples++;
-	}
+                accumulatedGI += lightColor * weight;
+                validSamples++;
+                break;
+            }
+        }
+    }
 
-	return accumulatedGI / numSamples;
+    return (validSamples > 0) ? accumulatedGI / validSamples : 0;
 }
 
 struct VertexOut
@@ -140,5 +146,22 @@ float4 main(VertexOut pin) : SV_Target
 	float3 position = GetPositionVS(uv, depth);
 	float3 normal = GetViewNormal(uv);
 	float3 gi = ComputeScreenSpaceGI(uv, position, normal);
-	return float4(gi, 1.0f);
+    
+    float2 velocity = velocityBufferTex.SampleLevel(linearClampSampler, uv, 0).xy;
+    float2 prevUV = uv - velocity;
+    bool validUV = all(prevUV > 0.0f) && all(prevUV < 1.0f);
+    
+    
+    const float depthThreshold = 0.02f;
+    float depthPrev = depthTex.SampleLevel(linearClampSampler, prevUV, 0);
+    bool depthValid = abs(depth - depthPrev) < depthThreshold;
+    float movementFactor = max(saturate(length(velocity)), 0.05f);
+    
+  
+    float blendFactor = (validUV && depthValid) ? movementFactor : 1.0f;
+
+    float3 historyGi = prevTex.Sample(linearClampSampler, prevUV).rgb;
+    float3 finalGi = saturate(lerp(historyGi.rgb, gi, blendFactor));
+    
+    return float4(finalGi, 1.0f);
 }

@@ -241,9 +241,13 @@
             {
             }
 
-            public override void SetTransform(Matrix4x4 transform)
+            public override void SetTransform(Matrix4x4 transform, bool transpose)
             {
-                paramsBuffer.Update(context, Matrix4x4.Transpose(transform));
+                if (transpose)
+                {
+                    transform = Matrix4x4.Transpose(transform);
+                }
+                paramsBuffer.Update(context, transform);
             }
 
             public void Dispose()

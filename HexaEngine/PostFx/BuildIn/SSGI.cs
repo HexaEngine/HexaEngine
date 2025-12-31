@@ -35,6 +35,8 @@
         private SSGIQualityPreset qualityPreset;
         private float sigmaS = 2.0f;
         private float sigmaR = 0.1f;
+        private float sigmaD = 0.5f;
+        private float sigmaN = 32.0f;
         private float radius = 16.0f;
 
         /// <inheritdoc/>
@@ -193,6 +195,12 @@
         [EditorProperty("Denoise Sigma R")]
         public float SigmaR { get => sigmaR; set => NotifyPropertyChangedAndSet(ref sigmaR, value); }
 
+        [EditorProperty("Denoise Sigma D")]
+        public float SigmaD { get => sigmaD; set => NotifyPropertyChangedAndSet(ref sigmaD, value); }
+
+        [EditorProperty("Denoise Sigma N")]
+        public float SigmaN { get => sigmaN; set => NotifyPropertyChangedAndSet(ref sigmaN, value); }
+
         [EditorProperty("Denoise Radius")]
         public float Radius { get => radius; set => NotifyPropertyChangedAndSet(ref radius, value); }
 
@@ -219,13 +227,18 @@
         {
             public float SigmaS;
             public float SigmaR;
-            public float Radius;
-            public float Padding;
+            public float SigmaD;
+            public float SigmaN;
 
-            public DenoiseParams(float sigmaS, float sigmaR, float radius)
+            public float Radius;
+            public Vector3 Padding;
+
+            public DenoiseParams(float sigmaS, float sigmaR, float sigmaD, float sigmaN, float radius)
             {
                 SigmaS = sigmaS;
                 SigmaR = sigmaR;
+                SigmaD = sigmaD;
+                SigmaN = sigmaN;
                 Radius = radius;
             }
         }
@@ -294,11 +307,13 @@
             Unsafe.SkipInit<DenoiseParams>(out var denoiseParams);
             denoiseParams.SigmaS = sigmaS;
             denoiseParams.SigmaR = sigmaR;
+            denoiseParams.SigmaD = sigmaD;
+            denoiseParams.SigmaN = sigmaN;
             denoiseParams.Radius = radius;
             denoiseParamsBuffer = new(denoiseParams, CpuAccessFlags.Write);
 
-            ssgiBuffer = creator.CreateBufferHalfRes("SSGI_BUFFER", creationFlags: ResourceCreationFlags.None);
-            tempSsgiBuffer = new(creator.Format, creator.Width / 2, creator.Height / 2, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            ssgiBuffer = creator.CreateBuffer("SSGI_BUFFER", creationFlags: ResourceCreationFlags.None);
+            tempSsgiBuffer = new(creator.Format, creator.Width, creator.Height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             blur = new(creator, "SSGI", radius: GaussianRadius.Radius7x7, additive: true);
         }
 
@@ -317,6 +332,8 @@
                 Unsafe.SkipInit<DenoiseParams>(out var denoiseParams);
                 denoiseParams.SigmaS = sigmaS;
                 denoiseParams.SigmaR = sigmaR;
+                denoiseParams.SigmaD = sigmaD;
+                denoiseParams.SigmaN = sigmaN;
                 denoiseParams.Radius = radius;
                 denoiseParamsBuffer.Update(context, denoiseParams);
                 dirty = false;
@@ -357,6 +374,7 @@
             context.SetGraphicsPipelineState(psoDenoise);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
+
             context.SetRenderTarget(null, null);
 
             context.SetRenderTarget(Output, null);
@@ -364,6 +382,7 @@
             context.SetGraphicsPipelineState(psoBlend);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipelineState(null);
+
             context.SetRenderTarget(null, null);
         }
 

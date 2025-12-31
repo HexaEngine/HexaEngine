@@ -5,9 +5,9 @@
     using Hexa.NET.Utilities.Text;
     using HexaEngine.Core;
     using HexaEngine.Editor.Extensions;
+    using HexaEngine.Editor.Graphics;
     using HexaEngine.Editor.Icons;
     using HexaEngine.Editor.Projects;
-    using HexaEngine.Graphics.Renderers;
     using System;
     using System.Numerics;
 
