@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Camera </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Camera ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Scenes_Camera.md&amp;value=---%0Auid%3A%20HexaEngine.Scenes.Camera%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Scenes.Camera">
+
+
+
+  <h1 id="HexaEngine_Scenes_Camera" data-uid="HexaEngine.Scenes.Camera" class="text-break">
+Class Camera  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Scenes.html">Scenes</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Guid(&quot;8519FD2E-7B30-4695-9B22-05167658EF3C&quot;)]
+[EditorGameObject&lt;Camera&gt;(&quot;Camera&quot;)]
+public class Camera : GameObject, IHierarchyObject, INotifyPropertyChanged, INotifyPropertyChanging, IEditorSelectable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html">EntityNotifyBase</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.GameObject.html">GameObject</a></div>
+      <div><span class="xref">Camera</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Editor.IHierarchyObject.html">IHierarchyObject</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanging">INotifyPropertyChanging</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Editor.IEditorSelectable.html">IEditorSelectable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Guid">GameObject.Guid</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Name">GameObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_FullName">GameObject.FullName</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEnabled">GameObject.IsEnabled</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorVisible">GameObject.IsEditorVisible</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsHidden">GameObject.IsHidden</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsVisible">GameObject.IsVisible</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Parent">GameObject.Parent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Initialized">GameObject.Initialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorSelected">GameObject.IsEditorSelected</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorOpen">GameObject.IsEditorOpen</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorDisplayed">GameObject.IsEditorDisplayed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Children">GameObject.Children</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Components">GameObject.Components</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Tag">GameObject.Tag</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Type">GameObject.Type</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_EnabledChanged">GameObject.EnabledChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_NameChanged">GameObject.NameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TagChanged">GameObject.TagChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ParentChanged">GameObject.ParentChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TransformChanged">GameObject.TransformChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TransformUpdated">GameObject.TransformUpdated</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ComponentAdded">GameObject.ComponentAdded</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ComponentRemoved">GameObject.ComponentRemoved</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ChildAdded">GameObject.ChildAdded</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ChildRemoved">GameObject.ChildRemoved</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_OverwriteTransform_Hexa_NET_Mathematics_Transform_">GameObject.OverwriteTransform(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_OnTransformChanged_Hexa_NET_Mathematics_Transform_">GameObject.OnTransformChanged(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_OnTransformUpdated_Hexa_NET_Mathematics_Transform_">GameObject.OnTransformUpdated(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_SendUpdateTransformed">GameObject.SendUpdateTransformed()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_SaveState">GameObject.SaveState()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RestoreState">GameObject.RestoreState()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Merge_HexaEngine_Scenes_GameObject_">GameObject.Merge(GameObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddChild_HexaEngine_Scenes_GameObject_">GameObject.AddChild(GameObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RemoveChild_HexaEngine_Scenes_GameObject_">GameObject.RemoveChild(GameObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponent_HexaEngine_Scenes_IComponent_">GameObject.AddComponent(IComponent)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponent__1">GameObject.AddComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponentSingleton__1">GameObject.AddComponentSingleton&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RemoveComponent_HexaEngine_Scenes_IComponent_">GameObject.RemoveComponent(IComponent)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetScene">GameObject.GetScene()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_BuildReferences">GameObject.BuildReferences()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetDepth_System_Int32__">GameObject.GetDepth(ref int)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_FindParent__1">GameObject.FindParent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_FindChild__1">GameObject.FindChild&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentFromParent__1">GameObject.GetComponentFromParent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentsFromParents__1">GameObject.GetComponentsFromParents&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentFromChild__1">GameObject.GetComponentFromChild&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentsFromChilds__1">GameObject.GetComponentsFromChilds&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetOrCreateComponent__1">GameObject.GetOrCreateComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponent__1">GameObject.GetComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TryGetComponent__1___0__">GameObject.TryGetComponent&lt;T&gt;(out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponents__1">GameObject.GetComponents&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponents_System_Func_HexaEngine_Scenes_IComponent_System_Boolean__">GameObject.GetComponents(Func&lt;IComponent, bool&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponents__1_System_Func___0_System_Boolean__">GameObject.GetComponents&lt;T&gt;(Func&lt;T, bool&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_HasComponent__1">GameObject.HasComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentsFromTree__1">GameObject.GetComponentsFromTree&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_DiscoverComponents__2">GameObject.DiscoverComponents&lt;T, TStop&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RemoveComponent_System_ValueTuple_HexaEngine_Scenes_GameObject_HexaEngine_Scenes_IComponent__">GameObject.RemoveComponent((GameObject, IComponent))</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponent_System_ValueTuple_HexaEngine_Scenes_GameObject_HexaEngine_Scenes_IComponent__">GameObject.AddComponent((GameObject, IComponent))</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetChild__1">GameObject.GetChild&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TryGetChild__1___0__">GameObject.TryGetChild&lt;T&gt;(out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetChildren__1">GameObject.GetChildren&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanging">EntityNotifyBase.PropertyChanging</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanged">EntityNotifyBase.PropertyChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanging_System_String_">EntityNotifyBase.OnPropertyChanging(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanged_System_String_">EntityNotifyBase.OnPropertyChanged(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotify__1___0____0_System_String_">EntityNotifyBase.SetAndNotify&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithRefEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithRefEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Scenes.SceneExensions.html#HexaEngine_Scenes_SceneExensions_AddComponentIfIs__1_HexaEngine_Scenes_GameObject_System_Action___0__">SceneExensions.AddComponentIfIs&lt;T&gt;(GameObject, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Scenes.SceneExensions.html#HexaEngine_Scenes_SceneExensions_RemoveComponentIfIs__1_HexaEngine_Scenes_GameObject_System_Action___0__">SceneExensions.RemoveComponentIfIs&lt;T&gt;(GameObject, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Scripts.ScriptHelper.html#HexaEngine_Scripts_ScriptHelper_FindScript__1_HexaEngine_Scenes_GameObject_">ScriptHelper.FindScript&lt;T&gt;(GameObject)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Scripts.ScriptHelper.html#HexaEngine_Scripts_ScriptHelper_FindScript__1_HexaEngine_Scenes_GameObject_System_Func___0_System_Boolean__">ScriptHelper.FindScript&lt;T&gt;(GameObject, Func&lt;T, bool&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Scenes_Camera__ctor_" data-uid="HexaEngine.Scenes.Camera.#ctor*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera__ctor" data-uid="HexaEngine.Scenes.Camera.#ctor">
+  Camera()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Camera()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Scenes_Camera_ApertureBlades_" data-uid="HexaEngine.Scenes.Camera.ApertureBlades*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_ApertureBlades" data-uid="HexaEngine.Scenes.Camera.ApertureBlades">
+  ApertureBlades
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ApertureBlades { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_ApertureFStop_" data-uid="HexaEngine.Scenes.Camera.ApertureFStop*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_ApertureFStop" data-uid="HexaEngine.Scenes.Camera.ApertureFStop">
+  ApertureFStop
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ApertureFStop { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_ApertureRatio_" data-uid="HexaEngine.Scenes.Camera.ApertureRatio*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_ApertureRatio" data-uid="HexaEngine.Scenes.Camera.ApertureRatio">
+  ApertureRatio
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ApertureRatio { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_ApertureRotation_" data-uid="HexaEngine.Scenes.Camera.ApertureRotation*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_ApertureRotation" data-uid="HexaEngine.Scenes.Camera.ApertureRotation">
+  ApertureRotation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ApertureRotation { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_AutoFocus_" data-uid="HexaEngine.Scenes.Camera.AutoFocus*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_AutoFocus" data-uid="HexaEngine.Scenes.Camera.AutoFocus">
+  AutoFocus
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool AutoFocus { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_Far_" data-uid="HexaEngine.Scenes.Camera.Far*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_Far" data-uid="HexaEngine.Scenes.Camera.Far">
+  Far
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Lens&quot;, null)]
+[EditorProperty(&quot;Far&quot;, EditorPropertyMode.Default)]
+public float Far { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_FocalLength_" data-uid="HexaEngine.Scenes.Camera.FocalLength*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_FocalLength" data-uid="HexaEngine.Scenes.Camera.FocalLength">
+  FocalLength
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Lens&quot;, null)]
+[EditorPropertyCondition&lt;Camera&gt;(&quot;IsLensUnitMM&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Focal Length&quot;, EditorPropertyMode.Default)]
+public float FocalLength { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_FocusDistance_" data-uid="HexaEngine.Scenes.Camera.FocusDistance*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_FocusDistance" data-uid="HexaEngine.Scenes.Camera.FocusDistance">
+  FocusDistance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float FocusDistance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_Fov_" data-uid="HexaEngine.Scenes.Camera.Fov*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_Fov" data-uid="HexaEngine.Scenes.Camera.Fov">
+  Fov
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Lens&quot;, null)]
+[EditorPropertyCondition&lt;Camera&gt;(&quot;IsLensUnitFov&quot;, EditorPropertyConditionMode.Visible)]
+[EditorProperty(&quot;Field of view&quot;, 0, 3.1241395, EditorPropertyMode.SliderAngle)]
+public float Fov { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_Height_" data-uid="HexaEngine.Scenes.Camera.Height*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_Height" data-uid="HexaEngine.Scenes.Camera.Height">
+  Height
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Height { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_LensUnit_" data-uid="HexaEngine.Scenes.Camera.LensUnit*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_LensUnit" data-uid="HexaEngine.Scenes.Camera.LensUnit">
+  LensUnit
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Lens&quot;, null)]
+[EditorProperty&lt;LensUnit&gt;(&quot;Lens Unit&quot;)]
+public LensUnit LensUnit { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Scenes.LensUnit.html">LensUnit</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_Near_" data-uid="HexaEngine.Scenes.Camera.Near*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_Near" data-uid="HexaEngine.Scenes.Camera.Near">
+  Near
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Lens&quot;, null)]
+[EditorProperty(&quot;Near&quot;, EditorPropertyMode.Default)]
+public float Near { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_ProjectionType_" data-uid="HexaEngine.Scenes.Camera.ProjectionType*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_ProjectionType" data-uid="HexaEngine.Scenes.Camera.ProjectionType">
+  ProjectionType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Lens&quot;, null)]
+[EditorProperty&lt;ProjectionType&gt;(&quot;Type&quot;)]
+public ProjectionType ProjectionType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">ProjectionType</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_SensorFit_" data-uid="HexaEngine.Scenes.Camera.SensorFit*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_SensorFit" data-uid="HexaEngine.Scenes.Camera.SensorFit">
+  SensorFit
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Camera&quot;, null)]
+[EditorProperty&lt;SensorFit&gt;(&quot;Sensor Fit&quot;)]
+public SensorFit SensorFit { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Scenes.SensorFit.html">SensorFit</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_SensorSize_" data-uid="HexaEngine.Scenes.Camera.SensorSize*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_SensorSize" data-uid="HexaEngine.Scenes.Camera.SensorSize">
+  SensorSize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Camera&quot;, null)]
+[EditorProperty(&quot;Sensor Size&quot;, EditorPropertyMode.Default)]
+public float SensorSize { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_Transform_" data-uid="HexaEngine.Scenes.Camera.Transform*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_Transform" data-uid="HexaEngine.Scenes.Camera.Transform">
+  Transform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CameraTransform Transform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">CameraTransform</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_VisibleLayers_" data-uid="HexaEngine.Scenes.Camera.VisibleLayers*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_VisibleLayers" data-uid="HexaEngine.Scenes.Camera.VisibleLayers">
+  VisibleLayers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Visible Layers&quot;, EditorPropertyMode.Default)]
+public DrawLayerCollection VisibleLayers { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.DrawLayerCollection.html">DrawLayerCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_VisualizeCulling_" data-uid="HexaEngine.Scenes.Camera.VisualizeCulling*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_VisualizeCulling" data-uid="HexaEngine.Scenes.Camera.VisualizeCulling">
+  VisualizeCulling
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L125"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Debug&quot;, null)]
+[EditorProperty(&quot;Visualize Culling&quot;, EditorPropertyMode.Default)]
+public bool VisualizeCulling { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_Width_" data-uid="HexaEngine.Scenes.Camera.Width*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_Width" data-uid="HexaEngine.Scenes.Camera.Width">
+  Width
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Width { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Scenes_Camera_CopySettings_" data-uid="HexaEngine.Scenes.Camera.CopySettings*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_CopySettings" data-uid="HexaEngine.Scenes.Camera.CopySettings">
+  CopySettings()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Camera&quot;, null)]
+[EditorButton(&quot;Copy from View&quot;)]
+public void CopySettings()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_DistanceTo_" data-uid="HexaEngine.Scenes.Camera.DistanceTo*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_DistanceTo_HexaEngine_Scenes_GameObject_" data-uid="HexaEngine.Scenes.Camera.DistanceTo(HexaEngine.Scenes.GameObject)">
+  DistanceTo(GameObject)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float DistanceTo(GameObject other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Scenes.GameObject.html">GameObject</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_FocalLengthToFov_" data-uid="HexaEngine.Scenes.Camera.FocalLengthToFov*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_FocalLengthToFov_System_Single_System_Single_" data-uid="HexaEngine.Scenes.Camera.FocalLengthToFov(System.Single,System.Single)">
+  FocalLengthToFov(float, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static float FocalLengthToFov(float focalLength, float sensorSize)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>focalLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>sensorSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_FovToFocalLength_" data-uid="HexaEngine.Scenes.Camera.FovToFocalLength*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_FovToFocalLength_System_Single_System_Single_" data-uid="HexaEngine.Scenes.Camera.FovToFocalLength(System.Single,System.Single)">
+  FovToFocalLength(float, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static float FovToFocalLength(float fov, float sensorSize)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fov</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>sensorSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_GetCameraProjection_" data-uid="HexaEngine.Scenes.Camera.GetCameraProjection*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_GetCameraProjection_System_Single_" data-uid="HexaEngine.Scenes.Camera.GetCameraProjection(System.Single)">
+  GetCameraProjection(float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L192"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4x4 GetCameraProjection(float near)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>near</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_Initialize_" data-uid="HexaEngine.Scenes.Camera.Initialize*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_Initialize" data-uid="HexaEngine.Scenes.Camera.Initialize">
+  Initialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Initialize()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_IsLensUnitFov_" data-uid="HexaEngine.Scenes.Camera.IsLensUnitFov*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_IsLensUnitFov_HexaEngine_Scenes_Camera_" data-uid="HexaEngine.Scenes.Camera.IsLensUnitFov(HexaEngine.Scenes.Camera)">
+  IsLensUnitFov(Camera)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsLensUnitFov(Camera camera)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_IsLensUnitMM_" data-uid="HexaEngine.Scenes.Camera.IsLensUnitMM*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_IsLensUnitMM_HexaEngine_Scenes_Camera_" data-uid="HexaEngine.Scenes.Camera.IsLensUnitMM(HexaEngine.Scenes.Camera)">
+  IsLensUnitMM(Camera)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsLensUnitMM(Camera camera)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_ProjectPosition_" data-uid="HexaEngine.Scenes.Camera.ProjectPosition*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_ProjectPosition_System_Numerics_Vector2_System_Single_Hexa_NET_Mathematics_Viewport_" data-uid="HexaEngine.Scenes.Camera.ProjectPosition(System.Numerics.Vector2,System.Single,Hexa.NET.Mathematics.Viewport)">
+  ProjectPosition(Vector2, float, Viewport)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3 ProjectPosition(Vector2 position, float depth, Viewport viewport)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>depth</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>viewport</code> <span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_ProjectPosition_" data-uid="HexaEngine.Scenes.Camera.ProjectPosition*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_ProjectPosition_System_Numerics_Vector3_" data-uid="HexaEngine.Scenes.Camera.ProjectPosition(System.Numerics.Vector3)">
+  ProjectPosition(Vector3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L207"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector4 ProjectPosition(Vector3 position)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Scenes_Camera_Uninitialize_" data-uid="HexaEngine.Scenes.Camera.Uninitialize*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_Uninitialize" data-uid="HexaEngine.Scenes.Camera.Uninitialize">
+  Uninitialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Uninitialize()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="HexaEngine_Scenes_Camera_op_Implicit_" data-uid="HexaEngine.Scenes.Camera.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Scenes_Camera_op_Implicit_HexaEngine_Scenes_Camera__Hexa_NET_Mathematics_CameraTransform" data-uid="HexaEngine.Scenes.Camera.op_Implicit(HexaEngine.Scenes.Camera)~Hexa.NET.Mathematics.CameraTransform">
+  implicit operator CameraTransform(Camera)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L247"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator CameraTransform(Camera camera)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">CameraTransform</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Scenes/Camera.cs/#L31" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

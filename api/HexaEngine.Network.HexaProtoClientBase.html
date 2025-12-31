@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class HexaProtoClientBase </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class HexaProtoClientBase ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Network_HexaProtoClientBase.md&amp;value=---%0Auid%3A%20HexaEngine.Network.HexaProtoClientBase%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Network.HexaProtoClientBase">
+
+
+
+  <h1 id="HexaEngine_Network_HexaProtoClientBase" data-uid="HexaEngine.Network.HexaProtoClientBase" class="text-break">
+Class HexaProtoClientBase  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Network.html">Network</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class HexaProtoClientBase : BaseSocket, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Network.BaseSocket.html">BaseSocket</a></div>
+      <div><span class="xref">HexaProtoClientBase</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Network.HexaProtoClient.html">HexaProtoClient</a></div>
+      <div><a class="xref" href="HexaEngine.Network.HexaProtoHandler.html">HexaProtoHandler</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_socket">BaseSocket.socket</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_IsConnected">BaseSocket.IsConnected</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_ReceiveTimeout">BaseSocket.ReceiveTimeout</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_SendTimeout">BaseSocket.SendTimeout</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_RemoteEndPoint">BaseSocket.RemoteEndPoint</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_LocalEndPoint">BaseSocket.LocalEndPoint</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_Error">BaseSocket.Error</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_CreateNetworkStream">BaseSocket.CreateNetworkStream()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_OnSocketError_System_Net_Sockets_SocketError_">BaseSocket.OnSocketError(SocketError)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_Receive_System_Memory_System_Byte__">BaseSocket.Receive(Memory&lt;byte&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_ReceiveAsync_System_Memory_System_Byte__System_Threading_CancellationToken_">BaseSocket.ReceiveAsync(Memory&lt;byte&gt;, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_Send_System_Span_System_Byte__">BaseSocket.Send(Span&lt;byte&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_SendAsync_System_Memory_System_Byte__System_Threading_CancellationToken_">BaseSocket.SendAsync(Memory&lt;byte&gt;, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Network.BaseSocket.html#HexaEngine_Network_BaseSocket_Dispose">BaseSocket.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase__ctor_" data-uid="HexaEngine.Network.HexaProtoClientBase.#ctor*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase__ctor_System_Net_Sockets_AddressFamily_System_Net_Sockets_SocketType_System_Net_Sockets_ProtocolType_" data-uid="HexaEngine.Network.HexaProtoClientBase.#ctor(System.Net.Sockets.AddressFamily,System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType)">
+  HexaProtoClientBase(AddressFamily, SocketType, ProtocolType)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected HexaProtoClientBase(AddressFamily family, SocketType type, ProtocolType protocol)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>family</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.addressfamily">AddressFamily</a></dt>
+    <dd></dd>
+    <dt><code>type</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.sockettype">SocketType</a></dt>
+    <dd></dd>
+    <dt><code>protocol</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.protocoltype">ProtocolType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase__ctor_" data-uid="HexaEngine.Network.HexaProtoClientBase.#ctor*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase__ctor_System_Net_Sockets_Socket_" data-uid="HexaEngine.Network.HexaProtoClientBase.#ctor(System.Net.Sockets.Socket)">
+  HexaProtoClientBase(Socket)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected HexaProtoClientBase(Socket socket)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>socket</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.socket">Socket</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_HeartbeatRate_" data-uid="HexaEngine.Network.HexaProtoClientBase.HeartbeatRate*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_HeartbeatRate" data-uid="HexaEngine.Network.HexaProtoClientBase.HeartbeatRate">
+  HeartbeatRate
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint HeartbeatRate { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_PayloadLimit_" data-uid="HexaEngine.Network.HexaProtoClientBase.PayloadLimit*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_PayloadLimit" data-uid="HexaEngine.Network.HexaProtoClientBase.PayloadLimit">
+  PayloadLimit
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint PayloadLimit { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_RequestRateLimit_" data-uid="HexaEngine.Network.HexaProtoClientBase.RequestRateLimit*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_RequestRateLimit" data-uid="HexaEngine.Network.HexaProtoClientBase.RequestRateLimit">
+  RequestRateLimit
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint RequestRateLimit { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_Dispose_" data-uid="HexaEngine.Network.HexaProtoClientBase.Dispose*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_Dispose_System_Boolean_" data-uid="HexaEngine.Network.HexaProtoClientBase.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L390"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_OnProtocolError_" data-uid="HexaEngine.Network.HexaProtoClientBase.OnProtocolError*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_OnProtocolError_HexaEngine_Network_Protocol_ProtocolError_" data-uid="HexaEngine.Network.HexaProtoClientBase.OnProtocolError(HexaEngine.Network.Protocol.ProtocolError)">
+  OnProtocolError(ProtocolError)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnProtocolError(ProtocolError error)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>error</code> <a class="xref" href="HexaEngine.Network.Protocol.ProtocolError.html">ProtocolError</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_Process_" data-uid="HexaEngine.Network.HexaProtoClientBase.Process*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_Process_HexaEngine_Network_Protocol_Record_" data-uid="HexaEngine.Network.HexaProtoClientBase.Process(HexaEngine.Network.Protocol.Record)">
+  Process(Record)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L388"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void Process(Record record)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>record</code> <a class="xref" href="HexaEngine.Network.Protocol.Record.html">Record</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_Receive_" data-uid="HexaEngine.Network.HexaProtoClientBase.Receive*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_Receive" data-uid="HexaEngine.Network.HexaProtoClientBase.Receive">
+  Receive()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Receive()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_ReceiveAsync_" data-uid="HexaEngine.Network.HexaProtoClientBase.ReceiveAsync*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_ReceiveAsync_System_Threading_CancellationToken_" data-uid="HexaEngine.Network.HexaProtoClientBase.ReceiveAsync(System.Threading.CancellationToken)">
+  ReceiveAsync(CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ValueTask ReceiveAsync(CancellationToken token)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>token</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_Send_" data-uid="HexaEngine.Network.HexaProtoClientBase.Send*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_Send_System_Collections_Generic_IList_HexaEngine_Network_Protocol_IRecord__" data-uid="HexaEngine.Network.HexaProtoClientBase.Send(System.Collections.Generic.IList{HexaEngine.Network.Protocol.IRecord})">
+  Send(IList&lt;IRecord&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L331"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Send(IList&lt;IRecord&gt; records)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>records</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="HexaEngine.Network.Protocol.IRecord.html">IRecord</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_Send_" data-uid="HexaEngine.Network.HexaProtoClientBase.Send*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_Send_System_Span_HexaEngine_Network_Protocol_IRecord__" data-uid="HexaEngine.Network.HexaProtoClientBase.Send(System.Span{HexaEngine.Network.Protocol.IRecord})">
+  Send(Span&lt;IRecord&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L250"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Send(Span&lt;IRecord&gt; records)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>records</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="HexaEngine.Network.Protocol.IRecord.html">IRecord</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_SendAsync_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendAsync*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_SendAsync_HexaEngine_Network_Protocol_IRecord_System_Threading_CancellationToken_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendAsync(HexaEngine.Network.Protocol.IRecord,System.Threading.CancellationToken)">
+  SendAsync(IRecord, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L283"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ValueTask&lt;bool&gt; SendAsync(IRecord record, CancellationToken token = default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>record</code> <a class="xref" href="HexaEngine.Network.Protocol.IRecord.html">IRecord</a></dt>
+    <dd></dd>
+    <dt><code>token</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_SendAsync_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendAsync*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_SendAsync_System_Memory_System_Byte__System_Byte___System_Threading_CancellationToken_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendAsync(System.Memory{System.Byte},System.Byte[],System.Threading.CancellationToken)">
+  SendAsync(Memory&lt;byte&gt;, byte[], CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L294"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected ValueTask&lt;bool&gt; SendAsync(Memory&lt;byte&gt; data, byte[] buffer, CancellationToken token = default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>data</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.memory-1">Memory</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+    <dt><code>token</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_SendAsync_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendAsync*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_SendAsync_System_Span_HexaEngine_Network_Protocol_IRecord__System_Threading_CancellationToken_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendAsync(System.Span{HexaEngine.Network.Protocol.IRecord},System.Threading.CancellationToken)">
+  SendAsync(Span&lt;IRecord&gt;, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L288"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ValueTask&lt;bool&gt; SendAsync(Span&lt;IRecord&gt; records, CancellationToken token = default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>records</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="HexaEngine.Network.Protocol.IRecord.html">IRecord</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>token</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_SendBuffered_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendBuffered*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_SendBuffered_System_Span_HexaEngine_Network_Protocol_IRecord__" data-uid="HexaEngine.Network.HexaProtoClientBase.SendBuffered(System.Span{HexaEngine.Network.Protocol.IRecord})">
+  SendBuffered(Span&lt;IRecord&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L364"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendBuffered(Span&lt;IRecord&gt; records)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>records</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="HexaEngine.Network.Protocol.IRecord.html">IRecord</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_SendProtocolError_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendProtocolError*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_SendProtocolError_HexaEngine_Network_Protocol_ErrorCode_HexaEngine_Network_Protocol_ErrorSeverity_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendProtocolError(HexaEngine.Network.Protocol.ErrorCode,HexaEngine.Network.Protocol.ErrorSeverity)">
+  SendProtocolError(ErrorCode, ErrorSeverity)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L381"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendProtocolError(ErrorCode errorCode, ErrorSeverity severity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>errorCode</code> <a class="xref" href="HexaEngine.Network.Protocol.ErrorCode.html">ErrorCode</a></dt>
+    <dd></dd>
+    <dt><code>severity</code> <a class="xref" href="HexaEngine.Network.Protocol.ErrorSeverity.html">ErrorSeverity</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_SendQueue_" data-uid="HexaEngine.Network.HexaProtoClientBase.SendQueue*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_SendQueue" data-uid="HexaEngine.Network.HexaProtoClientBase.SendQueue">
+  SendQueue()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L369"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendQueue()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_Send_" data-uid="HexaEngine.Network.HexaProtoClientBase.Send*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_Send__1___0_" data-uid="HexaEngine.Network.HexaProtoClientBase.Send``1(``0)">
+  Send&lt;T&gt;(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L224"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Send&lt;T&gt;(T record) where T : IRecord</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>record</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Network_HexaProtoClientBase_SetBufferPosition_" data-uid="HexaEngine.Network.HexaProtoClientBase.SetBufferPosition*"></a>
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_SetBufferPosition_System_Memory_System_Byte__System_Int32_System_Int32_" data-uid="HexaEngine.Network.HexaProtoClientBase.SetBufferPosition(System.Memory{System.Byte},System.Int32,System.Int32)">
+  SetBufferPosition(Memory&lt;byte&gt;, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L212"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void SetBufferPosition(Memory&lt;byte&gt; buffer, int read, int left)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.memory-1">Memory</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>read</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>left</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Network_HexaProtoClientBase_ProtocolError" data-uid="HexaEngine.Network.HexaProtoClientBase.ProtocolError">
+  ProtocolError
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event HexaProtoClientBase.ProtocolErrorEventHandler? ProtocolError</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Network.HexaProtoClientBase.html">HexaProtoClientBase</a>.<a class="xref" href="HexaEngine.Network.HexaProtoClientBase.ProtocolErrorEventHandler.html">ProtocolErrorEventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Network/HexaProtoClientBase.cs/#L9" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

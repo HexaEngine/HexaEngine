@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class RenderSystem </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class RenderSystem ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Graphics_RenderSystem.md&amp;value=---%0Auid%3A%20HexaEngine.Graphics.RenderSystem%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Graphics.RenderSystem">
+
+
+
+  <h1 id="HexaEngine_Graphics_RenderSystem" data-uid="HexaEngine.Graphics.RenderSystem" class="text-break">
+Class RenderSystem  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class RenderSystem : ISceneSystem, IHasFlags&lt;SystemFlags&gt;</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">RenderSystem</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Scenes.ISceneSystem.html">ISceneSystem</a></div>
+      <div><a class="xref" href="HexaEngine.Collections.IHasFlags-1.html">IHasFlags</a>&lt;<a class="xref" href="HexaEngine.Scenes.SystemFlags.html">SystemFlags</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Graphics_RenderSystem__ctor_" data-uid="HexaEngine.Graphics.RenderSystem.#ctor*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem__ctor_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Lights_LightManager_" data-uid="HexaEngine.Graphics.RenderSystem.#ctor(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Lights.LightManager)">
+  RenderSystem(IGraphicsDevice, LightManager)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RenderSystem(IGraphicsDevice device, LightManager lights)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>lights</code> <a class="xref" href="HexaEngine.Lights.LightManager.html">LightManager</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_AlphaTestQueue_" data-uid="HexaEngine.Graphics.RenderSystem.AlphaTestQueue*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_AlphaTestQueue" data-uid="HexaEngine.Graphics.RenderSystem.AlphaTestQueue">
+  AlphaTestQueue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IDrawable&gt; AlphaTestQueue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_BackgroundQueue_" data-uid="HexaEngine.Graphics.RenderSystem.BackgroundQueue*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_BackgroundQueue" data-uid="HexaEngine.Graphics.RenderSystem.BackgroundQueue">
+  BackgroundQueue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IDrawable&gt; BackgroundQueue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Drawables_" data-uid="HexaEngine.Graphics.RenderSystem.Drawables*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Drawables" data-uid="HexaEngine.Graphics.RenderSystem.Drawables">
+  Drawables
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IDrawable&gt; Drawables { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_DrawablesTree_" data-uid="HexaEngine.Graphics.RenderSystem.DrawablesTree*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_DrawablesTree" data-uid="HexaEngine.Graphics.RenderSystem.DrawablesTree">
+  DrawablesTree
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BVHTree&lt;IDrawable&gt; DrawablesTree { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.BVHTree-1.html">BVHTree</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Flags_" data-uid="HexaEngine.Graphics.RenderSystem.Flags*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Flags" data-uid="HexaEngine.Graphics.RenderSystem.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SystemFlags Flags { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Scenes.SystemFlags.html">SystemFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_GeometryLastQueue_" data-uid="HexaEngine.Graphics.RenderSystem.GeometryLastQueue*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_GeometryLastQueue" data-uid="HexaEngine.Graphics.RenderSystem.GeometryLastQueue">
+  GeometryLastQueue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IDrawable&gt; GeometryLastQueue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_GeometryQueue_" data-uid="HexaEngine.Graphics.RenderSystem.GeometryQueue*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_GeometryQueue" data-uid="HexaEngine.Graphics.RenderSystem.GeometryQueue">
+  GeometryQueue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IDrawable&gt; GeometryQueue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Name_" data-uid="HexaEngine.Graphics.RenderSystem.Name*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Name" data-uid="HexaEngine.Graphics.RenderSystem.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_OverlayQueue_" data-uid="HexaEngine.Graphics.RenderSystem.OverlayQueue*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_OverlayQueue" data-uid="HexaEngine.Graphics.RenderSystem.OverlayQueue">
+  OverlayQueue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IDrawable&gt; OverlayQueue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_TransparencyQueue_" data-uid="HexaEngine.Graphics.RenderSystem.TransparencyQueue*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_TransparencyQueue" data-uid="HexaEngine.Graphics.RenderSystem.TransparencyQueue">
+  TransparencyQueue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IDrawable&gt; TransparencyQueue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_AddToQueue_" data-uid="HexaEngine.Graphics.RenderSystem.AddToQueue*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_AddToQueue_HexaEngine_Graphics_IDrawable_" data-uid="HexaEngine.Graphics.RenderSystem.AddToQueue(HexaEngine.Graphics.IDrawable)">
+  AddToQueue(IDrawable)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L251"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddToQueue(IDrawable renderer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>renderer</code> <a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Awake_" data-uid="HexaEngine.Graphics.RenderSystem.Awake*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Awake_HexaEngine_Scenes_Scene_" data-uid="HexaEngine.Graphics.RenderSystem.Awake(HexaEngine.Scenes.Scene)">
+  Awake(Scene)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Awake(Scene scene)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>scene</code> <a class="xref" href="HexaEngine.Scenes.Scene.html">Scene</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Destroy_" data-uid="HexaEngine.Graphics.RenderSystem.Destroy*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Destroy" data-uid="HexaEngine.Graphics.RenderSystem.Destroy">
+  Destroy()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Destroy()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Draw_" data-uid="HexaEngine.Graphics.RenderSystem.Draw*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Draw_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Graphics_RenderQueueIndex_HexaEngine_Graphics_RenderPath_" data-uid="HexaEngine.Graphics.RenderSystem.Draw(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Graphics.RenderQueueIndex,HexaEngine.Graphics.RenderPath)">
+  Draw(IGraphicsContext, RenderQueueIndex, RenderPath)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Draw(IGraphicsContext context, RenderQueueIndex index, RenderPath path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>index</code> <a class="xref" href="HexaEngine.Graphics.RenderQueueIndex.html">RenderQueueIndex</a></dt>
+    <dd></dd>
+    <dt><code>path</code> <a class="xref" href="HexaEngine.Graphics.RenderPath.html">RenderPath</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_DrawDepth_" data-uid="HexaEngine.Graphics.RenderSystem.DrawDepth*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_DrawDepth_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Graphics_RenderQueueIndex_" data-uid="HexaEngine.Graphics.RenderSystem.DrawDepth(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Graphics.RenderQueueIndex)">
+  DrawDepth(IGraphicsContext, RenderQueueIndex)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DrawDepth(IGraphicsContext context, RenderQueueIndex index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>index</code> <a class="xref" href="HexaEngine.Graphics.RenderQueueIndex.html">RenderQueueIndex</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_ExecuteGroup_" data-uid="HexaEngine.Graphics.RenderSystem.ExecuteGroup*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_ExecuteGroup_System_Collections_Generic_IReadOnlyList_HexaEngine_Graphics_IDrawable__HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Profiling_ICPUProfiler_System_String_HexaEngine_Graphics_RenderPath_" data-uid="HexaEngine.Graphics.RenderSystem.ExecuteGroup(System.Collections.Generic.IReadOnlyList{HexaEngine.Graphics.IDrawable},HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Profiling.ICPUProfiler,System.String,HexaEngine.Graphics.RenderPath)">
+  ExecuteGroup(IReadOnlyList&lt;IDrawable&gt;, IGraphicsContext, ICPUProfiler?, string, RenderPath)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L326"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ExecuteGroup(IReadOnlyList&lt;IDrawable&gt; renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName, RenderPath path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>renderers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>profiler</code> <a class="xref" href="HexaEngine.Profiling.ICPUProfiler.html">ICPUProfiler</a></dt>
+    <dd></dd>
+    <dt><code>groupDebugName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>path</code> <a class="xref" href="HexaEngine.Graphics.RenderPath.html">RenderPath</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_ExecuteGroup_" data-uid="HexaEngine.Graphics.RenderSystem.ExecuteGroup*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_ExecuteGroup_System_Collections_Generic_IReadOnlyList_HexaEngine_Graphics_IDrawable__HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Profiling_ICPUProfiler_System_String_HexaEngine_Graphics_RenderPath_System_Void___System_UInt32_HexaEngine_Core_Graphics_IDepthStencilView_" data-uid="HexaEngine.Graphics.RenderSystem.ExecuteGroup(System.Collections.Generic.IReadOnlyList{HexaEngine.Graphics.IDrawable},HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Profiling.ICPUProfiler,System.String,HexaEngine.Graphics.RenderPath,System.Void**,System.UInt32,HexaEngine.Core.Graphics.IDepthStencilView)">
+  ExecuteGroup(IReadOnlyList&lt;IDrawable&gt;, IGraphicsContext, ICPUProfiler?, string, RenderPath, void**, uint, IDepthStencilView)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L350"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ExecuteGroup(IReadOnlyList&lt;IDrawable&gt; renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName, RenderPath path, void** rtvs, uint rtvCount, IDepthStencilView dsv)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>renderers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>profiler</code> <a class="xref" href="HexaEngine.Profiling.ICPUProfiler.html">ICPUProfiler</a></dt>
+    <dd></dd>
+    <dt><code>groupDebugName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>path</code> <a class="xref" href="HexaEngine.Graphics.RenderPath.html">RenderPath</a></dt>
+    <dd></dd>
+    <dt><code>rtvs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>**</dt>
+    <dd></dd>
+    <dt><code>rtvCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>dsv</code> <a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_ExecuteGroupDepth_" data-uid="HexaEngine.Graphics.RenderSystem.ExecuteGroupDepth*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_ExecuteGroupDepth_System_Collections_Generic_IReadOnlyList_HexaEngine_Graphics_IDrawable__HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Profiling_ICPUProfiler_System_String_" data-uid="HexaEngine.Graphics.RenderSystem.ExecuteGroupDepth(System.Collections.Generic.IReadOnlyList{HexaEngine.Graphics.IDrawable},HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Profiling.ICPUProfiler,System.String)">
+  ExecuteGroupDepth(IReadOnlyList&lt;IDrawable&gt;, IGraphicsContext, ICPUProfiler?, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L338"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ExecuteGroupDepth(IReadOnlyList&lt;IDrawable&gt; renderers, IGraphicsContext context, ICPUProfiler? profiler, string groupDebugName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>renderers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>profiler</code> <a class="xref" href="HexaEngine.Profiling.ICPUProfiler.html">ICPUProfiler</a></dt>
+    <dd></dd>
+    <dt><code>groupDebugName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_ExecuteGroupVisibilityTest_" data-uid="HexaEngine.Graphics.RenderSystem.ExecuteGroupVisibilityTest*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_ExecuteGroupVisibilityTest_System_Collections_Generic_IReadOnlyList_HexaEngine_Graphics_IDrawable__HexaEngine_Graphics_Culling_CullingContext_HexaEngine_Profiling_ICPUProfiler_System_String_" data-uid="HexaEngine.Graphics.RenderSystem.ExecuteGroupVisibilityTest(System.Collections.Generic.IReadOnlyList{HexaEngine.Graphics.IDrawable},HexaEngine.Graphics.Culling.CullingContext,HexaEngine.Profiling.ICPUProfiler,System.String)">
+  ExecuteGroupVisibilityTest(IReadOnlyList&lt;IDrawable&gt;, CullingContext, ICPUProfiler?, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ExecuteGroupVisibilityTest(IReadOnlyList&lt;IDrawable&gt; renderers, CullingContext context, ICPUProfiler? profiler, string groupDebugName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>renderers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Graphics.Culling.CullingContext.html">CullingContext</a></dt>
+    <dd></dd>
+    <dt><code>profiler</code> <a class="xref" href="HexaEngine.Profiling.ICPUProfiler.html">ICPUProfiler</a></dt>
+    <dd></dd>
+    <dt><code>groupDebugName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Invalidate_" data-uid="HexaEngine.Graphics.RenderSystem.Invalidate*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Invalidate_HexaEngine_Graphics_RenderQueueIndexFlags_" data-uid="HexaEngine.Graphics.RenderSystem.Invalidate(HexaEngine.Graphics.RenderQueueIndexFlags)">
+  Invalidate(RenderQueueIndexFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Invalidate(RenderQueueIndexFlags flags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.RenderQueueIndexFlags.html">RenderQueueIndexFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Load_" data-uid="HexaEngine.Graphics.RenderSystem.Load*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Load_HexaEngine_Core_Graphics_IGraphicsDevice_" data-uid="HexaEngine.Graphics.RenderSystem.Load(HexaEngine.Core.Graphics.IGraphicsDevice)">
+  Load(IGraphicsDevice)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Load(IGraphicsDevice device)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_RemoveFromQueue_" data-uid="HexaEngine.Graphics.RenderSystem.RemoveFromQueue*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_RemoveFromQueue_HexaEngine_Graphics_IDrawable_" data-uid="HexaEngine.Graphics.RenderSystem.RemoveFromQueue(HexaEngine.Graphics.IDrawable)">
+  RemoveFromQueue(IDrawable)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L288"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveFromQueue(IDrawable renderer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>renderer</code> <a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Unload_" data-uid="HexaEngine.Graphics.RenderSystem.Unload*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Unload" data-uid="HexaEngine.Graphics.RenderSystem.Unload">
+  Unload()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Unload()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_RenderSystem_Update_" data-uid="HexaEngine.Graphics.RenderSystem.Update*"></a>
+
+  <h3 id="HexaEngine_Graphics_RenderSystem_Update_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Graphics.RenderSystem.Update(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Update(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L191"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Update(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/RenderSystem.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

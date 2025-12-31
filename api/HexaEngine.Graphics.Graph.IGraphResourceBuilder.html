@@ -1,0 +1,2485 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IGraphResourceBuilder </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IGraphResourceBuilder ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Graphics_Graph_IGraphResourceBuilder.md&amp;value=---%0Auid%3A%20HexaEngine.Graphics.Graph.IGraphResourceBuilder%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder">
+
+
+
+  <h1 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder" class="text-break">
+Interface IGraphResourceBuilder  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Graphics.html">Graphics</a>.<a class="xref" href="HexaEngine.Graphics.Graph.html">Graph</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IGraphResourceBuilder</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Container_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Container*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Container" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Container">
+  Container
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">GraphResourceContainer? Container { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.GraphResourceContainer.html">GraphResourceContainer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Device_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Device*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Device" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Device">
+  Device
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsDevice Device { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GBuffers_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GBuffers*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GBuffers" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GBuffers">
+  GBuffers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IReadOnlyList&lt;GBuffer&gt; GBuffers { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.GBuffer.html">GBuffer</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Output_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Output*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Output" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Output">
+  Output
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IRenderTargetView? Output { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_OutputViewport_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.OutputViewport*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_OutputViewport" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.OutputViewport">
+  OutputViewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Viewport OutputViewport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_ShadowAtlas_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.ShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_ShadowAtlas" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.ShadowAtlas">
+  ShadowAtlas
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IReadOnlyList&lt;ShadowAtlas&gt; ShadowAtlas { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Textures_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Textures*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Textures" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Textures">
+  Textures
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IReadOnlyList&lt;Texture2D&gt; Textures { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Viewport_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Viewport*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_Viewport" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.Viewport">
+  Viewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Viewport Viewport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_AddResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.AddResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_AddResource_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.AddResource(System.String)">
+  AddResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef AddResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_AddResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.AddResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_AddResource__1_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.AddResource``1(System.String)">
+  AddResource&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;T&gt; AddResource&lt;T&gt;(string name) where T : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateComputePipelineState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateComputePipelineState_HexaEngine_Core_Graphics_ComputePipelineStateDescEx_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateComputePipelineState(HexaEngine.Core.Graphics.ComputePipelineStateDescEx,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateComputePipelineState(ComputePipelineStateDescEx, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;IComputePipelineState&gt; CreateComputePipelineState(ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDescEx.html">ComputePipelineStateDescEx</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IComputePipelineState.html">IComputePipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateComputePipelineState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateComputePipelineState_System_String_HexaEngine_Core_Graphics_ComputePipelineStateDescEx_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateComputePipelineState(System.String,HexaEngine.Core.Graphics.ComputePipelineStateDescEx,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateComputePipelineState(string, ComputePipelineStateDescEx, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;IComputePipelineState&gt; CreateComputePipelineState(string name, ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDescEx.html">ComputePipelineStateDescEx</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IComputePipelineState.html">IComputePipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateConstantBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateConstantBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateConstantBuffer__1_System_String_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateConstantBuffer``1(System.String,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateConstantBuffer&lt;T&gt;(string, CpuAccessFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;ConstantBuffer&lt;T&gt;&gt; CreateConstantBuffer&lt;T&gt;(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.ConstantBuffer-1.html">ConstantBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateConstantBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateConstantBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateConstantBuffer__1_System_String___0_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateConstantBuffer``1(System.String,``0,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateConstantBuffer&lt;T&gt;(string, T, CpuAccessFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;ConstantBuffer&lt;T&gt;&gt; CreateConstantBuffer&lt;T&gt;(string name, T value, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.ConstantBuffer-1.html">ConstantBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateDepthMipChain_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateDepthMipChain*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateDepthMipChain_System_String_HexaEngine_Core_Graphics_DepthStencilBufferDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateDepthMipChain(System.String,HexaEngine.Core.Graphics.DepthStencilBufferDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateDepthMipChain(string, DepthStencilBufferDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;DepthMipChain&gt; CreateDepthMipChain(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.DepthMipChain.html">DepthMipChain</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateDepthStencilBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateDepthStencilBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateDepthStencilBuffer_System_String_HexaEngine_Core_Graphics_DepthStencilBufferDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateDepthStencilBuffer(System.String,HexaEngine.Core.Graphics.DepthStencilBufferDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateDepthStencilBuffer(string, DepthStencilBufferDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;DepthStencil&gt; CreateDepthStencilBuffer(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateGBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateGBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateGBuffer_System_String_HexaEngine_Core_Graphics_GBufferDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateGBuffer(System.String,HexaEngine.Core.Graphics.GBufferDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateGBuffer(string, GBufferDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;GBuffer&gt; CreateGBuffer(string name, GBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.GBufferDescription.html">GBufferDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.GBuffer.html">GBuffer</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateGraphicsPipelineState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateGraphicsPipelineState_HexaEngine_Core_Graphics_GraphicsPipelineStateDescEx_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateGraphicsPipelineState(HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateGraphicsPipelineState(GraphicsPipelineStateDescEx, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;IGraphicsPipelineState&gt; CreateGraphicsPipelineState(GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx.html">GraphicsPipelineStateDescEx</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateGraphicsPipelineState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateGraphicsPipelineState_System_String_HexaEngine_Core_Graphics_GraphicsPipelineStateDescEx_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateGraphicsPipelineState(System.String,HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateGraphicsPipelineState(string, GraphicsPipelineStateDescEx, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;IGraphicsPipelineState&gt; CreateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx.html">GraphicsPipelineStateDescEx</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateResource__2_System_String___1_System_Func_HexaEngine_Core_Graphics_IGraphicsDevice___1___0__System_Collections_Generic_IList___0__System_Collections_Generic_IList_HexaEngine_Graphics_Graph_ResourceDescriptor___1___HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateResource``2(System.String,``1,System.Func{HexaEngine.Core.Graphics.IGraphicsDevice,``1,``0},System.Collections.Generic.IList{``0},System.Collections.Generic.IList{HexaEngine.Graphics.Graph.ResourceDescriptor{``1}},HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateResource&lt;TType, TDesc&gt;(string, TDesc, Func&lt;IGraphicsDevice, TDesc, TType&gt;, IList&lt;TType&gt;, IList&lt;ResourceDescriptor&lt;TDesc&gt;&gt;, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;TType&gt; CreateResource&lt;TType, TDesc&gt;(string name, TDesc description, Func&lt;IGraphicsDevice, TDesc, TType&gt; constructor, IList&lt;TType&gt; group, IList&lt;ResourceDescriptor&lt;TDesc&gt;&gt; lazyDescs, ResourceCreationFlags flags) where TType : class, IDisposable where TDesc : struct</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <span class="xref">TDesc</span></dt>
+    <dd></dd>
+    <dt><code>constructor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a>, TDesc, TType&gt;</dt>
+    <dd></dd>
+    <dt><code>group</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;TType&gt;</dt>
+    <dd></dd>
+    <dt><code>lazyDescs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="HexaEngine.Graphics.Graph.ResourceDescriptor-1.html">ResourceDescriptor</a>&lt;TDesc&gt;&gt;</dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;TType&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TType</code></dt>
+    <dd></dd>
+    <dt><code>TDesc</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateSamplerState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateSamplerState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateSamplerState_System_String_HexaEngine_Core_Graphics_SamplerStateDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateSamplerState(System.String,HexaEngine.Core.Graphics.SamplerStateDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateSamplerState(string, SamplerStateDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;ISamplerState&gt; CreateSamplerState(string name, SamplerStateDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.SamplerStateDescription.html">SamplerStateDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.ISamplerState.html">ISamplerState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateShadowAtlas_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateShadowAtlas_System_String_HexaEngine_Lights_ShadowAtlasDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateShadowAtlas(System.String,HexaEngine.Lights.ShadowAtlasDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateShadowAtlas(string, ShadowAtlasDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;ShadowAtlas&gt; CreateShadowAtlas(string name, ShadowAtlasDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlasDescription.html">ShadowAtlasDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateStructuredBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateStructuredBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateStructuredBuffer__1_System_String_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateStructuredBuffer``1(System.String,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateStructuredBuffer&lt;T&gt;(string, CpuAccessFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;StructuredBuffer&lt;T&gt;&gt; CreateStructuredBuffer&lt;T&gt;(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateStructuredBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateStructuredBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateStructuredBuffer__1_System_String_System_UInt32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateStructuredBuffer``1(System.String,System.UInt32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateStructuredBuffer&lt;T&gt;(string, uint, CpuAccessFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;StructuredBuffer&lt;T&gt;&gt; CreateStructuredBuffer&lt;T&gt;(string name, uint initialCapacity, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>initialCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateStructuredUavBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateStructuredUavBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateStructuredUavBuffer__1_System_String_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_BufferUnorderedAccessViewFlags_HexaEngine_Core_Graphics_BufferExtendedShaderResourceViewFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateStructuredUavBuffer``1(System.String,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags,HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateStructuredUavBuffer&lt;T&gt;(string, CpuAccessFlags, BufferUnorderedAccessViewFlags, BufferExtendedShaderResourceViewFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;StructuredUavBuffer&lt;T&gt;&gt; CreateStructuredUavBuffer&lt;T&gt;(string name, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>uavFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags.html">BufferUnorderedAccessViewFlags</a></dt>
+    <dd></dd>
+    <dt><code>srvFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags.html">BufferExtendedShaderResourceViewFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateStructuredUavBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateStructuredUavBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateStructuredUavBuffer__1_System_String_System_UInt32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_BufferUnorderedAccessViewFlags_HexaEngine_Core_Graphics_BufferExtendedShaderResourceViewFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateStructuredUavBuffer``1(System.String,System.UInt32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags,HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateStructuredUavBuffer&lt;T&gt;(string, uint, CpuAccessFlags, BufferUnorderedAccessViewFlags, BufferExtendedShaderResourceViewFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;StructuredUavBuffer&lt;T&gt;&gt; CreateStructuredUavBuffer&lt;T&gt;(string name, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>initialCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>uavFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags.html">BufferUnorderedAccessViewFlags</a></dt>
+    <dd></dd>
+    <dt><code>srvFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags.html">BufferExtendedShaderResourceViewFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateTexture1D_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateTexture1D*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateTexture1D_System_String_HexaEngine_Core_Graphics_Texture1DDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateTexture1D(System.String,HexaEngine.Core.Graphics.Texture1DDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateTexture1D(string, Texture1DDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;Texture1D&gt; CreateTexture1D(string name, Texture1DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateTexture2D_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateTexture2D*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateTexture2D_System_String_HexaEngine_Core_Graphics_Texture2DDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateTexture2D(System.String,HexaEngine.Core.Graphics.Texture2DDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateTexture2D(string, Texture2DDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;Texture2D&gt; CreateTexture2D(string name, Texture2DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture2DDescription.html">Texture2DDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateTexture3D_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateTexture3D*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_CreateTexture3D_System_String_HexaEngine_Core_Graphics_Texture3DDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.CreateTexture3D(System.String,HexaEngine.Core.Graphics.Texture3DDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateTexture3D(string, Texture3DDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;Texture3D&gt; CreateTexture3D(string name, Texture3DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture3DDescription.html">Texture3DDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture3D.html">Texture3D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_DisposeResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.DisposeResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_DisposeResource_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.DisposeResource(System.String)">
+  DisposeResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool DisposeResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetComputePipeline_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetComputePipeline*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetComputePipeline_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetComputePipeline(System.String)">
+  GetComputePipeline(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;IComputePipeline&gt; GetComputePipeline(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IComputePipeline.html">IComputePipeline</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetConstantBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetConstantBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetConstantBuffer__1_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetConstantBuffer``1(System.String)">
+  GetConstantBuffer&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;ConstantBuffer&lt;T&gt;&gt; GetConstantBuffer&lt;T&gt;(string name) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.ConstantBuffer-1.html">ConstantBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetDepthMipChain_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetDepthMipChain*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetDepthMipChain_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetDepthMipChain(System.String)">
+  GetDepthMipChain(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;DepthMipChain&gt; GetDepthMipChain(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.DepthMipChain.html">DepthMipChain</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetDepthStencilBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetDepthStencilBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetDepthStencilBuffer_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetDepthStencilBuffer(System.String)">
+  GetDepthStencilBuffer(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;DepthStencil&gt; GetDepthStencilBuffer(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetGBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetGBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetGBuffer_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetGBuffer(System.String)">
+  GetGBuffer(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;GBuffer&gt; GetGBuffer(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.GBuffer.html">GBuffer</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetGraphicsPipelineState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetGraphicsPipelineState_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetGraphicsPipelineState(System.String)">
+  GetGraphicsPipelineState(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;IGraphicsPipelineState&gt; GetGraphicsPipelineState(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetOrAddResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetOrAddResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetOrAddResource_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetOrAddResource(System.String)">
+  GetOrAddResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef GetOrAddResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetOrAddResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetOrAddResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetOrAddResource__1_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetOrAddResource``1(System.String)">
+  GetOrAddResource&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;T&gt; GetOrAddResource&lt;T&gt;(string name) where T : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetResource_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetResource(System.String)">
+  GetResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef? GetResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetResource__1_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetResource``1(System.String)">
+  GetResource&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;T&gt; GetResource&lt;T&gt;(string name) where T : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetSamplerState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetSamplerState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetSamplerState_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetSamplerState(System.String)">
+  GetSamplerState(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;ISamplerState&gt; GetSamplerState(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.ISamplerState.html">ISamplerState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetShadowAtlas_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetShadowAtlas_System_Int32_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetShadowAtlas(System.Int32)">
+  GetShadowAtlas(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ShadowAtlas GetShadowAtlas(int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetShadowAtlas_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetShadowAtlas_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetShadowAtlas(System.String)">
+  GetShadowAtlas(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;ShadowAtlas&gt; GetShadowAtlas(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetStructuredBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetStructuredBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetStructuredBuffer__1_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetStructuredBuffer``1(System.String)">
+  GetStructuredBuffer&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;StructuredBuffer&lt;T&gt;&gt; GetStructuredBuffer&lt;T&gt;(string name) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetStructuredUavBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetStructuredUavBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetStructuredUavBuffer__1_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetStructuredUavBuffer``1(System.String)">
+  GetStructuredUavBuffer&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;StructuredUavBuffer&lt;T&gt;&gt; GetStructuredUavBuffer&lt;T&gt;(string name) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetTexture1D_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetTexture1D*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetTexture1D_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetTexture1D(System.String)">
+  GetTexture1D(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;Texture1D&gt; GetTexture1D(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetTexture2D_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetTexture2D*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetTexture2D_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetTexture2D(System.String)">
+  GetTexture2D(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;Texture2D&gt; GetTexture2D(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetTexture3D_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetTexture3D*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_GetTexture3D_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.GetTexture3D(System.String)">
+  GetTexture3D(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ResourceRef&lt;Texture3D&gt; GetTexture3D(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture3D.html">Texture3D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_RemoveResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.RemoveResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_RemoveResource_System_String_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.RemoveResource(System.String)">
+  RemoveResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool RemoveResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_TryGetResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.TryGetResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_TryGetResource_System_String_HexaEngine_Graphics_Graph_ResourceRef__" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.TryGetResource(System.String,HexaEngine.Graphics.Graph.ResourceRef@)">
+  TryGetResource(string, out ResourceRef?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool TryGetResource(string name, out ResourceRef? resourceRef)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>resourceRef</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_TryGetResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.TryGetResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_TryGetResource__1_System_String_HexaEngine_Graphics_Graph_ResourceRef___0___" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.TryGetResource``1(System.String,HexaEngine.Graphics.Graph.ResourceRef{``0}@)">
+  TryGetResource&lt;T&gt;(string, out ResourceRef&lt;T&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool TryGetResource&lt;T&gt;(string name, out ResourceRef&lt;T&gt;? resourceRef) where T : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>resourceRef</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateComputePipelineState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateComputePipelineState_System_String_HexaEngine_Core_Graphics_ComputePipelineStateDescEx_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateComputePipelineState(System.String,HexaEngine.Core.Graphics.ComputePipelineStateDescEx)">
+  UpdateComputePipelineState(string, ComputePipelineStateDescEx)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateComputePipelineState(string name, ComputePipelineStateDescEx desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDescEx.html">ComputePipelineStateDescEx</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateDepthMipChain_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateDepthMipChain*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateDepthMipChain_System_String_HexaEngine_Core_Graphics_DepthStencilBufferDescription_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateDepthMipChain(System.String,HexaEngine.Core.Graphics.DepthStencilBufferDescription)">
+  UpdateDepthMipChain(string, DepthStencilBufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateDepthMipChain(string name, DepthStencilBufferDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateDepthStencilBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateDepthStencilBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateDepthStencilBuffer_System_String_HexaEngine_Core_Graphics_DepthStencilBufferDescription_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateDepthStencilBuffer(System.String,HexaEngine.Core.Graphics.DepthStencilBufferDescription)">
+  UpdateDepthStencilBuffer(string, DepthStencilBufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateDepthStencilBuffer(string name, DepthStencilBufferDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateGBuffer_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateGBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateGBuffer_System_String_HexaEngine_Core_Graphics_GBufferDescription_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateGBuffer(System.String,HexaEngine.Core.Graphics.GBufferDescription)">
+  UpdateGBuffer(string, GBufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateGBuffer(string name, GBufferDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.GBufferDescription.html">GBufferDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateGraphicsPipelineState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateGraphicsPipelineState_System_String_HexaEngine_Core_Graphics_GraphicsPipelineStateDescEx_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateGraphicsPipelineState(System.String,HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx)">
+  UpdateGraphicsPipelineState(string, GraphicsPipelineStateDescEx)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx.html">GraphicsPipelineStateDescEx</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateResource_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateResource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateResource__2_System_String___1_System_Func_HexaEngine_Core_Graphics_IGraphicsDevice___1___0__System_Collections_Generic_IList___0__" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateResource``2(System.String,``1,System.Func{HexaEngine.Core.Graphics.IGraphicsDevice,``1,``0},System.Collections.Generic.IList{``0})">
+  UpdateResource&lt;TType, TDesc&gt;(string, TDesc, Func&lt;IGraphicsDevice, TDesc, TType&gt;, IList&lt;TType&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateResource&lt;TType, TDesc&gt;(string name, TDesc desc, Func&lt;IGraphicsDevice, TDesc, TType&gt; constructor, IList&lt;TType&gt; group) where TType : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <span class="xref">TDesc</span></dt>
+    <dd></dd>
+    <dt><code>constructor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a>, TDesc, TType&gt;</dt>
+    <dd></dd>
+    <dt><code>group</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;TType&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TType</code></dt>
+    <dd></dd>
+    <dt><code>TDesc</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateSamplerState_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateSamplerState*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateSamplerState_System_String_HexaEngine_Core_Graphics_SamplerStateDescription_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateSamplerState(System.String,HexaEngine.Core.Graphics.SamplerStateDescription)">
+  UpdateSamplerState(string, SamplerStateDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateSamplerState(string name, SamplerStateDescription desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.SamplerStateDescription.html">SamplerStateDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateShadowAtlas_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateShadowAtlas_System_String_HexaEngine_Lights_ShadowAtlasDescription_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateShadowAtlas(System.String,HexaEngine.Lights.ShadowAtlasDescription)">
+  UpdateShadowAtlas(string, ShadowAtlasDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateShadowAtlas(string name, ShadowAtlasDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlasDescription.html">ShadowAtlasDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateTexture1D_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateTexture1D*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateTexture1D_System_String_HexaEngine_Core_Graphics_Texture1DDescription_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateTexture1D(System.String,HexaEngine.Core.Graphics.Texture1DDescription)">
+  UpdateTexture1D(string, Texture1DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateTexture1D(string name, Texture1DDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateTexture2D_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateTexture2D*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateTexture2D_System_String_HexaEngine_Core_Graphics_Texture2DDescription_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateTexture2D(System.String,HexaEngine.Core.Graphics.Texture2DDescription)">
+  UpdateTexture2D(string, Texture2DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateTexture2D(string name, Texture2DDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture2DDescription.html">Texture2DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateTexture3D_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateTexture3D*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_IGraphResourceBuilder_UpdateTexture3D_System_String_HexaEngine_Core_Graphics_Texture3DDescription_" data-uid="HexaEngine.Graphics.Graph.IGraphResourceBuilder.UpdateTexture3D(System.String,HexaEngine.Core.Graphics.Texture3DDescription)">
+  UpdateTexture3D(string, Texture3DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateTexture3D(string name, Texture3DDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture3DDescription.html">Texture3DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/IGraphResourceBuilder.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Probe </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Probe ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Lights_Probe.md&amp;value=---%0Auid%3A%20HexaEngine.Lights.Probe%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Lights.Probe">
+
+
+
+  <h1 id="HexaEngine_Lights_Probe" data-uid="HexaEngine.Lights.Probe" class="text-break">
+Class Probe  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Probe.cs/#L6"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Lights.html">Lights</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class Probe : GameObject, IHierarchyObject, INotifyPropertyChanged, INotifyPropertyChanging, IEditorSelectable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html">EntityNotifyBase</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.GameObject.html">GameObject</a></div>
+      <div><span class="xref">Probe</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Editor.IHierarchyObject.html">IHierarchyObject</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanging">INotifyPropertyChanging</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Editor.IEditorSelectable.html">IEditorSelectable</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Lights.Probes.StaticLightProbe.html">StaticLightProbe</a></div>
+      <div><a class="xref" href="HexaEngine.Lights.Probes.StaticReflectionProbe.html">StaticReflectionProbe</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Guid">GameObject.Guid</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Name">GameObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_FullName">GameObject.FullName</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEnabled">GameObject.IsEnabled</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorVisible">GameObject.IsEditorVisible</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsHidden">GameObject.IsHidden</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Transform">GameObject.Transform</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsVisible">GameObject.IsVisible</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Parent">GameObject.Parent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Initialized">GameObject.Initialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorSelected">GameObject.IsEditorSelected</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorOpen">GameObject.IsEditorOpen</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorDisplayed">GameObject.IsEditorDisplayed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Children">GameObject.Children</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Components">GameObject.Components</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Tag">GameObject.Tag</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Type">GameObject.Type</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_EnabledChanged">GameObject.EnabledChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_NameChanged">GameObject.NameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TagChanged">GameObject.TagChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ParentChanged">GameObject.ParentChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TransformChanged">GameObject.TransformChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TransformUpdated">GameObject.TransformUpdated</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ComponentAdded">GameObject.ComponentAdded</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ComponentRemoved">GameObject.ComponentRemoved</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ChildAdded">GameObject.ChildAdded</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ChildRemoved">GameObject.ChildRemoved</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_OverwriteTransform_Hexa_NET_Mathematics_Transform_">GameObject.OverwriteTransform(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_OnTransformChanged_Hexa_NET_Mathematics_Transform_">GameObject.OnTransformChanged(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_OnTransformUpdated_Hexa_NET_Mathematics_Transform_">GameObject.OnTransformUpdated(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_SendUpdateTransformed">GameObject.SendUpdateTransformed()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_SaveState">GameObject.SaveState()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RestoreState">GameObject.RestoreState()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Merge_HexaEngine_Scenes_GameObject_">GameObject.Merge(GameObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddChild_HexaEngine_Scenes_GameObject_">GameObject.AddChild(GameObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RemoveChild_HexaEngine_Scenes_GameObject_">GameObject.RemoveChild(GameObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponent_HexaEngine_Scenes_IComponent_">GameObject.AddComponent(IComponent)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponent__1">GameObject.AddComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponentSingleton__1">GameObject.AddComponentSingleton&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RemoveComponent_HexaEngine_Scenes_IComponent_">GameObject.RemoveComponent(IComponent)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Initialize">GameObject.Initialize()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Uninitialize">GameObject.Uninitialize()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetScene">GameObject.GetScene()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_BuildReferences">GameObject.BuildReferences()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetDepth_System_Int32__">GameObject.GetDepth(ref int)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_FindParent__1">GameObject.FindParent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_FindChild__1">GameObject.FindChild&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentFromParent__1">GameObject.GetComponentFromParent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentsFromParents__1">GameObject.GetComponentsFromParents&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentFromChild__1">GameObject.GetComponentFromChild&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentsFromChilds__1">GameObject.GetComponentsFromChilds&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetOrCreateComponent__1">GameObject.GetOrCreateComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponent__1">GameObject.GetComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TryGetComponent__1___0__">GameObject.TryGetComponent&lt;T&gt;(out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponents__1">GameObject.GetComponents&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponents_System_Func_HexaEngine_Scenes_IComponent_System_Boolean__">GameObject.GetComponents(Func&lt;IComponent, bool&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponents__1_System_Func___0_System_Boolean__">GameObject.GetComponents&lt;T&gt;(Func&lt;T, bool&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_HasComponent__1">GameObject.HasComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentsFromTree__1">GameObject.GetComponentsFromTree&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_DiscoverComponents__2">GameObject.DiscoverComponents&lt;T, TStop&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RemoveComponent_System_ValueTuple_HexaEngine_Scenes_GameObject_HexaEngine_Scenes_IComponent__">GameObject.RemoveComponent((GameObject, IComponent))</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponent_System_ValueTuple_HexaEngine_Scenes_GameObject_HexaEngine_Scenes_IComponent__">GameObject.AddComponent((GameObject, IComponent))</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetChild__1">GameObject.GetChild&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TryGetChild__1___0__">GameObject.TryGetChild&lt;T&gt;(out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetChildren__1">GameObject.GetChildren&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanging">EntityNotifyBase.PropertyChanging</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanged">EntityNotifyBase.PropertyChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanging_System_String_">EntityNotifyBase.OnPropertyChanging(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanged_System_String_">EntityNotifyBase.OnPropertyChanged(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotify__1___0____0_System_String_">EntityNotifyBase.SetAndNotify&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithRefEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithRefEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Scenes.SceneExensions.html#HexaEngine_Scenes_SceneExensions_AddComponentIfIs__1_HexaEngine_Scenes_GameObject_System_Action___0__">SceneExensions.AddComponentIfIs&lt;T&gt;(GameObject, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Scenes.SceneExensions.html#HexaEngine_Scenes_SceneExensions_RemoveComponentIfIs__1_HexaEngine_Scenes_GameObject_System_Action___0__">SceneExensions.RemoveComponentIfIs&lt;T&gt;(GameObject, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Scripts.ScriptHelper.html#HexaEngine_Scripts_ScriptHelper_FindScript__1_HexaEngine_Scenes_GameObject_">ScriptHelper.FindScript&lt;T&gt;(GameObject)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Scripts.ScriptHelper.html#HexaEngine_Scripts_ScriptHelper_FindScript__1_HexaEngine_Scenes_GameObject_System_Func___0_System_Boolean__">ScriptHelper.FindScript&lt;T&gt;(GameObject, Func&lt;T, bool&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Lights_Probe_Exposure_" data-uid="HexaEngine.Lights.Probe.Exposure*"></a>
+
+  <h3 id="HexaEngine_Lights_Probe_Exposure" data-uid="HexaEngine.Lights.Probe.Exposure">
+  Exposure
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Probe.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Exposure { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Probe_HorizonCutOff_" data-uid="HexaEngine.Lights.Probe.HorizonCutOff*"></a>
+
+  <h3 id="HexaEngine_Lights_Probe_HorizonCutOff" data-uid="HexaEngine.Lights.Probe.HorizonCutOff">
+  HorizonCutOff
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Probe.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float HorizonCutOff { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Probe_Orientation_" data-uid="HexaEngine.Lights.Probe.Orientation*"></a>
+
+  <h3 id="HexaEngine_Lights_Probe_Orientation" data-uid="HexaEngine.Lights.Probe.Orientation">
+  Orientation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Probe.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3 Orientation { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Probe_ProbeType_" data-uid="HexaEngine.Lights.Probe.ProbeType*"></a>
+
+  <h3 id="HexaEngine_Lights_Probe_ProbeType" data-uid="HexaEngine.Lights.Probe.ProbeType">
+  ProbeType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Probe.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract ProbeType ProbeType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.ProbeType.html">ProbeType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Probe_Range_" data-uid="HexaEngine.Lights.Probe.Range*"></a>
+
+  <h3 id="HexaEngine_Lights_Probe_Range" data-uid="HexaEngine.Lights.Probe.Range">
+  Range
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Probe.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Range { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Probe.cs/#L6" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IGraphicsContext </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IGraphicsContext ">
+      
+      <meta name="description" content="Provides an interface for graphics context management and operations on a graphics device.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_IGraphicsContext.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.IGraphicsContext%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.IGraphicsContext">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_IGraphicsContext" data-uid="HexaEngine.Core.Graphics.IGraphicsContext" class="text-break">
+Interface IGraphicsContext  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Provides an interface for graphics context management and operations on a graphics device.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IGraphicsContext : IDeviceChild, INative, IDisposable</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html#HexaEngine_Core_Graphics_IDeviceChild_DebugName">IDeviceChild.DebugName</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html#HexaEngine_Core_Graphics_IDeviceChild_IsDisposed">IDeviceChild.IsDisposed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html#HexaEngine_Core_Graphics_IDeviceChild_OnDisposed">IDeviceChild.OnDisposed</a>
+    </div>
+    <div>
+      <span class="xref">INative.NativePointer</span>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable.dispose">IDisposable.Dispose()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetAs__1_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetAs&lt;T&gt;(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetPointer_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetPointer(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContextExtensions.html#HexaEngine_Core_Graphics_IGraphicsContextExtensions_BeginEventScope_HexaEngine_Core_Graphics_IGraphicsContext_System_String_">IGraphicsContextExtensions.BeginEventScope(IGraphicsContext, string)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Device_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Device*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Device" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Device">
+  Device
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the graphics device associated with this graphics context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsDevice Device { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_BeginDraw_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.BeginDraw*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_BeginDraw_HexaEngine_Core_Graphics_BeginDrawDesc_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.BeginDraw(HexaEngine.Core.Graphics.BeginDrawDesc)">
+  BeginDraw(BeginDrawDesc)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void BeginDraw(BeginDrawDesc desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.BeginDrawDesc.html">BeginDrawDesc</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_BeginEvent_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.BeginEvent*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_BeginEvent_System_String_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.BeginEvent(System.String)">
+  BeginEvent(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L418"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Marks the beginning of a section of event code.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void BeginEvent(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string that contains the name of the event. The name is not relevant to the operating system.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ClearDepthStencilView_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearDepthStencilView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ClearDepthStencilView_HexaEngine_Core_Graphics_IDepthStencilView_HexaEngine_Core_Graphics_DepthStencilClearFlags_System_Single_System_Byte_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearDepthStencilView(HexaEngine.Core.Graphics.IDepthStencilView,HexaEngine.Core.Graphics.DepthStencilClearFlags,System.Single,System.Byte)">
+  ClearDepthStencilView(IDepthStencilView, DepthStencilClearFlags, float, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the specified depth-stencil view with the specified clear flags, depth, and stencil values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>depthStencilView</code> <a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd><p>The depth-stencil view to clear.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilClearFlags.html">DepthStencilClearFlags</a></dt>
+    <dd><p>The clear flags specifying what to clear.</p>
+</dd>
+    <dt><code>depth</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The depth value to clear to.</p>
+</dd>
+    <dt><code>stencil</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd><p>The stencil value to clear to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ClearRenderTargetView_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearRenderTargetView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ClearRenderTargetView_HexaEngine_Core_Graphics_IRenderTargetView_System_Numerics_Vector4_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearRenderTargetView(HexaEngine.Core.Graphics.IRenderTargetView,System.Numerics.Vector4)">
+  ClearRenderTargetView(IRenderTargetView, Vector4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the specified render target view with the specified clear color.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>renderTargetView</code> <a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd><p>The render target view to clear.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The clear color as a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ClearRenderTargetViews_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearRenderTargetViews*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ClearRenderTargetViews_System_UInt32_System_Void___System_Numerics_Vector4_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearRenderTargetViews(System.UInt32,System.Void**,System.Numerics.Vector4)">
+  ClearRenderTargetViews(uint, void**, Vector4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L378"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears multiple render target views with the specified color values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ClearRenderTargetViews(uint count, void** rtvs, Vector4 value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of render target views to clear.</p>
+</dd>
+    <dt><code>rtvs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>**</dt>
+    <dd><p>An array of pointers to render target views to clear.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The color value to clear the render target views with.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ClearState_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ClearState" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearState">
+  ClearState()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L224"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the graphics context's state to its default values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ClearState()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ClearUnorderedAccessViewUint_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearUnorderedAccessViewUint*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ClearUnorderedAccessViewUint_HexaEngine_Core_Graphics_IUnorderedAccessView_System_UInt32_System_UInt32_System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearUnorderedAccessViewUint(HexaEngine.Core.Graphics.IUnorderedAccessView,System.UInt32,System.UInt32,System.UInt32,System.UInt32)">
+  ClearUnorderedAccessViewUint(IUnorderedAccessView, uint, uint, uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L388"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears an unordered access view with unsigned integer values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ClearUnorderedAccessViewUint(IUnorderedAccessView uav, uint r, uint g, uint b, uint a)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>uav</code> <a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+    <dd><p>The unordered access view to clear.</p>
+</dd>
+    <dt><code>r</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The red channel value to clear the unordered access view with.</p>
+</dd>
+    <dt><code>g</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The green channel value to clear the unordered access view with.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The blue channel value to clear the unordered access view with.</p>
+</dd>
+    <dt><code>a</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The alpha channel value to clear the unordered access view with.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ClearView_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ClearView_HexaEngine_Core_Graphics_IDepthStencilView_System_Numerics_Vector4_Hexa_NET_Mathematics_Rect_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearView(HexaEngine.Core.Graphics.IDepthStencilView,System.Numerics.Vector4,Hexa.NET.Mathematics.Rect)">
+  ClearView(IDepthStencilView, Vector4, Rect)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L404"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears a depth-stencil view with the specified color value within a specified rectangular region.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ClearView(IDepthStencilView dsv, Vector4 color, Rect rect)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dsv</code> <a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd><p>The depth-stencil view to clear.</p>
+</dd>
+    <dt><code>color</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The color value to clear the depth-stencil view with.</p>
+</dd>
+    <dt><code>rect</code> <span class="xref">Rect</span></dt>
+    <dd><p>The rectangular region to clear in the depth-stencil view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ClearView_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ClearView_HexaEngine_Core_Graphics_IRenderTargetView_System_Numerics_Vector4_Hexa_NET_Mathematics_Rect_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearView(HexaEngine.Core.Graphics.IRenderTargetView,System.Numerics.Vector4,Hexa.NET.Mathematics.Rect)">
+  ClearView(IRenderTargetView, Vector4, Rect)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L396"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears a render target view with the specified color value within a specified rectangular region.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ClearView(IRenderTargetView rtv, Vector4 color, Rect rect)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rtv</code> <a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd><p>The render target view to clear.</p>
+</dd>
+    <dt><code>color</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The color value to clear the render target view with.</p>
+</dd>
+    <dt><code>rect</code> <span class="xref">Rect</span></dt>
+    <dd><p>The rectangular region to clear in the render target view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ClearView_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ClearView_HexaEngine_Core_Graphics_IUnorderedAccessView_System_Numerics_Vector4_Hexa_NET_Mathematics_Rect_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ClearView(HexaEngine.Core.Graphics.IUnorderedAccessView,System.Numerics.Vector4,Hexa.NET.Mathematics.Rect)">
+  ClearView(IUnorderedAccessView, Vector4, Rect)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L412"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears an unordered access view with the specified color value within a specified rectangular region.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ClearView(IUnorderedAccessView uav, Vector4 color, Rect rect)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>uav</code> <a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+    <dd><p>The unordered access view to clear.</p>
+</dd>
+    <dt><code>color</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd><p>The color value to clear the unordered access view with.</p>
+</dd>
+    <dt><code>rect</code> <span class="xref">Rect</span></dt>
+    <dd><p>The rectangular region to clear in the unordered access view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_CopyResource_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.CopyResource*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_CopyResource_HexaEngine_Core_Graphics_IResource_HexaEngine_Core_Graphics_IResource_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.CopyResource(HexaEngine.Core.Graphics.IResource,HexaEngine.Core.Graphics.IResource)">
+  CopyResource(IResource, IResource)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies data from one resource to another.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void CopyResource(IResource dst, IResource src)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dst</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The destination resource to copy data to.</p>
+</dd>
+    <dt><code>src</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The source resource to copy data from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_CopyStructureCount_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.CopyStructureCount*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_CopyStructureCount_HexaEngine_Core_Graphics_IBuffer_System_UInt32_HexaEngine_Core_Graphics_IUnorderedAccessView_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.CopyStructureCount(HexaEngine.Core.Graphics.IBuffer,System.UInt32,HexaEngine.Core.Graphics.IUnorderedAccessView)">
+  CopyStructureCount(IBuffer, uint, IUnorderedAccessView)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies the structure count from an unordered access view (UAV) to a buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void CopyStructureCount(IBuffer dst, uint alignedByteOffset, IUnorderedAccessView uav)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dst</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The destination buffer to store the structure count.</p>
+</dd>
+    <dt><code>alignedByteOffset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The aligned byte offset in the buffer.</p>
+</dd>
+    <dt><code>uav</code> <a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+    <dd><p>The unordered access view (UAV) containing the structure count.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Dispatch_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Dispatch*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Dispatch_System_UInt32_System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Dispatch(System.UInt32,System.UInt32,System.UInt32)">
+  Dispatch(uint, uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L321"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Dispatches a compute shader with the specified thread group counts.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Dispatch(uint threadGroupCountX, uint threadGroupCountY, uint threadGroupCountZ)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>threadGroupCountX</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of thread groups in the X direction.</p>
+</dd>
+    <dt><code>threadGroupCountY</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of thread groups in the Y direction.</p>
+</dd>
+    <dt><code>threadGroupCountZ</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of thread groups in the Z direction.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_DispatchIndirect_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DispatchIndirect*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_DispatchIndirect_HexaEngine_Core_Graphics_IBuffer_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DispatchIndirect(HexaEngine.Core.Graphics.IBuffer,System.UInt32)">
+  DispatchIndirect(IBuffer, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L328"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Dispatches a compute shader indirectly using the specified dispatch arguments.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DispatchIndirect(IBuffer dispatchArgs, uint offset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dispatchArgs</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The buffer containing the dispatch arguments.</p>
+</dd>
+    <dt><code>offset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The offset to start reading dispatch arguments from the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_DrawIndexedInstanced_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawIndexedInstanced*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_DrawIndexedInstanced_System_UInt32_System_UInt32_System_UInt32_System_Int32_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawIndexedInstanced(System.UInt32,System.UInt32,System.UInt32,System.Int32,System.UInt32)">
+  DrawIndexedInstanced(uint, uint, uint, int, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L262"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws indexed, instanced geometry using the specified index count and instance count.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DrawIndexedInstanced(uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>indexCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of indices to draw.</p>
+</dd>
+    <dt><code>instanceCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of instances to draw.</p>
+</dd>
+    <dt><code>indexOffset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The offset to start reading indices from the index buffer.</p>
+</dd>
+    <dt><code>vertexOffset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The offset to start reading vertices from the vertex buffer.</p>
+</dd>
+    <dt><code>instanceOffset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The offset to start reading instance data from the instance buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_DrawIndexedInstancedIndirect_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawIndexedInstancedIndirect*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_DrawIndexedInstancedIndirect_HexaEngine_Core_Graphics_IBuffer_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawIndexedInstancedIndirect(HexaEngine.Core.Graphics.IBuffer,System.UInt32)">
+  DrawIndexedInstancedIndirect(IBuffer, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L269"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws indexed, instanced geometry using indirect arguments from a buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DrawIndexedInstancedIndirect(IBuffer bufferForArgs, uint alignedByteOffsetForArgs)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bufferForArgs</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The buffer containing the indirect draw arguments.</p>
+</dd>
+    <dt><code>alignedByteOffsetForArgs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The aligned byte offset within the buffer for the draw arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_DrawIndexedInstancedIndirect_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawIndexedInstancedIndirect*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_DrawIndexedInstancedIndirect_System_Void__System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawIndexedInstancedIndirect(System.Void*,System.UInt32)">
+  DrawIndexedInstancedIndirect(void*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L276"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws indexed, instanced geometry using indirect arguments from a pointer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DrawIndexedInstancedIndirect(void* bufferForArgs, uint alignedByteOffsetForArgs)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bufferForArgs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the memory location containing the indirect draw arguments.</p>
+</dd>
+    <dt><code>alignedByteOffsetForArgs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The aligned byte offset within the memory location for the draw arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_DrawInstanced_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawInstanced*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_DrawInstanced_System_UInt32_System_UInt32_System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawInstanced(System.UInt32,System.UInt32,System.UInt32,System.UInt32)">
+  DrawInstanced(uint, uint, uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L252"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws non-indexed, instanced geometry using the specified vertex count and instance count.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DrawInstanced(uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertexCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of vertices to draw.</p>
+</dd>
+    <dt><code>instanceCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of instances to draw.</p>
+</dd>
+    <dt><code>vertexOffset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The offset to start reading vertices from the vertex buffer.</p>
+</dd>
+    <dt><code>instanceOffset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The offset to start reading instance data from the instance buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_DrawInstancedIndirect_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawInstancedIndirect*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_DrawInstancedIndirect_HexaEngine_Core_Graphics_IBuffer_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawInstancedIndirect(HexaEngine.Core.Graphics.IBuffer,System.UInt32)">
+  DrawInstancedIndirect(IBuffer, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L283"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws non-indexed, instanced geometry using indirect arguments from a buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DrawInstancedIndirect(IBuffer bufferForArgs, uint alignedByteOffsetForArgs)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bufferForArgs</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The buffer containing the indirect draw arguments.</p>
+</dd>
+    <dt><code>alignedByteOffsetForArgs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The aligned byte offset within the buffer for the draw arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_DrawInstancedIndirect_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawInstancedIndirect*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_DrawInstancedIndirect_System_Void__System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.DrawInstancedIndirect(System.Void*,System.UInt32)">
+  DrawInstancedIndirect(void*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L290"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws non-indexed, instanced geometry using indirect arguments from a pointer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DrawInstancedIndirect(void* bufferForArgs, uint alignedByteOffsetForArgs)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bufferForArgs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the memory location containing the indirect draw arguments.</p>
+</dd>
+    <dt><code>alignedByteOffsetForArgs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The aligned byte offset within the memory location for the draw arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_EndEvent_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.EndEvent*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_EndEvent" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.EndEvent">
+  EndEvent()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L423"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Marks the end of a section of event code.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void EndEvent()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ExecuteCommandBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ExecuteCommandBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ExecuteCommandBuffer_HexaEngine_Core_Graphics_ICommandBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ExecuteCommandBuffer(HexaEngine.Core.Graphics.ICommandBuffer)">
+  ExecuteCommandBuffer(ICommandBuffer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L352"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExecuteCommandBuffer(ICommandBuffer commandBuffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.ICommandBuffer.html">ICommandBuffer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_ExecuteCommandList_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ExecuteCommandList*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_ExecuteCommandList_HexaEngine_Core_Graphics_ICommandList_System_Boolean_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.ExecuteCommandList(HexaEngine.Core.Graphics.ICommandList,System.Boolean)">
+  ExecuteCommandList(ICommandList, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L341"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Executes the specified command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use command buffers&quot;)]
+void ExecuteCommandList(ICommandList commandList, bool restoreState)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandList</code> <a class="xref" href="HexaEngine.Core.Graphics.ICommandList.html">ICommandList</a></dt>
+    <dd><p>The command list to execute.</p>
+</dd>
+    <dt><code>restoreState</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True to restore the rendering state after execution; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_FinishCommandList_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.FinishCommandList*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_FinishCommandList_System_Boolean_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.FinishCommandList(System.Boolean)">
+  FinishCommandList(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L349"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Finishes and returns a new command list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use command buffers&quot;)]
+ICommandList FinishCommandList(bool restoreState)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>restoreState</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True to restore the rendering state after finishing; otherwise, false.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ICommandList.html">ICommandList</a></dt>
+    <dd><p>A new command list that can be used for rendering commands.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Flush_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Flush*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Flush" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Flush">
+  Flush()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L313"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flushes any pending rendering commands to the GPU.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Flush()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_GenerateMips_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.GenerateMips*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_GenerateMips_HexaEngine_Core_Graphics_IShaderResourceView_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.GenerateMips(HexaEngine.Core.Graphics.IShaderResourceView)">
+  GenerateMips(IShaderResourceView)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L334"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Generates mipmaps for a shader resource view.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void GenerateMips(IShaderResourceView resourceView)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resourceView</code> <a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd><p>The shader resource view to generate mipmaps for.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Map_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Map*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Map_HexaEngine_Core_Graphics_IResource_System_Int32_HexaEngine_Core_Graphics_MapMode_HexaEngine_Core_Graphics_MapFlags_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Map(HexaEngine.Core.Graphics.IResource,System.Int32,HexaEngine.Core.Graphics.MapMode,HexaEngine.Core.Graphics.MapFlags)">
+  Map(IResource, int, MapMode, MapFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Maps a resource to allow read or write access from the CPU.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">MappedSubresource Map(IResource resource, int subresourceIndex, MapMode mode, MapFlags flags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to map.</p>
+</dd>
+    <dt><code>subresourceIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the subresource to map.</p>
+</dd>
+    <dt><code>mode</code> <a class="xref" href="HexaEngine.Core.Graphics.MapMode.html">MapMode</a></dt>
+    <dd><p>The mapping mode (read or write).</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.MapFlags.html">MapFlags</a></dt>
+    <dd><p>Optional flags for mapping.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.MappedSubresource.html">MappedSubresource</a></dt>
+    <dd><p>A <a class="xref" href="HexaEngine.Core.Graphics.MappedSubresource.html">MappedSubresource</a> object representing the mapped data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_QueryBegin_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.QueryBegin*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_QueryBegin_HexaEngine_Core_Graphics_IQuery_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.QueryBegin(HexaEngine.Core.Graphics.IQuery)">
+  QueryBegin(IQuery)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L296"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Begins a query operation using the specified query object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void QueryBegin(IQuery query)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>query</code> <a class="xref" href="HexaEngine.Core.Graphics.IQuery.html">IQuery</a></dt>
+    <dd><p>The query object to begin the operation with.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_QueryEnd_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.QueryEnd*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_QueryEnd_HexaEngine_Core_Graphics_IQuery_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.QueryEnd(HexaEngine.Core.Graphics.IQuery)">
+  QueryEnd(IQuery)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L302"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Ends a query operation using the specified query object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void QueryEnd(IQuery query)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>query</code> <a class="xref" href="HexaEngine.Core.Graphics.IQuery.html">IQuery</a></dt>
+    <dd><p>The query object to end the operation with.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_QueryGetData_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.QueryGetData*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_QueryGetData_HexaEngine_Core_Graphics_IQuery_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.QueryGetData(HexaEngine.Core.Graphics.IQuery)">
+  QueryGetData(IQuery)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves the query data from the specified query object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void QueryGetData(IQuery query)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>query</code> <a class="xref" href="HexaEngine.Core.Graphics.IQuery.html">IQuery</a></dt>
+    <dd><p>The query object to retrieve data from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Read_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Read*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Read_HexaEngine_Core_Graphics_IBuffer_System_Void__System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Read(HexaEngine.Core.Graphics.IBuffer,System.Void*,System.Int32)">
+  Read(IBuffer, void*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads data from a buffer to a pointer with optional mapping flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Read(IBuffer buffer, void* value, int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The source buffer to read data from.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to store the read data.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The size of the data to read, in bytes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Read_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Read*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Read__1_HexaEngine_Core_Graphics_IBuffer___0__System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Read``1(HexaEngine.Core.Graphics.IBuffer,``0*,System.UInt32)">
+  Read&lt;T&gt;(IBuffer, T*, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads data from a buffer to an array of type T with optional mapping flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Read&lt;T&gt;(IBuffer buffer, T* values, uint count) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The source buffer to read data from.</p>
+</dd>
+    <dt><code>values</code> T*</dt>
+    <dd><p>An array to store the read data.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of elements to read from the buffer.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of data to read. Must be unmanaged.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetComputePipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetComputePipelineState_HexaEngine_Core_Graphics_IComputePipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetComputePipelineState(HexaEngine.Core.Graphics.IComputePipelineState)">
+  SetComputePipelineState(IComputePipelineState?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the active compute pipeline state for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetComputePipelineState(IComputePipelineState? state)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>state</code> <a class="xref" href="HexaEngine.Core.Graphics.IComputePipelineState.html">IComputePipelineState</a></dt>
+    <dd><p>The compute pipeline state to set. Pass null to unset the active pipeline state.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetGraphicsPipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetGraphicsPipelineState_HexaEngine_Core_Graphics_IGraphicsPipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetGraphicsPipelineState(HexaEngine.Core.Graphics.IGraphicsPipelineState)">
+  SetGraphicsPipelineState(IGraphicsPipelineState?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the active graphics pipeline state for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetGraphicsPipelineState(IGraphicsPipelineState? state)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>state</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a></dt>
+    <dd><p>The graphics pipeline state to set. Pass null to unset the active pipeline state.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetIndexBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetIndexBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetIndexBuffer_HexaEngine_Core_Graphics_IBuffer_HexaEngine_Core_Graphics_Format_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetIndexBuffer(HexaEngine.Core.Graphics.IBuffer,HexaEngine.Core.Graphics.Format,System.Int32)">
+  SetIndexBuffer(IBuffer?, Format, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets an index buffer for the input assembler stage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>indexBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The index buffer to set.</p>
+</dd>
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The format of the indices in the buffer.</p>
+</dd>
+    <dt><code>offset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The offset (in bytes) to start reading from the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetPrimitiveTopology_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetPrimitiveTopology*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetPrimitiveTopology_HexaEngine_Core_Graphics_PrimitiveTopology_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetPrimitiveTopology(HexaEngine.Core.Graphics.PrimitiveTopology)">
+  SetPrimitiveTopology(PrimitiveTopology)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L243"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the primitive topology for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetPrimitiveTopology(PrimitiveTopology topology)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>topology</code> <a class="xref" href="HexaEngine.Core.Graphics.PrimitiveTopology.html">PrimitiveTopology</a></dt>
+    <dd><p>The primitive topology to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetRenderTarget_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetRenderTarget*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetRenderTarget_HexaEngine_Core_Graphics_IRenderTargetView_HexaEngine_Core_Graphics_IDepthStencilView_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetRenderTarget(HexaEngine.Core.Graphics.IRenderTargetView,HexaEngine.Core.Graphics.IDepthStencilView)">
+  SetRenderTarget(IRenderTargetView?, IDepthStencilView?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L188"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the render target and depth-stencil views for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetRenderTarget(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>renderTargetView</code> <a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd><p>The render target view to set. Pass null to unset the render target view.</p>
+</dd>
+    <dt><code>depthStencilView</code> <a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd><p>The depth-stencil view to set. Pass null to unset the depth-stencil view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetRenderTargets_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetRenderTargets*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetRenderTargets_System_UInt32_System_Void___HexaEngine_Core_Graphics_IDepthStencilView_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetRenderTargets(System.UInt32,System.Void**,HexaEngine.Core.Graphics.IDepthStencilView)">
+  SetRenderTargets(uint, void**, IDepthStencilView?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L370"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets render targets for rendering using an array of views and an optional depth-stencil view.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetRenderTargets(uint count, void** views, IDepthStencilView? depthStencilView)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of render targets to set.</p>
+</dd>
+    <dt><code>views</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>**</dt>
+    <dd><p>An array of pointers to render target views to set.</p>
+</dd>
+    <dt><code>depthStencilView</code> <a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd><p>The optional depth-stencil view to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetRenderTargetsAndUnorderedAccessViews_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetRenderTargetsAndUnorderedAccessViews*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetRenderTargetsAndUnorderedAccessViews_HexaEngine_Core_Graphics_IRenderTargetView_HexaEngine_Core_Graphics_IDepthStencilView_System_UInt32_HexaEngine_Core_Graphics_IUnorderedAccessView_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetRenderTargetsAndUnorderedAccessViews(HexaEngine.Core.Graphics.IRenderTargetView,HexaEngine.Core.Graphics.IDepthStencilView,System.UInt32,HexaEngine.Core.Graphics.IUnorderedAccessView,System.UInt32)">
+  SetRenderTargetsAndUnorderedAccessViews(IRenderTargetView?, IDepthStencilView?, uint, IUnorderedAccessView?, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L198"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the render target, depth-stencil view, and unordered access views for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetRenderTargetsAndUnorderedAccessViews(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView, uint uavSlot, IUnorderedAccessView? unorderedAccessView, uint uavInitialCount = 4294967295)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>renderTargetView</code> <a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd><p>The render target view to set. Pass null to unset the render target view.</p>
+</dd>
+    <dt><code>depthStencilView</code> <a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd><p>The depth-stencil view to set. Pass null to unset the depth-stencil view.</p>
+</dd>
+    <dt><code>uavSlot</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The slot for the unordered access view.</p>
+</dd>
+    <dt><code>unorderedAccessView</code> <a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+    <dd><p>The unordered access view to set. Pass null to unset the unordered access view.</p>
+</dd>
+    <dt><code>uavInitialCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial count for the unordered access view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetRenderTargetsAndUnorderedAccessViews_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetRenderTargetsAndUnorderedAccessViews*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetRenderTargetsAndUnorderedAccessViews_System_UInt32_System_Void___HexaEngine_Core_Graphics_IDepthStencilView_System_UInt32_System_UInt32_System_Void___System_UInt32__" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetRenderTargetsAndUnorderedAccessViews(System.UInt32,System.Void**,HexaEngine.Core.Graphics.IDepthStencilView,System.UInt32,System.UInt32,System.Void**,System.UInt32*)">
+  SetRenderTargetsAndUnorderedAccessViews(uint, void**, IDepthStencilView?, uint, uint, void**, uint*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the render targets, depth-stencil view, and unordered access views for rendering using arrays of views and counts.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetRenderTargetsAndUnorderedAccessViews(uint count, void** views, IDepthStencilView? depthStencilView, uint uavSlot, uint uavCount, void** uavs, uint* pUavInitialCount)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of views in the arrays.</p>
+</dd>
+    <dt><code>views</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>**</dt>
+    <dd><p>An array of pointers to render target views and depth-stencil view.</p>
+</dd>
+    <dt><code>depthStencilView</code> <a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd><p>The depth-stencil view to set. Pass null to unset the depth-stencil view.</p>
+</dd>
+    <dt><code>uavSlot</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The slot for the unordered access view.</p>
+</dd>
+    <dt><code>uavCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of unordered access views in the array.</p>
+</dd>
+    <dt><code>uavs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>**</dt>
+    <dd><p>An array of pointers to unordered access views.</p>
+</dd>
+    <dt><code>pUavInitialCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>*</dt>
+    <dd><p>An array of initial counts for the unordered access views.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetResourceBindingList_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetResourceBindingList*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetResourceBindingList_HexaEngine_Core_Graphics_IResourceBindingList_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetResourceBindingList(HexaEngine.Core.Graphics.IResourceBindingList)">
+  SetResourceBindingList(IResourceBindingList)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetResourceBindingList(IResourceBindingList resourceBindings)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resourceBindings</code> <a class="xref" href="HexaEngine.Core.Graphics.IResourceBindingList.html">IResourceBindingList</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetScissorRect_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetScissorRect*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetScissorRect_System_Int32_System_Int32_System_Int32_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetScissorRect(System.Int32,System.Int32,System.Int32,System.Int32)">
+  SetScissorRect(int, int, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L219"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the scissor rectangle to restrict the rendering area.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetScissorRect(int x, int y, int z, int w)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The x-coordinate of the top-left corner of the scissor rectangle.</p>
+</dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The y-coordinate of the top-left corner of the scissor rectangle.</p>
+</dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the scissor rectangle.</p>
+</dd>
+    <dt><code>w</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The height of the scissor rectangle.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetVertexBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetVertexBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetVertexBuffer_HexaEngine_Core_Graphics_IBuffer_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetVertexBuffer(HexaEngine.Core.Graphics.IBuffer,System.UInt32)">
+  SetVertexBuffer(IBuffer?, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a vertex buffer for the input assembler stage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetVertexBuffer(IBuffer? vertexBuffer, uint stride)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertexBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The vertex buffer to set.</p>
+</dd>
+    <dt><code>stride</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The stride (size of each vertex) in bytes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetVertexBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetVertexBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetVertexBuffer_HexaEngine_Core_Graphics_IBuffer_System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetVertexBuffer(HexaEngine.Core.Graphics.IBuffer,System.UInt32,System.UInt32)">
+  SetVertexBuffer(IBuffer?, uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a vertex buffer for the input assembler stage with an offset.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetVertexBuffer(IBuffer? vertexBuffer, uint stride, uint offset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertexBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The vertex buffer to set.</p>
+</dd>
+    <dt><code>stride</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The stride (size of each vertex) in bytes.</p>
+</dd>
+    <dt><code>offset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The offset (in bytes) to start reading from the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetVertexBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetVertexBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetVertexBuffer_System_UInt32_HexaEngine_Core_Graphics_IBuffer_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetVertexBuffer(System.UInt32,HexaEngine.Core.Graphics.IBuffer,System.UInt32)">
+  SetVertexBuffer(uint, IBuffer?, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a vertex buffer for the input assembler stage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slot</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The vertex buffer slot to set.</p>
+</dd>
+    <dt><code>vertexBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The vertex buffer to set.</p>
+</dd>
+    <dt><code>stride</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The stride (size of each vertex) in bytes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetVertexBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetVertexBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetVertexBuffer_System_UInt32_HexaEngine_Core_Graphics_IBuffer_System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetVertexBuffer(System.UInt32,HexaEngine.Core.Graphics.IBuffer,System.UInt32,System.UInt32)">
+  SetVertexBuffer(uint, IBuffer?, uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a vertex buffer for the input assembler stage with an offset.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride, uint offset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slot</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The vertex buffer slot to set.</p>
+</dd>
+    <dt><code>vertexBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The vertex buffer to set.</p>
+</dd>
+    <dt><code>stride</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The stride (size of each vertex) in bytes.</p>
+</dd>
+    <dt><code>offset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The offset (in bytes) to start reading from the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetViewport_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetViewport*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetViewport_Hexa_NET_Mathematics_Viewport_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetViewport(Hexa.NET.Mathematics.Viewport)">
+  SetViewport(Viewport)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L230"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the viewport for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetViewport(Viewport viewport)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>viewport</code> <span class="xref">Viewport</span></dt>
+    <dd><p>The viewport to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_SetViewports_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetViewports*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_SetViewports_System_UInt32_Hexa_NET_Mathematics_Viewport__" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.SetViewports(System.UInt32,Hexa.NET.Mathematics.Viewport*)">
+  SetViewports(uint, Viewport*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L237"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets an array of viewports for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetViewports(uint count, Viewport* viewports)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of viewports in the array.</p>
+</dd>
+    <dt><code>viewports</code> <span class="xref">Viewport</span>*</dt>
+    <dd><p>An array of viewports to set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Signal_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Signal*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Signal_HexaEngine_Core_Graphics_IFence_System_UInt64_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Signal(HexaEngine.Core.Graphics.IFence,System.UInt64)">
+  Signal(IFence, ulong)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L431"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates a fence to a specified value after all previous work has completed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Signal(IFence fence, ulong value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fence</code> <a class="xref" href="HexaEngine.Core.Graphics.IFence.html">IFence</a></dt>
+    <dd><p>A Fence object.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>The value to set the fence to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Graphics_IGraphicsContext_Signal_HexaEngine_Core_Graphics_IFence_System_UInt64__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Note: This method only applies to immediate-mode contexts.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Unmap_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Unmap*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Unmap_HexaEngine_Core_Graphics_IResource_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Unmap(HexaEngine.Core.Graphics.IResource,System.Int32)">
+  Unmap(IResource, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Unmaps a previously mapped resource to invalidate CPU access.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Unmap(IResource resource, int subresourceIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to unmap.</p>
+</dd>
+    <dt><code>subresourceIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the subresource to unmap.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_UnsetResourceBindingList_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.UnsetResourceBindingList*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_UnsetResourceBindingList_HexaEngine_Core_Graphics_IResourceBindingList_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.UnsetResourceBindingList(HexaEngine.Core.Graphics.IResourceBindingList)">
+  UnsetResourceBindingList(IResourceBindingList)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UnsetResourceBindingList(IResourceBindingList resourceBindings)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resourceBindings</code> <a class="xref" href="HexaEngine.Core.Graphics.IResourceBindingList.html">IResourceBindingList</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_UpdateSubresource_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.UpdateSubresource*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_UpdateSubresource_HexaEngine_Core_Graphics_IResource_System_Int32_HexaEngine_Core_Graphics_MappedSubresource_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.UpdateSubresource(HexaEngine.Core.Graphics.IResource,System.Int32,HexaEngine.Core.Graphics.MappedSubresource)">
+  UpdateSubresource(IResource, int, MappedSubresource)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L360"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates a subresource of a resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to update.</p>
+</dd>
+    <dt><code>destSubresource</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the destination subresource.</p>
+</dd>
+    <dt><code>subresource</code> <a class="xref" href="HexaEngine.Core.Graphics.MappedSubresource.html">MappedSubresource</a></dt>
+    <dd><p>The subresource data containing the update.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_UpdateSubresource_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.UpdateSubresource*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_UpdateSubresource_HexaEngine_Core_Graphics_IResource_System_Int32_System_Nullable_HexaEngine_Core_Graphics_Box__HexaEngine_Core_Graphics_MappedSubresource_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.UpdateSubresource(HexaEngine.Core.Graphics.IResource,System.Int32,System.Nullable{HexaEngine.Core.Graphics.Box},HexaEngine.Core.Graphics.MappedSubresource)">
+  UpdateSubresource(IResource, int, Box?, MappedSubresource)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L362"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateSubresource(IResource resource, int destSubresource, Box? box, MappedSubresource subresource)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd></dd>
+    <dt><code>destSubresource</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>box</code> <a class="xref" href="HexaEngine.Core.Graphics.Box.html">Box</a>?</dt>
+    <dd></dd>
+    <dt><code>subresource</code> <a class="xref" href="HexaEngine.Core.Graphics.MappedSubresource.html">MappedSubresource</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Wait_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Wait*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Wait_HexaEngine_Core_Graphics_IFence_System_UInt64_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Wait(HexaEngine.Core.Graphics.IFence,System.UInt64)">
+  Wait(IFence, ulong)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L439"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Waits until the specified fence reaches or exceeds the specified value before future work can begin.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Wait(IFence fence, ulong value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fence</code> <a class="xref" href="HexaEngine.Core.Graphics.IFence.html">IFence</a></dt>
+    <dd><p>A Fence object.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>The value that the device context is waiting for the fence to reach or exceed. So when <a class="xref" href="HexaEngine.Core.Graphics.IFence.html#HexaEngine_Core_Graphics_IFence_GetCompletedValue">GetCompletedValue()</a> is greater than or equal to Value, the wait is terminated.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Graphics_IGraphicsContext_Wait_HexaEngine_Core_Graphics_IFence_System_UInt64__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Note: This method only applies to immediate-mode contexts.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Write_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Write_HexaEngine_Core_Graphics_IBuffer_System_Void__System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write(HexaEngine.Core.Graphics.IBuffer,System.Void*,System.Int32)">
+  Write(IBuffer, void*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes data to a buffer from a pointer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Write(IBuffer buffer, void* value, int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The target buffer to write data to.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the data to write.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The size of the data to write, in bytes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Write_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Write_HexaEngine_Core_Graphics_IBuffer_System_Void__System_Int32_HexaEngine_Core_Graphics_MapMode_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write(HexaEngine.Core.Graphics.IBuffer,System.Void*,System.Int32,HexaEngine.Core.Graphics.MapMode)">
+  Write(IBuffer, void*, int, MapMode)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes data from a pointer to a buffer with optional mapping flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Write(IBuffer buffer, void* value, int size, MapMode flags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The target buffer to write data to.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>A pointer to the data to write.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The size of the data to write, in bytes.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.MapMode.html">MapMode</a></dt>
+    <dd><p>Optional mapping flags specifying how the buffer should be mapped.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Write_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Write__1_HexaEngine_Core_Graphics_IBuffer___0_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write``1(HexaEngine.Core.Graphics.IBuffer,``0)">
+  Write&lt;T&gt;(IBuffer, T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes a single value of type T to a buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Write&lt;T&gt;(IBuffer buffer, T value) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The target buffer to write data to.</p>
+</dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd><p>The value of type T to write to the buffer.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of data to write. Must be unmanaged.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Write_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Write__1_HexaEngine_Core_Graphics_IBuffer___0__System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write``1(HexaEngine.Core.Graphics.IBuffer,``0*,System.Int32)">
+  Write&lt;T&gt;(IBuffer, T*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes data from a pointer to a buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Write&lt;T&gt;(IBuffer buffer, T* value, int size) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The target buffer to write data to.</p>
+</dd>
+    <dt><code>value</code> T*</dt>
+    <dd><p>A pointer to the data to write.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The size of the data to write, in bytes.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of data to write. Must be unmanaged.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsContext_Write_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsContext_Write__1_HexaEngine_Core_Graphics_IBuffer___0__System_Int32_HexaEngine_Core_Graphics_MapMode_" data-uid="HexaEngine.Core.Graphics.IGraphicsContext.Write``1(HexaEngine.Core.Graphics.IBuffer,``0*,System.Int32,HexaEngine.Core.Graphics.MapMode)">
+  Write&lt;T&gt;(IBuffer, T*, int, MapMode)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes data from a pointer to a buffer with optional mapping flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Write&lt;T&gt;(IBuffer buffer, T* value, int size, MapMode flags) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The target buffer to write data to.</p>
+</dd>
+    <dt><code>value</code> T*</dt>
+    <dd><p>A pointer to the data to write.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The size of the data to write, in bytes.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.MapMode.html">MapMode</a></dt>
+    <dd><p>Optional mapping flags specifying how the buffer should be mapped.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of data to write. Must be unmanaged.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsContext.cs/#L9" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

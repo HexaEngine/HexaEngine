@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class PrimitiveRenderComponent </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class PrimitiveRenderComponent ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Components_Renderer_PrimitiveRenderComponent.md&amp;value=---%0Auid%3A%20HexaEngine.Components.Renderer.PrimitiveRenderComponent%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent">
+
+
+
+  <h1 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent" class="text-break">
+Class PrimitiveRenderComponent  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Components.html">Components</a>.<a class="xref" href="HexaEngine.Components.Renderer.html">Renderer</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class PrimitiveRenderComponent : BaseDrawableComponent, INotifyPropertyChanged, INotifyPropertyChanging, IDrawable, IHasFlags&lt;RendererFlags&gt;, ISelectableHitTest, IComponent, IEditorHighlightable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html">EntityNotifyBase</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.Component.html">Component</a></div>
+      <div><a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html">BaseDrawableComponent</a></div>
+      <div><span class="xref">PrimitiveRenderComponent</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanging">INotifyPropertyChanging</a></div>
+      <div><a class="xref" href="HexaEngine.Graphics.IDrawable.html">IDrawable</a></div>
+      <div><a class="xref" href="HexaEngine.Collections.IHasFlags-1.html">IHasFlags</a>&lt;<a class="xref" href="HexaEngine.Graphics.RendererFlags.html">RendererFlags</a>&gt;</div>
+      <div><a class="xref" href="HexaEngine.Scenes.Managers.ISelectableHitTest.html">ISelectableHitTest</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.IComponent.html">IComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Editor.IEditorHighlightable.html">IEditorHighlightable</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Components.Renderer.CapsuleRendererComponent.html">CapsuleRendererComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Components.Renderer.CubeRendererComponent.html">CubeRendererComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Components.Renderer.CylinderRendererComponent.html">CylinderRendererComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Components.Renderer.OctahedronRendererComponent.html">OctahedronRendererComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Components.Renderer.SphereRendererComponent.html">SphereRendererComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Components.Renderer.TetrahedronRendererComponent.html">TetrahedronRendererComponent</a></div>
+      <div><a class="xref" href="HexaEngine.Components.Renderer.TorusRendererComponent.html">TorusRendererComponent</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_QueueIndex">BaseDrawableComponent.QueueIndex</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_GameObject">BaseDrawableComponent.GameObject</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_Loaded">BaseDrawableComponent.Loaded</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_BatchSupport">BaseDrawableComponent.BatchSupport</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_QueueIndexChanged">BaseDrawableComponent.QueueIndexChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_DrawableInvalidated">BaseDrawableComponent.DrawableInvalidated</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_Awake">BaseDrawableComponent.Awake()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_Destroy">BaseDrawableComponent.Destroy()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_Invalidate">BaseDrawableComponent.Invalidate()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_Load_HexaEngine_Core_Graphics_IGraphicsDevice_">BaseDrawableComponent.Load(IGraphicsDevice)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_Unload">BaseDrawableComponent.Unload()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_Draw_HexaEngine_Core_Graphics_IGraphicsContext_System_String_">BaseDrawableComponent.Draw(IGraphicsContext, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Components.Renderer.BaseDrawableComponent.html#HexaEngine_Components_Renderer_BaseDrawableComponent_SelectRayTest_Hexa_NET_Mathematics_Ray_System_Single__">BaseDrawableComponent.SelectRayTest(Ray, ref float)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.Component.html#HexaEngine_Scenes_Component_Guid">Component.Guid</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.Component.html#HexaEngine_Scenes_Component_IsSerializable">Component.IsSerializable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanging">EntityNotifyBase.PropertyChanging</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanged">EntityNotifyBase.PropertyChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanging_System_String_">EntityNotifyBase.OnPropertyChanging(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanged_System_String_">EntityNotifyBase.OnPropertyChanged(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotify__1___0____0_System_String_">EntityNotifyBase.SetAndNotify&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithRefEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithRefEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_materialAsset" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.materialAsset">
+  materialAsset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected AssetRef materialAsset</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Assets.AssetRef.html">AssetRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_BoundingBox_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.BoundingBox*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_BoundingBox" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.BoundingBox">
+  BoundingBox
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public override BoundingBox BoundingBox { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">BoundingBox</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_DebugName_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.DebugName*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_DebugName" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.DebugName">
+  DebugName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public override string DebugName { get; protected set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Flags_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Flags*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Flags" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public override RendererFlags Flags { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.RendererFlags.html">RendererFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Material_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Material*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Material" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Material">
+  Material
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Material&quot;, AssetType.Material, EditorPropertyMode.Default)]
+public AssetRef Material { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Assets.AssetRef.html">AssetRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Transform_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Transform*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Transform" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Transform">
+  Transform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public Matrix4x4 Transform { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Bake_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Bake*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Bake_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Bake(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Bake(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Bake(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_CreatePrimitive_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.CreatePrimitive*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_CreatePrimitive" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.CreatePrimitive">
+  CreatePrimitive()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract IPrimitive CreatePrimitive()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Primitives.IPrimitive.html">IPrimitive</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Draw_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Draw*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Draw_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Graphics_RenderPath_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Draw(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Graphics.RenderPath)">
+  Draw(IGraphicsContext, RenderPath)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Draw(IGraphicsContext context, RenderPath path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>path</code> <a class="xref" href="HexaEngine.Graphics.RenderPath.html">RenderPath</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_DrawDepth_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.DrawDepth*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_DrawDepth_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.DrawDepth(HexaEngine.Core.Graphics.IGraphicsContext)">
+  DrawDepth(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void DrawDepth(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_DrawHighlight_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.DrawHighlight*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_DrawHighlight_HexaEngine_Core_Editor_EditorHighlightContext_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.DrawHighlight(HexaEngine.Core.Editor.EditorHighlightContext)">
+  DrawHighlight(EditorHighlightContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DrawHighlight(EditorHighlightContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Editor.EditorHighlightContext.html">EditorHighlightContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_DrawShadowMap_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.DrawShadowMap*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_DrawShadowMap_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IBuffer_HexaEngine_Lights_ShadowType_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.DrawShadowMap(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.IBuffer,HexaEngine.Lights.ShadowType)">
+  DrawShadowMap(IGraphicsContext, IBuffer, ShadowType)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>light</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd></dd>
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Lights.ShadowType.html">ShadowType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_GetBoundingBox_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.GetBoundingBox*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_GetBoundingBox" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.GetBoundingBox">
+  GetBoundingBox()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract BoundingBox GetBoundingBox()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">BoundingBox</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_LoadCore_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.LoadCore*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_LoadCore_HexaEngine_Core_Graphics_IGraphicsDevice_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.LoadCore(HexaEngine.Core.Graphics.IGraphicsDevice)">
+  LoadCore(IGraphicsDevice)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void LoadCore(IGraphicsDevice device)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_SetAndUpdateModelEquals_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.SetAndUpdateModelEquals*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_SetAndUpdateModelEquals__1___0____0_HexaEngine_Components_Renderer_PrimitiveRenderComponent_ModelUpdateFlags_System_String_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.SetAndUpdateModelEquals``1(``0@,``0,HexaEngine.Components.Renderer.PrimitiveRenderComponent.ModelUpdateFlags,System.String)">
+  SetAndUpdateModelEquals&lt;T&gt;(ref T, T, ModelUpdateFlags, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void SetAndUpdateModelEquals&lt;T&gt;(ref T target, T value, PrimitiveRenderComponent.ModelUpdateFlags updateFlags = ModelUpdateFlags.Mesh, string propertyName = &quot;&quot;) where T : IEquatable&lt;T&gt;</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>updateFlags</code> <a class="xref" href="HexaEngine.Components.Renderer.PrimitiveRenderComponent.html">PrimitiveRenderComponent</a>.<a class="xref" href="HexaEngine.Components.Renderer.PrimitiveRenderComponent.ModelUpdateFlags.html">ModelUpdateFlags</a></dt>
+    <dd></dd>
+    <dt><code>propertyName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_SetAndUpdateModel_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.SetAndUpdateModel*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_SetAndUpdateModel__1___0____0_HexaEngine_Components_Renderer_PrimitiveRenderComponent_ModelUpdateFlags_System_String_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.SetAndUpdateModel``1(``0@,``0,HexaEngine.Components.Renderer.PrimitiveRenderComponent.ModelUpdateFlags,System.String)">
+  SetAndUpdateModel&lt;T&gt;(ref T, T, ModelUpdateFlags, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L184"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void SetAndUpdateModel&lt;T&gt;(ref T target, T value, PrimitiveRenderComponent.ModelUpdateFlags updateFlags = ModelUpdateFlags.Mesh, string propertyName = &quot;&quot;)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>updateFlags</code> <a class="xref" href="HexaEngine.Components.Renderer.PrimitiveRenderComponent.html">PrimitiveRenderComponent</a>.<a class="xref" href="HexaEngine.Components.Renderer.PrimitiveRenderComponent.ModelUpdateFlags.html">ModelUpdateFlags</a></dt>
+    <dd></dd>
+    <dt><code>propertyName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_UnloadCore_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.UnloadCore*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_UnloadCore" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.UnloadCore">
+  UnloadCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void UnloadCore()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Update_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Update*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_Update_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.Update(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Update(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Update(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_UpdateModel_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.UpdateModel*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_UpdateModel_HexaEngine_Components_Renderer_PrimitiveRenderComponent_ModelUpdateFlags_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.UpdateModel(HexaEngine.Components.Renderer.PrimitiveRenderComponent.ModelUpdateFlags)">
+  UpdateModel(ModelUpdateFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void UpdateModel(PrimitiveRenderComponent.ModelUpdateFlags updateFlags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>updateFlags</code> <a class="xref" href="HexaEngine.Components.Renderer.PrimitiveRenderComponent.html">PrimitiveRenderComponent</a>.<a class="xref" href="HexaEngine.Components.Renderer.PrimitiveRenderComponent.ModelUpdateFlags.html">ModelUpdateFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_VisibilityTest_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.VisibilityTest*"></a>
+
+  <h3 id="HexaEngine_Components_Renderer_PrimitiveRenderComponent_VisibilityTest_HexaEngine_Graphics_Culling_CullingContext_" data-uid="HexaEngine.Components.Renderer.PrimitiveRenderComponent.VisibilityTest(HexaEngine.Graphics.Culling.CullingContext)">
+  VisibilityTest(CullingContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void VisibilityTest(CullingContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Graphics.Culling.CullingContext.html">CullingContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Components/Renderer/PrimitiveRenderComponent.cs/#L20" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

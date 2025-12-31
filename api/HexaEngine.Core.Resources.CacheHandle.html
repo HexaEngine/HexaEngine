@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class CacheHandle </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class CacheHandle ">
+      
+      <meta name="description" content="Represents a cache handle for managing cached data from a source stream.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Resources_CacheHandle.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Resources.CacheHandle%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Resources.CacheHandle">
+
+
+
+  <h1 id="HexaEngine_Core_Resources_CacheHandle" data-uid="HexaEngine.Core.Resources.CacheHandle" class="text-break">
+Class CacheHandle  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Resources.html">Resources</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a cache handle for managing cached data from a source stream.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class CacheHandle : Stream, IAsyncDisposable, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.marshalbyrefobject">MarshalByRefObject</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></div>
+      <div><span class="xref">CacheHandle</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.null">Stream.Null</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.beginread">Stream.BeginRead(byte[], int, int, AsyncCallback, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.beginwrite">Stream.BeginWrite(byte[], int, int, AsyncCallback, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.close">Stream.Close()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.copyto#system-io-stream-copyto(system-io-stream)">Stream.CopyTo(Stream)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.copyto#system-io-stream-copyto(system-io-stream-system-int32)">Stream.CopyTo(Stream, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.copytoasync#system-io-stream-copytoasync(system-io-stream)">Stream.CopyToAsync(Stream)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.copytoasync#system-io-stream-copytoasync(system-io-stream-system-int32)">Stream.CopyToAsync(Stream, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.copytoasync#system-io-stream-copytoasync(system-io-stream-system-int32-system-threading-cancellationtoken)">Stream.CopyToAsync(Stream, int, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.copytoasync#system-io-stream-copytoasync(system-io-stream-system-threading-cancellationtoken)">Stream.CopyToAsync(Stream, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.createwaithandle">Stream.CreateWaitHandle()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.dispose#system-io-stream-dispose">Stream.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.disposeasync">Stream.DisposeAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.endread">Stream.EndRead(IAsyncResult)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.endwrite">Stream.EndWrite(IAsyncResult)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.flushasync#system-io-stream-flushasync">Stream.FlushAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.flushasync#system-io-stream-flushasync(system-threading-cancellationtoken)">Stream.FlushAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.objectinvariant">Stream.ObjectInvariant()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.read#system-io-stream-read(system-span((system-byte)))">Stream.Read(Span&lt;byte&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readasync#system-io-stream-readasync(system-byte()-system-int32-system-int32)">Stream.ReadAsync(byte[], int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readasync#system-io-stream-readasync(system-byte()-system-int32-system-int32-system-threading-cancellationtoken)">Stream.ReadAsync(byte[], int, int, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readasync#system-io-stream-readasync(system-memory((system-byte))-system-threading-cancellationtoken)">Stream.ReadAsync(Memory&lt;byte&gt;, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readatleast">Stream.ReadAtLeast(Span&lt;byte&gt;, int, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readatleastasync">Stream.ReadAtLeastAsync(Memory&lt;byte&gt;, int, bool, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readbyte">Stream.ReadByte()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readexactly#system-io-stream-readexactly(system-byte()-system-int32-system-int32)">Stream.ReadExactly(byte[], int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readexactly#system-io-stream-readexactly(system-span((system-byte)))">Stream.ReadExactly(Span&lt;byte&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readexactlyasync#system-io-stream-readexactlyasync(system-byte()-system-int32-system-int32-system-threading-cancellationtoken)">Stream.ReadExactlyAsync(byte[], int, int, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readexactlyasync#system-io-stream-readexactlyasync(system-memory((system-byte))-system-threading-cancellationtoken)">Stream.ReadExactlyAsync(Memory&lt;byte&gt;, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.synchronized">Stream.Synchronized(Stream)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.validatebufferarguments">Stream.ValidateBufferArguments(byte[], int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.validatecopytoarguments">Stream.ValidateCopyToArguments(Stream, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.write#system-io-stream-write(system-readonlyspan((system-byte)))">Stream.Write(ReadOnlySpan&lt;byte&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.writeasync#system-io-stream-writeasync(system-byte()-system-int32-system-int32)">Stream.WriteAsync(byte[], int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.writeasync#system-io-stream-writeasync(system-byte()-system-int32-system-int32-system-threading-cancellationtoken)">Stream.WriteAsync(byte[], int, int, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.writeasync#system-io-stream-writeasync(system-readonlymemory((system-byte))-system-threading-cancellationtoken)">Stream.WriteAsync(ReadOnlyMemory&lt;byte&gt;, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.writebyte">Stream.WriteByte(byte)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.cantimeout">Stream.CanTimeout</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.readtimeout">Stream.ReadTimeout</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.writetimeout">Stream.WriteTimeout</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.marshalbyrefobject.getlifetimeservice">MarshalByRefObject.GetLifetimeService()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.marshalbyrefobject.initializelifetimeservice">MarshalByRefObject.InitializeLifetimeService()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.marshalbyrefobject.memberwiseclone">MarshalByRefObject.MemberwiseClone(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.CompressionHelper.html#HexaEngine_Core_IO_CompressionHelper_CreateCompressionStream_System_IO_Stream_HexaEngine_Core_IO_Compression_System_Boolean__">CompressionHelper.CreateCompressionStream(Stream, Compression, out bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.CompressionHelper.html#HexaEngine_Core_IO_CompressionHelper_CreateDecompressionStream_System_IO_Stream_HexaEngine_Core_IO_Compression_System_Boolean__">CompressionHelper.CreateDecompressionStream(Stream, Compression, out bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_Compare_System_IO_Stream_System_Byte___">StreamExtensions.Compare(Stream, byte[])</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_CompareVersion_System_IO_Stream_System_UInt64_System_UInt64_Hexa_NET_Mathematics_Endianness_HexaEngine_Core_IO_Version__">StreamExtensions.CompareVersion(Stream, ulong, ulong, Endianness, out Version)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_MoveBlock_System_IO_Stream_System_Int64_System_Int64_System_Int64_">StreamExtensions.MoveBlock(Stream, long, long, long)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_Read_System_IO_Stream_System_Int64_">StreamExtensions.Read(Stream, long)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayDouble_System_IO_Stream_System_Double___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayDouble(Stream, double[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayFloat_System_IO_Stream_System_Single___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayFloat(Stream, float[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayInt16_System_IO_Stream_System_Int16___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayInt16(Stream, short[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayInt32_System_IO_Stream_System_Int32___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayInt32(Stream, int[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayInt64_System_IO_Stream_System_Int64___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayInt64(Stream, long[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayUInt16_System_IO_Stream_System_UInt16___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayUInt16(Stream, ushort[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayUInt32_System_IO_Stream_System_UInt32___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayUInt32(Stream, uint[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayUInt64_System_IO_Stream_System_UInt64___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayUInt64(Stream, ulong[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayVector2_System_IO_Stream_System_Numerics_Vector2___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayVector2(Stream, Vector2[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayVector3_System_IO_Stream_System_Numerics_Vector3___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayVector3(Stream, Vector3[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadArrayVector4_System_IO_Stream_System_Numerics_Vector4___Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadArrayVector4(Stream, Vector4[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadBytes_System_IO_Stream_System_Int32_">StreamExtensions.ReadBytes(Stream, int)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadBytes_System_IO_Stream_System_UInt32_">StreamExtensions.ReadBytes(Stream, uint)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadDouble_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadDouble(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadFloat_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadFloat(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadGuid_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadGuid(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadInt16_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadInt16(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadInt32_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadInt32(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadInt64_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadInt64(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadMatrix4x4_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadMatrix4x4(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadQuaternion_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadQuaternion(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadString_System_IO_Stream_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadString(Stream, Encoding, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadUInt16_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadUInt16(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadUInt32_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadUInt32(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadUInt64_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadUInt64(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadVector2_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadVector2(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadVector3_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadVector3(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_ReadVector4_System_IO_Stream_Hexa_NET_Mathematics_Endianness_">StreamExtensions.ReadVector4(Stream, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayDouble_System_IO_Stream_System_Double___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayDouble(Stream, double[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayFloat_System_IO_Stream_System_Single___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayFloat(Stream, float[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayInt16_System_IO_Stream_System_Span_System_Int16__Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayInt16(Stream, Span&lt;short&gt;, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayInt32_System_IO_Stream_System_Int32___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayInt32(Stream, int[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayInt64_System_IO_Stream_System_Int64___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayInt64(Stream, long[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayUInt16_System_IO_Stream_System_UInt16___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayUInt16(Stream, ushort[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayUInt32_System_IO_Stream_System_UInt32___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayUInt32(Stream, uint[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayUInt64_System_IO_Stream_System_UInt64___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayUInt64(Stream, ulong[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayVector2_System_IO_Stream_System_Numerics_Vector2___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayVector2(Stream, Vector2[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayVector3_System_IO_Stream_System_Numerics_Vector3___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayVector3(Stream, Vector3[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteArrayVector4_System_IO_Stream_System_Numerics_Vector4___Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteArrayVector4(Stream, Vector4[], Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteDouble_System_IO_Stream_System_Double_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteDouble(Stream, double, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteFloat_System_IO_Stream_System_Single_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteFloat(Stream, float, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteGuid_System_IO_Stream_System_Guid_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteGuid(Stream, Guid, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteInt16_System_IO_Stream_System_Int16_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteInt16(Stream, short, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteInt32_System_IO_Stream_System_Int32_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteInt32(Stream, int, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteInt64_System_IO_Stream_System_Int64_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteInt64(Stream, long, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteMatrix4x4_System_IO_Stream_System_Numerics_Matrix4x4_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteMatrix4x4(Stream, Matrix4x4, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteQuaternion_System_IO_Stream_System_Numerics_Quaternion_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteQuaternion(Stream, Quaternion, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteString_System_IO_Stream_System_String_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteString(Stream, string?, Encoding, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteUInt16_System_IO_Stream_System_UInt16_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteUInt16(Stream, ushort, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteUInt32_System_IO_Stream_System_UInt32_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteUInt32(Stream, uint, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteUInt64_System_IO_Stream_System_UInt64_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteUInt64(Stream, ulong, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteVector2_System_IO_Stream_System_Numerics_Vector2_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteVector2(Stream, Vector2, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteVector3_System_IO_Stream_System_Numerics_Vector3_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteVector3(Stream, Vector3, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.IO.StreamExtensions.html#HexaEngine_Core_IO_StreamExtensions_WriteVector4_System_IO_Stream_System_Numerics_Vector4_Hexa_NET_Mathematics_Endianness_">StreamExtensions.WriteVector4(Stream, Vector4, Endianness)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Web.StreamExtensions.html#HexaEngine_Web_StreamExtensions_CopyToAsync_System_IO_Stream_System_IO_Stream_System_Int32_System_IProgress_System_Int64__System_Threading_CancellationToken_">StreamExtensions.CopyToAsync(Stream, Stream, int, IProgress&lt;long&gt;?, CancellationToken)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle__ctor_" data-uid="HexaEngine.Core.Resources.CacheHandle.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle__ctor_HexaEngine_Core_Resources_Cache_System_String_HexaEngine_Core_IO_VirtualStream_HexaEngine_Core_Resources_CacheMode_" data-uid="HexaEngine.Core.Resources.CacheHandle.#ctor(HexaEngine.Core.Resources.Cache,System.String,HexaEngine.Core.IO.VirtualStream,HexaEngine.Core.Resources.CacheMode)">
+  CacheHandle(Cache, string, VirtualStream, CacheMode)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Resources.CacheHandle.html">CacheHandle</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CacheHandle(Cache cache, string name, VirtualStream stream, CacheMode mode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cache</code> <a class="xref" href="HexaEngine.Core.Resources.Cache.html">Cache</a></dt>
+    <dd><p>The cache associated with this handle.</p>
+</dd>
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the cache handle.</p>
+</dd>
+    <dt><code>stream</code> <a class="xref" href="HexaEngine.Core.IO.VirtualStream.html">VirtualStream</a></dt>
+    <dd><p>The source stream from which data is cached.</p>
+</dd>
+    <dt><code>mode</code> <a class="xref" href="HexaEngine.Core.Resources.CacheMode.html">CacheMode</a></dt>
+    <dd><p>The caching mode to use.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_CanRead_" data-uid="HexaEngine.Core.Resources.CacheHandle.CanRead*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_CanRead" data-uid="HexaEngine.Core.Resources.CacheHandle.CanRead">
+  CanRead
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, gets a value indicating whether the current stream supports reading.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool CanRead { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the stream supports reading; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_CanSeek_" data-uid="HexaEngine.Core.Resources.CacheHandle.CanSeek*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_CanSeek" data-uid="HexaEngine.Core.Resources.CacheHandle.CanSeek">
+  CanSeek
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, gets a value indicating whether the current stream supports seeking.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool CanSeek { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the stream supports seeking; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_CanWrite_" data-uid="HexaEngine.Core.Resources.CacheHandle.CanWrite*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_CanWrite" data-uid="HexaEngine.Core.Resources.CacheHandle.CanWrite">
+  CanWrite
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, gets a value indicating whether the current stream supports writing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool CanWrite { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the stream supports writing; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_LastAccess_" data-uid="HexaEngine.Core.Resources.CacheHandle.LastAccess*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_LastAccess" data-uid="HexaEngine.Core.Resources.CacheHandle.LastAccess">
+  LastAccess
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the timestamp of the last access to this cache handle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long LastAccess { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Length_" data-uid="HexaEngine.Core.Resources.CacheHandle.Length*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Length" data-uid="HexaEngine.Core.Resources.CacheHandle.Length">
+  Length
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, gets the length in bytes of the stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override long Length { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>A long value representing the length of the stream in bytes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>A class derived from <code>Stream</code> does not support seeking and the length is unknown.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.objectdisposedexception">ObjectDisposedException</a></dt>
+    <dd><p>Methods were called after the stream was closed.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Name_" data-uid="HexaEngine.Core.Resources.CacheHandle.Name*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Name" data-uid="HexaEngine.Core.Resources.CacheHandle.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the name of the cache handle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Position_" data-uid="HexaEngine.Core.Resources.CacheHandle.Position*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Position" data-uid="HexaEngine.Core.Resources.CacheHandle.Position">
+  Position
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, gets or sets the position within the current stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override long Position { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The current position within the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.ioexception">IOException</a></dt>
+    <dd><p>An I/O error occurs.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>The stream does not support seeking.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.objectdisposedexception">ObjectDisposedException</a></dt>
+    <dd><p>Methods were called after the stream was closed.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Size_" data-uid="HexaEngine.Core.Resources.CacheHandle.Size*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Size" data-uid="HexaEngine.Core.Resources.CacheHandle.Size">
+  Size
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the size of the cached data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long Size { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_BeginLock_" data-uid="HexaEngine.Core.Resources.CacheHandle.BeginLock*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_BeginLock" data-uid="HexaEngine.Core.Resources.CacheHandle.BeginLock">
+  BeginLock()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Begins a lock block to access the cache handle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDisposable BeginLock()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></dt>
+    <dd><p>A <a class="xref" href="HexaEngine.Core.Resources.CacheHandle.html">CacheHandle.LockBlock</a> that must be disposed to release the lock.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Dispose_" data-uid="HexaEngine.Core.Resources.CacheHandle.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Dispose_System_Boolean_" data-uid="HexaEngine.Core.Resources.CacheHandle.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L206"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Releases the unmanaged resources used by the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> and optionally releases the managed resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> to release both managed and unmanaged resources; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> to release only unmanaged resources.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Flush_" data-uid="HexaEngine.Core.Resources.CacheHandle.Flush*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Flush" data-uid="HexaEngine.Core.Resources.CacheHandle.Flush">
+  Flush()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, clears all buffers for this stream and causes any buffered data to be written to the underlying device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Flush()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.ioexception">IOException</a></dt>
+    <dd><p>An I/O error occurs.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Lock_" data-uid="HexaEngine.Core.Resources.CacheHandle.Lock*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Lock" data-uid="HexaEngine.Core.Resources.CacheHandle.Lock">
+  Lock()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Locks access to the cache handle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Lock()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Read_" data-uid="HexaEngine.Core.Resources.CacheHandle.Read*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Read_System_Byte___System_Int32_System_Int32_" data-uid="HexaEngine.Core.Resources.CacheHandle.Read(System.Byte[],System.Int32,System.Int32)">
+  Read(byte[], int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, reads a sequence of bytes from the current stream and advances the position within the stream by the number of bytes read.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int Read(byte[] buffer, int offset, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>An array of bytes. When this method returns, the buffer contains the specified byte array with the values between <code class="paramref">offset</code> and (<code class="paramref">offset</code> + <code class="paramref">count</code> - 1) replaced by the bytes read from the current source.</p>
+</dd>
+    <dt><code>offset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The zero-based byte offset in <code class="paramref">buffer</code> at which to begin storing the data read from the current stream.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The maximum number of bytes to be read from the current stream.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many bytes are not currently available, or zero (0) if <code class="paramref">count</code> is 0 or the end of the stream has been reached.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>The sum of <code class="paramref">offset</code> and <code class="paramref">count</code> is larger than the buffer length.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">buffer</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+    <dd><p><code class="paramref">offset</code> or <code class="paramref">count</code> is negative.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.ioexception">IOException</a></dt>
+    <dd><p>An I/O error occurs.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>The stream does not support reading.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.objectdisposedexception">ObjectDisposedException</a></dt>
+    <dd><p>Methods were called after the stream was closed.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Seek_" data-uid="HexaEngine.Core.Resources.CacheHandle.Seek*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Seek_System_Int64_System_IO_SeekOrigin_" data-uid="HexaEngine.Core.Resources.CacheHandle.Seek(System.Int64,System.IO.SeekOrigin)">
+  Seek(long, SeekOrigin)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, sets the position within the current stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override long Seek(long offset, SeekOrigin origin)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>offset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>A byte offset relative to the <code class="paramref">origin</code> parameter.</p>
+</dd>
+    <dt><code>origin</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.seekorigin">SeekOrigin</a></dt>
+    <dd><p>A value of type <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.seekorigin">SeekOrigin</a> indicating the reference point used to obtain the new position.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The new position within the current stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.ioexception">IOException</a></dt>
+    <dd><p>An I/O error occurs.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>The stream does not support seeking, such as if the stream is constructed from a pipe or console output.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.objectdisposedexception">ObjectDisposedException</a></dt>
+    <dd><p>Methods were called after the stream was closed.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_SetLength_" data-uid="HexaEngine.Core.Resources.CacheHandle.SetLength*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_SetLength_System_Int64_" data-uid="HexaEngine.Core.Resources.CacheHandle.SetLength(System.Int64)">
+  SetLength(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, sets the length of the current stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void SetLength(long value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The desired length of the current stream in bytes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.ioexception">IOException</a></dt>
+    <dd><p>An I/O error occurs.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>The stream does not support both writing and seeking, such as if the stream is constructed from a pipe or console output.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.objectdisposedexception">ObjectDisposedException</a></dt>
+    <dd><p>Methods were called after the stream was closed.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Unlock_" data-uid="HexaEngine.Core.Resources.CacheHandle.Unlock*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Unlock" data-uid="HexaEngine.Core.Resources.CacheHandle.Unlock">
+  Unlock()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Unlocks access to the cache handle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Unlock()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Resources_CacheHandle_Write_" data-uid="HexaEngine.Core.Resources.CacheHandle.Write*"></a>
+
+  <h3 id="HexaEngine_Core_Resources_CacheHandle_Write_System_Byte___System_Int32_System_Int32_" data-uid="HexaEngine.Core.Resources.CacheHandle.Write(System.Byte[],System.Int32,System.Int32)">
+  Write(byte[], int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L173"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, writes a sequence of bytes to the current stream and advances the current position within this stream by the number of bytes written.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Write(byte[] buffer, int offset, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>An array of bytes. This method copies <code class="paramref">count</code> bytes from <code class="paramref">buffer</code> to the current stream.</p>
+</dd>
+    <dt><code>offset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The zero-based byte offset in <code class="paramref">buffer</code> at which to begin copying bytes to the current stream.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of bytes to be written to the current stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>The sum of <code class="paramref">offset</code> and <code class="paramref">count</code> is greater than the buffer length.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">buffer</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+    <dd><p><code class="paramref">offset</code> or <code class="paramref">count</code> is negative.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.ioexception">IOException</a></dt>
+    <dd><p>An I/O error occurred, such as the specified file cannot be found.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>The stream does not support writing.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.objectdisposedexception">ObjectDisposedException</a></dt>
+    <dd><p><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream.write#system-io-stream-write(system-byte()-system-int32-system-int32)">Write(byte[], int, int)</a> was called after the stream was closed.</p>
+</dd>
+  </dl>
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Resources/CacheHandle.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

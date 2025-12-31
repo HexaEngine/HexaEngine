@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class CullingContext </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class CullingContext ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Graphics_Culling_CullingContext.md&amp;value=---%0Auid%3A%20HexaEngine.Graphics.Culling.CullingContext%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Graphics.Culling.CullingContext">
+
+
+
+  <h1 id="HexaEngine_Graphics_Culling_CullingContext" data-uid="HexaEngine.Graphics.Culling.CullingContext" class="text-break">
+Class CullingContext  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Graphics.html">Graphics</a>.<a class="xref" href="HexaEngine.Graphics.Culling.html">Culling</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class CullingContext</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">CullingContext</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext__ctor_" data-uid="HexaEngine.Graphics.Culling.CullingContext.#ctor*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext__ctor_HexaEngine_Core_Graphics_Buffers_StructuredBuffer_System_UInt32__HexaEngine_Core_Graphics_Buffers_StructuredBuffer_System_Numerics_Matrix4x4__HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_System_UInt32__HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_System_Numerics_Matrix4x4__HexaEngine_Core_Graphics_Buffers_StructuredBuffer_HexaEngine_Graphics_Culling_TypeData__HexaEngine_Core_Graphics_Buffers_StructuredBuffer_HexaEngine_Graphics_Culling_GPUInstance__HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_HexaEngine_Core_Graphics_Structs_DrawIndexedInstancedIndirectArgs__HexaEngine_Core_Graphics_Buffers_DrawIndirectArgsBuffer_HexaEngine_Core_Graphics_Structs_DrawIndexedInstancedIndirectArgs__HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_System_UInt32__" data-uid="HexaEngine.Graphics.Culling.CullingContext.#ctor(HexaEngine.Core.Graphics.Buffers.StructuredBuffer{System.UInt32},HexaEngine.Core.Graphics.Buffers.StructuredBuffer{System.Numerics.Matrix4x4},HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer{System.UInt32},HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer{System.Numerics.Matrix4x4},HexaEngine.Core.Graphics.Buffers.StructuredBuffer{HexaEngine.Graphics.Culling.TypeData},HexaEngine.Core.Graphics.Buffers.StructuredBuffer{HexaEngine.Graphics.Culling.GPUInstance},HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer{HexaEngine.Core.Graphics.Structs.DrawIndexedInstancedIndirectArgs},HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer{HexaEngine.Core.Graphics.Structs.DrawIndexedInstancedIndirectArgs},HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer{System.UInt32})">
+  CullingContext(StructuredBuffer&lt;uint&gt;, StructuredBuffer&lt;Matrix4x4&gt;, StructuredUavBuffer&lt;uint&gt;, StructuredUavBuffer&lt;Matrix4x4&gt;, StructuredBuffer&lt;TypeData&gt;, StructuredBuffer&lt;GPUInstance&gt;, StructuredUavBuffer&lt;DrawIndexedInstancedIndirectArgs&gt;, DrawIndirectArgsBuffer&lt;DrawIndexedInstancedIndirectArgs&gt;, StructuredUavBuffer&lt;uint&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CullingContext(StructuredBuffer&lt;uint&gt; instanceOffsetsNoCull, StructuredBuffer&lt;Matrix4x4&gt; instanceDataNoCull, StructuredUavBuffer&lt;uint&gt; instanceOffsets, StructuredUavBuffer&lt;Matrix4x4&gt; instanceDataOutBuffer, StructuredBuffer&lt;TypeData&gt; typeDataBuffer, StructuredBuffer&lt;GPUInstance&gt; instanceDataBuffer, StructuredUavBuffer&lt;DrawIndexedInstancedIndirectArgs&gt; swapBuffer, DrawIndirectArgsBuffer&lt;DrawIndexedInstancedIndirectArgs&gt; drawIndirectArgs, StructuredUavBuffer&lt;uint&gt; visibleListBuffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>instanceOffsetsNoCull</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>instanceDataNoCull</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>instanceOffsets</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>instanceDataOutBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>typeDataBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;<a class="xref" href="HexaEngine.Graphics.Culling.TypeData.html">TypeData</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>instanceDataBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;<a class="xref" href="HexaEngine.Graphics.Culling.GPUInstance.html">GPUInstance</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>swapBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Structs.DrawIndexedInstancedIndirectArgs.html">DrawIndexedInstancedIndirectArgs</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>drawIndirectArgs</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer-1.html">DrawIndirectArgsBuffer</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Structs.DrawIndexedInstancedIndirectArgs.html">DrawIndexedInstancedIndirectArgs</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>visibleListBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_Count_" data-uid="HexaEngine.Graphics.Culling.CullingContext.Count*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_Count" data-uid="HexaEngine.Graphics.Culling.CullingContext.Count">
+  Count
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Count { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_CurrentType_" data-uid="HexaEngine.Graphics.Culling.CullingContext.CurrentType*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_CurrentType" data-uid="HexaEngine.Graphics.Culling.CullingContext.CurrentType">
+  CurrentType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint CurrentType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_DrawIndirectArgs_" data-uid="HexaEngine.Graphics.Culling.CullingContext.DrawIndirectArgs*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_DrawIndirectArgs" data-uid="HexaEngine.Graphics.Culling.CullingContext.DrawIndirectArgs">
+  DrawIndirectArgs
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DrawIndirectArgsBuffer&lt;DrawIndexedInstancedIndirectArgs&gt; DrawIndirectArgs { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.DrawIndirectArgsBuffer-1.html">DrawIndirectArgsBuffer</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Structs.DrawIndexedInstancedIndirectArgs.html">DrawIndexedInstancedIndirectArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_InstanceDataNoCull_" data-uid="HexaEngine.Graphics.Culling.CullingContext.InstanceDataNoCull*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_InstanceDataNoCull" data-uid="HexaEngine.Graphics.Culling.CullingContext.InstanceDataNoCull">
+  InstanceDataNoCull
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StructuredBuffer&lt;Matrix4x4&gt; InstanceDataNoCull { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_InstanceDataOutBuffer_" data-uid="HexaEngine.Graphics.Culling.CullingContext.InstanceDataOutBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_InstanceDataOutBuffer" data-uid="HexaEngine.Graphics.Culling.CullingContext.InstanceDataOutBuffer">
+  InstanceDataOutBuffer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StructuredUavBuffer&lt;Matrix4x4&gt; InstanceDataOutBuffer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_InstanceOffsets_" data-uid="HexaEngine.Graphics.Culling.CullingContext.InstanceOffsets*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_InstanceOffsets" data-uid="HexaEngine.Graphics.Culling.CullingContext.InstanceOffsets">
+  InstanceOffsets
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StructuredUavBuffer&lt;uint&gt; InstanceOffsets { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_InstanceOffsetsNoCull_" data-uid="HexaEngine.Graphics.Culling.CullingContext.InstanceOffsetsNoCull*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_InstanceOffsetsNoCull" data-uid="HexaEngine.Graphics.Culling.CullingContext.InstanceOffsetsNoCull">
+  InstanceOffsetsNoCull
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StructuredBuffer&lt;uint&gt; InstanceOffsetsNoCull { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_SwapBuffer_" data-uid="HexaEngine.Graphics.Culling.CullingContext.SwapBuffer*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_SwapBuffer" data-uid="HexaEngine.Graphics.Culling.CullingContext.SwapBuffer">
+  SwapBuffer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StructuredUavBuffer&lt;DrawIndexedInstancedIndirectArgs&gt; SwapBuffer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Structs.DrawIndexedInstancedIndirectArgs.html">DrawIndexedInstancedIndirectArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_TypeCount_" data-uid="HexaEngine.Graphics.Culling.CullingContext.TypeCount*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_TypeCount" data-uid="HexaEngine.Graphics.Culling.CullingContext.TypeCount">
+  TypeCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int TypeCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_VisibleList_" data-uid="HexaEngine.Graphics.Culling.CullingContext.VisibleList*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_VisibleList" data-uid="HexaEngine.Graphics.Culling.CullingContext.VisibleList">
+  VisibleList
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StructuredUavBuffer&lt;uint&gt; VisibleList { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_AppendInstance_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendInstance*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_AppendInstance_HexaEngine_Graphics_Culling_GPUInstance_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendInstance(HexaEngine.Graphics.Culling.GPUInstance)">
+  AppendInstance(GPUInstance)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint AppendInstance(GPUInstance instance)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>instance</code> <a class="xref" href="HexaEngine.Graphics.Culling.GPUInstance.html">GPUInstance</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_AppendInstance_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendInstance*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_AppendInstance_System_Numerics_Matrix4x4_Hexa_NET_Mathematics_BoundingBox_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendInstance(System.Numerics.Matrix4x4,Hexa.NET.Mathematics.BoundingBox)">
+  AppendInstance(Matrix4x4, BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint AppendInstance(Matrix4x4 world, BoundingBox boundingBox)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd></dd>
+    <dt><code>boundingBox</code> <span class="xref">BoundingBox</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_AppendInstance_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendInstance*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_AppendInstance_System_Numerics_Matrix4x4_Hexa_NET_Mathematics_BoundingSphere_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendInstance(System.Numerics.Matrix4x4,Hexa.NET.Mathematics.BoundingSphere)">
+  AppendInstance(Matrix4x4, BoundingSphere)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint AppendInstance(Matrix4x4 world, BoundingSphere boundingSphere)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd></dd>
+    <dt><code>boundingSphere</code> <span class="xref">BoundingSphere</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_AppendInstance_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendInstance*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_AppendInstance_System_Numerics_Matrix4x4_System_Numerics_Vector3_System_Single_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendInstance(System.Numerics.Matrix4x4,System.Numerics.Vector3,System.Single)">
+  AppendInstance(Matrix4x4, Vector3, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint AppendInstance(Matrix4x4 world, Vector3 center, float radius)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd></dd>
+    <dt><code>center</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+    <dt><code>radius</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_AppendType_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendType*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_AppendType_HexaEngine_Graphics_Culling_TypeData_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendType(HexaEngine.Graphics.Culling.TypeData)">
+  AppendType(TypeData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint AppendType(TypeData type)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Graphics.Culling.TypeData.html">TypeData</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_AppendType_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendType*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_AppendType_System_UInt32_System_UInt32_System_Int32_System_UInt32_" data-uid="HexaEngine.Graphics.Culling.CullingContext.AppendType(System.UInt32,System.UInt32,System.Int32,System.UInt32)">
+  AppendType(uint, uint, int, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint AppendType(uint indexCountPerInstance, uint startIndexLocation = 0, int baseVertexLocation = 0, uint startInstanceLocation = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>indexCountPerInstance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>startIndexLocation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>baseVertexLocation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>startInstanceLocation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_Flush_" data-uid="HexaEngine.Graphics.Culling.CullingContext.Flush*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_Flush_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Graphics.Culling.CullingContext.Flush(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Flush(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Flush(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_GetDrawArgsOffset_" data-uid="HexaEngine.Graphics.Culling.CullingContext.GetDrawArgsOffset*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_GetDrawArgsOffset" data-uid="HexaEngine.Graphics.Culling.CullingContext.GetDrawArgsOffset">
+  GetDrawArgsOffset()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint GetDrawArgsOffset()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Culling_CullingContext_Reset_" data-uid="HexaEngine.Graphics.Culling.CullingContext.Reset*"></a>
+
+  <h3 id="HexaEngine_Graphics_Culling_CullingContext_Reset" data-uid="HexaEngine.Graphics.Culling.CullingContext.Reset">
+  Reset()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reset()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Culling/CullingContext.cs/#L9" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

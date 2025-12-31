@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class DirectionalLight </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class DirectionalLight ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Lights_Types_DirectionalLight.md&amp;value=---%0Auid%3A%20HexaEngine.Lights.Types.DirectionalLight%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Lights.Types.DirectionalLight">
+
+
+
+  <h1 id="HexaEngine_Lights_Types_DirectionalLight" data-uid="HexaEngine.Lights.Types.DirectionalLight" class="text-break">
+Class DirectionalLight  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Lights.html">Lights</a>.<a class="xref" href="HexaEngine.Lights.Types.html">Types</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Lights&quot;, null)]
+[EditorGameObject&lt;DirectionalLight&gt;(&quot;Directional Light&quot;)]
+public class DirectionalLight : Light, IHierarchyObject, INotifyPropertyChanged, INotifyPropertyChanging, IEditorSelectable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html">EntityNotifyBase</a></div>
+      <div><a class="xref" href="HexaEngine.Scenes.GameObject.html">GameObject</a></div>
+      <div><a class="xref" href="HexaEngine.Lights.LightSource.html">LightSource</a></div>
+      <div><a class="xref" href="HexaEngine.Lights.Light.html">Light</a></div>
+      <div><span class="xref">DirectionalLight</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Editor.IHierarchyObject.html">IHierarchyObject</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanging">INotifyPropertyChanging</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Editor.IEditorSelectable.html">IEditorSelectable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_lightShadowMapChangedHandlers">Light.lightShadowMapChangedHandlers</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_Range">Light.Range</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ShadowMapEnable">Light.ShadowMapEnable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ShadowMapUpdateMode">Light.ShadowMapUpdateMode</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ShadowMapResolution">Light.ShadowMapResolution</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ShadowMapSlopeScaleDepthBias">Light.ShadowMapSlopeScaleDepthBias</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ShadowMapNormalBias">Light.ShadowMapNormalBias</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ShadowMapSoftness">Light.ShadowMapSoftness</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ShadowMapLightBleedingReduction">Light.ShadowMapLightBleedingReduction</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ContactShadowsEnable">Light.ContactShadowsEnable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ContactShadowsThickness">Light.ContactShadowsThickness</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ContactShadowsMaxSteps">Light.ContactShadowsMaxSteps</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ContactShadowsMaxRayDistance">Light.ContactShadowsMaxRayDistance</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ContactShadowsMaxDepthDistance">Light.ContactShadowsMaxDepthDistance</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_VolumetricsEnable">Light.VolumetricsEnable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_VolumetricsMultiplier">Light.VolumetricsMultiplier</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_ShadowMapChanged">Light.ShadowMapChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_Position">Light.Position</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_Direction">Light.Direction</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_CreateShadowMap_HexaEngine_Lights_ShadowAtlas_">Light.CreateShadowMap(ShadowAtlas)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_DestroyShadowMap">Light.DestroyShadowMap()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_GetQueueIndex">Light.GetQueueIndex()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.Light.html#HexaEngine_Lights_Light_Uninitialize">Light.Uninitialize()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.LightSource.html#HexaEngine_Lights_LightSource_color">LightSource.color</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.LightSource.html#HexaEngine_Lights_LightSource_Color">LightSource.Color</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Lights.LightSource.html#HexaEngine_Lights_LightSource_Intensity">LightSource.Intensity</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Guid">GameObject.Guid</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Name">GameObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_FullName">GameObject.FullName</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEnabled">GameObject.IsEnabled</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorVisible">GameObject.IsEditorVisible</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsHidden">GameObject.IsHidden</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Transform">GameObject.Transform</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsVisible">GameObject.IsVisible</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Parent">GameObject.Parent</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Initialized">GameObject.Initialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorSelected">GameObject.IsEditorSelected</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorOpen">GameObject.IsEditorOpen</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_IsEditorDisplayed">GameObject.IsEditorDisplayed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Children">GameObject.Children</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Components">GameObject.Components</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Tag">GameObject.Tag</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Type">GameObject.Type</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_EnabledChanged">GameObject.EnabledChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_NameChanged">GameObject.NameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TagChanged">GameObject.TagChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ParentChanged">GameObject.ParentChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TransformChanged">GameObject.TransformChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TransformUpdated">GameObject.TransformUpdated</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ComponentAdded">GameObject.ComponentAdded</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ComponentRemoved">GameObject.ComponentRemoved</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ChildAdded">GameObject.ChildAdded</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_ChildRemoved">GameObject.ChildRemoved</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_OverwriteTransform_Hexa_NET_Mathematics_Transform_">GameObject.OverwriteTransform(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_OnTransformChanged_Hexa_NET_Mathematics_Transform_">GameObject.OnTransformChanged(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_OnTransformUpdated_Hexa_NET_Mathematics_Transform_">GameObject.OnTransformUpdated(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_SendUpdateTransformed">GameObject.SendUpdateTransformed()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_SaveState">GameObject.SaveState()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RestoreState">GameObject.RestoreState()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Merge_HexaEngine_Scenes_GameObject_">GameObject.Merge(GameObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddChild_HexaEngine_Scenes_GameObject_">GameObject.AddChild(GameObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RemoveChild_HexaEngine_Scenes_GameObject_">GameObject.RemoveChild(GameObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponent_HexaEngine_Scenes_IComponent_">GameObject.AddComponent(IComponent)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponent__1">GameObject.AddComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponentSingleton__1">GameObject.AddComponentSingleton&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RemoveComponent_HexaEngine_Scenes_IComponent_">GameObject.RemoveComponent(IComponent)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_Initialize">GameObject.Initialize()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetScene">GameObject.GetScene()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_BuildReferences">GameObject.BuildReferences()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetDepth_System_Int32__">GameObject.GetDepth(ref int)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_FindParent__1">GameObject.FindParent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_FindChild__1">GameObject.FindChild&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentFromParent__1">GameObject.GetComponentFromParent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentsFromParents__1">GameObject.GetComponentsFromParents&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentFromChild__1">GameObject.GetComponentFromChild&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentsFromChilds__1">GameObject.GetComponentsFromChilds&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetOrCreateComponent__1">GameObject.GetOrCreateComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponent__1">GameObject.GetComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TryGetComponent__1___0__">GameObject.TryGetComponent&lt;T&gt;(out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponents__1">GameObject.GetComponents&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponents_System_Func_HexaEngine_Scenes_IComponent_System_Boolean__">GameObject.GetComponents(Func&lt;IComponent, bool&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponents__1_System_Func___0_System_Boolean__">GameObject.GetComponents&lt;T&gt;(Func&lt;T, bool&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_HasComponent__1">GameObject.HasComponent&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetComponentsFromTree__1">GameObject.GetComponentsFromTree&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_DiscoverComponents__2">GameObject.DiscoverComponents&lt;T, TStop&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_RemoveComponent_System_ValueTuple_HexaEngine_Scenes_GameObject_HexaEngine_Scenes_IComponent__">GameObject.RemoveComponent((GameObject, IComponent))</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_AddComponent_System_ValueTuple_HexaEngine_Scenes_GameObject_HexaEngine_Scenes_IComponent__">GameObject.AddComponent((GameObject, IComponent))</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetChild__1">GameObject.GetChild&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_TryGetChild__1___0__">GameObject.TryGetChild&lt;T&gt;(out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.GameObject.html#HexaEngine_Scenes_GameObject_GetChildren__1">GameObject.GetChildren&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanging">EntityNotifyBase.PropertyChanging</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_PropertyChanged">EntityNotifyBase.PropertyChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanging_System_String_">EntityNotifyBase.OnPropertyChanging(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_OnPropertyChanged_System_String_">EntityNotifyBase.OnPropertyChanged(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotify__1___0____0_System_String_">EntityNotifyBase.SetAndNotify&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.EntityNotifyBase.html#HexaEngine_Scenes_EntityNotifyBase_SetAndNotifyWithRefEqualsTest__1___0____0_System_String_">EntityNotifyBase.SetAndNotifyWithRefEqualsTest&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Scenes.SceneExensions.html#HexaEngine_Scenes_SceneExensions_AddComponentIfIs__1_HexaEngine_Scenes_GameObject_System_Action___0__">SceneExensions.AddComponentIfIs&lt;T&gt;(GameObject, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Scenes.SceneExensions.html#HexaEngine_Scenes_SceneExensions_RemoveComponentIfIs__1_HexaEngine_Scenes_GameObject_System_Action___0__">SceneExensions.RemoveComponentIfIs&lt;T&gt;(GameObject, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Scripts.ScriptHelper.html#HexaEngine_Scripts_ScriptHelper_FindScript__1_HexaEngine_Scenes_GameObject_">ScriptHelper.FindScript&lt;T&gt;(GameObject)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Scripts.ScriptHelper.html#HexaEngine_Scripts_ScriptHelper_FindScript__1_HexaEngine_Scenes_GameObject_System_Func___0_System_Boolean__">ScriptHelper.FindScript&lt;T&gt;(GameObject, Func&lt;T, bool&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight__ctor_" data-uid="HexaEngine.Lights.Types.DirectionalLight.#ctor*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight__ctor" data-uid="HexaEngine.Lights.Types.DirectionalLight.#ctor">
+  DirectionalLight()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DirectionalLight()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_MaxCascadeCount" data-uid="HexaEngine.Lights.Types.DirectionalLight.MaxCascadeCount">
+  MaxCascadeCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int MaxCascadeCount = 8</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_CascadeCount_" data-uid="HexaEngine.Lights.Types.DirectionalLight.CascadeCount*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_CascadeCount" data-uid="HexaEngine.Lights.Types.DirectionalLight.CascadeCount">
+  CascadeCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Shadow Map&quot;, &quot;Shadows&quot;)]
+[EditorProperty(&quot;Cascade Count&quot;, EditorPropertyMode.Default)]
+public int CascadeCount { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_HasShadowMap_" data-uid="HexaEngine.Lights.Types.DirectionalLight.HasShadowMap*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_HasShadowMap" data-uid="HexaEngine.Lights.Types.DirectionalLight.HasShadowMap">
+  HasShadowMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public override bool HasShadowMap { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_LightType_" data-uid="HexaEngine.Lights.Types.DirectionalLight.LightType*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_LightType" data-uid="HexaEngine.Lights.Types.DirectionalLight.LightType">
+  LightType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public override LightType LightType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.LightType.html">LightType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_ShadowFrustra_" data-uid="HexaEngine.Lights.Types.DirectionalLight.ShadowFrustra*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_ShadowFrustra" data-uid="HexaEngine.Lights.Types.DirectionalLight.ShadowFrustra">
+  ShadowFrustra
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public IReadOnlyList&lt;BoundingFrustum&gt; ShadowFrustra { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<span class="xref">BoundingFrustum</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_ShadowMapSize_" data-uid="HexaEngine.Lights.Types.DirectionalLight.ShadowMapSize*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_ShadowMapSize" data-uid="HexaEngine.Lights.Types.DirectionalLight.ShadowMapSize">
+  ShadowMapSize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public override int ShadowMapSize { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_SplitLambda_" data-uid="HexaEngine.Lights.Types.DirectionalLight.SplitLambda*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_SplitLambda" data-uid="HexaEngine.Lights.Types.DirectionalLight.SplitLambda">
+  SplitLambda
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Shadow Map&quot;, &quot;Shadows&quot;)]
+[EditorProperty(&quot;Split Lambda&quot;, EditorPropertyMode.Default)]
+public float SplitLambda { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_SplitMode_" data-uid="HexaEngine.Lights.Types.DirectionalLight.SplitMode*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_SplitMode" data-uid="HexaEngine.Lights.Types.DirectionalLight.SplitMode">
+  SplitMode
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorCategory(&quot;Shadow Map&quot;, &quot;Shadows&quot;)]
+[EditorProperty&lt;CascadesSplitMode&gt;(&quot;Split Mode&quot;)]
+public CascadesSplitMode SplitMode { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">CascadesSplitMode</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_BeginUpdateShadowMap_" data-uid="HexaEngine.Lights.Types.DirectionalLight.BeginUpdateShadowMap*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_BeginUpdateShadowMap_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_HexaEngine_Lights_Structs_ShadowData__HexaEngine_Core_Graphics_Buffers_ConstantBuffer_HexaEngine_Lights_Structs_CSMShadowParams__HexaEngine_Scenes_Camera_" data-uid="HexaEngine.Lights.Types.DirectionalLight.BeginUpdateShadowMap(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer{HexaEngine.Lights.Structs.ShadowData},HexaEngine.Core.Graphics.Buffers.ConstantBuffer{HexaEngine.Lights.Structs.CSMShadowParams},HexaEngine.Scenes.Camera)">
+  BeginUpdateShadowMap(IGraphicsContext, StructuredUavBuffer&lt;ShadowData&gt;, ConstantBuffer&lt;CSMShadowParams&gt;, Camera)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L207"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void BeginUpdateShadowMap(IGraphicsContext context, StructuredUavBuffer&lt;ShadowData&gt; buffer, ConstantBuffer&lt;CSMShadowParams&gt; csmConstantBuffer, Camera camera)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="HexaEngine.Lights.Structs.ShadowData.html">ShadowData</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>csmConstantBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.ConstantBuffer-1.html">ConstantBuffer</a>&lt;<a class="xref" href="HexaEngine.Lights.Structs.CSMShadowParams.html">CSMShadowParams</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_GetDepthStencil_" data-uid="HexaEngine.Lights.Types.DirectionalLight.GetDepthStencil*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_GetDepthStencil" data-uid="HexaEngine.Lights.Types.DirectionalLight.GetDepthStencil">
+  GetDepthStencil()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DepthStencil? GetDepthStencil()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_GetMap_" data-uid="HexaEngine.Lights.Types.DirectionalLight.GetMap*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_GetMap" data-uid="HexaEngine.Lights.Types.DirectionalLight.GetMap">
+  GetMap()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Texture2D? GetMap()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_GetShadowMap_" data-uid="HexaEngine.Lights.Types.DirectionalLight.GetShadowMap*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_GetShadowMap" data-uid="HexaEngine.Lights.Types.DirectionalLight.GetShadowMap">
+  GetShadowMap()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override IShaderResourceView? GetShadowMap()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_IntersectFrustum_" data-uid="HexaEngine.Lights.Types.DirectionalLight.IntersectFrustum*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_IntersectFrustum_Hexa_NET_Mathematics_BoundingBox_" data-uid="HexaEngine.Lights.Types.DirectionalLight.IntersectFrustum(Hexa.NET.Mathematics.BoundingBox)">
+  IntersectFrustum(BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L261"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tests if an object that moved affects the shadow volume</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool IntersectFrustum(BoundingBox box)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>box</code> <span class="xref">BoundingBox</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_OnCreateShadowMap_" data-uid="HexaEngine.Lights.Types.DirectionalLight.OnCreateShadowMap*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_OnCreateShadowMap_HexaEngine_Lights_ShadowAtlas_" data-uid="HexaEngine.Lights.Types.DirectionalLight.OnCreateShadowMap(HexaEngine.Lights.ShadowAtlas)">
+  OnCreateShadowMap(ShadowAtlas)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnCreateShadowMap(ShadowAtlas atlas)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>atlas</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_OnDestroyShadowMap_" data-uid="HexaEngine.Lights.Types.DirectionalLight.OnDestroyShadowMap*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_OnDestroyShadowMap" data-uid="HexaEngine.Lights.Types.DirectionalLight.OnDestroyShadowMap">
+  OnDestroyShadowMap()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnDestroyShadowMap()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_UpdateShadowBuffer_" data-uid="HexaEngine.Lights.Types.DirectionalLight.UpdateShadowBuffer*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_UpdateShadowBuffer_HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_HexaEngine_Lights_Structs_ShadowData__HexaEngine_Scenes_Camera_" data-uid="HexaEngine.Lights.Types.DirectionalLight.UpdateShadowBuffer(HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer{HexaEngine.Lights.Structs.ShadowData},HexaEngine.Scenes.Camera)">
+  UpdateShadowBuffer(StructuredUavBuffer&lt;ShadowData&gt;, Camera)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateShadowBuffer(StructuredUavBuffer&lt;ShadowData&gt; buffer, Camera camera)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="HexaEngine.Lights.Structs.ShadowData.html">ShadowData</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_UpdateShadowMap_" data-uid="HexaEngine.Lights.Types.DirectionalLight.UpdateShadowMap*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_UpdateShadowMap_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_HexaEngine_Lights_Structs_ShadowData__HexaEngine_Core_Graphics_Buffers_ConstantBuffer_HexaEngine_Lights_Structs_CSMShadowParams__HexaEngine_Scenes_Camera_System_UInt32__System_Boolean__" data-uid="HexaEngine.Lights.Types.DirectionalLight.UpdateShadowMap(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer{HexaEngine.Lights.Structs.ShadowData},HexaEngine.Core.Graphics.Buffers.ConstantBuffer{HexaEngine.Lights.Structs.CSMShadowParams},HexaEngine.Scenes.Camera,System.UInt32@,System.Boolean@)">
+  UpdateShadowMap(IGraphicsContext, StructuredUavBuffer&lt;ShadowData&gt;, ConstantBuffer&lt;CSMShadowParams&gt;, Camera, out uint, out bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer&lt;ShadowData&gt; buffer, ConstantBuffer&lt;CSMShadowParams&gt; csmConstantBuffer, Camera camera, out uint updateMask, out bool reproject)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="HexaEngine.Lights.Structs.ShadowData.html">ShadowData</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>csmConstantBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.ConstantBuffer-1.html">ConstantBuffer</a>&lt;<a class="xref" href="HexaEngine.Lights.Structs.CSMShadowParams.html">CSMShadowParams</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+    <dt><code>updateMask</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>reproject</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_UpdateShadowMap_" data-uid="HexaEngine.Lights.Types.DirectionalLight.UpdateShadowMap*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_UpdateShadowMap_HexaEngine_Core_Graphics_IGraphicsContext_System_Int32_HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_HexaEngine_Lights_Structs_ShadowData__HexaEngine_Core_Graphics_Buffers_ConstantBuffer_HexaEngine_Lights_Structs_CSMShadowParams__HexaEngine_Scenes_Camera_" data-uid="HexaEngine.Lights.Types.DirectionalLight.UpdateShadowMap(HexaEngine.Core.Graphics.IGraphicsContext,System.Int32,HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer{HexaEngine.Lights.Structs.ShadowData},HexaEngine.Core.Graphics.Buffers.ConstantBuffer{HexaEngine.Lights.Structs.CSMShadowParams},HexaEngine.Scenes.Camera)">
+  UpdateShadowMap(IGraphicsContext, int, StructuredUavBuffer&lt;ShadowData&gt;, ConstantBuffer&lt;CSMShadowParams&gt;, Camera)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L232"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateShadowMap(IGraphicsContext context, int cascadeIndex, StructuredUavBuffer&lt;ShadowData&gt; buffer, ConstantBuffer&lt;CSMShadowParams&gt; csmConstantBuffer, Camera camera)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>cascadeIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;<a class="xref" href="HexaEngine.Lights.Structs.ShadowData.html">ShadowData</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>csmConstantBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.ConstantBuffer-1.html">ConstantBuffer</a>&lt;<a class="xref" href="HexaEngine.Lights.Structs.CSMShadowParams.html">CSMShadowParams</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_Types_DirectionalLight_UpdateShadowMapSize_" data-uid="HexaEngine.Lights.Types.DirectionalLight.UpdateShadowMapSize*"></a>
+
+  <h3 id="HexaEngine_Lights_Types_DirectionalLight_UpdateShadowMapSize_HexaEngine_Scenes_Camera_HexaEngine_Lights_ShadowAtlas_" data-uid="HexaEngine.Lights.Types.DirectionalLight.UpdateShadowMapSize(HexaEngine.Scenes.Camera,HexaEngine.Lights.ShadowAtlas)">
+  UpdateShadowMapSize(Camera, ShadowAtlas)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L266"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool UpdateShadowMapSize(Camera camera, ShadowAtlas atlas)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>camera</code> <a class="xref" href="HexaEngine.Scenes.Camera.html">Camera</a></dt>
+    <dd></dd>
+    <dt><code>atlas</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/Types/DirectionalLight.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

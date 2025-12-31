@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class TerrainGrid </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class TerrainGrid ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Meshes_TerrainGrid.md&amp;value=---%0Auid%3A%20HexaEngine.Meshes.TerrainGrid%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Meshes.TerrainGrid">
+
+
+
+  <h1 id="HexaEngine_Meshes_TerrainGrid" data-uid="HexaEngine.Meshes.TerrainGrid" class="text-break">
+Class TerrainGrid  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Meshes.html">Meshes</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class TerrainGrid : IEnumerable&lt;TerrainCell&gt;, IEnumerable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">TerrainGrid</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid__ctor_" data-uid="HexaEngine.Meshes.TerrainGrid.#ctor*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid__ctor_HexaEngine_Core_IO_ReusableFileStream_System_Boolean_" data-uid="HexaEngine.Meshes.TerrainGrid.#ctor(HexaEngine.Core.IO.ReusableFileStream,System.Boolean)">
+  TerrainGrid(ReusableFileStream, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainGrid(ReusableFileStream stream, bool isDynamic)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="HexaEngine.Core.IO.ReusableFileStream.html">ReusableFileStream</a></dt>
+    <dd></dd>
+    <dt><code>isDynamic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_BoundingBox_" data-uid="HexaEngine.Meshes.TerrainGrid.BoundingBox*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_BoundingBox" data-uid="HexaEngine.Meshes.TerrainGrid.BoundingBox">
+  BoundingBox
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox BoundingBox { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">BoundingBox</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_Count_" data-uid="HexaEngine.Meshes.TerrainGrid.Count*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_Count" data-uid="HexaEngine.Meshes.TerrainGrid.Count">
+  Count
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Count { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_Item_" data-uid="HexaEngine.Meshes.TerrainGrid.Item*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_Item_System_Int32_" data-uid="HexaEngine.Meshes.TerrainGrid.Item(System.Int32)">
+  this[int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCell this[int index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_Layers_" data-uid="HexaEngine.Meshes.TerrainGrid.Layers*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_Layers" data-uid="HexaEngine.Meshes.TerrainGrid.Layers">
+  Layers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;TerrainLayer&gt; Layers { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_TerrainData_" data-uid="HexaEngine.Meshes.TerrainGrid.TerrainData*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_TerrainData" data-uid="HexaEngine.Meshes.TerrainGrid.TerrainData">
+  TerrainData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainFile TerrainData { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainFile.html">TerrainFile</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_Add_" data-uid="HexaEngine.Meshes.TerrainGrid.Add*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_Add_HexaEngine_Meshes_TerrainCell_" data-uid="HexaEngine.Meshes.TerrainGrid.Add(HexaEngine.Meshes.TerrainCell)">
+  Add(TerrainCell)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L149"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(TerrainCell cell)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cell</code> <a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_AddLayer_" data-uid="HexaEngine.Meshes.TerrainGrid.AddLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_AddLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Meshes.TerrainGrid.AddLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  AddLayer(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddLayer(TerrainLayer layer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_Clear_" data-uid="HexaEngine.Meshes.TerrainGrid.Clear*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_Clear" data-uid="HexaEngine.Meshes.TerrainGrid.Clear">
+  Clear()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_CreateCell_" data-uid="HexaEngine.Meshes.TerrainGrid.CreateCell*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_CreateCell_Hexa_NET_Mathematics_Point2_" data-uid="HexaEngine.Meshes.TerrainGrid.CreateCell(Hexa.NET.Mathematics.Point2)">
+  CreateCell(Point2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCell CreateCell(Point2 pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <span class="xref">Point2</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_CreateCell_" data-uid="HexaEngine.Meshes.TerrainGrid.CreateCell*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_CreateCell_Hexa_NET_Mathematics_Point2_HexaEngine_Core_IO_Binary_Terrains_HeightMap_" data-uid="HexaEngine.Meshes.TerrainGrid.CreateCell(Hexa.NET.Mathematics.Point2,HexaEngine.Core.IO.Binary.Terrains.HeightMap)">
+  CreateCell(Point2, HeightMap)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCell CreateCell(Point2 pos, HeightMap heightMap)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <span class="xref">Point2</span></dt>
+    <dd></dd>
+    <dt><code>heightMap</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.HeightMap.html">HeightMap</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_Dispose_" data-uid="HexaEngine.Meshes.TerrainGrid.Dispose*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_Dispose" data-uid="HexaEngine.Meshes.TerrainGrid.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_Find_" data-uid="HexaEngine.Meshes.TerrainGrid.Find*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_Find_Hexa_NET_Mathematics_Point2_" data-uid="HexaEngine.Meshes.TerrainGrid.Find(Hexa.NET.Mathematics.Point2)">
+  Find(Point2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L169"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCell? Find(Point2 id)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <span class="xref">Point2</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_FindLayer_" data-uid="HexaEngine.Meshes.TerrainGrid.FindLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_FindLayer_System_String_" data-uid="HexaEngine.Meshes.TerrainGrid.FindLayer(System.String)">
+  FindLayer(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainLayer? FindLayer(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_FindNeighbors_" data-uid="HexaEngine.Meshes.TerrainGrid.FindNeighbors*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_FindNeighbors" data-uid="HexaEngine.Meshes.TerrainGrid.FindNeighbors">
+  FindNeighbors()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L190"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FindNeighbors()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_FindNeighbors_" data-uid="HexaEngine.Meshes.TerrainGrid.FindNeighbors*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_FindNeighbors_HexaEngine_Meshes_TerrainCell_" data-uid="HexaEngine.Meshes.TerrainGrid.FindNeighbors(HexaEngine.Meshes.TerrainCell)">
+  FindNeighbors(TerrainCell)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FindNeighbors(TerrainCell cell)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cell</code> <a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_GenerateBoundingBox_" data-uid="HexaEngine.Meshes.TerrainGrid.GenerateBoundingBox*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_GenerateBoundingBox" data-uid="HexaEngine.Meshes.TerrainGrid.GenerateBoundingBox">
+  GenerateBoundingBox()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L224"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GenerateBoundingBox()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_GetEnumerator_" data-uid="HexaEngine.Meshes.TerrainGrid.GetEnumerator*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_GetEnumerator" data-uid="HexaEngine.Meshes.TerrainGrid.GetEnumerator">
+  GetEnumerator()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L251"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns an enumerator that iterates through the collection.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerator&lt;TerrainCell&gt; GetEnumerator()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator</a>&lt;<a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a>&gt;</dt>
+    <dd><p>An enumerator that can be used to iterate through the collection.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_IndexOfLayer_" data-uid="HexaEngine.Meshes.TerrainGrid.IndexOfLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_IndexOfLayer_System_String_" data-uid="HexaEngine.Meshes.TerrainGrid.IndexOfLayer(System.String)">
+  IndexOfLayer(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int IndexOfLayer(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_LayerExists_" data-uid="HexaEngine.Meshes.TerrainGrid.LayerExists*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_LayerExists_System_String_" data-uid="HexaEngine.Meshes.TerrainGrid.LayerExists(System.String)">
+  LayerExists(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool LayerExists(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_RegenerateAll_" data-uid="HexaEngine.Meshes.TerrainGrid.RegenerateAll*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_RegenerateAll_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Meshes.TerrainGrid.RegenerateAll(HexaEngine.Core.Graphics.IGraphicsContext)">
+  RegenerateAll(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L198"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RegenerateAll(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_Remove_" data-uid="HexaEngine.Meshes.TerrainGrid.Remove*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_Remove_HexaEngine_Meshes_TerrainCell_" data-uid="HexaEngine.Meshes.TerrainGrid.Remove(HexaEngine.Meshes.TerrainCell)">
+  Remove(TerrainCell)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Remove(TerrainCell cell)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cell</code> <a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_TryAddLayer_" data-uid="HexaEngine.Meshes.TerrainGrid.TryAddLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_TryAddLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Meshes.TerrainGrid.TryAddLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  TryAddLayer(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryAddLayer(TerrainLayer layer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_TryAddOrGetLayer_" data-uid="HexaEngine.Meshes.TerrainGrid.TryAddOrGetLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_TryAddOrGetLayer_System_String_" data-uid="HexaEngine.Meshes.TerrainGrid.TryAddOrGetLayer(System.String)">
+  TryAddOrGetLayer(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainLayer TryAddOrGetLayer(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainGrid_TryAddOrGetLayer_" data-uid="HexaEngine.Meshes.TerrainGrid.TryAddOrGetLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainGrid_TryAddOrGetLayer_System_String_HexaEngine_Core_Assets_AssetRef_" data-uid="HexaEngine.Meshes.TerrainGrid.TryAddOrGetLayer(System.String,HexaEngine.Core.Assets.AssetRef)">
+  TryAddOrGetLayer(string, AssetRef)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainLayer TryAddOrGetLayer(string name, AssetRef material)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>material</code> <a class="xref" href="HexaEngine.Core.Assets.AssetRef.html">AssetRef</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainGrid.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

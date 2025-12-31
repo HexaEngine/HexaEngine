@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class SSGI </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class SSGI ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_PostFx_BuildIn_SSGI.md&amp;value=---%0Auid%3A%20HexaEngine.PostFx.BuildIn.SSGI%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.PostFx.BuildIn.SSGI">
+
+
+
+  <h1 id="HexaEngine_PostFx_BuildIn_SSGI" data-uid="HexaEngine.PostFx.BuildIn.SSGI" class="text-break">
+Class SSGI  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.PostFx.html">PostFx</a>.<a class="xref" href="HexaEngine.PostFx.BuildIn.html">BuildIn</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorDisplayName(&quot;SSGI&quot;)]
+public class SSGI : PostFxBase, IPostFx, INotifyPropertyChanged, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.PostFxBase.html">PostFxBase</a></div>
+      <div><span class="xref">SSGI</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.PostFx.IPostFx.html">IPostFx</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_dirty">PostFxBase.dirty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Input">PostFxBase.Input</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_InputResource">PostFxBase.InputResource</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Output">PostFxBase.Output</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_OutputResource">PostFxBase.OutputResource</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Viewport">PostFxBase.Viewport</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_DisplayName">PostFxBase.DisplayName</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Initialized">PostFxBase.Initialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Enabled">PostFxBase.Enabled</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_OnEnabledChanged">PostFxBase.OnEnabledChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_OnReload">PostFxBase.OnReload</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_PropertyChanged">PostFxBase.PropertyChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_CreateDisplayName">PostFxBase.CreateDisplayName()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Resize_System_Int32_System_Int32_">PostFxBase.Resize(int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Compose_HexaEngine_Core_Graphics_IGraphicsContext_">PostFxBase.Compose(IGraphicsContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_PrePassDraw_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Graphics_Graph_GraphResourceBuilder_">PostFxBase.PrePassDraw(IGraphicsContext, GraphResourceBuilder)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_SetOutput_HexaEngine_Core_Graphics_IRenderTargetView_HexaEngine_Core_Graphics_ITexture2D_Hexa_NET_Mathematics_Viewport_">PostFxBase.SetOutput(IRenderTargetView, ITexture2D, Viewport)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_SetInput_HexaEngine_Core_Graphics_IShaderResourceView_HexaEngine_Core_Graphics_ITexture2D_">PostFxBase.SetInput(IShaderResourceView, ITexture2D)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_NotifyPropertyChanged_System_String_">PostFxBase.NotifyPropertyChanged(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_NotifyPropertyChangedAndSet__1___0____0_System_String_">PostFxBase.NotifyPropertyChangedAndSet&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_NotifyPropertyChangedAndSetAndReload__1___0____0_System_String_">PostFxBase.NotifyPropertyChangedAndSetAndReload&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_NotifyReload">PostFxBase.NotifyReload()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Dispose">PostFxBase.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_ResetSettings">PostFxBase.ResetSettings()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_ColorSpace_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.ColorSpace*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_ColorSpace" data-uid="HexaEngine.PostFx.BuildIn.SSGI.ColorSpace">
+  ColorSpace
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the color space of the post-processing effect. (eg. SDR or HDR)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override PostFxColorSpace ColorSpace { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.PostFx.PostFxColorSpace.html">PostFxColorSpace</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_Distance_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Distance*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_Distance" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Distance">
+  Distance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the distance for SSGI.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Distance&quot;, EditorPropertyMode.Default)]
+[Tooltip(&quot;Specifies the distance for Screen Space Global Illumination (SSGI).&quot;)]
+public float Distance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_Flags_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Flags*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_Flags" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the flags associated with the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override PostFxFlags Flags { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.PostFx.PostFxFlags.html">PostFxFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_Intensity_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Intensity*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_Intensity" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Intensity">
+  Intensity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the intensity of SSGI.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Intensity&quot;, EditorPropertyMode.Default)]
+[Tooltip(&quot;Specifies the intensity of Screen Space Global Illumination (SSGI).&quot;)]
+public float Intensity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_MaxRayCount_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.MaxRayCount*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_MaxRayCount" data-uid="HexaEngine.PostFx.BuildIn.SSGI.MaxRayCount">
+  MaxRayCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the maximum number of rays for SSGI.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Max Ray Count&quot;, EditorPropertyMode.Default)]
+[Tooltip(&quot;Specifies the maximum number of rays for Screen Space Global Illumination (SSGI). This value is applicable when the quality preset is set to &#39;Custom&#39;.&quot;)]
+public int MaxRayCount { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_Name_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Name*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_Name" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the name of the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string Name { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_QualityPreset_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.QualityPreset*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_QualityPreset" data-uid="HexaEngine.PostFx.BuildIn.SSGI.QualityPreset">
+  QualityPreset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the quality preset for SSGI.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty&lt;SSGI.SSGIQualityPreset&gt;(&quot;Quality Preset&quot;)]
+[Tooltip(&quot;Gets or sets the quality preset for Screen Space Global Illumination (SSGI).&quot;)]
+public SSGI.SSGIQualityPreset QualityPreset { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.PostFx.BuildIn.SSGI.html">SSGI</a>.<a class="xref" href="HexaEngine.PostFx.BuildIn.SSGI.SSGIQualityPreset.html">SSGIQualityPreset</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_Radius_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Radius*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_Radius" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Radius">
+  Radius
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L204"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Denoise Radius&quot;, EditorPropertyMode.Default)]
+public float Radius { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_RayHitThreshold_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.RayHitThreshold*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_RayHitThreshold" data-uid="HexaEngine.PostFx.BuildIn.SSGI.RayHitThreshold">
+  RayHitThreshold
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the ray step for SSGI.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Ray Hit Threshold&quot;, EditorPropertyMode.Default)]
+[Tooltip(&quot;Specifies the ray hit threshold for Screen Space Global Illumination (SSGI). This value is applicable when the quality preset is set to &#39;Custom&#39;.&quot;)]
+public float RayHitThreshold { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_RayStep_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.RayStep*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_RayStep" data-uid="HexaEngine.PostFx.BuildIn.SSGI.RayStep">
+  RayStep
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the ray step for SSGI.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Ray Step&quot;, EditorPropertyMode.Default)]
+[Tooltip(&quot;Specifies the ray step for Screen Space Global Illumination (SSGI). This value is applicable when the quality preset is set to &#39;Custom&#39;.&quot;)]
+public float RayStep { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_RaySteps_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.RaySteps*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_RaySteps" data-uid="HexaEngine.PostFx.BuildIn.SSGI.RaySteps">
+  RaySteps
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the number of steps for SSGI ray tracing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Ray Steps&quot;, EditorPropertyMode.Default)]
+[Tooltip(&quot;Specifies the number of steps for ray tracing in Screen Space Global Illumination (SSGI). This value is applicable when the quality preset is set to &#39;Custom&#39;.&quot;)]
+public int RaySteps { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_SigmaD_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SigmaD*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_SigmaD" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SigmaD">
+  SigmaD
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L198"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Denoise Sigma D&quot;, EditorPropertyMode.Default)]
+public float SigmaD { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_SigmaN_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SigmaN*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_SigmaN" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SigmaN">
+  SigmaN
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Denoise Sigma N&quot;, EditorPropertyMode.Default)]
+public float SigmaN { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_SigmaR_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SigmaR*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_SigmaR" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SigmaR">
+  SigmaR
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Denoise Sigma R&quot;, EditorPropertyMode.Default)]
+public float SigmaR { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_SigmaS_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SigmaS*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_SigmaS" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SigmaS">
+  SigmaS
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L192"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorProperty(&quot;Denoise Sigma S&quot;, EditorPropertyMode.Default)]
+public float SigmaS { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_DisposeCore_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.DisposeCore*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_DisposeCore" data-uid="HexaEngine.PostFx.BuildIn.SSGI.DisposeCore">
+  DisposeCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L389"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs the core disposal logic for the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void DisposeCore()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_Draw_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Draw*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_Draw_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Draw(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Draw(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L356"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Draw(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_Initialize_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Initialize*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_Initialize_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_PostFx_PostFxGraphResourceBuilder_System_Int32_System_Int32_HexaEngine_Core_Graphics_ShaderMacro___" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Initialize(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.PostFx.PostFxGraphResourceBuilder,System.Int32,System.Int32,HexaEngine.Core.Graphics.ShaderMacro[])">
+  Initialize(IGraphicsDevice, PostFxGraphResourceBuilder, int, int, ShaderMacro[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L262"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd><p>The graphics device.</p>
+</dd>
+    <dt><code>creator</code> <a class="xref" href="HexaEngine.PostFx.PostFxGraphResourceBuilder.html">PostFxGraphResourceBuilder</a></dt>
+    <dd><p>The resource builder for creating resources.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the rendering area.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The height of the rendering area.</p>
+</dd>
+    <dt><code>macros</code> <a class="xref" href="HexaEngine.Core.Graphics.ShaderMacro.html">ShaderMacro</a>[]</dt>
+    <dd><p>The shader macros to use during initialization.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_SetupDependencies_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SetupDependencies*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_SetupDependencies_HexaEngine_PostFx_PostFxDependencyBuilder_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.SetupDependencies(HexaEngine.PostFx.PostFxDependencyBuilder)">
+  SetupDependencies(PostFxDependencyBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L248"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets up dependencies for the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void SetupDependencies(PostFxDependencyBuilder builder)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>builder</code> <a class="xref" href="HexaEngine.PostFx.PostFxDependencyBuilder.html">PostFxDependencyBuilder</a></dt>
+    <dd><p>The dependency builder.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_Update_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Update*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_Update_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.Update(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Update(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L320"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Update(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_SSGI_UpdateBindings_" data-uid="HexaEngine.PostFx.BuildIn.SSGI.UpdateBindings*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_SSGI_UpdateBindings" data-uid="HexaEngine.PostFx.BuildIn.SSGI.UpdateBindings">
+  UpdateBindings()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L343"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when a resource has changed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void UpdateBindings()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/SSGI.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
