@@ -17,18 +17,17 @@
         private CullingFlags cullingFlags = CullingFlags.All;
         private float depthBias = 0.0f;
 
+        private IComputePipelineState initPso;
         private IComputePipelineState culling;
 
         private ConstantBuffer<CBCamera> occlusionCameraBuffer;
-        private StructuredUavBuffer<uint> instanceOffsets;
         private StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer;
         private StructuredBuffer<TypeData> typeDataBuffer;
         private StructuredBuffer<GPUInstance> instanceDataBuffer;
         private StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer;
         private DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
-        private StructuredUavBuffer<uint> visibleListBuffer;
 
-        private StructuredBuffer<uint> instanceOffsetsNoCull;
+        private StructuredBuffer<uint> instanceOffsets;
         private StructuredBuffer<Matrix4x4> instanceDataNoCull;
 
         private readonly EventHandlers<CapacityChangedEventArgs> resizedEventHandlers = new();
@@ -41,23 +40,26 @@
 
         public CullingManager(IGraphicsDevice device)
         {
+            initPso = device.CreateComputePipelineState(new ComputePipelineDesc()
+            {
+                Path = "HexaEngine.Core:shaders/compute/culling/init.hlsl",
+            });
+
             culling = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "HexaEngine.Core:shaders/compute/culling/culling.hlsl",
             });
 
             instanceDataNoCull = new(CpuAccessFlags.Write);
-            instanceOffsetsNoCull = new(CpuAccessFlags.Write);
+            instanceOffsets = new(CpuAccessFlags.Write);
 
             occlusionCameraBuffer = new(CpuAccessFlags.Write);
             occlusionParamBuffer = new(CpuAccessFlags.Write);
-            instanceOffsets = new(CpuAccessFlags.None);
             instanceDataOutBuffer = new(CpuAccessFlags.Read);
             typeDataBuffer = new(CpuAccessFlags.Write);
             instanceDataBuffer = new(CpuAccessFlags.Write);
             swapBuffer = new(CpuAccessFlags.RW);
             drawIndirectArgs = new(CpuAccessFlags.Write);
-            visibleListBuffer = new(CpuAccessFlags.Read);
             sampler = new(new(Filter.MinMagLinearMipPoint, TextureAddressMode.Clamp));
 
             var bindings = culling.Bindings;
@@ -67,19 +69,17 @@
             bindings.SetSRV("instanceDataIn", instanceDataBuffer.SRV);
 
             bindings.SetUAV("instanceDataOut", instanceDataOutBuffer.UAV);
-            bindings.SetUAV("instanceOffsets", instanceOffsets.UAV);
+            bindings.SetSRV("instanceOffsets", instanceOffsets.SRV);
             bindings.SetUAV("drawArgs", swapBuffer.UAV);
-            bindings.SetUAV("visibleListOut", visibleListBuffer.UAV);
 
             bindings.SetSampler("samplerPoint", sampler);
 
-            context = new(instanceOffsetsNoCull, instanceDataNoCull, instanceOffsets, instanceDataOutBuffer, typeDataBuffer, instanceDataBuffer, swapBuffer, drawIndirectArgs, visibleListBuffer);
+            context = new(instanceOffsets, instanceDataNoCull, instanceDataOutBuffer, typeDataBuffer, instanceDataBuffer, swapBuffer, drawIndirectArgs);
 
             instanceDataBuffer.Resize += BufferResize;
             instanceDataOutBuffer.Resize += BufferResize;
             instanceOffsets.Resize += BufferResize;
             swapBuffer.Resize += BufferResize;
-            visibleListBuffer.Resize += BufferResize;
         }
 
         private bool resized;
@@ -142,6 +142,11 @@
             return visible;
         }
 
+        public static uint CeilDiv(uint x, uint y)
+        {
+            return (x + y - 1) / y;
+        }
+
         public unsafe void ExecuteCulling(IGraphicsContext context, Camera camera, int instanceCount, int typeCount, DepthMipChain mipChain, ICPUProfiler? profiler)
         {
             if (instanceCount == 0)
@@ -174,15 +179,14 @@
             var bindings = culling.Bindings;
 
             bindings.SetSRV("instanceDataIn", instanceDataBuffer.SRV);
+            bindings.SetSRV("instanceOffsets", instanceOffsets.SRV);
 
             bindings.SetUAV("instanceDataOut", instanceDataOutBuffer.UAV);
-            bindings.SetUAV("instanceOffsets", instanceOffsets.UAV);
             bindings.SetUAV("drawArgs", swapBuffer.UAV);
-            bindings.SetUAV("visibleListOut", visibleListBuffer.UAV);
 
             culling.Bindings.SetSRV("inputRT", mipChain.SRV);
             context.SetComputePipelineState(culling);
-            context.Dispatch((uint)instanceCount / 1024 + 1, 1, 1);
+            context.Dispatch(CeilDiv((uint)instanceCount, 1024), 1, 1);
             context.SetComputePipelineState(null);
 
             swapBuffer.CopyTo(context, drawIndirectArgs.Buffer);
@@ -238,11 +242,7 @@
             swapBuffer = null;
             drawIndirectArgs.Dispose();
             drawIndirectArgs = null;
-            visibleListBuffer.Dispose();
-            visibleListBuffer = null;
 
-            instanceOffsetsNoCull.Dispose();
-            instanceOffsetsNoCull = null;
             instanceDataNoCull.Dispose();
             instanceDataNoCull = null;
 

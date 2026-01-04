@@ -128,7 +128,7 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the threshold for bokeh blur.
         /// </summary>
-        [EditorProperty("Bokeh Blur Threshold", EditorPropertyMode.Slider, 0.01f, 1f)]
+        [EditorProperty("Bokeh Blur Threshold", 0.01f, 1f, EditorPropertyMode.Slider)]
         public float BokehBlurThreshold
         {
             get => bokehBlurThreshold;
@@ -138,7 +138,7 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the luminance threshold for bokeh.
         /// </summary>
-        [EditorProperty("Bokeh Lum Threshold", EditorPropertyMode.Slider, 0.01f, 1f)]
+        [EditorProperty("Bokeh Lum Threshold", 0.01f, 1f, EditorPropertyMode.Slider)]
         public float BokehLumThreshold
         {
             get => bokehLumThreshold;
@@ -158,7 +158,7 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the scale factor for bokeh color.
         /// </summary>
-        [EditorProperty("Bokeh Color Scale", EditorPropertyMode.Default, 0f, float.MaxValue)]
+        [EditorProperty("Bokeh Color Scale", 0f, float.MaxValue, EditorPropertyMode.Default)]
         public float BokehColorScale
         {
             get => bokehColorScale;
@@ -168,7 +168,7 @@ namespace HexaEngine.PostFx.BuildIn
         /// <summary>
         /// Gets or sets the falloff factor for bokeh.
         /// </summary>
-        [EditorProperty("Bokeh Fallout", EditorPropertyMode.Slider, 0f, 1f)]
+        [EditorProperty("Bokeh Fallout", 0f, 1f, EditorPropertyMode.Slider)]
         public float BokehFallout
         {
             get => bokehFallout;

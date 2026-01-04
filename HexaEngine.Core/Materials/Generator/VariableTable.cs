@@ -45,6 +45,14 @@
 
         public int OperationCount => operations.Count;
 
+        public IReadOnlyList<ShaderResourceView> SRVs => shaderResourceViews;
+
+        public IReadOnlyList<UnorderedAccessView> UAVs => unorderedAccessViews;
+
+        public IReadOnlyList<ConstantBuffer> CBVs => constantBuffers;
+
+        public IReadOnlyList<SamplerState> Samplers => samplers;
+
         public void Build(CodeWriter builder)
         {
             builder.WriteLine("// ------------------------------------------------------------------------------");

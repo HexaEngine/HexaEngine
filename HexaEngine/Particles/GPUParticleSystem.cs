@@ -188,14 +188,14 @@
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
-            particleInitDeadList = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/InitDeadListCS.hlsl"));
+            particleInitDeadList = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.Core:shaders/forward/particles/InitDeadListCS.hlsl"));
             particleInitDeadList.Bindings.SetUAV("deadList", deadListBuffer.UAV, 0);
 
-            particleReset = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/ParticleResetCS.hlsl"));
+            particleReset = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.Core:shaders/forward/particles/ParticleResetCS.hlsl"));
             particleReset.Bindings.SetUAV("ParticleBufferA", particleBufferA.UAV);
             particleReset.Bindings.SetUAV("ParticleBufferB", particleBufferB.UAV);
 
-            particleEmit = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/ParticleEmitCS.hlsl"));
+            particleEmit = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.Core:shaders/forward/particles/ParticleEmitCS.hlsl"));
             particleEmit.Bindings.SetCBV("DeadListCountCBuffer", deadListCountBuffer);
             particleEmit.Bindings.SetCBV("EmitterCBuffer", emitterBuffer);
             particleEmit.Bindings.SetSRV("RandomBuffer", randomTexture);
@@ -204,7 +204,7 @@
             particleEmit.Bindings.SetUAV("DeadListToAllocFrom", deadListBuffer.UAV);
             particleEmit.Bindings.SetSampler("linearWrapSampler", linearWrapSampler);
 
-            particleSimulate = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/ParticleSimulateCS.hlsl"));
+            particleSimulate = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.Core:shaders/forward/particles/ParticleSimulateCS.hlsl"));
             particleEmit.Bindings.SetCBV("ComputeCBuffer", simulationBuffer);
             particleEmit.Bindings.SetCBV("EmitterCBuffer", emitterBuffer);
             particleSimulate.Bindings.SetUAV("ParticleBufferA", particleBufferA.UAV);
@@ -214,27 +214,27 @@
             particleSimulate.Bindings.SetUAV("ViewSpacePositions", viewSpacePositionsBuffer.UAV);
             particleSimulate.Bindings.SetUAV("DrawArgs", indirectRenderArgsBuffer.UAV);
 
-            particleSortInitArgs = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/InitSortDispatchArgsCS.hlsl"));
+            particleSortInitArgs = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.Core:shaders/forward/particles/InitSortDispatchArgsCS.hlsl"));
             particleSortInitArgs.Bindings.SetCBV("NumElementsCB", activeListCountBuffer);
             particleSortInitArgs.Bindings.SetUAV("Data", indirectSortArgsBuffer.UAV);
 
-            particleSort512 = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/Sort512CS.hlsl"));
+            particleSort512 = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.Core:shaders/forward/particles/Sort512CS.hlsl"));
             particleSort512.Bindings.SetCBV("NumElementsCB", activeListCountBuffer);
             particleSort512.Bindings.SetUAV("Data", aliveIndexBuffer.UAV);
 
-            particleBitonicSortStep = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/BitonicSortStepCS.hlsl"));
+            particleBitonicSortStep = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.Core:shaders/forward/particles/BitonicSortStepCS.hlsl"));
             particleBitonicSortStep.Bindings.SetCBV("NumElementsCB", activeListCountBuffer);
             particleBitonicSortStep.Bindings.SetCBV("SortConstants", sortDispatchInfoBuffer);
             particleBitonicSortStep.Bindings.SetUAV("Data", aliveIndexBuffer.UAV);
 
-            particleSortInner512 = device.CreateComputePipelineState(new ComputePipelineDesc("forward/particles/SortInner512CS.hlsl"));
+            particleSortInner512 = device.CreateComputePipelineState(new ComputePipelineDesc("HexaEngine.Core:shaders/forward/particles/SortInner512CS.hlsl"));
             particleSortInner512.Bindings.SetCBV("NumElementsCB", activeListCountBuffer);
             particleSortInner512.Bindings.SetUAV("Data", aliveIndexBuffer.UAV);
 
             particles = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "forward/particles/ParticleVS.hlsl",
-                PixelShader = "forward/particles/ParticlePS.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/forward/particles/ParticleVS.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/forward/particles/ParticlePS.hlsl",
             }, new()
             {
                 Blend = BlendDescription.AlphaBlend,

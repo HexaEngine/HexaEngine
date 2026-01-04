@@ -20,9 +20,8 @@
         private ConstantBuffer<UPoint4> offsetBuffer;
         private DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
         private StructuredBuffer<Matrix4x4> transformNoBuffer;
-        private StructuredBuffer<uint> transformNoOffsetBuffer;
+        private StructuredBuffer<uint> transformOffsetBuffer;
         private StructuredUavBuffer<Matrix4x4> transformBuffer;
-        private StructuredUavBuffer<uint> transformOffsetBuffer;
 #nullable restore
 
         protected override void Initialize(IGraphicsDevice device, CullingContext cullingContext)
@@ -31,9 +30,8 @@
             offsetBuffer = new(CpuAccessFlags.Write);
             drawIndirectArgs = cullingContext.DrawIndirectArgs;
             transformNoBuffer = cullingContext.InstanceDataNoCull;
-            transformNoOffsetBuffer = cullingContext.InstanceOffsetsNoCull;
-            transformBuffer = cullingContext.InstanceDataOutBuffer;
             transformOffsetBuffer = cullingContext.InstanceOffsets;
+            transformBuffer = cullingContext.InstanceDataOutBuffer;
 
             CullingManager.Current.BuffersResized += TransformBufferResize;
         }
@@ -72,7 +70,7 @@
                 else
                 {
                     bindings.SetSRV("worldMatrices", transformNoBuffer.SRV);
-                    bindings.SetSRV("worldMatrixOffsets", transformNoOffsetBuffer.SRV);
+                    bindings.SetSRV("worldMatrixOffsets", transformOffsetBuffer.SRV);
                 }
             }
         }

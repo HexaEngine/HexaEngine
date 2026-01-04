@@ -8,43 +8,37 @@
 
     public class CullingContext
     {
-        private readonly StructuredBuffer<uint> instanceOffsetsNoCull;
+        private readonly StructuredBuffer<uint> instanceOffsets;
         private readonly StructuredBuffer<Matrix4x4> instanceDataNoCull;
-        private readonly StructuredUavBuffer<uint> instanceOffsets;
         private readonly StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer;
         private readonly StructuredBuffer<TypeData> typeDataBuffer;
         private readonly StructuredBuffer<GPUInstance> instanceDataBuffer;
         private readonly StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer;
         private readonly DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
-        private readonly StructuredUavBuffer<uint> visibleListBuffer;
         private uint currentType;
         private int count;
         private int typeCount;
 
-        public CullingContext(StructuredBuffer<uint> instanceOffsetsNoCull, StructuredBuffer<Matrix4x4> instanceDataNoCull, StructuredUavBuffer<uint> instanceOffsets, StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer, StructuredBuffer<TypeData> typeDataBuffer, StructuredBuffer<GPUInstance> instanceDataBuffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs, StructuredUavBuffer<uint> visibleListBuffer)
+        public CullingContext(StructuredBuffer<uint> instanceOffsets, StructuredBuffer<Matrix4x4> instanceDataNoCull, StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer, StructuredBuffer<TypeData> typeDataBuffer, StructuredBuffer<GPUInstance> instanceDataBuffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs)
         {
-            this.instanceOffsetsNoCull = instanceOffsetsNoCull;
-            this.instanceDataNoCull = instanceDataNoCull;
             this.instanceOffsets = instanceOffsets;
+            this.instanceDataNoCull = instanceDataNoCull;
             this.instanceDataOutBuffer = instanceDataOutBuffer;
             this.typeDataBuffer = typeDataBuffer;
             this.instanceDataBuffer = instanceDataBuffer;
             this.swapBuffer = swapBuffer;
             this.drawIndirectArgs = drawIndirectArgs;
-            this.visibleListBuffer = visibleListBuffer;
         }
 
-        public StructuredBuffer<uint> InstanceOffsetsNoCull => instanceOffsetsNoCull;
+        public StructuredBuffer<uint> InstanceOffsets => instanceOffsets;
 
         public StructuredBuffer<Matrix4x4> InstanceDataNoCull => instanceDataNoCull;
-
-        public StructuredUavBuffer<uint> InstanceOffsets => instanceOffsets;
 
         public StructuredUavBuffer<Matrix4x4> InstanceDataOutBuffer => instanceDataOutBuffer;
 
         public DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> DrawIndirectArgs => drawIndirectArgs;
+
         public StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> SwapBuffer => swapBuffer;
-        public StructuredUavBuffer<uint> VisibleList => visibleListBuffer;
 
         public uint CurrentType => currentType;
 
@@ -57,7 +51,7 @@
             typeDataBuffer.ResetCounter();
             instanceDataBuffer.ResetCounter();
             instanceDataNoCull.ResetCounter();
-            instanceOffsetsNoCull.ResetCounter();
+            instanceOffsets.ResetCounter();
             swapBuffer.Clear();
             currentType = 0;
         }
@@ -67,7 +61,7 @@
             swapBuffer.Update(context);
 
             drawIndirectArgs.Capacity = instanceOffsets.Capacity = swapBuffer.Capacity;
-            visibleListBuffer.Capacity = instanceDataOutBuffer.Capacity = instanceDataBuffer.Capacity;
+            instanceDataOutBuffer.Capacity = instanceDataBuffer.Capacity;
             instanceDataBuffer.Update(context);
             typeCount = (int)typeDataBuffer.Count;
             count = (int)instanceDataBuffer.Count;
@@ -75,7 +69,7 @@
             typeDataBuffer.Update(context);
 
             instanceDataNoCull.Update(context);
-            instanceOffsetsNoCull.Update(context);
+            instanceOffsets.Update(context);
         }
 
         public unsafe uint GetDrawArgsOffset()
@@ -86,7 +80,7 @@
         public uint AppendType(TypeData type)
         {
             swapBuffer.Add(new(type.IndexCountPerInstance, 0, type.StartIndexLocation, type.BaseVertexLocation, type.StartInstanceLocation));
-            instanceOffsetsNoCull.Add(instanceDataNoCull.Count);
+            instanceOffsets.Add(instanceDataNoCull.Count);
             currentType = typeDataBuffer.Count;
             typeDataBuffer.Add(type);
             return currentType;

@@ -19,6 +19,8 @@
 
         public event Action<VariableTable>? OnPostBuildTable;
 
+        public GenerationContext Context => context;
+
         public string Generate(Node root, List<Node> nodes, string entryName, bool defineInputStruct, bool defineOutputStruct, IOSignature inputSignature, IOSignature outputSignature)
         {
             context.Reset();

@@ -1,15 +1,18 @@
 ﻿namespace HexaEngine.Materials.Generator.Structs
 {
     using HexaEngine.Materials.Generator;
+    using HexaEngine.Materials.Nodes;
 
     public struct SamplerState
     {
+        public ITextureNode SourceNode;
         public uint Slot;
         public string Name;
         public SType SamplerType;
 
-        public SamplerState(string name, SType samplerType)
+        public SamplerState(ITextureNode sourceNode, string name, SType samplerType)
         {
+            SourceNode = sourceNode;
             Name = name;
             SamplerType = samplerType;
         }

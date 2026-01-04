@@ -19,6 +19,7 @@ cbuffer SSGIParams : register(b0)
 	int SSGI_RAY_STEPS;
 	float SSGI_RAY_STEP;
 	float SSGI_DEPTH_BIAS;
+    float adapationSpeed;
 };
 
 float3 GetViewPos(float2 coord)
@@ -152,10 +153,10 @@ float4 main(VertexOut pin) : SV_Target
     bool validUV = all(prevUV > 0.0f) && all(prevUV < 1.0f);
     
     
-    const float depthThreshold = 0.02f;
+    const float depthThreshold = adapationSpeed;
     float depthPrev = depthTex.SampleLevel(linearClampSampler, prevUV, 0);
     bool depthValid = abs(depth - depthPrev) < depthThreshold;
-    float movementFactor = max(saturate(length(velocity)), 0.05f);
+    float movementFactor = max(saturate(length(velocity) ), 0.05f);
     
   
     float blendFactor = (validUV && depthValid) ? movementFactor : 1.0f;

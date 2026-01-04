@@ -725,14 +725,14 @@
 
         public ShaderResourceView AddSrv(ITextureNode node, string name, SType srvType, SType type)
         {
-            var srv = Table.AddShaderResourceView(new(Table.GetUniqueName(name), srvType, type), false);
+            var srv = Table.AddShaderResourceView(new(node, Table.GetUniqueName(name), srvType, type), false);
             TextureMapping.Add(node, srv.Slot);
             return srv;
         }
 
         public SamplerState AddSampler(ITextureNode node, string name, SType samplerType)
         {
-            var sampler = Table.AddSamplerState(new(Table.GetUniqueName(name), samplerType), false);
+            var sampler = Table.AddSamplerState(new(node, Table.GetUniqueName(name), samplerType), false);
             SamplerMapping.Add(node, sampler.Slot);
             return sampler;
         }

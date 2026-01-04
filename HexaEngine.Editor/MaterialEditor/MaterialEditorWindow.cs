@@ -26,6 +26,7 @@
     using HexaEngine.Resources.Factories;
     using System.Numerics;
     using System.Text;
+    using MaterialTexture = Core.IO.Binary.Materials.MaterialTexture;
 
     [EditorWindowCategory("Tools")]
     public class MaterialEditorWindow : EditorWindow
@@ -746,6 +747,31 @@
 
                 material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceVersionKey).Value = SurfaceVersion;
                 material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataSurfaceKey).Value = result;
+                //material.Textures.Clear();
+                /*foreach (var srv in generator.Context.Table.SRVs)
+                {
+                    if (srv.SourceNode is TextureFileNode texNode)
+                    {
+                        MaterialTexture tex = new()
+                        {
+                            Name = srv.Name,
+                            Type = MaterialTextureType.None,
+                            File = texNode.Path,
+                            UVWSrc = 0,
+                            Filter = texNode.Filter,
+                            U = texNode.U,
+                            V = texNode.V,
+                            W = texNode.W,
+                            MipLODBias = texNode.MipLODBias,
+                            MaxAnisotropy = texNode.MaxAnisotropy,
+                            BorderColor = texNode.BorderColor,
+                            MinLOD = texNode.MinLOD,
+                            MaxLOD = texNode.MaxLOD,
+                            Flags = TextureFlags.None
+                        };
+                        material.Textures.Add(tex);
+                    }
+                }*/
             }
             catch (Exception ex)
             {

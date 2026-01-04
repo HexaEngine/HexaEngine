@@ -38,6 +38,7 @@
         private float sigmaD = 0.5f;
         private float sigmaN = 32.0f;
         private float radius = 16.0f;
+        private float adaptationSpeed = 1.0f;
 
         /// <inheritdoc/>
         public override string Name { get; } = "SSGI";
@@ -189,6 +190,9 @@
             }
         }
 
+        [EditorProperty("Adaptation Speed")]
+        public float AdaptationSpeed { get => adaptationSpeed; set => NotifyPropertyChangedAndSet(ref adaptationSpeed, value); }
+
         [EditorProperty("Denoise Sigma S")]
         public float SigmaS { get => sigmaS; set => NotifyPropertyChangedAndSet(ref sigmaS, value); }
 
@@ -214,7 +218,8 @@
             public int RaySteps;
             public float RayStep;
             public float RayHitThreshold;
-            public Vector2 Padding;
+            public float AdaptationSpeed;
+            public float padding;
 
             public SSGIParams()
             {
@@ -302,6 +307,8 @@
             ssgiParams.MaxRayCount = maxRayCount;
             ssgiParams.RaySteps = raySteps;
             ssgiParams.RayStep = rayStep;
+            ssgiParams.RayHitThreshold = rayHitThreshold;
+            ssgiParams.AdaptationSpeed = adaptationSpeed;
             ssgiParamsBuffer = new(ssgiParams, CpuAccessFlags.Write);
 
             Unsafe.SkipInit<DenoiseParams>(out var denoiseParams);
@@ -328,6 +335,7 @@
                 ssgiParams.RaySteps = raySteps;
                 ssgiParams.RayStep = rayStep;
                 ssgiParams.RayHitThreshold = rayHitThreshold;
+                ssgiParams.AdaptationSpeed = adaptationSpeed;
                 ssgiParamsBuffer.Update(context, ssgiParams);
                 Unsafe.SkipInit<DenoiseParams>(out var denoiseParams);
                 denoiseParams.SigmaS = sigmaS;

@@ -1,4 +1,4 @@
-﻿#include "../../camera.hlsl"
+#include "common.hlsl"
 
 float3 extract_scale(in float4x4 m)
 {
@@ -42,50 +42,14 @@ bool projectSphere(float3 c, float r, float znear, float P00, float P11, out flo
 	return true;
 }
 
-struct Sphere
-{
-	float3 center;
-	float radius;
-};
+Texture2D<float> inputRT;
+StructuredBuffer<InstanceData> instanceDataIn;
+StructuredBuffer<uint> instanceOffsets;
+RWStructuredBuffer<float4x4> instanceDataOut;
+RWStructuredBuffer<DrawIndexedInstancedIndirectArgs> drawArgs;
+SamplerState samplerPoint;
 
-struct InstanceData
-{
-	uint type;
-	float4x4 world;
-	Sphere boundingSphere;
-};
-
-struct DrawIndexedInstancedIndirectArgs
-{
-	uint IndexCountPerInstance;
-	uint InstanceCount;
-	uint StartIndexLocation;
-	int BaseVertexLocation;
-	uint StartInstanceLocation;
-};
-
-cbuffer CullingParams : register(b0)
-{
-	uint NoofInstances;
-	uint NoofPropTypes;
-	bool FrustumCulling;
-	bool OcclusionCulling;
-	uint MaxMipLevel;
-	float P00;
-	float P11;
-	float depthBias;
-	float4 frustum;
-};
-
-Texture2D inputRT : register(t0);
-StructuredBuffer<InstanceData> instanceDataIn : register(t1);
-RWStructuredBuffer<float4x4> instanceDataOut : register(u0);
-RWStructuredBuffer<uint> instanceOffsets : register(u1);
-RWStructuredBuffer<DrawIndexedInstancedIndirectArgs> drawArgs : register(u2);
-RWStructuredBuffer<uint> visibleListOut : register(u3);
-SamplerState samplerPoint : register(s0);
-
-groupshared uint temp[1024];
+#define SPHERE_SCALE 1.1f
 
 [numthreads(1024, 1, 1)]
 void main(uint3 threadID : SV_DispatchThreadID)
@@ -101,7 +65,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
 	Sphere boundingSphere = data.boundingSphere;
 
 	float3 center = mul(mul(float4(boundingSphere.center, 1), data.world), view);
-	float radius = boundingSphere.radius * length(extract_scale(data.world));
+    float radius = boundingSphere.radius * length(extract_scale(data.world) * SPHERE_SCALE);
 
 	// the left/top/right/bottom plane culling utilizes frustum symmetry to cull against two planes at the same time
 	visible = visible && center.z * frustum[1] - abs(center.x) * frustum[0] > -radius;
@@ -125,7 +89,6 @@ void main(uint3 threadID : SV_DispatchThreadID)
 			float level = floor(log2(max(width, height)));
 
 			// sample the depth pyramid at that specific level
-
 			float4 depths =
 			{
 				inputRT.SampleLevel(samplerPoint, (aabb.xy + aabb.zw) * 0.5, level, int2(0, 0)).x,
@@ -134,45 +97,20 @@ void main(uint3 threadID : SV_DispatchThreadID)
 				inputRT.SampleLevel(samplerPoint, (aabb.xy + aabb.zw) * 0.5, level, int2(1, 1)).x,
 			};
 
-			float depth = max(max(depths.x, depths.y), max(depths.z, depths.w));
+            float depth = GetLinearDepth(max(max(depths.x, depths.y), max(depths.z, depths.w)));
 
 			float depthSphere = 1 - camNear / (center.z - radius);
 
-			//if the depth of the sphere is in front of the depth pyramid value, then the object is visible
+			// if the depth of the sphere is in front of the depth pyramid value, then the object is visible
 			visible = visible && depthSphere <= depth + depthBias;
 		}
 	}
 
 	if (visible)
 	{
-		instanceDataOut[di] = instanceDataIn[di].world;
-
-		//increase instance count for this particular prop type
-		InterlockedAdd(drawArgs[instanceDataIn[di].type].InstanceCount, 1);
-	}
-
-	temp[di] = visible;
-	visibleListOut[di] = visible;
-
-	GroupMemoryBarrier();
-
-	// this could be improved through a gpu based sorting system.
-	if (di == 0)
-	{
-		uint j = 0;
-		for (uint i = 0; i < NoofInstances; i++)
-		{
-			if (temp[i] == 1)
-			{
-				instanceDataOut[j++] = instanceDataOut[i];
-			}
-		}
-
-		uint baseOffset = 0;
-		for (uint x = 0; x < NoofPropTypes; x++)
-		{
-			instanceOffsets[x] = baseOffset;
-			baseOffset += drawArgs[x].InstanceCount;
-		}
-	}
+        uint slot = 0;
+        InterlockedAdd(drawArgs[data.type].InstanceCount, 1, slot);
+        uint baseOffset = instanceOffsets[data.type];
+        instanceDataOut[baseOffset + slot] = data.world;
+    }
 }

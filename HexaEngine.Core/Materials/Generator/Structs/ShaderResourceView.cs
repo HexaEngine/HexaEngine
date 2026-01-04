@@ -1,18 +1,21 @@
 ﻿namespace HexaEngine.Materials.Generator.Structs
 {
     using HexaEngine.Materials.Generator;
+    using HexaEngine.Materials.Nodes;
     using System.Globalization;
 
     public struct ShaderResourceView
     {
+        public ITextureNode SourceNode;
         public uint Slot;
         public string Name;
         public SType SrvType;
         public SType Type;
         public int Samples;
 
-        public ShaderResourceView(string name, SType srvType, SType type, int samples = -1)
+        public ShaderResourceView(ITextureNode sourceNode, string name, SType srvType, SType type, int samples = -1)
         {
+            SourceNode = sourceNode;
             Name = name;
             SrvType = srvType;
             Type = type;

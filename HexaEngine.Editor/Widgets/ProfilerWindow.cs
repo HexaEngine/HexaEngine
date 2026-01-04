@@ -408,7 +408,7 @@
         private float accum = 0;
         private int samplesPerSecond = 1000;
         private int samplesPerSecondMem = 50;
-        private int selected;
+        private int selected = -1;
 
         private float accumMem = 0;
         private readonly List<MemorySnapshot> memorySnapshots = new();

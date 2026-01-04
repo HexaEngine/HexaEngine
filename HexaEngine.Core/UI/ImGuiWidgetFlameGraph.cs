@@ -24,6 +24,7 @@
 namespace HexaEngine.Core.UI
 {
     using Hexa.NET.ImGui;
+    using Hexa.NET.Utilities.Text;
     using System.Numerics;
 
     /// <summary>
@@ -68,9 +69,10 @@ namespace HexaEngine.Core.UI
             ImGuiContextPtr g = ImGui.GetCurrentContext();
             ImGuiStylePtr style = &((ImGuiContext*)g)->Style;
 
+            byte minDepth = 0;
             if (selected != -1)
             {
-                valuesGetter(&scaleMin, &scaleMax, null, null, data, selected);
+                valuesGetter(&scaleMin, &scaleMax, &minDepth, null, data, selected);
             }
 
             // Find the maximum depth
@@ -94,9 +96,9 @@ namespace HexaEngine.Core.UI
                 graphSize.Y = labelSize.Y + style.FramePadding.Y * 3 + blockHeight * (maxDepth + 1);
             }
 
-            Vector2 cursor = ImGui.GetCursorPos();
+            Vector2 pos = ImGui.GetCursorScreenPos();
 
-            ImRect frameBB = new() { Min = window->DC.CursorPos, Max = window->DC.CursorPos + graphSize };
+            ImRect frameBB = new() { Min = pos, Max = pos + graphSize };
             ImRect innerBB = new() { Min = frameBB.Min + style.FramePadding, Max = frameBB.Max - style.FramePadding };
             ImRect totalBB = new() { Min = frameBB.Min, Max = frameBB.Max + new Vector2(labelSize.X > 0.0f ? style.ItemInnerSpacing.X + labelSize.X : 0.0f, 0) };
             ImGuiP.ItemSize(totalBB, style.FramePadding.Y);
@@ -104,6 +106,8 @@ namespace HexaEngine.Core.UI
             {
                 return;
             }
+
+            var hovered = ImGui.IsItemHovered();
 
             // Determine scale from values if not specified
             if (scaleMin == float.MaxValue || scaleMax == float.MaxValue)
@@ -143,6 +147,9 @@ namespace HexaEngine.Core.UI
                 return;
             }
 
+            byte* buffer = stackalloc byte[256];
+            StrBuilder sb = new(buffer, 256);
+
             bool any_hovered = false;
             if (valuesCount - valuesOffset >= 1)
             {
@@ -152,6 +159,7 @@ namespace HexaEngine.Core.UI
                 uint col_outline_base = ImGui.GetColorU32(ImGuiCol.PlotHistogram) & 0x7FFFFFFF;
                 uint col_outline_hovered = ImGui.GetColorU32(ImGuiCol.PlotHistogramHovered) & 0x7FFFFFFF;
 
+                float width = innerBB.Max.X - innerBB.Min.X;
                 for (int i = valuesOffset; i < valuesCount; ++i)
                 {
                     float stageStart = 0, stageEnd = 1;
@@ -163,15 +171,16 @@ namespace HexaEngine.Core.UI
                     var start = stageStart - scaleMin;
                     var end = stageEnd - scaleMin;
 
-                    if (start < 0 || stageStart > scaleMax)
+                    if (start < 0 || stageStart > scaleMax || depth < minDepth)
                     {
                         continue;
                     }
 
-                    var startX = (start / duration);
-                    var endX = (end / duration);
+                    var startX = start / duration;
+                    var endX = end / duration;
 
-                    float width = innerBB.Max.X - innerBB.Min.X;
+                    depth -= minDepth;
+
                     float height;
                     if (flip)
                     {
@@ -186,7 +195,7 @@ namespace HexaEngine.Core.UI
                     var pos1 = innerBB.Min + new Vector2(endX * width, height + blockHeight);
 
                     bool v_hovered = false;
-                    if (ImGui.IsMouseHoveringRect(pos0, pos1))
+                    if (hovered && ImGui.IsMouseHoveringRect(pos0, pos1))
                     {
                         if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
                         {
@@ -199,12 +208,14 @@ namespace HexaEngine.Core.UI
                                 selected = i;
                             }
                         }
-#pragma warning disable CA2014 // note it's not needed to move you out of the loop the if above only allows one item
-                        var args = stackalloc byte[sizeof(float*) * sizeof(byte*)];
-#pragma warning restore CA2014
-                        *(byte**)args = caption;
-                        *(float*)((byte**)args + 1) = stageEnd - stageStart;
-                        ImGui.SetTooltipV($"%s: {stageEnd - stageStart}ms", (nuint)args);
+
+                        sb.Reset();
+                        sb.Append(caption);
+                        sb.Append(": "u8);
+                        sb.Append(stageEnd - stageStart, 2);
+                        sb.Append("ms"u8);
+                        sb.End();
+                        ImGui.SetTooltip(sb);
 
                         v_hovered = true;
                         any_hovered = v_hovered;
@@ -225,18 +236,23 @@ namespace HexaEngine.Core.UI
                 // Text overlay
                 if (overlayText != null)
                 {
-                    ImGuiP.RenderTextClipped(new Vector2(frameBB.Min.X, frameBB.Min.Y + style.FramePadding.Y), frameBB.Max, overlayText, (byte*)null, (Vector2*)null, new Vector2(0.5f, 0.0f), null);
+                    ImGuiP.RenderTextClipped(new(frameBB.Min.X, frameBB.Min.Y + style.FramePadding.Y), frameBB.Max, overlayText, (byte*)null, (Vector2*)null, new Vector2(0.5f, 0.0f), null);
                 }
 
                 if (labelSize.X > 0.0f)
                 {
-                    ImGuiP.RenderText(new Vector2(frameBB.Max.X + style.ItemInnerSpacing.X, innerBB.Min.Y), label, (byte*)null, true);
+                    ImGuiP.RenderText(new(frameBB.Max.X + style.ItemInnerSpacing.X, innerBB.Min.Y), label, (byte*)null, true);
                 }
             }
 
-            if (!any_hovered && ImGui.IsItemHovered())
+            if (!any_hovered && hovered)
             {
-                ImGui.SetTooltip($"Total: {scaleMax - scaleMin} ms");
+                sb.Reset();
+                sb.Append("Total: "u8);
+                sb.Append(scaleMax - scaleMin, 2);
+                sb.Append(" ms"u8);
+                sb.End();
+                ImGui.SetTooltip(sb);
             }
         }
     }

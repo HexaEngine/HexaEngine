@@ -64,7 +64,7 @@
 
                     var center = Vector3.Transform(instance.BoundingSphere.Center, world);
                     var radius = instance.BoundingSphere.Radius * ExtractScale(world).Length();
-                    DebugDraw.DrawSphere(center, default, radius, Colors.White);
+                    DebugDraw.DrawSphere(center, default, radius * 0.5f, Colors.White);
                 }
             }
 
