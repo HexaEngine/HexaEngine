@@ -63,17 +63,17 @@
             };
 
             ImGuiFontBuilder defaultBuilder = new(fonts);
-            defaultBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/arial.ttf", 15 * scale)
-                          .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
-                          .AddFontFromAsset("HexaEngine.Editor:fonts/fa-solid-900.ttf", 14 * scale, glyphRanges)
-                          .AddFontFromAsset("HexaEngine.Editor:fonts/fa-brands-400.ttf", 14 * scale, glyphRanges);
+            defaultBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/arial.ttf", 15)
+                          .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                          .AddFontFromAsset("HexaEngine.Editor:fonts/fa-solid-900.ttf", 14, glyphRanges)
+                          .AddFontFromAsset("HexaEngine.Editor:fonts/fa-brands-400.ttf", 14, glyphRanges);
             aliasToFont.Add("Default", defaultBuilder.Font);
             defaultBuilder.Destroy();
 
             ImGuiFontBuilder iconsRegularBuilder = new(fonts);
-            iconsRegularBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/arial.ttf", 15 * scale)
-                               .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
-                               .AddFontFromAsset("HexaEngine.Editor:fonts/fa-regular-400.ttf", 14 * scale, glyphRanges);
+            iconsRegularBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/arial.ttf", 15)
+                               .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                               .AddFontFromAsset("HexaEngine.Editor:fonts/fa-regular-400.ttf", 14, glyphRanges);
             aliasToFont.Add("Icons-Regular", iconsRegularBuilder.Font);
             iconsRegularBuilder.Destroy();
 
@@ -84,17 +84,16 @@
             };
 
             ImGuiFontBuilder widgetsFontBuilder = new(fonts);
-            widgetsFontBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/arial.ttf", size: 16 * scale)
-                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
-                                 .AddFontFromAsset("HexaEngine.Editor:fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges);
+            widgetsFontBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/arial.ttf", size: 16)
+                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                                 .AddFontFromAsset("HexaEngine.Editor:fonts/MaterialSymbolsRounded.ttf", 20, glyphMaterialRanges);
             aliasToFont.Add("WidgetsFont", widgetsFontBuilder.Font);
             widgetsFontBuilder.Destroy();
 
             ImGuiFontBuilder textEditorFontBuilder = new(fonts);
-            textEditorFontBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/CascadiaMono.ttf", size: 16 * scale)
-                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16 * scale)
-                                 .AddFontFromAsset("HexaEngine.Editor:fonts/MaterialSymbolsRounded.ttf", 20 * scale, glyphMaterialRanges)
-                                 ;
+            textEditorFontBuilder.AddFontFromAsset("HexaEngine.Editor:fonts/CascadiaMono.ttf", size: 16)
+                                 .SetOption(conf => conf.GlyphMinAdvanceX = 16)
+                                 .AddFontFromAsset("HexaEngine.Editor:fonts/MaterialSymbolsRounded.ttf", 20, glyphMaterialRanges);
             aliasToFont.Add("TextEditorFont", textEditorFontBuilder.Font);
             textEditorFontBuilder.Destroy();
 

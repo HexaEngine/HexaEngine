@@ -34,7 +34,7 @@
         {
             var userCallback = Marshal.GetDelegateForFunctionPointer<QueryFilterCallbackDelegate>((nint)userdata);
 
-            var act = Actor.mapper.GetManagedObject<RigidBody>(actor);
+            var act = GCUtils.GetObjectAs<RigidBody>(actor->userData);
             var colliderShape = ColliderShape.mapper.GetManagedObject<ColliderShape>(shape);
 
             var result = userCallback(act, (FilterData*)filterData, colliderShape, Helper.Convert((PxHitFlags)hitFlags));

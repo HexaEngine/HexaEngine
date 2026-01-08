@@ -167,15 +167,6 @@
 
             if (comboOpen)
             {
-                if (currentAxis != null)
-                {
-                    var axisName = currentAxis.Name;
-                    if (ImGui.InputText("##Name"u8, ref axisName, 1024))
-                    {
-                        currentAxis.Name = axisName;
-                    }
-                }
-
                 for (int i = 0; i < inputMap.VirtualAxes.Count; i++)
                 {
                     var axis = inputMap.VirtualAxes[i];
@@ -217,6 +208,12 @@
                 unsavedChanges = true;
                 currentAxis = null;
                 return;
+            }
+
+            var axisName = currentAxis.Name;
+            if (ImGui.InputText("##Name"u8, ref axisName, 1024, ImGuiInputTextFlags.EnterReturnsTrue))
+            {
+                currentAxis.Name = axisName;
             }
 
             ImGui.SeparatorText("Bindings"u8);

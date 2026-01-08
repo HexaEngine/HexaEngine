@@ -204,7 +204,7 @@
 
                 if (result)
                 {
-                    var act = Actor.mapper.GetManagedObject<RigidBody>(pxRaycastHit.actor);
+                    var act = GCUtils.GetObjectAs<RigidBody>(pxRaycastHit.actor->userData);
                     var colliderShape = ColliderShape.mapper.GetManagedObject<ColliderShape>(pxRaycastHit.shape);
 
                     raycastHit = new(pxRaycastHit.faceIndex, Helper.Convert(pxRaycastHit.flags), pxRaycastHit.position, pxRaycastHit.normal, pxRaycastHit.distance, pxRaycastHit.u, pxRaycastHit.v, act, colliderShape);
@@ -266,7 +266,7 @@
                 {
                     var hit = raycastHitBuffer[i];
 
-                    var act = Actor.mapper.GetManagedObject<RigidBody>(hit.actor);
+                    var act = GCUtils.GetObjectAs<RigidBody>(hit.actor->userData);
                     var colliderShape = ColliderShape.mapper.GetManagedObject<ColliderShape>(hit.shape);
 
                     RaycastHit raycastHit = new(hit.faceIndex, Helper.Convert(hit.flags), hit.position, hit.normal, hit.distance, hit.u, hit.v, act, colliderShape);

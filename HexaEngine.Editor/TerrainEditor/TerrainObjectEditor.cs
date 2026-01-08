@@ -547,8 +547,8 @@ namespace HexaEngine.Editor.TerrainEditor
 
                 brushOverlay = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
                 {
-                    VertexShader = "tools/terrain/overlay/vs.hlsl",
-                    PixelShader = "tools/terrain/overlay/ps.hlsl",
+                    VertexShader = "HexaEngine.Editor:shaders/terrain/overlay/vs.hlsl",
+                    PixelShader = "HexaEngine.Editor:shaders/terrain/overlay/ps.hlsl",
                 }, new()
                 {
                     DepthStencil = DepthStencilDescription.None,

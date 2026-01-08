@@ -129,10 +129,14 @@
 
                 var oldCapacity = capacity;
                 var tmp = AllocT<T>((int)value);
-                var oldsize = count * sizeof(T);
-                var newsize = value * sizeof(T);
-                Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
-                Free(items);
+
+                if (items != null)
+                {
+                    var oldsize = count * sizeof(T);
+                    var newsize = value * sizeof(T);
+                    Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
+                    Free(items);
+                }
                 items = tmp;
                 capacity = value;
                 count = capacity < count ? capacity : count;

@@ -17,7 +17,6 @@
         private CullingFlags cullingFlags = CullingFlags.All;
         private float depthBias = 0.0f;
 
-        private IComputePipelineState initPso;
         private IComputePipelineState culling;
 
         private ConstantBuffer<CBCamera> occlusionCameraBuffer;
@@ -40,11 +39,6 @@
 
         public CullingManager(IGraphicsDevice device)
         {
-            initPso = device.CreateComputePipelineState(new ComputePipelineDesc()
-            {
-                Path = "HexaEngine.Core:shaders/compute/culling/init.hlsl",
-            });
-
             culling = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
                 Path = "HexaEngine.Core:shaders/compute/culling/culling.hlsl",

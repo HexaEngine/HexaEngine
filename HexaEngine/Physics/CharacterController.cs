@@ -8,6 +8,8 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
+    using System.Runtime.InteropServices;
+
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.Physics.CharacterController")]
     [EditorCategory("Physics")]
     [EditorComponent<CharacterController>("Character Controller", Icon = "\xf192")]
@@ -442,7 +444,7 @@
 
             actor = controller->GetActor();
             rigidBody = new(actor, ActorType.Kinematic, this);
-            Physics.Actor.mapper.AddMapping(actor, rigidBody);
+            actor->userData = GCUtils.GCAlloc(rigidBody);
         }
 
         void ICharacterControllerComponent.DestroyController()
@@ -455,7 +457,7 @@
 
             if (controller != null)
             {
-                Physics.Actor.mapper.RemoveMapping(actor);
+                GCUtils.GCFree(actor->userData);
                 rigidBody.CharacterController = null; // dereference here.
                 rigidBody = null!;
                 actor = null;

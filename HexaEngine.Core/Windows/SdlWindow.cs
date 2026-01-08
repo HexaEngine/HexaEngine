@@ -615,19 +615,49 @@
         /// Gets the X11 information of the window.
         /// </summary>
         /// <exception cref="NotSupportedException">Thrown when X11 information is not supported.</exception>
-        public (nint Display, nuint Window)? X11 => throw new NotSupportedException();
+        public (nint Display, nuint Window)? X11
+        {
+            get
+            {
+                Logger.ThrowIf(destroyed, "The window is already destroyed");
+
+                var props = SDL.GetWindowProperties(window);
+                var x11Display = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_X11_DISPLAY_POINTER, null);
+                var x11Window = (nuint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_X11_WINDOW_NUMBER, null);
+                return (x11Display, x11Window);
+            }
+        }
 
         /// <summary>
         /// Gets the Cocoa information of the window.
         /// </summary>
         /// <exception cref="NotSupportedException">Thrown when Cocoa information is not supported.</exception>
-        public nint? Cocoa => throw new NotSupportedException();
+        public nint? Cocoa
+        {
+            get
+            {
+                Logger.ThrowIf(destroyed, "The window is already destroyed");
+                var props = SDL.GetWindowProperties(window);
+                var cocoaWindow = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, null);
+                return cocoaWindow;
+            }
+        }
 
         /// <summary>
         /// Gets the Wayland information of the window.
         /// </summary>
         /// <exception cref="NotSupportedException">Thrown when Wayland information is not supported.</exception>
-        public (nint Display, nint Surface)? Wayland => throw new NotSupportedException();
+        public (nint Display, nint Surface)? Wayland
+        {
+            get
+            {
+                Logger.ThrowIf(destroyed, "The window is already destroyed");
+                var props = SDL.GetWindowProperties(window);
+                var waylandDisplay = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, null);
+                var waylandSurface = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, null);
+                return (waylandDisplay, waylandSurface);
+            }
+        }
 
         /// <summary>
         /// Gets the WinRT information of the window.
@@ -639,7 +669,19 @@
         /// Gets the UIKit information of the window.
         /// </summary>
         /// <exception cref="NotSupportedException">Thrown when UIKit information is not supported.</exception>
-        public (nint Window, uint Framebuffer, uint Colorbuffer, uint ResolveFramebuffer)? UIKit => throw new NotSupportedException();
+        public (nint Window, uint Framebuffer, uint Colorbuffer, uint ResolveFramebuffer)? UIKit
+        {
+            get
+            {
+                Logger.ThrowIf(destroyed, "The window is already destroyed");
+                var props = SDL.GetWindowProperties(window);
+                var uiKitWindow = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_UIKIT_WINDOW_POINTER, null);
+                var uiKitFramebuffer = (uint)SDL.GetNumberProperty(props, SDL.SDL_PROP_WINDOW_UIKIT_OPENGL_FRAMEBUFFER_NUMBER, 0);
+                var uiKitColorbuffer = (uint)SDL.GetNumberProperty(props, SDL.SDL_PROP_WINDOW_UIKIT_OPENGL_RENDERBUFFER_NUMBER, 0);
+                var uiKitResolveFramebuffer = (uint)SDL.GetNumberProperty(props, SDL.SDL_PROP_WINDOW_UIKIT_OPENGL_RESOLVE_FRAMEBUFFER_NUMBER, 0);
+                return (uiKitWindow, uiKitFramebuffer, uiKitColorbuffer, uiKitResolveFramebuffer);
+            }
+        }
 
         /// <summary>
         /// Gets the Win32 information of the window.
@@ -663,13 +705,33 @@
         /// Gets the Vivante information of the window.
         /// </summary>
         /// <exception cref="NotSupportedException">Thrown when Vivante information is not supported.</exception>
-        public (nint Display, nint Window)? Vivante => throw new NotSupportedException();
+        public (nint Display, nint Window)? Vivante
+        {
+            get
+            {
+                Logger.ThrowIf(destroyed, "The window is already destroyed");
+                var props = SDL.GetWindowProperties(window);
+                var vivanteDisplay = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_VIVANTE_DISPLAY_POINTER, null);
+                var vivanteWindow = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_VIVANTE_WINDOW_POINTER, null);
+                return (vivanteDisplay, vivanteWindow);
+            }
+        }
 
         /// <summary>
         /// Gets the Android information of the window.
         /// </summary>
         /// <exception cref="NotSupportedException">Thrown when Android information is not supported.</exception>
-        public (nint Window, nint Surface)? Android => throw new NotSupportedException();
+        public (nint Window, nint Surface)? Android
+        {
+            get
+            {
+                Logger.ThrowIf(destroyed, "The window is already destroyed");
+                var props = SDL.GetWindowProperties(window);
+                var androidWindow = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_ANDROID_WINDOW_POINTER, null);
+                var androidSurface = (nint)SDL.GetPointerProperty(props, SDL.SDL_PROP_WINDOW_ANDROID_SURFACE_POINTER, null);
+                return (androidWindow, androidSurface);
+            }
+        }
 
         /// <summary>
         /// Gets the GLFW information of the window.

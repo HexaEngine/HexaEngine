@@ -36,8 +36,8 @@
         {
             maskEdit = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                VertexShader = "quad.hlsl",
-                PixelShader = "tools/terrain/mask/ps.hlsl",
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Editor:shaders/terrain/mask/ps.hlsl",
             }, new()
             {
                 DepthStencil = new()
@@ -58,12 +58,12 @@
 
             occupationCheckPipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
-                Path = "tools/terrain/mask/occupation.hlsl",
+                Path = "HexaEngine.Editor:shaders/terrain/mask/occupation.hlsl",
             });
 
             channelRemapPipeline = device.CreateComputePipelineState(new ComputePipelineDesc()
             {
-                Path = "tools/terrain/mask/remap.hlsl",
+                Path = "HexaEngine.Editor:shaders/terrain/mask/remap.hlsl",
             });
 
             maskTexBuffer = new(Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.Read | GpuAccessFlags.UA);

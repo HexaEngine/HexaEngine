@@ -7,6 +7,7 @@
     using HexaEngine.Scenes.Serialization;
     using MagicPhysX;
     using System;
+    using System.Runtime.InteropServices;
 
     // TODO: Constraints.
     // TODO: Dominance Group Editor.
@@ -21,9 +22,6 @@
         private bool disableGravity;
         private bool sendSleepNotifies;
         private byte dominanceGroup = 0;
-
-        [JsonIgnore]
-        internal static readonly ConcurrentNativeToManagedMapper mapper = new();
 
         [EditorProperty<ActorType>("Type")]
         public ActorType Type
@@ -140,7 +138,7 @@
             actor = CreateActor(physics, scene);
             if (actor != null)
             {
-                mapper.AddMapping(actor, this);
+                actor->userData = GCUtils.GCAlloc(this);
 
                 actor->SetActorFlagsMut(Helper.Convert(Flags));
                 actor->SetDominanceGroupMut(dominanceGroup);
@@ -162,7 +160,7 @@
             scene = null;
             if (actor != null)
             {
-                mapper.RemoveMapping(actor);
+                GCUtils.GCFree(actor->userData);
                 var scene = actor->GetScene();
                 scene->RemoveActorMut(actor, true);
                 actor->SetNameMut(null);
