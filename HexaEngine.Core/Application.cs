@@ -101,42 +101,6 @@
         }
 
         /// <summary>
-        /// Represents special folders used by the application.
-        /// </summary>
-        public enum SpecialFolder
-        {
-            /// <summary>
-            /// The assets folder <see cref="Paths.CurrentAssetsPath"/>
-            /// </summary>
-            Assets,
-
-            /// <summary>
-            /// The shaders folder <see cref="Paths.CurrentShaderPath"/>
-            /// </summary>
-            Shaders,
-
-            /// <summary>
-            /// The sounds folder <see cref="Paths.CurrentSoundPath"/>
-            /// </summary>
-            Sounds,
-
-            /// <summary>
-            /// The models folder <see cref="Paths.CurrentMeshesPath"/>
-            /// </summary>
-            Models,
-
-            /// <summary>
-            /// The textures folder <see cref="Paths.CurrentTexturePath"/>
-            /// </summary>
-            Textures,
-
-            /// <summary>
-            /// The scenes folder <see cref="Paths.CurrentAssetsPath"/>
-            /// </summary>
-            Scenes,
-        }
-
-        /// <summary>
         /// Gets or sets a value indicating whether the application is in editor mode.
         /// </summary>
         public static bool InEditorMode
@@ -260,25 +224,6 @@
             }
 
             return eventArgs.Cancel;
-        }
-
-        /// <summary>
-        /// Gets the folder path for the specified special folder.
-        /// </summary>
-        /// <param name="folder">The special folder.</param>
-        /// <returns>The folder path.</returns>
-        public static string GetFolder(SpecialFolder folder)
-        {
-            return folder switch
-            {
-                SpecialFolder.Assets => Path.GetFullPath("assets/"),
-                SpecialFolder.Shaders => Path.GetFullPath("assets/shaders/"),
-                SpecialFolder.Sounds => Path.GetFullPath("assets/sounds/"),
-                SpecialFolder.Models => Path.GetFullPath("assets/models/"),
-                SpecialFolder.Textures => Path.GetFullPath("assets/textures/"),
-                SpecialFolder.Scenes => Path.GetFullPath("assets/scenes/"),
-                _ => throw new ArgumentOutOfRangeException(nameof(folder)),
-            };
         }
 
         /// <summary>

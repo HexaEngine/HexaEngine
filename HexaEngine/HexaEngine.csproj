@@ -49,8 +49,6 @@
 		<PackageReference Include="HexaEngine.UI" Version="1.0.0.1" />
 		<PackageReference Include="MagicPhysX" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
 		<PackageReference Include="Hexa.Protobuf" Version="1.0.0" />
 		<PackageReference Include="Hexa.Protobuf.Analyzers" Version="1.0.0">
 			<PrivateAssets>all</PrivateAssets>

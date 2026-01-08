@@ -322,7 +322,6 @@
         {
             return
             [
-                Application.GetFolder(Application.SpecialFolder.Assets),
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
