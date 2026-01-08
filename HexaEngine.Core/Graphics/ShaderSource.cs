@@ -51,7 +51,7 @@ namespace HexaEngine.Core.Graphics
             {
                 return Encoding.UTF8.GetBytes(FileSystem.ReadAllText(path));
             }
-            return Encoding.UTF8.GetBytes(FileSystem.ReadAllText(Paths.CurrentShaderPath + filePath));
+            return Encoding.UTF8.GetBytes(FileSystem.ReadAllText(filePath));
         }
     }
 

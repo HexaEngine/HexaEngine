@@ -154,7 +154,7 @@
                 Free(pValue);
             }
 
-            var basePath = Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, filename)) ?? string.Empty;
+            var basePath = Path.GetDirectoryName(filename) ?? string.Empty;
             byte* pBasePath = basePath.ToUTF8Ptr();
             options.SetIncludeCallbacks(include, release, pBasePath);
 
@@ -210,7 +210,7 @@
         /// <returns>True if the compilation is successful; otherwise, false.</returns>
         public static bool CompileSPIRVFromFile(string filename, string entrypoint, ShaderKind kind, SourceLanguage language, out ShaderSpirvIL il, [NotNullWhen(false)] out string? error)
         {
-            var source = FileSystem.ReadAllText(Paths.CurrentShaderPath + filename);
+            var source = FileSystem.ReadAllText(filename);
             return CompileSPIRVFromSource(source, filename, entrypoint, Array.Empty<ShaderMacro>(), kind, language, out il, out error);
         }
 
@@ -227,7 +227,7 @@
         /// <returns>True if the compilation is successful; otherwise, false.</returns>
         public static bool CompileSPIRVFromFile(string filename, string entrypoint, ShaderMacro[] macros, ShaderKind kind, SourceLanguage language, out ShaderSpirvIL il, [NotNullWhen(false)] out string? error)
         {
-            var source = FileSystem.ReadAllText(Paths.CurrentShaderPath + filename);
+            var source = FileSystem.ReadAllText(filename);
             return CompileSPIRVFromSource(source, filename, entrypoint, macros, kind, language, out il, out error);
         }
 

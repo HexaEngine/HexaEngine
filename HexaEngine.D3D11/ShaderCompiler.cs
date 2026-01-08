@@ -60,9 +60,7 @@ namespace HexaEngine.D3D11
             ID3D10Blob* vBlob;
             ID3D10Blob* vError;
 
-            string systemInclude = Paths.CurrentShaderPath;
-
-            IncludeHandler handler = new(basePath, systemInclude);
+            IncludeHandler handler = new(basePath, basePath);
             ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
             include->LpVtbl = (void**)Alloc(sizeof(nint) * 2);
             include->LpVtbl[0] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Open);
@@ -141,9 +139,7 @@ namespace HexaEngine.D3D11
             ID3D10Blob* vBlob;
             ID3D10Blob* vError;
 
-            string systemInclude = Paths.CurrentShaderPath;
-
-            IncludeHandler handler = new(basePath, systemInclude);
+            IncludeHandler handler = new(basePath, basePath);
             ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
             include->LpVtbl = (void**)Alloc(sizeof(nint) * 2);
             include->LpVtbl[0] = (void*)Marshal.GetFunctionPointerForDelegate(handler.Open);

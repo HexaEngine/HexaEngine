@@ -43,7 +43,7 @@
                 Free(pValue);
             }
 
-            IncludeHandler handler = new(Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
+            IncludeHandler handler = new(Path.GetDirectoryName(sourceName) ?? string.Empty);
             ShadercIncludeResolveFn include = handler.Include;
             ShadercIncludeResultReleaseFn release = handler.IncludeRelease;
             options.SetIncludeCallbacks(include, release, null);

@@ -65,7 +65,7 @@
             sourceBuffer.Size = pSource.GetBufferSize();
             sourceBuffer.Encoding = 0;
 
-            IncludeHandler handler = new(Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
+            IncludeHandler handler = new(Path.GetDirectoryName(sourceName) ?? string.Empty);
             ComPtr<IDxcIncludeHandler> pInclude;
             IDxcIncludeHandler* include = (IDxcIncludeHandler*)Alloc(sizeof(IDxcIncludeHandler) + sizeof(nint));
             pInclude.Handle = include;
