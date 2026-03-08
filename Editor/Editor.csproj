@@ -26,7 +26,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Editor\HexaEngine.Editor.csproj" />
-		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
 		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>
 

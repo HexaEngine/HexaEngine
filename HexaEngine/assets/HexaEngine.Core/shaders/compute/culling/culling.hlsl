@@ -65,7 +65,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
 	Sphere boundingSphere = data.boundingSphere;
 
 	float3 center = mul(mul(float4(boundingSphere.center, 1), data.world), view);
-    float radius = boundingSphere.radius * length(extract_scale(data.world) * SPHERE_SCALE);
+    float radius = boundingSphere.radius * length(extract_scale(data.world)) * SPHERE_SCALE;
 
 	// the left/top/right/bottom plane culling utilizes frustum symmetry to cull against two planes at the same time
 	visible = visible && center.z * frustum[1] - abs(center.x) * frustum[0] > -radius;

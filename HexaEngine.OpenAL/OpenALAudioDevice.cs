@@ -102,7 +102,7 @@
             return new OpenALWaveAudioStream(stream);
         }
 
-        public ISourceVoice CreateSourceVoice(IAudioStream audioStream)
+        public ISound CreateSound(IAudioStream audioStream)
         {
             uint source;
             OpenAL.GenSources(1, &source);

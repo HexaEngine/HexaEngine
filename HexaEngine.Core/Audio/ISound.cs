@@ -5,13 +5,8 @@
     /// <summary>
     /// Represents a source voice for playing audio with control over its properties and state.
     /// </summary>
-    public interface ISourceVoice : IDisposable
+    public interface ISound : IDisposable
     {
-        /// <summary>
-        /// Gets the audio stream buffer associated with the source voice.
-        /// </summary>
-        IAudioStream Buffer { get; }
-
         /// <summary>
         /// Gets or sets the emitter for controlling the audio source's spatial properties.
         /// </summary>
@@ -45,27 +40,27 @@
         /// <summary>
         /// Occurs when the source voice is paused.
         /// </summary>
-        event Action? OnPause;
+        event Action? Paused;
 
         /// <summary>
         /// Occurs when the source voice starts playing.
         /// </summary>
-        event Action? OnPlay;
+        event Action? Playing;
 
         /// <summary>
         /// Occurs when the source voice is rewound.
         /// </summary>
-        event Action? OnRewind;
+        event Action? Rewinded;
 
         /// <summary>
         /// Occurs when the state of the source voice changes.
         /// </summary>
-        event Action<AudioSourceState>? OnStateChanged;
+        event Action<AudioSourceState>? StateChanged;
 
         /// <summary>
         /// Occurs when the source voice is stopped.
         /// </summary>
-        event Action? OnStop;
+        event Action? Stopped;
 
         /// <summary>
         /// Pauses the source voice, if playing.
@@ -86,10 +81,5 @@
         /// Stops playing the source voice.
         /// </summary>
         void Stop();
-
-        /// <summary>
-        /// Updates the state and position of the source voice.
-        /// </summary>
-        void Update();
     }
 }

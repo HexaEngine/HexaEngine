@@ -5,7 +5,7 @@
     /// <summary>
     /// Represents an audio emitter used for controlling the properties of audio sources.
     /// </summary>
-    public interface IEmitter
+    public interface IEmitter : IDisposable
     {
         /// <summary>
         /// Gets or sets the inner angle of the cone in radians for sound directionality.

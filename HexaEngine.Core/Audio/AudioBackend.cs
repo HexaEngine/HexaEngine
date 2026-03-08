@@ -24,5 +24,10 @@
         /// Use the XAudio2 audio backend for audio processing.
         /// </summary>
         XAudio2 = 2,
+
+        /// <summary>
+        /// Use the miniaudio audio backend for audio processing.
+        /// </summary>
+        MiniAudio = 3,
     }
 }

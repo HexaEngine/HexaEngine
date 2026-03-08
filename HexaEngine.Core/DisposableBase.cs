@@ -72,6 +72,8 @@
                 OnDisposed?.Invoke(this, EventArgs.Empty);
                 disposedValue = true;
             }
+
+            LeakTracer.Release(this);
         }
 
         protected abstract void DisposeCore();

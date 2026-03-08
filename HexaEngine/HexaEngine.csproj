@@ -61,9 +61,8 @@
 		<ProjectReference Include="..\HexaEngine.D3D11\HexaEngine.D3D11.csproj" />
 		<ProjectReference Include="..\HexaEngine.D3D12\HexaEngine.D3D12.csproj" />
 		<ProjectReference Include="..\HexaEngine.Dotnet\HexaEngine.Dotnet.csproj" />
-		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
+		<ProjectReference Include="..\HexaEngine.MiniAudio\HexaEngine.MiniAudio.csproj" />
 		<ProjectReference Include="..\HexaEngine.Vulkan\HexaEngine.Vulkan.csproj" />
-		<ProjectReference Include="..\HexaEngine.XAudio\HexaEngine.XAudio.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

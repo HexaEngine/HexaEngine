@@ -1,12 +1,9 @@
 ﻿namespace Editor
 {
-    using Hexa.NET.DebugDraw;
     using Hexa.NET.Mathematics;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Graphics.Overlays;
-    using HexaEngine.Scenes.Managers;
-    using System.Numerics;
 
     public class EditorRenderer : OverlayRendererBase
     {
@@ -27,7 +24,6 @@
 
         public static void DrawEditor(IGraphicsContext context)
         {
-            DebugDraw.SetCamera(CameraManager.Current?.Transform.ViewProjection ?? Matrix4x4.Identity);
             Designer.Draw(context);
             SceneWindow.Draw();
         }

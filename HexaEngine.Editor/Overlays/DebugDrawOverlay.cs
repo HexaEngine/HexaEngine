@@ -4,9 +4,11 @@ using HexaEngine.Core;
 using HexaEngine.Core.Graphics;
 using HexaEngine.Graphics.Overlays;
 using HexaEngine.Graphics.Renderers;
+using HexaEngine.Scenes.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +22,8 @@ namespace HexaEngine.Editor.Overlays
         {
             if (Application.InEditorMode)
             {
+                DebugDraw.SetCamera(CameraManager.Current?.Transform.ViewProjection ?? Matrix4x4.Identity);
+                Inspector.Draw();
                 context.SetRenderTarget(target, depthStencil);
                 DebugDraw.SetViewport(viewport.Offset, viewport.Size);
                 DebugDrawRenderer.EndDraw();

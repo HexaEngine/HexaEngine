@@ -11,9 +11,7 @@
     public class ListenerComponent : IAudioComponent
     {
         private bool isActive;
-#pragma warning disable CS8618 // Non-nullable field 'listener' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private IListener listener;
-#pragma warning restore CS8618 // Non-nullable field 'listener' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        private IListener? listener;
 
         /// <summary>
         /// The GUID of the <see cref="ListenerComponent"/>.
@@ -26,7 +24,7 @@
 
         [EditorProperty("Is Active")]
         public bool IsActive
-        { get => isActive; set { listener.IsActive = value; isActive = value; } }
+        { get => isActive; set { if (listener != null) listener.IsActive = value; isActive = value; } }
 
         [JsonIgnore]
         public GameObject GameObject { get; set; } = null!;
@@ -39,13 +37,14 @@
 
         public void Update()
         {
+            if (listener == null) return;
             listener.Position = GameObject.Transform.Position;
             listener.Orientation = new(GameObject.Transform.Forward, GameObject.Transform.Up);
         }
 
         public void Destroy()
         {
-            listener.Dispose();
+            listener?.Dispose();
         }
     }
 }

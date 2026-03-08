@@ -27,5 +27,11 @@
         /// Gets or sets the velocity of the audio listener in 3D space.
         /// </summary>
         Vector3 Velocity { get; set; }
+
+        public float ConeInnerAngle { get; set; }
+
+        public float ConeOuterAngle { get; set; }
+
+        public float ConeOuterGain { get; set; }
     }
 }

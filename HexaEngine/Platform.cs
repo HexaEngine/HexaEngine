@@ -8,7 +8,7 @@
     using HexaEngine.D3D12;
     using HexaEngine.Editor.Plugins;
     using HexaEngine.Jobs;
-    using HexaEngine.OpenAL;
+    using HexaEngine.MiniAudio;
     using HexaEngine.Scripts;
     using HexaEngine.Vulkan;
     using HexaEngine.Windows;
@@ -51,7 +51,7 @@
                     break;
             }
 
-            OpenALAdapter.Init();
+            MiniAudioAdapter.Init();
 
             if (editor)
             {

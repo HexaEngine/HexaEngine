@@ -9,9 +9,7 @@
     public static class AudioManager
     {
 #nullable disable
-        private static IAudioContext audioContext;
         private static IAudioDevice audioDevice;
-        private static IMasteringVoice master;
         private static Thread streamThread;
 #nullable enable
         private static bool running;
@@ -22,58 +20,28 @@
         public static IAudioDevice Device => audioDevice;
 
         /// <summary>
-        /// Gets the audio context associated with the audio device.
-        /// </summary>
-        public static IAudioContext Context => audioContext;
-
-        /// <summary>
-        /// Gets the mastering voice used for audio output.
-        /// </summary>
-        public static IMasteringVoice Master => master;
-
-        /// <summary>
         /// Initializes the audio manager with the specified audio device.
         /// </summary>
         /// <param name="device">The audio device to use for audio processing.</param>
         public static void Initialize(IAudioDevice device)
         {
             audioDevice = device;
-            audioContext = audioDevice.Default;
-            master = audioDevice.CreateMasteringVoice("Master");
             running = true;
             streamThread = new(ThreadVoid);
             streamThread.Start();
         }
 
         /// <summary>
-        /// Creates an audio stream from the specified file path.
+        /// Creates a new sound source for audio playback using the specified asset path.
         /// </summary>
-        /// <param name="path">The path to the audio file.</param>
-        /// <returns>An audio stream created from the specified audio file.</returns>
-        [Obsolete("Use AssetPath overload instead.")]
-        public static IAudioStream CreateStream(string path)
+        /// <remarks>The audio device must be initialized before calling this method. An exception may be
+        /// thrown if the asset path is invalid or if the audio device is not ready.</remarks>
+        /// <param name="path">The asset path that identifies the location of the audio asset to be used for the sound source. The path
+        /// must refer to a valid and accessible audio resource.</param>
+        /// <returns>An instance of ISound that represents the created sound source, which can be used to control audio playback.</returns>
+        public static ISound CreateSourceVoice(in AssetPath path)
         {
-            return audioDevice.CreateWaveAudioStream(FileSystem.OpenRead(path));
-        }
-
-        /// <summary>
-        /// Creates an audio stream from the specified file path.
-        /// </summary>
-        /// <param name="path">The path to the audio file.</param>
-        /// <returns>An audio stream created from the specified audio file.</returns>
-        public static IAudioStream CreateStream(AssetPath path)
-        {
-            return audioDevice.CreateWaveAudioStream(FileSystem.OpenRead(path));
-        }
-
-        /// <summary>
-        /// Creates a source voice for playing audio from the provided audio stream.
-        /// </summary>
-        /// <param name="stream">The audio stream to play.</param>
-        /// <returns>A source voice for playing audio from the given audio stream.</returns>
-        public static ISourceVoice CreateSourceVoice(IAudioStream stream)
-        {
-            return audioDevice.CreateSourceVoice(stream);
+            return audioDevice.CreateSound(path);
         }
 
         /// <summary>
@@ -82,7 +50,7 @@
         /// <returns>An audio listener for controlling audio output.</returns>
         public static IListener CreateListener()
         {
-            return audioDevice.CreateListener(master);
+            return audioDevice.CreateListener();
         }
 
         /// <summary>
@@ -98,7 +66,7 @@
         {
             while (running)
             {
-                audioDevice.ProcessAudio();
+                audioDevice.Update();
                 Thread.Sleep(10);
             }
         }
@@ -110,7 +78,6 @@
         {
             running = false;
             streamThread.Join();
-            audioContext.Dispose();
             audioDevice.Dispose();
         }
     }

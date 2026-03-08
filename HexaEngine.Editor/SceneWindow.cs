@@ -410,8 +410,6 @@
                     Inspector.Operation = ImGuizmoOperation.Universal;
                 }
                 TooltipHelper.Tooltip("Translate & Rotate & Scale"u8);
-
-                Inspector.Draw();
             }
 
             ImGui.End();

@@ -60,7 +60,7 @@
         private static IGraphicsDevice graphicsDevice;
         private static IGraphicsContext graphicsContext;
         private static IGPUProfiler gpuProfiler;
-        private static IAudioDevice audioDevice;
+        private static IAudioDevice playbackAudioDevice;
 
 #nullable restore
 
@@ -301,7 +301,7 @@
 
         public static void Shutdown()
         {
-            audioDevice?.Dispose();
+            playbackAudioDevice?.Dispose();
             graphicsContext?.Dispose();
             graphicsDevice?.Dispose();
 
@@ -332,11 +332,13 @@
             graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend, GraphicsDebugging);
             graphicsContext = graphicsDevice.Context;
             gpuProfiler = graphicsDevice.Profiler;
-            audioDevice = AudioAdapter.CreateAudioDevice(AudioBackend.Auto, null);
+            var audioAdapter = AudioAdapter.ChooseAudioAdapter(AudioBackend);
+            AudioDeviceDesc audioDeviceDesc = new();
+            playbackAudioDevice = audioAdapter.CreatePlaybackDevice(audioDeviceDesc);
 
             for (int i = 0; i < windows.Count; i++)
             {
-                windows[i].Initialize(audioDevice, graphicsDevice);
+                windows[i].Initialize(playbackAudioDevice, graphicsDevice);
             }
 
             initialized = true;
@@ -374,7 +376,7 @@
             windowIdToWindow.Add(window.WindowID, window);
             if (initialized)
             {
-                window.Initialize(audioDevice, graphicsDevice);
+                window.Initialize(playbackAudioDevice, graphicsDevice);
             }
         }
 
@@ -432,7 +434,7 @@
 
             OnApplicationClose?.Invoke();
 
-            audioDevice.Dispose();
+            playbackAudioDevice.Dispose();
             graphicsContext.Dispose();
             graphicsDevice.Dispose();
 

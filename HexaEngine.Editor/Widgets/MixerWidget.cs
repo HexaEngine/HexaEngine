@@ -14,10 +14,10 @@
             ImGui.BeginGroup();
             ImGui.Text("Master");
 
-            var gain = AudioManager.Master.Gain;
+            var gain = AudioManager.Device.Gain;
             if (ImGui.VSliderFloat("##Master", new(30, 200), ref gain, 0, 1))
             {
-                AudioManager.Master.Gain = gain;
+                AudioManager.Device.Gain = gain;
             }
 
             float[] data = new float[2] { -80, -80 };

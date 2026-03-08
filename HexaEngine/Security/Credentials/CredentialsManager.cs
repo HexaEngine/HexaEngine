@@ -64,7 +64,7 @@
                 {
                     container = [];
                     var fs = File.OpenRead(CredentialFile);
-                    if (!container.TryDecrypt(fs, password))
+                    if (!container.Decrypt(fs, password))
                     {
                         return false;
                     }

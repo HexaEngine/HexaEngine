@@ -30,4 +30,41 @@
         /// </summary>
         int PlatformScore { get; }
     }
+
+    public interface IAudioAdapterEx : IAudioAdapter, IDisposable
+    {
+        public IReadOnlyList<AudioDeviceInfo> PlaybackDevices { get; }
+
+        public IReadOnlyList<AudioDeviceInfo> CaptureDevices { get; }
+
+        public void RefreshDevices();
+
+        public IAudioDevice CreatePlaybackDevice(in AudioDeviceDesc desc);
+
+        void InitInstance();
+    }
+
+    public enum AudioFormat
+    {
+        Unknown,
+        U8,
+        S16,
+        S24,
+        S32,
+        F32,
+    }
+
+    public struct AudioDeviceDesc
+    {
+        public uint Id;
+        public uint SampleRate;
+        public uint Channels;
+    }
+
+    public struct AudioDeviceInfo
+    {
+        public uint Id;
+        public string Name;
+        public bool IsDefault;
+    }
 }

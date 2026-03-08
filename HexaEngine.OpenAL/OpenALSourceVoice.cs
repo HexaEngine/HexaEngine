@@ -4,7 +4,7 @@
     using Hexa.NET.OpenAL;
     using System.Numerics;
 
-    public class OpenALSourceVoice : ISourceVoice
+    public class OpenALSourceVoice : ISound
     {
         public const int SourceSpatializeSoft = 0x1214;
         private uint source;
@@ -111,15 +111,15 @@
 
         public AudioSourceState State => Convert(state);
 
-        public event Action<AudioSourceState>? OnStateChanged;
+        public event Action<AudioSourceState>? StateChanged;
 
-        public event Action? OnPlay;
+        public event Action? Playing;
 
-        public event Action? OnPause;
+        public event Action? Paused;
 
-        public event Action? OnRewind;
+        public event Action? Rewinded;
 
-        public event Action? OnStop;
+        public event Action? Stopped;
 
         public IEmitter? Emitter { get; set; }
 
@@ -145,7 +145,7 @@
             if (newState != state)
             {
                 state = newState;
-                OnStateChanged?.Invoke(Convert(state));
+                StateChanged?.Invoke(Convert(state));
             }
             if (state == (int)ALEnum.Playing)
             {
@@ -156,27 +156,27 @@
         public void Play()
         {
             OpenAL.SourcePlay(source);
-            OnPlay?.Invoke();
+            Playing?.Invoke();
         }
 
         public void Stop()
         {
             OpenAL.SourceStop(source);
             stream.Reset();
-            OnStop?.Invoke();
+            Stopped?.Invoke();
         }
 
         public void Pause()
         {
             OpenAL.SourcePause(source);
-            OnPause?.Invoke();
+            Paused?.Invoke();
         }
 
         public void Rewind()
         {
             OpenAL.SourceRewind(source);
             stream.Reset();
-            OnRewind?.Invoke();
+            Rewinded?.Invoke();
         }
 
         private void Submix_GainChanged(float submixGain)

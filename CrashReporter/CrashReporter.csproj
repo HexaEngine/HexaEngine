@@ -2,14 +2,32 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  <PublishAot>true</PublishAot>
+	  <DebugSymbols>false</DebugSymbols>
+	  <StripSymbols>true</StripSymbols>
+	  <OptimizationPreference>Size</OptimizationPreference>
+	  <PublishTrimmed>true</PublishTrimmed>
+	  <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
   </PropertyGroup>
-	
-  <ItemGroup>
-    <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
-  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Hexa.NET.ImGui" Version="2.2.9" />
+		<PackageReference Include="Hexa.NET.ImGui.Backends" Version="1.0.18" />
+		<PackageReference Include="Hexa.NET.ImGui.Backends.SDL3" Version="1.0.18" />
+		<PackageReference Include="Hexa.NET.OpenGL3" Version="1.1.0" />
+		<PackageReference Include="Hexa.NET.SDL3" Version="1.2.17" />
+	</ItemGroup>
 
 </Project>

@@ -116,8 +116,7 @@
             header.RecordTableLength = recordTableSize;
             header.DataLength = dataSize;
 
-            byte* plainData = (byte*)Marshal.AllocHGlobal(plainSize);
-            Span<byte> plainBuffer = new(plainData, plainSize);
+            using SecureMemory<byte> plainBuffer = new(plainSize);
 
             int idx = 0;
             for (int i = 0; i < records.Length; i++)
@@ -137,8 +136,7 @@
             int cipherSize = Helper.MeasureCipherSize(plainSize, Cipher.AES_GCM_256);
             int containerSize = headerSize + hashSize + cipherSize;
 
-            byte* containerData = (byte*)Marshal.AllocHGlobal(containerSize);
-            Span<byte> containerBuffer = new(containerData, containerSize);
+            using SecureMemory<byte> containerBuffer = new(containerSize);
             Span<byte> headerBuffer = containerBuffer[..headerSize];
             Span<byte> hashBuffer = containerBuffer.Slice(headerSize, hashSize);
             Span<byte> cipherBuffer = containerBuffer.Slice(headerSize + hashSize, cipherSize);
@@ -150,7 +148,6 @@
             aes.Dispose();
 
             plainBuffer.Clear();
-            Marshal.FreeHGlobal((nint)plainData);
 
             HMACSHA512 hmac = new(hash.ToArray());
             hmac.TryComputeHash(cipherBuffer, hashBuffer, out _);
@@ -162,90 +159,13 @@
             header.Write(headerBuffer);
 
             stream.Write(containerBuffer);
-
-            containerBuffer.Clear();
-            Marshal.FreeHGlobal((nint)containerData);
         }
 
-        public unsafe void Decrypt(Stream stream, SecureString password)
+        public unsafe bool Decrypt(Stream stream, SecureString password)
         {
             int headerSize = CredentialsContainerHeader.SizeOf();
             Span<byte> headerBuffer = stackalloc byte[headerSize];
-            stream.Read(headerBuffer);
-            CredentialsContainerHeader header = default;
-            header.Read(headerBuffer);
-
-            int plainSize = header.RecordTableLength + header.DataLength;
-            int hashSize = Helper.MeasureHashSize(plainSize, header.Hash);
-            int cipherSize = Helper.MeasureCipherSize(plainSize, header.Cipher);
-            int containerSize = hashSize + cipherSize;
-
-            byte* containerData = (byte*)Marshal.AllocHGlobal(containerSize);
-            Span<byte> containerBuffer = new(containerData, containerSize);
-            stream.Read(containerBuffer);
-
-            byte* plainData = (byte*)Marshal.AllocHGlobal(plainSize);
-            Span<byte> plainBuffer = new(plainData, plainSize);
-
-            Span<byte> hashBuffer = containerBuffer[..hashSize];
-            Span<byte> cipherBuffer = containerBuffer.Slice(hashSize, cipherSize);
-
-            byte* computedHashData = (byte*)Marshal.AllocHGlobal(hashSize);
-            Span<byte> computedHashBuffer = new(computedHashData, hashSize);
-
-            password.HashSecureString(PasswordHashAlgorithm.SHA_512_256, out var hash, out var hashPin);
-            HMACSHA512 hmac = new(hash.ToArray());
-            hmac.TryComputeHash(cipherBuffer, computedHashBuffer, out _);
-            hmac.Dispose();
-            bool equal = computedHashBuffer.SequenceEqual(hashBuffer);
-            Marshal.FreeHGlobal((nint)computedHashData);
-
-            if (!equal)
-            {
-                throw new InvalidOperationException("");
-            }
-
-            AesGcm aes = new(hash, AesGcm.TagByteSizes.MaxSize);
-            Helper.Decrypt(aes, cipherBuffer, plainBuffer);
-            aes.Dispose();
-
-            hash.Clear();
-            hashPin.Free();
-
-            containerBuffer.Clear();
-            Marshal.FreeHGlobal((nint)containerData);
-
-            CredentialRecord[] records = new CredentialRecord[header.RecordsCount];
-
-            int idx = 0;
-            for (int i = 0; i < header.RecordsCount; i++)
-            {
-                idx += records[i].Read(plainBuffer[idx..]);
-            }
-
-            for (int i = 0; i < header.RecordsCount; i++)
-            {
-                var record = records[i];
-                ICredentials? cred = CreateCredentialsFrom(record);
-
-                if (cred == null)
-                {
-                    continue;
-                }
-
-                cred.Read(plainBuffer.Slice((header.DataOffset + record.Offset), record.Size));
-                credentials.Add(record.Name, cred);
-            }
-
-            plainBuffer.Clear();
-            Marshal.FreeHGlobal((nint)plainData);
-        }
-
-        public unsafe bool TryDecrypt(Stream stream, SecureString password)
-        {
-            int headerSize = CredentialsContainerHeader.SizeOf();
-            Span<byte> headerBuffer = stackalloc byte[headerSize];
-            stream.Read(headerBuffer);
+            stream.ReadExactly(headerBuffer);
             CredentialsContainerHeader header = default;
 
             if (!header.TryRead(headerBuffer, out _))
@@ -258,34 +178,24 @@
             int cipherSize = Helper.MeasureCipherSize(plainSize, header.Cipher);
             int containerSize = hashSize + cipherSize;
 
-            byte* containerData = (byte*)Marshal.AllocHGlobal(containerSize);
-            Span<byte> containerBuffer = new(containerData, containerSize);
-            stream.Read(containerBuffer);
+            using SecureMemory<byte> containerMemory = new(containerSize);
+            stream.ReadExactly(containerMemory);
 
-            byte* plainData = (byte*)Marshal.AllocHGlobal(plainSize);
-            Span<byte> plainBuffer = new(plainData, plainSize);
+            using SecureMemory<byte> plainBuffer = new(plainSize);
 
-            Span<byte> hashBuffer = containerBuffer[..hashSize];
-            Span<byte> cipherBuffer = containerBuffer.Slice(hashSize, cipherSize);
+            Span<byte> hashBuffer = containerMemory[..hashSize];
+            Span<byte> cipherBuffer = containerMemory.Slice(hashSize, cipherSize);
 
-            byte* computedHashData = (byte*)Marshal.AllocHGlobal(hashSize);
-            Span<byte> computedHashBuffer = new(computedHashData, hashSize);
+            using SecureMemory<byte> computedHashBuffer = new(hashSize);
 
             password.HashSecureString(PasswordHashAlgorithm.SHA_512_256, out var hash, out var hashPin);
             HMACSHA512 hmac = new(hash.ToArray());
             hmac.TryComputeHash(cipherBuffer, computedHashBuffer, out _);
             hmac.Dispose();
-            bool equal = computedHashBuffer.SequenceEqual(hashBuffer);
-            Marshal.FreeHGlobal((nint)computedHashData);
+            bool equal = computedHashBuffer.AsSpan().SequenceEqual(hashBuffer);
 
             if (!equal)
             {
-                containerBuffer.Clear();
-                Marshal.FreeHGlobal((nint)containerData);
-
-                plainBuffer.Clear();
-                Marshal.FreeHGlobal((nint)plainData);
-
                 return false;
             }
 
@@ -296,8 +206,7 @@
             hash.Clear();
             hashPin.Free();
 
-            containerBuffer.Clear();
-            Marshal.FreeHGlobal((nint)containerData);
+            containerMemory.Dispose();
 
             CredentialRecord[] records = new CredentialRecord[header.RecordsCount];
 
@@ -320,9 +229,6 @@
                 cred.Read(plainBuffer.Slice(header.DataOffset + record.Offset, record.Size));
                 credentials.Add(record.Name, cred);
             }
-
-            plainBuffer.Clear();
-            Marshal.FreeHGlobal((nint)plainData);
 
             return true;
         }
