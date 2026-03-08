@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class DepthStencil </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class DepthStencil ">
+      
+      <meta name="description" content="Represents a depth stencil texture for use in graphics rendering.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_DepthStencil.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.DepthStencil%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.DepthStencil">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_DepthStencil" data-uid="HexaEngine.Core.Graphics.DepthStencil" class="text-break">
+Class DepthStencil  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a depth stencil texture for use in graphics rendering.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class DepthStencil : ITexture2D, IResource, IDepthStencilView, IUnorderedAccessView, IShaderResourceView, IDeviceChild, INative, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">DepthStencil</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html">IDeviceChild</a></div>
+      <div><span class="xref">INative</span></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetAs__1_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetAs&lt;T&gt;(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetPointer_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetPointer(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Extensions.SRVExtensions.html#HexaEngine_Core_Extensions_SRVExtensions_ToTexRef_HexaEngine_Core_Graphics_IShaderResourceView_">SRVExtensions.ToTexRef(IShaderResourceView?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil__ctor_" data-uid="HexaEngine.Core.Graphics.DepthStencil.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil__ctor_HexaEngine_Core_Graphics_DepthStencilBufferDescription_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.DepthStencil.#ctor(HexaEngine.Core.Graphics.DepthStencilBufferDescription,System.String,System.Int32)">
+  DepthStencil(DepthStencilBufferDescription, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DepthStencil(DepthStencilBufferDescription desc, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+    <dd><p>The description of the depth stencil buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the file that contains the calling code (automatically generated).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the calling code (automatically generated).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when the format is invalid for a depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil__ctor_" data-uid="HexaEngine.Core.Graphics.DepthStencil.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil__ctor_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_DepthStencilViewFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.DepthStencil.#ctor(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.DepthStencilViewFlags,HexaEngine.Core.Graphics.ResourceMiscFlag,System.String,System.Int32)">
+  DepthStencil(Format, int, int, CpuAccessFlags, GpuAccessFlags, DepthStencilViewFlags, ResourceMiscFlag, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a> class with the specified format, width, height, array size, mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.
+This constructor sets the array size to 1 and the mip levels to 1.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DepthStencil(Format format, int width, int height, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The format of the depth stencil buffer.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the depth stencil buffer.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The height of the depth stencil buffer.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd><p>The GPU access flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>depthStencilViewFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewFlags.html">DepthStencilViewFlags</a></dt>
+    <dd><p>The depth stencil view flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>miscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the file that contains the calling code (automatically generated).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the calling code (automatically generated).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil__ctor_" data-uid="HexaEngine.Core.Graphics.DepthStencil.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil__ctor_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_DepthStencilViewFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.DepthStencil.#ctor(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.DepthStencilViewFlags,HexaEngine.Core.Graphics.ResourceMiscFlag,System.String,System.Int32)">
+  DepthStencil(Format, int, int, int, CpuAccessFlags, GpuAccessFlags, DepthStencilViewFlags, ResourceMiscFlag, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a> class with the specified format, width, height, array size, and CPU and GPU access flags.
+This constructor sets the mip levels to 1 and uses the default depth stencil view flags and miscellaneous flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DepthStencil(Format format, int width, int height, int arraySize, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The format of the depth stencil buffer.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the depth stencil buffer.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The height of the depth stencil buffer.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The array size (number of slices) of the depth stencil buffer.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd><p>The GPU access flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>depthStencilViewFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewFlags.html">DepthStencilViewFlags</a></dt>
+    <dd><p>The depth stencil view flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>miscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the file that contains the calling code (automatically generated).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the calling code (automatically generated).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil__ctor_" data-uid="HexaEngine.Core.Graphics.DepthStencil.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil__ctor_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_DepthStencilViewFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.DepthStencil.#ctor(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.DepthStencilViewFlags,HexaEngine.Core.Graphics.ResourceMiscFlag,System.String,System.Int32)">
+  DepthStencil(Format, int, int, int, int, CpuAccessFlags, GpuAccessFlags, DepthStencilViewFlags, ResourceMiscFlag, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L198"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a> class with the specified format, width, height, array size, mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DepthStencil(Format format, int width, int height, int arraySize, int mipLevels, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The format of the depth stencil buffer.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the depth stencil buffer.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The height of the depth stencil buffer.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The array size (number of slices) of the depth stencil buffer.</p>
+</dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of mip levels in the depth stencil buffer.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd><p>The GPU access flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>depthStencilViewFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewFlags.html">DepthStencilViewFlags</a></dt>
+    <dd><p>The depth stencil view flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>miscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous flags for the depth stencil buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the file that contains the calling code (automatically generated).</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the calling code (automatically generated).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when the format is invalid for a depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_ArraySize_" data-uid="HexaEngine.Core.Graphics.DepthStencil.ArraySize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_ArraySize" data-uid="HexaEngine.Core.Graphics.DepthStencil.ArraySize">
+  ArraySize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L339"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the array size of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ArraySize { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_CanRead_" data-uid="HexaEngine.Core.Graphics.DepthStencil.CanRead*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_CanRead" data-uid="HexaEngine.Core.Graphics.DepthStencil.CanRead">
+  CanRead
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L364"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the depth stencil can be read.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool CanRead { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_CanWrite_" data-uid="HexaEngine.Core.Graphics.DepthStencil.CanWrite*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_CanWrite" data-uid="HexaEngine.Core.Graphics.DepthStencil.CanWrite">
+  CanWrite
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L369"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the depth stencil can be written to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool CanWrite { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_CpuAccessFlags_" data-uid="HexaEngine.Core.Graphics.DepthStencil.CpuAccessFlags*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_CpuAccessFlags" data-uid="HexaEngine.Core.Graphics.DepthStencil.CpuAccessFlags">
+  CpuAccessFlags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L349"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the CPU access flags of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CpuAccessFlags CpuAccessFlags { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_DSV_" data-uid="HexaEngine.Core.Graphics.DepthStencil.DSV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_DSV" data-uid="HexaEngine.Core.Graphics.DepthStencil.DSV">
+  DSV
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L299"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the depth stencil view associated with the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDepthStencilView DSV { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_DebugName_" data-uid="HexaEngine.Core.Graphics.DepthStencil.DebugName*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_DebugName" data-uid="HexaEngine.Core.Graphics.DepthStencil.DebugName">
+  DebugName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L384"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the debug name for the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? DebugName { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Description_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Description*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Description" data-uid="HexaEngine.Core.Graphics.DepthStencil.Description">
+  Description
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L319"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the description of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Texture2DDescription Description { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DDescription.html">Texture2DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Dimension_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Dimension*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Dimension" data-uid="HexaEngine.Core.Graphics.DepthStencil.Dimension">
+  Dimension
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L294"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the resource dimension of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceDimension Dimension { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ResourceDimension.html">ResourceDimension</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Format_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Format*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Format" data-uid="HexaEngine.Core.Graphics.DepthStencil.Format">
+  Format
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L324"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the format of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Format Format { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_GpuAccessFlags_" data-uid="HexaEngine.Core.Graphics.DepthStencil.GpuAccessFlags*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_GpuAccessFlags" data-uid="HexaEngine.Core.Graphics.DepthStencil.GpuAccessFlags">
+  GpuAccessFlags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L354"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the GPU access flags of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GpuAccessFlags GpuAccessFlags { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Height_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Height*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Height" data-uid="HexaEngine.Core.Graphics.DepthStencil.Height">
+  Height
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L334"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the height of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Height { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_IsDisposed_" data-uid="HexaEngine.Core.Graphics.DepthStencil.IsDisposed*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_IsDisposed" data-uid="HexaEngine.Core.Graphics.DepthStencil.IsDisposed">
+  IsDisposed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L374"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the depth stencil has been disposed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsDisposed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_MipLevels_" data-uid="HexaEngine.Core.Graphics.DepthStencil.MipLevels*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_MipLevels" data-uid="HexaEngine.Core.Graphics.DepthStencil.MipLevels">
+  MipLevels
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L344"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the number of mip levels of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MipLevels { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_MiscFlag_" data-uid="HexaEngine.Core.Graphics.DepthStencil.MiscFlag*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_MiscFlag" data-uid="HexaEngine.Core.Graphics.DepthStencil.MiscFlag">
+  MiscFlag
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L359"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the miscellaneous flags of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceMiscFlag MiscFlag { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_NativePointer_" data-uid="HexaEngine.Core.Graphics.DepthStencil.NativePointer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_NativePointer" data-uid="HexaEngine.Core.Graphics.DepthStencil.NativePointer">
+  NativePointer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L379"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the native pointer to the depth stencil texture.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public nint NativePointer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_SRV_" data-uid="HexaEngine.Core.Graphics.DepthStencil.SRV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_SRV" data-uid="HexaEngine.Core.Graphics.DepthStencil.SRV">
+  SRV
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L304"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the shader resource view associated with the depth stencil, if available.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IShaderResourceView? SRV { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_UAV_" data-uid="HexaEngine.Core.Graphics.DepthStencil.UAV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_UAV" data-uid="HexaEngine.Core.Graphics.DepthStencil.UAV">
+  UAV
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L309"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the unordered access view associated with the depth stencil, if available.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IUnorderedAccessView? UAV { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Viewport_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Viewport*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Viewport" data-uid="HexaEngine.Core.Graphics.DepthStencil.Viewport">
+  Viewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the viewport associated with the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Viewport Viewport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Width_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Width*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Width" data-uid="HexaEngine.Core.Graphics.DepthStencil.Width">
+  Width
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L329"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the width of the depth stencil.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Width { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_CopyTo_" data-uid="HexaEngine.Core.Graphics.DepthStencil.CopyTo*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_CopyTo_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IResource_" data-uid="HexaEngine.Core.Graphics.DepthStencil.CopyTo(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.IResource)">
+  CopyTo(IGraphicsContext, IResource)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L654"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies the content of this depth stencil to another resource using the provided graphics context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CopyTo(IGraphicsContext context, IResource resource)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used for copying the resource.</p>
+</dd>
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The destination resource where the content of this depth stencil will be copied.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Dispose_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Dispose" data-uid="HexaEngine.Core.Graphics.DepthStencil.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L678"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Dispose_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Dispose_System_Boolean_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L664"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Disposes the specified disposing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>if set to <code>true</code> [disposing].</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Resize_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Resize_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32)">
+  Resize(Format, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L474"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the depth stencil to the specified dimensions using the given format, keeping the existing values for array size, mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize(Format format, int width, int height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The new format of the depth stencil.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new width of the depth stencil.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new height of the depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Resize_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Resize_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_DepthStencilViewFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.DepthStencilViewFlags,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  Resize(Format, int, int, CpuAccessFlags, GpuAccessFlags, DepthStencilViewFlags, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L516"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the depth stencil with the specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize(Format format, int width, int height, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The new format of the depth stencil.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new width of the depth stencil.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new height of the depth stencil.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The new CPU access flags of the depth stencil.</p>
+</dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd><p>The new GPU access flags of the depth stencil.</p>
+</dd>
+    <dt><code>depthStencilViewFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewFlags.html">DepthStencilViewFlags</a></dt>
+    <dd><p>The new depth stencil view flags of the depth stencil.</p>
+</dd>
+    <dt><code>miscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The new miscellaneous flags of the depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when an invalid format is specified for a depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Resize_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Resize_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32)">
+  Resize(Format, int, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L486"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the depth stencil to the specified dimensions using the given format and array size, keeping the existing values for mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize(Format format, int width, int height, int arraySize)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The new format of the depth stencil.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new width of the depth stencil.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new height of the depth stencil.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new array size of the depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Resize_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Resize_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_DepthStencilViewFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.DepthStencilViewFlags,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  Resize(Format, int, int, int, CpuAccessFlags, GpuAccessFlags, DepthStencilViewFlags, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L533"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the depth stencil with the specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize(Format format, int width, int height, int arraySize, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The new format of the depth stencil.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new width of the depth stencil.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new height of the depth stencil.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new array size of the depth stencil.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The new CPU access flags of the depth stencil.</p>
+</dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd><p>The new GPU access flags of the depth stencil.</p>
+</dd>
+    <dt><code>depthStencilViewFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewFlags.html">DepthStencilViewFlags</a></dt>
+    <dd><p>The new depth stencil view flags of the depth stencil.</p>
+</dd>
+    <dt><code>miscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The new miscellaneous flags of the depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when an invalid format is specified for a depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Resize_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Resize_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_System_Int32_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,System.Int32)">
+  Resize(Format, int, int, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L499"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the depth stencil to the specified dimensions using the given format, array size, and mip levels, keeping the existing values for CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize(Format format, int width, int height, int arraySize, int mipLevels)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The new format of the depth stencil.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new width of the depth stencil.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new height of the depth stencil.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new array size of the depth stencil.</p>
+</dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new number of mip levels of the depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Resize_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Resize_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_DepthStencilViewFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.DepthStencilViewFlags,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  Resize(Format, int, int, int, int, CpuAccessFlags, GpuAccessFlags, DepthStencilViewFlags, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L551"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the depth stencil with the specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize(Format format, int width, int height, int arraySize, int mipLevels, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags, DepthStencilViewFlags depthStencilViewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The new format of the depth stencil.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new width of the depth stencil.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new height of the depth stencil.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new array size of the depth stencil.</p>
+</dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new number of mip levels of the depth stencil.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The new CPU access flags of the depth stencil.</p>
+</dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd><p>The new GPU access flags of the depth stencil.</p>
+</dd>
+    <dt><code>depthStencilViewFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewFlags.html">DepthStencilViewFlags</a></dt>
+    <dd><p>The new depth stencil view flags of the depth stencil.</p>
+</dd>
+    <dt><code>miscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The new miscellaneous flags of the depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when an invalid format is specified for a depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="HexaEngine_Core_Graphics_DepthStencil_Resize_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_Resize_System_Int32_System_Int32_" data-uid="HexaEngine.Core.Graphics.DepthStencil.Resize(System.Int32,System.Int32)">
+  Resize(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L463"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the depth stencil to the specified dimensions using the existing format, array size, mip levels, CPU access flags, GPU access flags, depth stencil view flags, and miscellaneous flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize(int width, int height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new width of the depth stencil.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new height of the depth stencil.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Core_Graphics_DepthStencil_OnDisposed" data-uid="HexaEngine.Core.Graphics.DepthStencil.OnDisposed">
+  OnDisposed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L389"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Occurs when the depth stencil is disposed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler? OnDisposed</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/DepthStencil.cs/#L9" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

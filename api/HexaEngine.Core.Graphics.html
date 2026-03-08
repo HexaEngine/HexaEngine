@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Namespace HexaEngine.Core.Graphics </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Namespace HexaEngine.Core.Graphics ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics">
+
+  <h1 id="HexaEngine_Core_Graphics" data-uid="HexaEngine.Core.Graphics" class="text-break">Namespace HexaEngine.Core.Graphics</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="markdown level0 remarks"></div>
+
+    <h3 id="classes">
+Classes
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.AccessHelper.html">AccessHelper</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BytecodeShaderSource.html">BytecodeShaderSource</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.CodeShaderSource.html">CodeShaderSource</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthMipChain.html">DepthMipChain</a></dt>
+      <dd><p>Represents a chain of depth textures with multiple mip levels for use in graphics rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a></dt>
+      <dd><p>Represents a depth stencil texture for use in graphics rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.FileShaderSource.html">FileShaderSource</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.FormatHelper.html">FormatHelper</a></dt>
+      <dd><p>A helper class for working with pixel formats.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GBuffer.html">GBuffer</a></dt>
+      <dd><p>Represents a G-Buffer used for storing intermediate rendering results.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsAdapter.html">GraphicsAdapter</a></dt>
+      <dd><p>Provides functionality for managing graphics adapters and creating graphics devices.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html">IDeviceChildExtensions</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContextExtensions.html">IGraphicsContextExtensions</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.MemoryManager.html">MemoryManager</a></dt>
+      <dd><p>Provides a mechanism for tracking memory usage associated with graphics resources.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.PipelineManager.html">PipelineManager</a></dt>
+      <dd><p>A manager class responsible for managing graphics and compute pipelines in the application.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.PipelineStateManager.html">PipelineStateManager</a></dt>
+      <dd><p>A manager class responsible for managing graphics and compute pipeline states in the application.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ResourceHelper.html">ResourceHelper</a></dt>
+      <dd><p>A helper class for calculating resource sizes.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.SamplerState.html">SamplerState</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderCache.html">ShaderCache</a></dt>
+      <dd><p>Thread-safe shader cache, allows up to 64 read threads at the same time to access the cache and one write thread.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderCacheEntry.html">ShaderCacheEntry</a></dt>
+      <dd><p>Represents an entry in the shader cache.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderCompilers.html">ShaderCompilers</a></dt>
+      <dd><p>Provides a registry for <a class="xref" href="HexaEngine.Core.Graphics.IShaderCompiler.html">IShaderCompiler</a> instances associated with graphics backends.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderSource.html">ShaderSource</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture3D.html">Texture3D</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.TextureHelper.html">TextureHelper</a></dt>
+      <dd><p>A static class containing helper methods for working with textures.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html">Texture&lt;TTexture, TDesc&gt;</a></dt>
+      <dd></dd>
+    </dl>
+    <h3 id="structs">
+Structs
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BeginDrawDesc.html">BeginDrawDesc</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BindingValuePair.html">BindingValuePair</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BlendDescription.html">BlendDescription</a></dt>
+      <dd><p>Defines the blending settings for a graphics pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Box.html">Box</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferDescription.html">BufferDescription</a></dt>
+      <dd><p>Describes a buffer resource, which represents a contiguous block of memory.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferExtendedShaderResourceView.html">BufferExtendedShaderResourceView</a></dt>
+      <dd><p>Describes an extended shader resource view for a buffer resource.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferRenderTargetView.html">BufferRenderTargetView</a></dt>
+      <dd><p>Represents a description for creating a render target view for a buffer resource.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferShaderResourceView.html">BufferShaderResourceView</a></dt>
+      <dd><p>Represents a description for creating a shader resource view for a buffer resource.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferUnorderedAccessView.html">BufferUnorderedAccessView</a></dt>
+      <dd><p>Represents a description for creating an unordered access view for a buffer resource.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ClearColorValue.html">ClearColorValue</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ClearColors.html">ClearColors</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ClearDepthStencilValue.html">ClearDepthStencilValue</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ClearValue.html">ClearValue</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineDesc.html">ComputePipelineDesc</a></dt>
+      <dd><p>Describes a compute pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineDescEx.html">ComputePipelineDescEx</a></dt>
+      <dd><p>Describes a compute pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDesc.html">ComputePipelineStateDesc</a></dt>
+      <dd><p>Describes the configuration for a compute pipeline state object, including any pipeline state flags that affect
+its behavior.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDescEx.html">ComputePipelineStateDescEx</a></dt>
+      <dd><p>Represents a combined description of a compute pipeline and its state.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+      <dd><p>Describes a depth-stencil buffer, including its format, size, array size, mip levels, binding options, usage, CPU access options, view options, sample description, and miscellaneous options.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthStencilDescription.html">DepthStencilDescription</a></dt>
+      <dd><p>Represents a description of a depth stencil state.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthStencilOperationDescription.html">DepthStencilOperationDescription</a></dt>
+      <dd><p>Represents a description of stencil operations and functions for depth-stencil testing.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewDescription.html">DepthStencilViewDescription</a></dt>
+      <dd><p>Represents a description of a depth-stencil view.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GBufferDescription.html">GBufferDescription</a></dt>
+      <dd><p>Describes the configuration for a G-Buffer.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsDeviceCapabilities.html">GraphicsDeviceCapabilities</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineDesc.html">GraphicsPipelineDesc</a></dt>
+      <dd><p>Represents a description of a graphics pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineDescEx.html">GraphicsPipelineDescEx</a></dt>
+      <dd><p>Represents a description of a graphics pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDesc.html">GraphicsPipelineStateDesc</a></dt>
+      <dd><p>Represents the description of a graphics pipeline state.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx.html">GraphicsPipelineStateDescEx</a></dt>
+      <dd><p>Represents a combined description of a graphics pipeline and its state.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContextExtensions.EventScope.html">IGraphicsContextExtensions.EventScope</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.InputElementDescription.html">InputElementDescription</a></dt>
+      <dd><p>Describes an element in the layout of a vertex buffer.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.MappedSubresource.html">MappedSubresource</a></dt>
+      <dd><p>Represents a mapped subresource with information about the data pointer, row pitch, and depth pitch.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.MemoryManager.MemoryEntry.html">MemoryManager.MemoryEntry</a></dt>
+      <dd><p>Represents an entry tracking a graphics resource and its memory usage.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+      <dd><p>Represents a size value that can be used with pointer arithmetic.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.RasterizerDescription.html">RasterizerDescription</a></dt>
+      <dd><p>Describes the rasterizer state used in the graphics pipeline to control how geometry is rendered.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.RenderTargetArray.html">RenderTargetArray</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.RenderTargetBlendDescription.html">RenderTargetBlendDescription</a></dt>
+      <dd><p>Describes the blending and logic operations used in rendering to a render target.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.RenderTargetViewDescription.html">RenderTargetViewDescription</a></dt>
+      <dd><p>Describes a render target view.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.SampleDescription.html">SampleDescription</a></dt>
+      <dd><p>Describes the number of multisamples and the quality of the samples.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.SamplerStateDescription.html">SamplerStateDescription</a></dt>
+      <dd><p>Describes the properties of a sampler state in a graphics API or framework.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Shader.html">Shader</a></dt>
+      <dd><p>Represents a shader with its bytecode and length.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderMacro.html">ShaderMacro</a></dt>
+      <dd><p>Represents a shader macro with a name and definition.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderResourceViewDescription.html">ShaderResourceViewDescription</a></dt>
+      <dd><p>Represents the description of a shader resource view.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a></dt>
+      <dd><p>Represents data for a subresource.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.SwapChainDescription.html">SwapChainDescription</a></dt>
+      <dd><p>Describes a swap chain.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.SwapChainFullscreenDescription.html">SwapChainFullscreenDescription</a></dt>
+      <dd><p>Describes the fullscreen parameters for a swap chain.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1DArrayDepthStencilView.html">Texture1DArrayDepthStencilView</a></dt>
+      <dd><p>Represents a partial description of a depth-stencil view for a 1D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1DArrayRenderTargetView.html">Texture1DArrayRenderTargetView</a></dt>
+      <dd><p>Represents a partial description of a render target view for a 1D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1DArrayShaderResourceView.html">Texture1DArrayShaderResourceView</a></dt>
+      <dd><p>Represents a partial description of a shader resource view for a 1D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1DArrayUnorderedAccessView.html">Texture1DArrayUnorderedAccessView</a></dt>
+      <dd><p>Represents a partial description of an unordered access view for a 1D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1DDepthStencilView.html">Texture1DDepthStencilView</a></dt>
+      <dd><p>Represents a partial description of a depth-stencil view for a 1D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+      <dd><p>Represents the description of a 1D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1DRenderTargetView.html">Texture1DRenderTargetView</a></dt>
+      <dd><p>Represents a render target view for a 1D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1DShaderResourceView.html">Texture1DShaderResourceView</a></dt>
+      <dd><p>Represents a shader resource view for a 1D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture1DUnorderedAccessView.html">Texture1DUnorderedAccessView</a></dt>
+      <dd><p>Represents an unordered access view for a 1D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DArrayDepthStencilView.html">Texture2DArrayDepthStencilView</a></dt>
+      <dd><p>Represents a depth-stencil view for a 2D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DArrayRenderTargetView.html">Texture2DArrayRenderTargetView</a></dt>
+      <dd><p>Represents a render target view for a 2D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DArrayShaderResourceView.html">Texture2DArrayShaderResourceView</a></dt>
+      <dd><p>Represents a shader resource view for a 2D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DArrayUnorderedAccessView.html">Texture2DArrayUnorderedAccessView</a></dt>
+      <dd><p>Represents an unordered access view for a 2D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DDepthStencilView.html">Texture2DDepthStencilView</a></dt>
+      <dd><p>Represents a depth-stencil view for a 2D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DDescription.html">Texture2DDescription</a></dt>
+      <dd><p>Represents the description of a 2D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DMultisampledArrayDepthStencilView.html">Texture2DMultisampledArrayDepthStencilView</a></dt>
+      <dd><p>Represents a depth-stencil view for a multisampled 2D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DMultisampledArrayRenderTargetView.html">Texture2DMultisampledArrayRenderTargetView</a></dt>
+      <dd><p>Represents a render target view for a multisampled 2D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DMultisampledArrayShaderResourceView.html">Texture2DMultisampledArrayShaderResourceView</a></dt>
+      <dd><p>Represents a shader resource view for a multisampled 2D texture array.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DMultisampledDepthStencilView.html">Texture2DMultisampledDepthStencilView</a></dt>
+      <dd><p>Represents a depth stencil view for a multisampled 2D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DMultisampledRenderTargetView.html">Texture2DMultisampledRenderTargetView</a></dt>
+      <dd><p>Represents a render target view for a multisampled 2D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DMultisampledShaderResourceView.html">Texture2DMultisampledShaderResourceView</a></dt>
+      <dd><p>Represents a shader resource view for a multisampled 2D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DRenderTargetView.html">Texture2DRenderTargetView</a></dt>
+      <dd><p>Represents a render target view for a 2D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DShaderResourceView.html">Texture2DShaderResourceView</a></dt>
+      <dd><p>Represents a shader resource view for a 2D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture2DUnorderedAccessView.html">Texture2DUnorderedAccessView</a></dt>
+      <dd><p>Represents an unordered access view for a 2D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture3DDescription.html">Texture3DDescription</a></dt>
+      <dd><p>Represents the description of a 3D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture3DRenderTargetView.html">Texture3DRenderTargetView</a></dt>
+      <dd><p>Represents a render target view for a 3D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture3DShaderResourceView.html">Texture3DShaderResourceView</a></dt>
+      <dd><p>Represents a shader resource view for a 3D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Texture3DUnorderedAccessView.html">Texture3DUnorderedAccessView</a></dt>
+      <dd><p>Represents an unordered access view for a 3D texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.TextureCubeArrayShaderResourceView.html">TextureCubeArrayShaderResourceView</a></dt>
+      <dd><p>Represents a shader resource view for an array of cube textures.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.TextureCubeShaderResourceView.html">TextureCubeShaderResourceView</a></dt>
+      <dd><p>Represents a shader resource view for a cube texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.TextureFileDescription.html">TextureFileDescription</a></dt>
+      <dd><p>Describes a texture file.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.UnorderedAccessViewDescription.html">UnorderedAccessViewDescription</a></dt>
+      <dd><p>Describes an unordered access view.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ViewportArray.html">ViewportArray</a></dt>
+      <dd></dd>
+    </dl>
+    <h3 id="interfaces">
+Interfaces
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+      <dd><p>Represents a buffer resource used in graphics rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ICommandBuffer.html">ICommandBuffer</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ICommandList.html">ICommandList</a></dt>
+      <dd><p>Represents a graphics command list for issuing rendering commands to a graphics device.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IComputePipeline.html">IComputePipeline</a></dt>
+      <dd><p>Represents a compute pipeline used for running compute shaders on a graphics device.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IComputePipelineState.html">IComputePipelineState</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+      <dd><p>Represents a view that allows read and write access to a depth-stencil buffer.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html">IDeviceChild</a></dt>
+      <dd><p>Represents a graphics device child, which is an object associated with a graphics device.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IFence.html">IFence</a></dt>
+      <dd><p>Represents a fence, an object used for synchronization of the CPU and one or more GPUs.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IGPUProfiler.html">IGPUProfiler</a></dt>
+      <dd><p>Provides an interface for profiling GPU performance and timing information.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsAdapter.html">IGraphicsAdapter</a></dt>
+      <dd><p>Represents a graphics adapter that provides information about the graphics device and GPU(s).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+      <dd><p>Provides an interface for graphics context management and operations on a graphics device.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+      <dd><p>Represents a graphics device used for rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipeline.html">IGraphicsPipeline</a></dt>
+      <dd><p>Represents a graphics pipeline that specifies the rendering state and shaders for graphics rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a></dt>
+      <dd><p>Interface representing the state of a graphics pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IImage.html">IImage</a></dt>
+      <dd><p>Represents an image with information about its properties and access to pixel data.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IPipeline.html">IPipeline</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IPipelineState.html">IPipelineState</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IPredicate.html">IPredicate</a></dt>
+      <dd><p>Represents a graphics predicate that can be used to control rendering commands.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IQuery.html">IQuery</a></dt>
+      <dd><p>Represents a graphics query that can be used to gather information about GPU performance and rendering statistics.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+      <dd><p>Represents a render target view (RTV) in graphics programming, which allows rendering to a resource as a target.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+      <dd><p>Represents a resource in graphics programming.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IResourceBindingList.html">IResourceBindingList</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ISamplerState.html">ISamplerState</a></dt>
+      <dd><p>Represents a sampler state object that defines how textures are sampled during shader execution.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+      <dd><p>Represents a scratch image used for image processing and manipulation.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderCompiler.html">IShaderCompiler</a></dt>
+      <dd><p>Represents a compiler for shader programs that can compile shader source code into shader objects.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+      <dd><p>Represents a shader resource view (SRV) in graphics programming, which provides access to a resource from a shader.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ISwapChain.html">ISwapChain</a></dt>
+      <dd><p>Represents a swap chain for presenting graphics output to a display.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+      <dd><p>Represents a 1D texture resource in a graphics device.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></dt>
+      <dd><p>Represents a 2D texture in graphics programming.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture3D.html">ITexture3D</a></dt>
+      <dd><p>Represents a 3D texture resource in a graphics device.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ITextureLoader.html">ITextureLoader</a></dt>
+      <dd><p>Provides methods for loading and initializing textures and scratch images.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+      <dd><p>Represents an unordered access view (UAV) in graphics programming, which provides read and write access to a resource from a shader.</p>
+</dd>
+    </dl>
+    <h3 id="enums">
+Enums
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+      <dd><p>Flags used to specify the bind options for a resource, such as a buffer or texture.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Blend.html">Blend</a></dt>
+      <dd><p>Specifies different blending options for use in a graphics pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BlendOperation.html">BlendOperation</a></dt>
+      <dd><p>Specifies different types of blending operations for color data.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags.html">BufferExtendedShaderResourceViewFlags</a></dt>
+      <dd><p>Flags that specify how a shader resource view for a buffer resource is accessed.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags.html">BufferUnorderedAccessViewFlags</a></dt>
+      <dd><p>Flags that describe the behavior of an unordered access view for a buffer resource.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ClearFlags.html">ClearFlags</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ColorSpace.html">ColorSpace</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ColorWriteEnable.html">ColorWriteEnable</a></dt>
+      <dd><p>Flags that determine which color components can be written to the render target.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ComparisonFunction.html">ComparisonFunction</a></dt>
+      <dd><p>Defines comparison functions used in depth and stencil operations.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ConservativeRasterizationMode.html">ConservativeRasterizationMode</a></dt>
+      <dd><p>Specifies the mode for conservative rasterization.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+      <dd><p>Flags that specify CPU access rights.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.CullMode.html">CullMode</a></dt>
+      <dd><p>Specifies how triangles are culled during rasterization.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthStencilClearFlags.html">DepthStencilClearFlags</a></dt>
+      <dd><p>Flags used to specify which parts of a depth stencil buffer should be cleared when performing a clear operation.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewDimension.html">DepthStencilViewDimension</a></dt>
+      <dd><p>Represents the dimension of a depth-stencil view.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewFlags.html">DepthStencilViewFlags</a></dt>
+      <dd><p>Specifies flags that control the behavior of a depth-stencil view.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.DepthWriteMask.html">DepthWriteMask</a></dt>
+      <dd><p>Specifies whether and how to modify the depth component of a depth-stencil buffer.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.FenceFlags.html">FenceFlags</a></dt>
+      <dd><p>Specifies fence options.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.FillMode.html">FillMode</a></dt>
+      <dd><p>Specifies how filled polygons are rendered.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Filter.html">Filter</a></dt>
+      <dd><p>Specifies texture filtering modes for sampling textures.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+      <dd><p>Specifies pixel format for textures and resources.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+      <dd><p>Flags that specify GPU access rights.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsBackend.html">GraphicsBackend</a></dt>
+      <dd><p>Specifies the graphics backend used by the application.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsDeviceCapabilitiesFlags.html">GraphicsDeviceCapabilitiesFlags</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.InputClassification.html">InputClassification</a></dt>
+      <dd><p>Specifies the classification of input data in a vertex buffer.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.LogicOperation.html">LogicOperation</a></dt>
+      <dd><p>Defines logical operations used in graphics rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.MapFlags.html">MapFlags</a></dt>
+      <dd><p>Flags for mapping resources.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.MapMode.html">MapMode</a></dt>
+      <dd><p>Flags for resource mapping types.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ModeScaling.html">ModeScaling</a></dt>
+      <dd><p>Specifies the scaling mode for an swap-chain.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ModeScanlineOrder.html">ModeScanlineOrder</a></dt>
+      <dd><p>Specifies the scanline order for an swapchain.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.PipelineStateFlags.html">PipelineStateFlags</a></dt>
+      <dd><p>Specifies flags that control pipeline state behavior.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.PrimitiveTopology.html">PrimitiveTopology</a></dt>
+      <dd><p>Specifies the primitive topology for rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Query.html">Query</a></dt>
+      <dd><p>Specifies types of queries used in graphics and performance measurement.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.RenderTargetViewDimension.html">RenderTargetViewDimension</a></dt>
+      <dd><p>Identifies the dimension of a render target view.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ResourceDimension.html">ResourceDimension</a></dt>
+      <dd><p>Specifies the dimension of a graphics resource.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+      <dd><p>Flags that describe miscellaneous resource options.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Scaling.html">Scaling</a></dt>
+      <dd><p>Enumerates different scaling options.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderBackend.html">ShaderBackend</a></dt>
+      <dd><p>Represents different shader backends.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderParameterType.html">ShaderParameterType</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderResourceViewDimension.html">ShaderResourceViewDimension</a></dt>
+      <dd><p>Represents the dimension of a shader resource view.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.ShaderStage.html">ShaderStage</a></dt>
+      <dd><p>Represents the various shader stages.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.StencilOperation.html">StencilOperation</a></dt>
+      <dd><p>Defines stencil operations.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.SwapChainAlphaMode.html">SwapChainAlphaMode</a></dt>
+      <dd><p>Specifies the alpha mode of the swap chain.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.SwapChainFlags.html">SwapChainFlags</a></dt>
+      <dd><p>Defines flags for swap chain creation.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.SwapEffect.html">SwapEffect</a></dt>
+      <dd><p>Describes the presentation model of the swap chain.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.TextureAddressMode.html">TextureAddressMode</a></dt>
+      <dd><p>Specifies how texture addressing is handled outside the range [0, 1].</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.TextureDimension.html">TextureDimension</a></dt>
+      <dd><p>Specifies the dimension of a texture in graphics programming.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.TextureLoaderFlags.html">TextureLoaderFlags</a></dt>
+      <dd><p>Specifies flags for texture loading operations.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.UnorderedAccessViewDimension.html">UnorderedAccessViewDimension</a></dt>
+      <dd><p>Represents the dimension of an unordered access view.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="HexaEngine.Core.Graphics.Usage.html">Usage</a></dt>
+      <dd><p>Represents the usage type of a resource.</p>
+</dd>
+    </dl>
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

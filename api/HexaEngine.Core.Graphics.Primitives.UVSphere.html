@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class UVSphere </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class UVSphere ">
+      
+      <meta name="description" content="Represents a 3D sphere primitive.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_Primitives_UVSphere.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.Primitives.UVSphere%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.Primitives.UVSphere">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_Primitives_UVSphere" data-uid="HexaEngine.Core.Graphics.Primitives.UVSphere" class="text-break">
+Class UVSphere  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Primitives/UVSphere.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a>.<a class="xref" href="HexaEngine.Core.Graphics.Primitives.html">Primitives</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a 3D sphere primitive.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class UVSphere : Primitive&lt;UVSphereDesc, uint&gt;, IDisposableRef, IPrimitive, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Core.DisposableRefBase.html">DisposableRefBase</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html">Primitive</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Primitives.UVSphereDesc.html">UVSphereDesc</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</div>
+      <div><span class="xref">UVSphere</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.IDisposableRef.html">IDisposableRef</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.Primitives.IPrimitive.html">IPrimitive</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_Description">Primitive&lt;UVSphereDesc, uint&gt;.Description</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_VertexCount">Primitive&lt;UVSphereDesc, uint&gt;.VertexCount</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_IndexCount">Primitive&lt;UVSphereDesc, uint&gt;.IndexCount</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_VertexBuffer">Primitive&lt;UVSphereDesc, uint&gt;.VertexBuffer</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_IndexBuffer">Primitive&lt;UVSphereDesc, uint&gt;.IndexBuffer</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_PrimInputElements">Primitive&lt;UVSphereDesc, uint&gt;.PrimInputElements</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_InputElements">Primitive&lt;UVSphereDesc, uint&gt;.InputElements</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_DrawAuto_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IGraphicsPipelineState_">Primitive&lt;UVSphereDesc, uint&gt;.DrawAuto(IGraphicsContext, IGraphicsPipelineState)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_DrawAuto_HexaEngine_Core_Graphics_IGraphicsContext_">Primitive&lt;UVSphereDesc, uint&gt;.DrawAuto(IGraphicsContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_DrawAutoInstanced_HexaEngine_Core_Graphics_IGraphicsContext_System_UInt32_">Primitive&lt;UVSphereDesc, uint&gt;.DrawAutoInstanced(IGraphicsContext, uint)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_BeginDraw_HexaEngine_Core_Graphics_IGraphicsContext_System_UInt32__System_UInt32__System_Int32__">Primitive&lt;UVSphereDesc, uint&gt;.BeginDraw(IGraphicsContext, out uint, out uint, out int)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Primitives.Primitive-2.html#HexaEngine_Core_Graphics_Primitives_Primitive_2_EndDraw_HexaEngine_Core_Graphics_IGraphicsContext_">Primitive&lt;UVSphereDesc, uint&gt;.EndDraw(IGraphicsContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.DisposableRefBase.html#HexaEngine_Core_DisposableRefBase_IsDisposed">DisposableRefBase.IsDisposed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.DisposableRefBase.html#HexaEngine_Core_DisposableRefBase_OnDisposed">DisposableRefBase.OnDisposed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.DisposableRefBase.html#HexaEngine_Core_DisposableRefBase_AddRef">DisposableRefBase.AddRef()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.DisposableRefBase.html#HexaEngine_Core_DisposableRefBase_Dispose">DisposableRefBase.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Primitives_UVSphere__ctor_" data-uid="HexaEngine.Core.Graphics.Primitives.UVSphere.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Primitives_UVSphere__ctor_HexaEngine_Core_Graphics_Primitives_UVSphereDesc_" data-uid="HexaEngine.Core.Graphics.Primitives.UVSphere.#ctor(HexaEngine.Core.Graphics.Primitives.UVSphereDesc)">
+  UVSphere(UVSphereDesc)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Primitives/UVSphere.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Primitives.UVSphere.html">UVSphere</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public UVSphere(UVSphereDesc desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.Primitives.UVSphereDesc.html">UVSphereDesc</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Primitives_UVSphere_CreateSphere_" data-uid="HexaEngine.Core.Graphics.Primitives.UVSphere.CreateSphere*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Primitives_UVSphere_CreateSphere_HexaEngine_Core_Graphics_Buffers_VertexBuffer_HexaEngine_Core_Graphics_Primitives_PrimVertex___HexaEngine_Core_Graphics_Buffers_IndexBuffer_System_UInt32___System_Single_System_UInt32_System_Boolean_System_Boolean_" data-uid="HexaEngine.Core.Graphics.Primitives.UVSphere.CreateSphere(HexaEngine.Core.Graphics.Buffers.VertexBuffer{HexaEngine.Core.Graphics.Primitives.PrimVertex}@,HexaEngine.Core.Graphics.Buffers.IndexBuffer{System.UInt32}@,System.Single,System.UInt32,System.Boolean,System.Boolean)">
+  CreateSphere(out VertexBuffer&lt;PrimVertex&gt;, out IndexBuffer&lt;uint&gt;, float, uint, bool, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Primitives/UVSphere.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a sphere mesh with the specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void CreateSphere(out VertexBuffer&lt;PrimVertex&gt; vertexBuffer, out IndexBuffer&lt;uint&gt; indexBuffer, float diameter = 1, uint tessellation = 16, bool invertn = false, bool flipWinding = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vertexBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.VertexBuffer-1.html">VertexBuffer</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Primitives.PrimVertex.html">PrimVertex</a>&gt;</dt>
+    <dd><p>The vertex buffer of the sphere.</p>
+</dd>
+    <dt><code>indexBuffer</code> <a class="xref" href="HexaEngine.Core.Graphics.Buffers.IndexBuffer-1.html">IndexBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd><p>The index buffer of the sphere.</p>
+</dd>
+    <dt><code>diameter</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The diameter of the sphere.</p>
+</dd>
+    <dt><code>tessellation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The level of tessellation for the sphere.</p>
+</dd>
+    <dt><code>invertn</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A flag indicating whether to invert the normals of the sphere.</p>
+</dd>
+    <dt><code>flipWinding</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Primitives_UVSphere_InitializeMesh_" data-uid="HexaEngine.Core.Graphics.Primitives.UVSphere.InitializeMesh*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Primitives_UVSphere_InitializeMesh_HexaEngine_Core_Graphics_Primitives_UVSphereDesc_" data-uid="HexaEngine.Core.Graphics.Primitives.UVSphere.InitializeMesh(HexaEngine.Core.Graphics.Primitives.UVSphereDesc)">
+  InitializeMesh(UVSphereDesc)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Primitives/UVSphere.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes the sphere mesh by creating vertex and index buffers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override (VertexBuffer&lt;PrimVertex&gt;, IndexBuffer&lt;uint&gt;?) InitializeMesh(UVSphereDesc desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.Primitives.UVSphereDesc.html">UVSphereDesc</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<a class="xref" href="HexaEngine.Core.Graphics.Buffers.VertexBuffer-1.html">VertexBuffer</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Primitives.PrimVertex.html">PrimVertex</a>&gt;, <a class="xref" href="HexaEngine.Core.Graphics.Buffers.IndexBuffer-1.html">IndexBuffer</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;)</dt>
+    <dd><p>A tuple containing the vertex buffer and an optional index buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Primitives/UVSphere.cs/#L32" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

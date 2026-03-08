@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class PostFxBase </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class PostFxBase ">
+      
+      <meta name="description" content="A base class for implementing post-processing effects.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_PostFx_PostFxBase.md&amp;value=---%0Auid%3A%20HexaEngine.PostFx.PostFxBase%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.PostFx.PostFxBase">
+
+
+
+  <h1 id="HexaEngine_PostFx_PostFxBase" data-uid="HexaEngine.PostFx.PostFxBase" class="text-break">
+Class PostFxBase  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.PostFx.html">PostFx</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>A base class for implementing post-processing effects.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class PostFxBase : IPostFx, INotifyPropertyChanged, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">PostFxBase</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.PostFx.IPostFx.html">IPostFx</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.AutoExposure.html">AutoExposure</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.BentNormals.html">BentNormals</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.Bloom.html">Bloom</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.ChromaticAberration.html">ChromaticAberration</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.ColorGrading.html">ColorGrading</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.DDASSR.html">DDASSR</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.DepthOfField.html">DepthOfField</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.FXAA.html">FXAA</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.Fog.html">Fog</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.Grain.html">Grain</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.HBAO.html">HBAO</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.LensFlare.html">LensFlare</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.LinearDepth.html">LinearDepth</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.MotionBlur.html">MotionBlur</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.SSAO.html">SSAO</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.SSGI.html">SSGI</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.SSR.html">SSR</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.TAA.html">TAA</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.UserLUT.html">UserLUT</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.VelocityBuffer.html">VelocityBuffer</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.Vignette.html">Vignette</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.VolumetricClouds.html">VolumetricClouds</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.VolumetricLighting.html">VolumetricLighting</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.BuildIn.VolumetricScattering.html">VolumetricScattering</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_PostFx_PostFxBase__ctor_" data-uid="HexaEngine.PostFx.PostFxBase.#ctor*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase__ctor" data-uid="HexaEngine.PostFx.PostFxBase.#ctor">
+  PostFxBase()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PostFxBase()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Input" data-uid="HexaEngine.PostFx.PostFxBase.Input">
+  Input
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The input shader resource view.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected IShaderResourceView Input</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_InputResource" data-uid="HexaEngine.PostFx.PostFxBase.InputResource">
+  InputResource
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The input resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected IResource InputResource</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Output" data-uid="HexaEngine.PostFx.PostFxBase.Output">
+  Output
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The output render target view.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected IRenderTargetView Output</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_OutputResource" data-uid="HexaEngine.PostFx.PostFxBase.OutputResource">
+  OutputResource
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The output resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected IResource OutputResource</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Viewport" data-uid="HexaEngine.PostFx.PostFxBase.Viewport">
+  Viewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The viewport associated with the output.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Viewport Viewport</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_dirty" data-uid="HexaEngine.PostFx.PostFxBase.dirty">
+  dirty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether the post-processing effect is dirty and needs an update.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool dirty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_ColorSpace_" data-uid="HexaEngine.PostFx.PostFxBase.ColorSpace*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_ColorSpace" data-uid="HexaEngine.PostFx.PostFxBase.ColorSpace">
+  ColorSpace
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the color space of the post-processing effect. (eg. SDR or HDR)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract PostFxColorSpace ColorSpace { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.PostFx.PostFxColorSpace.html">PostFxColorSpace</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_DisplayName_" data-uid="HexaEngine.PostFx.PostFxBase.DisplayName*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_DisplayName" data-uid="HexaEngine.PostFx.PostFxBase.DisplayName">
+  DisplayName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the display name of the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ImGuiName DisplayName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.UI.ImGuiName.html">ImGuiName</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Enabled_" data-uid="HexaEngine.PostFx.PostFxBase.Enabled*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Enabled" data-uid="HexaEngine.PostFx.PostFxBase.Enabled">
+  Enabled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the post-processing effect is enabled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Enabled { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Flags_" data-uid="HexaEngine.PostFx.PostFxBase.Flags*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Flags" data-uid="HexaEngine.PostFx.PostFxBase.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the flags associated with the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract PostFxFlags Flags { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.PostFx.PostFxFlags.html">PostFxFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Initialized_" data-uid="HexaEngine.PostFx.PostFxBase.Initialized*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Initialized" data-uid="HexaEngine.PostFx.PostFxBase.Initialized">
+  Initialized
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the post-processing effect has been initialized.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Initialized { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Name_" data-uid="HexaEngine.PostFx.PostFxBase.Name*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Name" data-uid="HexaEngine.PostFx.PostFxBase.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the name of the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract string Name { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Compose_" data-uid="HexaEngine.PostFx.PostFxBase.Compose*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Compose_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.PostFx.PostFxBase.Compose(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Compose(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L170"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Composes the post-processing effect in a later stage if configured.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Compose(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_CreateDisplayName_" data-uid="HexaEngine.PostFx.PostFxBase.CreateDisplayName*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_CreateDisplayName" data-uid="HexaEngine.PostFx.PostFxBase.CreateDisplayName">
+  CreateDisplayName()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual ImGuiName CreateDisplayName()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.UI.ImGuiName.html">ImGuiName</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Dispose_" data-uid="HexaEngine.PostFx.PostFxBase.Dispose*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Dispose" data-uid="HexaEngine.PostFx.PostFxBase.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L266"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_DisposeCore_" data-uid="HexaEngine.PostFx.PostFxBase.DisposeCore*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_DisposeCore" data-uid="HexaEngine.PostFx.PostFxBase.DisposeCore">
+  DisposeCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L197"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs the core disposal logic for the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void DisposeCore()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Draw_" data-uid="HexaEngine.PostFx.PostFxBase.Draw*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Draw_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.PostFx.PostFxBase.Draw(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Draw(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Draw(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Initialize_" data-uid="HexaEngine.PostFx.PostFxBase.Initialize*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Initialize_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_PostFx_PostFxGraphResourceBuilder_System_Int32_System_Int32_HexaEngine_Core_Graphics_ShaderMacro___" data-uid="HexaEngine.PostFx.PostFxBase.Initialize(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.PostFx.PostFxGraphResourceBuilder,System.Int32,System.Int32,HexaEngine.Core.Graphics.ShaderMacro[])">
+  Initialize(IGraphicsDevice, PostFxGraphResourceBuilder, int, int, ShaderMacro[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd><p>The graphics device.</p>
+</dd>
+    <dt><code>creator</code> <a class="xref" href="HexaEngine.PostFx.PostFxGraphResourceBuilder.html">PostFxGraphResourceBuilder</a></dt>
+    <dd><p>The resource builder for creating resources.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the rendering area.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The height of the rendering area.</p>
+</dd>
+    <dt><code>macros</code> <a class="xref" href="HexaEngine.Core.Graphics.ShaderMacro.html">ShaderMacro</a>[]</dt>
+    <dd><p>The shader macros to use during initialization.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_NotifyPropertyChanged_" data-uid="HexaEngine.PostFx.PostFxBase.NotifyPropertyChanged*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_NotifyPropertyChanged_System_String_" data-uid="HexaEngine.PostFx.PostFxBase.NotifyPropertyChanged(System.String)">
+  NotifyPropertyChanged(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Notifies subscribers when a property has changed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void NotifyPropertyChanged(string name = &quot;&quot;)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the changed property.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_NotifyPropertyChangedAndSetAndReload_" data-uid="HexaEngine.PostFx.PostFxBase.NotifyPropertyChangedAndSetAndReload*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_NotifyPropertyChangedAndSetAndReload__1___0____0_System_String_" data-uid="HexaEngine.PostFx.PostFxBase.NotifyPropertyChangedAndSetAndReload``1(``0@,``0,System.String)">
+  NotifyPropertyChangedAndSetAndReload&lt;T&gt;(ref T, T, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L234"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Notifies subscribers when a property has changed, sets the property value, and triggers a reload.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void NotifyPropertyChangedAndSetAndReload&lt;T&gt;(ref T target, T value, string name = &quot;&quot;)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <span class="xref">T</span></dt>
+    <dd><p>The target property to set.</p>
+</dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd><p>The new value of the property.</p>
+</dd>
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the changed property.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the property.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_NotifyPropertyChangedAndSet_" data-uid="HexaEngine.PostFx.PostFxBase.NotifyPropertyChangedAndSet*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_NotifyPropertyChangedAndSet__1___0____0_System_String_" data-uid="HexaEngine.PostFx.PostFxBase.NotifyPropertyChangedAndSet``1(``0@,``0,System.String)">
+  NotifyPropertyChangedAndSet&lt;T&gt;(ref T, T, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Notifies subscribers when a property has changed and sets the property value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void NotifyPropertyChangedAndSet&lt;T&gt;(ref T target, T value, string name = &quot;&quot;)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>target</code> <span class="xref">T</span></dt>
+    <dd><p>The target property to set.</p>
+</dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd><p>The new value of the property.</p>
+</dd>
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the changed property.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the property.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_NotifyReload_" data-uid="HexaEngine.PostFx.PostFxBase.NotifyReload*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_NotifyReload" data-uid="HexaEngine.PostFx.PostFxBase.NotifyReload">
+  NotifyReload()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L249"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Notifies subscribers that a reload is required.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void NotifyReload()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_PrePassDraw_" data-uid="HexaEngine.PostFx.PostFxBase.PrePassDraw*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_PrePassDraw_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Graphics_Graph_GraphResourceBuilder_" data-uid="HexaEngine.PostFx.PostFxBase.PrePassDraw(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Graphics.Graph.GraphResourceBuilder)">
+  PrePassDraw(IGraphicsContext, GraphResourceBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L175"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws the post-processing effect during the pre-pass stage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context.</p>
+</dd>
+    <dt><code>creator</code> <a class="xref" href="HexaEngine.Graphics.Graph.GraphResourceBuilder.html">GraphResourceBuilder</a></dt>
+    <dd><p>The resource builder for creating resources.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_ResetSettings_" data-uid="HexaEngine.PostFx.PostFxBase.ResetSettings*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_ResetSettings" data-uid="HexaEngine.PostFx.PostFxBase.ResetSettings">
+  ResetSettings()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L278"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ResetSettings()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Resize_" data-uid="HexaEngine.PostFx.PostFxBase.Resize*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Resize_System_Int32_System_Int32_" data-uid="HexaEngine.PostFx.PostFxBase.Resize(System.Int32,System.Int32)">
+  Resize(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the post-processing effect to match the new dimensions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Resize(int width, int height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new width of the rendering area.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new height of the rendering area.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_SetInput_" data-uid="HexaEngine.PostFx.PostFxBase.SetInput*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_SetInput_HexaEngine_Core_Graphics_IShaderResourceView_HexaEngine_Core_Graphics_ITexture2D_" data-uid="HexaEngine.PostFx.PostFxBase.SetInput(HexaEngine.Core.Graphics.IShaderResourceView,HexaEngine.Core.Graphics.ITexture2D)">
+  SetInput(IShaderResourceView, ITexture2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L188"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the input for the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void SetInput(IShaderResourceView view, ITexture2D resource)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>view</code> <a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd><p>The shader resource view.</p>
+</dd>
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></dt>
+    <dd><p>The texture resource.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_SetOutput_" data-uid="HexaEngine.PostFx.PostFxBase.SetOutput*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_SetOutput_HexaEngine_Core_Graphics_IRenderTargetView_HexaEngine_Core_Graphics_ITexture2D_Hexa_NET_Mathematics_Viewport_" data-uid="HexaEngine.PostFx.PostFxBase.SetOutput(HexaEngine.Core.Graphics.IRenderTargetView,HexaEngine.Core.Graphics.ITexture2D,Hexa.NET.Mathematics.Viewport)">
+  SetOutput(IRenderTargetView, ITexture2D, Viewport)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the output target for the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>view</code> <a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd><p>The render target view.</p>
+</dd>
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></dt>
+    <dd><p>The texture resource.</p>
+</dd>
+    <dt><code>viewport</code> <span class="xref">Viewport</span></dt>
+    <dd><p>The viewport dimensions.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_SetupDependencies_" data-uid="HexaEngine.PostFx.PostFxBase.SetupDependencies*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_SetupDependencies_HexaEngine_PostFx_PostFxDependencyBuilder_" data-uid="HexaEngine.PostFx.PostFxBase.SetupDependencies(HexaEngine.PostFx.PostFxDependencyBuilder)">
+  SetupDependencies(PostFxDependencyBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets up dependencies for the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract void SetupDependencies(PostFxDependencyBuilder builder)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>builder</code> <a class="xref" href="HexaEngine.PostFx.PostFxDependencyBuilder.html">PostFxDependencyBuilder</a></dt>
+    <dd><p>The dependency builder.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_Update_" data-uid="HexaEngine.PostFx.PostFxBase.Update*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_Update_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.PostFx.PostFxBase.Update(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Update(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Update(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxBase_UpdateBindings_" data-uid="HexaEngine.PostFx.PostFxBase.UpdateBindings*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_UpdateBindings" data-uid="HexaEngine.PostFx.PostFxBase.UpdateBindings">
+  UpdateBindings()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when a resource has changed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void UpdateBindings()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_OnEnabledChanged" data-uid="HexaEngine.PostFx.PostFxBase.OnEnabledChanged">
+  OnEnabledChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Occurs when the <a class="xref" href="HexaEngine.PostFx.IPostFx.html#HexaEngine_PostFx_IPostFx_Enabled">Enabled</a> property changes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action&lt;IPostFx, bool&gt;? OnEnabledChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="HexaEngine.PostFx.IPostFx.html">IPostFx</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_OnReload" data-uid="HexaEngine.PostFx.PostFxBase.OnReload">
+  OnReload
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Occurs when the post-processing effect needs to be reloaded.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action&lt;IPostFx&gt;? OnReload</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="HexaEngine.PostFx.IPostFx.html">IPostFx</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_PostFx_PostFxBase_PropertyChanged" data-uid="HexaEngine.PostFx.PostFxBase.PropertyChanged">
+  PropertyChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Occurs when a property value changes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event PropertyChangedEventHandler? PropertyChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.propertychangedeventhandler">PropertyChangedEventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxBase.cs/#L17" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

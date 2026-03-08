@@ -1,0 +1,2297 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IGraphicsDevice </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IGraphicsDevice ">
+      
+      <meta name="description" content="Represents a graphics device used for rendering.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_IGraphicsDevice.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.IGraphicsDevice%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.IGraphicsDevice">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_IGraphicsDevice" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice" class="text-break">
+Interface IGraphicsDevice  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a graphics device used for rendering.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IGraphicsDevice : IDeviceChild, INative, IDisposable</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html#HexaEngine_Core_Graphics_IDeviceChild_DebugName">IDeviceChild.DebugName</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html#HexaEngine_Core_Graphics_IDeviceChild_IsDisposed">IDeviceChild.IsDisposed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html#HexaEngine_Core_Graphics_IDeviceChild_OnDisposed">IDeviceChild.OnDisposed</a>
+    </div>
+    <div>
+      <span class="xref">INative.NativePointer</span>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable.dispose">IDisposable.Dispose()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetAs__1_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetAs&lt;T&gt;(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetPointer_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetPointer(IDeviceChild?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_Backend_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.Backend*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_Backend" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.Backend">
+  Backend
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the graphics backend used by the device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">GraphicsBackend Backend { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsBackend.html">GraphicsBackend</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_Capabilities_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.Capabilities*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_Capabilities" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.Capabilities">
+  Capabilities
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the capabilities of the graphics device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">GraphicsDeviceCapabilities Capabilities { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.GraphicsDeviceCapabilities.html">GraphicsDeviceCapabilities</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_Context_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.Context*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_Context" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.Context">
+  Context
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the immediate graphics context associated with the device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsContext Context { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_Profiler_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.Profiler*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_Profiler" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.Profiler">
+  Profiler
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the GPU profiler associated with the device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGPUProfiler Profiler { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGPUProfiler.html">IGPUProfiler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_TextureLoader_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.TextureLoader*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_TextureLoader" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.TextureLoader">
+  TextureLoader
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the texture loader associated with the device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITextureLoader TextureLoader { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITextureLoader.html">ITextureLoader</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateBuffer_HexaEngine_Core_Graphics_BufferDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateBuffer(HexaEngine.Core.Graphics.BufferDescription)">
+  CreateBuffer(BufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a buffer with the given description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IBuffer CreateBuffer(BufferDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferDescription.html">BufferDescription</a></dt>
+    <dd><p>The description of the buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The created buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateBuffer_System_Void__System_Int32_System_UInt32_HexaEngine_Core_Graphics_BufferDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateBuffer(System.Void*,System.Int32,System.UInt32,HexaEngine.Core.Graphics.BufferDescription)">
+  CreateBuffer(void*, int, uint, BufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a buffer with the given description and initial values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IBuffer CreateBuffer(void* values, int stride, uint count, BufferDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd><p>The array of initial values.</p>
+</dd>
+    <dt><code>stride</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The stride of the buffer.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of values in the array.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferDescription.html">BufferDescription</a></dt>
+    <dd><p>The description of the buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The created buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateBuffer__1___0__System_UInt32_HexaEngine_Core_Graphics_BufferDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateBuffer``1(``0*,System.UInt32,HexaEngine.Core.Graphics.BufferDescription)">
+  CreateBuffer&lt;T&gt;(T*, uint, BufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a buffer with the given description and initial values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IBuffer CreateBuffer&lt;T&gt;(T* values, uint count, BufferDescription description) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> T*</dt>
+    <dd><p>The array of initial values.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The number of values in the array.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferDescription.html">BufferDescription</a></dt>
+    <dd><p>The description of the buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The created buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the initial values.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateBuffer__1___0_HexaEngine_Core_Graphics_BufferDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateBuffer``1(``0,HexaEngine.Core.Graphics.BufferDescription)">
+  CreateBuffer&lt;T&gt;(T, BufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a buffer with the given description and initial value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IBuffer CreateBuffer&lt;T&gt;(T value, BufferDescription description) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd><p>The initial value of the buffer.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferDescription.html">BufferDescription</a></dt>
+    <dd><p>The description of the buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The created buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the initial value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateCommandBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateCommandBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateCommandBuffer" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateCommandBuffer">
+  CreateCommandBuffer()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L349"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ICommandBuffer CreateCommandBuffer()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ICommandBuffer.html">ICommandBuffer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateComputePipeline_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateComputePipeline*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateComputePipeline_HexaEngine_Core_Graphics_ComputePipelineDescEx_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateComputePipeline(HexaEngine.Core.Graphics.ComputePipelineDescEx,System.String,System.Int32)">
+  CreateComputePipeline(ComputePipelineDescEx, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L451"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a compute pipeline with the specified description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IComputePipeline CreateComputePipeline(ComputePipelineDescEx desc, string filename = &quot;&quot;, int line = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineDescEx.html">ComputePipelineDescEx</a></dt>
+    <dd><p>The description of the compute pipeline.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the caller (automatically filled by the compiler).</p>
+</dd>
+    <dt><code>line</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the caller (automatically filled by the compiler).</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IComputePipeline.html">IComputePipeline</a></dt>
+    <dd><p>The created compute pipeline.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateComputePipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateComputePipelineState_HexaEngine_Core_Graphics_ComputePipelineDescEx_HexaEngine_Core_Graphics_ComputePipelineStateDesc_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateComputePipelineState(HexaEngine.Core.Graphics.ComputePipelineDescEx,HexaEngine.Core.Graphics.ComputePipelineStateDesc,System.String,System.Int32)">
+  CreateComputePipelineState(ComputePipelineDescEx, ComputePipelineStateDesc, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L424"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a graphics pipeline state object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IComputePipelineState CreateComputePipelineState(ComputePipelineDescEx pipelineDesc, ComputePipelineStateDesc desc = default, string filename = &quot;&quot;, int line = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pipelineDesc</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineDescEx.html">ComputePipelineDescEx</a></dt>
+    <dd><p>The description of the compute pipeline.</p>
+</dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDesc.html">ComputePipelineStateDesc</a></dt>
+    <dd><p>The description of the compute pipeline state.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the caller (automatically provided).</p>
+</dd>
+    <dt><code>line</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the caller (automatically provided).</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IComputePipelineState.html">IComputePipelineState</a></dt>
+    <dd><p>The created graphics pipeline state object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateComputePipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateComputePipelineState_HexaEngine_Core_Graphics_ComputePipelineStateDescEx_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateComputePipelineState(HexaEngine.Core.Graphics.ComputePipelineStateDescEx,System.String,System.Int32)">
+  CreateComputePipelineState(ComputePipelineStateDescEx, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L439"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a compute pipeline state based on the provided combined description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IComputePipelineState CreateComputePipelineState(ComputePipelineStateDescEx desc, string filename = &quot;&quot;, int line = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDescEx.html">ComputePipelineStateDescEx</a></dt>
+    <dd><p>The combined description of the compute pipeline and its state.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the caller.</p>
+</dd>
+    <dt><code>line</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the caller.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IComputePipelineState.html">IComputePipelineState</a></dt>
+    <dd><p>The created compute pipeline state.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateComputePipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateComputePipelineState_HexaEngine_Core_Graphics_IComputePipeline_HexaEngine_Core_Graphics_ComputePipelineStateDesc_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateComputePipelineState(HexaEngine.Core.Graphics.IComputePipeline,HexaEngine.Core.Graphics.ComputePipelineStateDesc,System.String,System.Int32)">
+  CreateComputePipelineState(IComputePipeline, ComputePipelineStateDesc, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L414"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a graphics pipeline state object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IComputePipelineState CreateComputePipelineState(IComputePipeline pipeline, ComputePipelineStateDesc desc, string filename = &quot;&quot;, int line = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pipeline</code> <a class="xref" href="HexaEngine.Core.Graphics.IComputePipeline.html">IComputePipeline</a></dt>
+    <dd><p>The graphics pipeline containing shaders.</p>
+</dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDesc.html">ComputePipelineStateDesc</a></dt>
+    <dd><p>The description of the compute pipeline state.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the caller (automatically provided).</p>
+</dd>
+    <dt><code>line</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the caller (automatically provided).</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IComputePipelineState.html">IComputePipelineState</a></dt>
+    <dd><p>The created graphics pipeline state object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateDeferredContext_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateDeferredContext*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateDeferredContext" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateDeferredContext">
+  CreateDeferredContext()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L346"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a deferred graphics context for command recording.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use command buffers&quot;)]
+IGraphicsContext CreateDeferredContext()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The created deferred graphics context.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateDepthStencilView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateDepthStencilView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateDepthStencilView_HexaEngine_Core_Graphics_IResource_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateDepthStencilView(HexaEngine.Core.Graphics.IResource)">
+  CreateDepthStencilView(IResource)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a depth-stencil view for a resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IDepthStencilView CreateDepthStencilView(IResource resource)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to create the view for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd><p>The created depth-stencil view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateDepthStencilView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateDepthStencilView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateDepthStencilView_HexaEngine_Core_Graphics_IResource_HexaEngine_Core_Graphics_DepthStencilViewDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateDepthStencilView(HexaEngine.Core.Graphics.IResource,HexaEngine.Core.Graphics.DepthStencilViewDescription)">
+  CreateDepthStencilView(IResource, DepthStencilViewDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a depth-stencil view for a resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to create the view for.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilViewDescription.html">DepthStencilViewDescription</a></dt>
+    <dd><p>The description of the depth-stencil view.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IDepthStencilView.html">IDepthStencilView</a></dt>
+    <dd><p>The created depth-stencil view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateFence_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateFence*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateFence_System_UInt64_HexaEngine_Core_Graphics_FenceFlags_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateFence(System.UInt64,HexaEngine.Core.Graphics.FenceFlags)">
+  CreateFence(ulong, FenceFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L459"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a fence object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IFence CreateFence(ulong initialValue, FenceFlags flags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>initialValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd><p>The initial value of the fence.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Graphics.FenceFlags.html">FenceFlags</a></dt>
+    <dd><p>Flags to control fence behavior.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IFence.html">IFence</a></dt>
+    <dd><p>The created fence object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateGraphicsPipeline_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateGraphicsPipeline*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateGraphicsPipeline_HexaEngine_Core_Graphics_GraphicsPipelineDescEx_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateGraphicsPipeline(HexaEngine.Core.Graphics.GraphicsPipelineDescEx,System.String,System.Int32)">
+  CreateGraphicsPipeline(GraphicsPipelineDescEx, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L366"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a graphics pipeline with the specified description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDescEx desc, string filename = &quot;&quot;, int line = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineDescEx.html">GraphicsPipelineDescEx</a></dt>
+    <dd><p>The description of the graphics pipeline.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the caller (automatically filled by the compiler).</p>
+</dd>
+    <dt><code>line</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the caller (automatically filled by the compiler).</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipeline.html">IGraphicsPipeline</a></dt>
+    <dd><p>The created graphics pipeline.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateGraphicsPipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateGraphicsPipelineState_HexaEngine_Core_Graphics_GraphicsPipelineDescEx_HexaEngine_Core_Graphics_GraphicsPipelineStateDesc_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateGraphicsPipelineState(HexaEngine.Core.Graphics.GraphicsPipelineDescEx,HexaEngine.Core.Graphics.GraphicsPipelineStateDesc,System.String,System.Int32)">
+  CreateGraphicsPipelineState(GraphicsPipelineDescEx, GraphicsPipelineStateDesc, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L386"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a graphics pipeline state based on the provided graphics pipeline description and state description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsPipelineState CreateGraphicsPipelineState(GraphicsPipelineDescEx pipelineDesc, GraphicsPipelineStateDesc desc, string filename = &quot;&quot;, int line = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pipelineDesc</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineDescEx.html">GraphicsPipelineDescEx</a></dt>
+    <dd><p>The description of the graphics pipeline.</p>
+</dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDesc.html">GraphicsPipelineStateDesc</a></dt>
+    <dd><p>The description of the graphics pipeline state.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the caller (automatically provided by the compiler).</p>
+</dd>
+    <dt><code>line</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the caller (automatically provided by the compiler).</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a></dt>
+    <dd><p>The created graphics pipeline state.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateGraphicsPipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateGraphicsPipelineState_HexaEngine_Core_Graphics_GraphicsPipelineStateDescEx_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateGraphicsPipelineState(HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx,System.String,System.Int32)">
+  CreateGraphicsPipelineState(GraphicsPipelineStateDescEx, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L401"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a graphics pipeline state based on the provided combined description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsPipelineState CreateGraphicsPipelineState(GraphicsPipelineStateDescEx desc, string filename = &quot;&quot;, int line = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx.html">GraphicsPipelineStateDescEx</a></dt>
+    <dd><p>The combined description of the graphics pipeline and its state.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the caller.</p>
+</dd>
+    <dt><code>line</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the caller.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a></dt>
+    <dd><p>The created graphics pipeline state.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateGraphicsPipelineState_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateGraphicsPipelineState_HexaEngine_Core_Graphics_IGraphicsPipeline_HexaEngine_Core_Graphics_GraphicsPipelineStateDesc_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateGraphicsPipelineState(HexaEngine.Core.Graphics.IGraphicsPipeline,HexaEngine.Core.Graphics.GraphicsPipelineStateDesc,System.String,System.Int32)">
+  CreateGraphicsPipelineState(IGraphicsPipeline, GraphicsPipelineStateDesc, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L376"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a graphics pipeline state object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IGraphicsPipelineState CreateGraphicsPipelineState(IGraphicsPipeline pipeline, GraphicsPipelineStateDesc desc, string filename = &quot;&quot;, int line = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pipeline</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipeline.html">IGraphicsPipeline</a></dt>
+    <dd><p>The graphics pipeline containing shaders.</p>
+</dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDesc.html">GraphicsPipelineStateDesc</a></dt>
+    <dd><p>Description of the graphics pipeline state.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the caller (automatically provided).</p>
+</dd>
+    <dt><code>line</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number of the caller (automatically provided).</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a></dt>
+    <dd><p>The created graphics pipeline state object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateQuery_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateQuery*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateQuery" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateQuery">
+  CreateQuery()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L333"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a query object for GPU performance queries.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQuery CreateQuery()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IQuery.html">IQuery</a></dt>
+    <dd><p>The created query object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateQuery_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateQuery*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateQuery_HexaEngine_Core_Graphics_Query_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateQuery(HexaEngine.Core.Graphics.Query)">
+  CreateQuery(Query)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L340"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a query object of the specified type for GPU performance queries.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQuery CreateQuery(Query type)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Core.Graphics.Query.html">Query</a></dt>
+    <dd><p>The type of the query object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IQuery.html">IQuery</a></dt>
+    <dd><p>The created query object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateRenderTargetView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateRenderTargetView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateRenderTargetView_HexaEngine_Core_Graphics_IResource_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateRenderTargetView(HexaEngine.Core.Graphics.IResource)">
+  CreateRenderTargetView(IResource)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a render target view for a resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IRenderTargetView CreateRenderTargetView(IResource resource)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to create the view for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd><p>The created render target view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateRenderTargetView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateRenderTargetView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateRenderTargetView_HexaEngine_Core_Graphics_IResource_HexaEngine_Core_Graphics_RenderTargetViewDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateRenderTargetView(HexaEngine.Core.Graphics.IResource,HexaEngine.Core.Graphics.RenderTargetViewDescription)">
+  CreateRenderTargetView(IResource, RenderTargetViewDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L196"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a render target view for a resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to create the view for.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.RenderTargetViewDescription.html">RenderTargetViewDescription</a></dt>
+    <dd><p>The description of the render target view.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd><p>The created render target view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateResourceBindingList_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateResourceBindingList*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateResourceBindingList_HexaEngine_Core_Graphics_IComputePipeline_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateResourceBindingList(HexaEngine.Core.Graphics.IComputePipeline)">
+  CreateResourceBindingList(IComputePipeline)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IResourceBindingList CreateResourceBindingList(IComputePipeline pipeline)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pipeline</code> <a class="xref" href="HexaEngine.Core.Graphics.IComputePipeline.html">IComputePipeline</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IResourceBindingList.html">IResourceBindingList</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateResourceBindingList_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateResourceBindingList*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateResourceBindingList_HexaEngine_Core_Graphics_IGraphicsPipeline_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateResourceBindingList(HexaEngine.Core.Graphics.IGraphicsPipeline)">
+  CreateResourceBindingList(IGraphicsPipeline)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IResourceBindingList CreateResourceBindingList(IGraphicsPipeline pipeline)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pipeline</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipeline.html">IGraphicsPipeline</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IResourceBindingList.html">IResourceBindingList</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSamplerState_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSamplerState*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSamplerState_HexaEngine_Core_Graphics_SamplerStateDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSamplerState(HexaEngine.Core.Graphics.SamplerStateDescription)">
+  CreateSamplerState(SamplerStateDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L233"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a sampler state for texture sampling.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ISamplerState CreateSamplerState(SamplerStateDescription sampler)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sampler</code> <a class="xref" href="HexaEngine.Core.Graphics.SamplerStateDescription.html">SamplerStateDescription</a></dt>
+    <dd><p>The description of the sampler state.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ISamplerState.html">ISamplerState</a></dt>
+    <dd><p>The created sampler state.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateShaderResourceView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateShaderResourceView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateShaderResourceView_HexaEngine_Core_Graphics_IBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateShaderResourceView(HexaEngine.Core.Graphics.IBuffer)">
+  CreateShaderResourceView(IBuffer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L218"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a shader resource view for a buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IShaderResourceView CreateShaderResourceView(IBuffer buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The buffer to create the view for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd><p>The created shader resource view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateShaderResourceView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateShaderResourceView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateShaderResourceView_HexaEngine_Core_Graphics_IBuffer_HexaEngine_Core_Graphics_ShaderResourceViewDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateShaderResourceView(HexaEngine.Core.Graphics.IBuffer,HexaEngine.Core.Graphics.ShaderResourceViewDescription)">
+  CreateShaderResourceView(IBuffer, ShaderResourceViewDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L226"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a shader resource view for a buffer with the given description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The buffer to create the view for.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.ShaderResourceViewDescription.html">ShaderResourceViewDescription</a></dt>
+    <dd><p>The description of the shader resource view.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd><p>The created shader resource view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateShaderResourceView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateShaderResourceView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateShaderResourceView_HexaEngine_Core_Graphics_IResource_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateShaderResourceView(HexaEngine.Core.Graphics.IResource)">
+  CreateShaderResourceView(IResource)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a shader resource view for a resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IShaderResourceView CreateShaderResourceView(IResource resource)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to create the view for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd><p>The created shader resource view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateShaderResourceView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateShaderResourceView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateShaderResourceView_HexaEngine_Core_Graphics_IResource_HexaEngine_Core_Graphics_ShaderResourceViewDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateShaderResourceView(HexaEngine.Core.Graphics.IResource,HexaEngine.Core.Graphics.ShaderResourceViewDescription)">
+  CreateShaderResourceView(IResource, ShaderResourceViewDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L211"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a shader resource view for a resource with the given description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IShaderResourceView CreateShaderResourceView(IResource texture, ShaderResourceViewDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>texture</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to create the view for.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.ShaderResourceViewDescription.html">ShaderResourceViewDescription</a></dt>
+    <dd><p>The description of the shader resource view.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd><p>The created shader resource view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSwapChain_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSwapChain*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSwapChain_Hexa_NET_SDL3_SDLWindow__" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSwapChain(Hexa.NET.SDL3.SDLWindow*)">
+  CreateSwapChain(SDLWindow*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a swap chain associated with a SDL window for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ISwapChain CreateSwapChain(SDLWindow* window)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>window</code> <span class="xref">SDLWindow</span>*</dt>
+    <dd><p>The SDL window to associate the swap chain with.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ISwapChain.html">ISwapChain</a></dt>
+    <dd><p>The created swap chain.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSwapChain_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSwapChain*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSwapChain_Hexa_NET_SDL3_SDLWindow__HexaEngine_Core_Graphics_SwapChainDescription_HexaEngine_Core_Graphics_SwapChainFullscreenDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSwapChain(Hexa.NET.SDL3.SDLWindow*,HexaEngine.Core.Graphics.SwapChainDescription,HexaEngine.Core.Graphics.SwapChainFullscreenDescription)">
+  CreateSwapChain(SDLWindow*, SwapChainDescription, SwapChainFullscreenDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a swap chain associated with a SDL window for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ISwapChain CreateSwapChain(SDLWindow* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>window</code> <span class="xref">SDLWindow</span>*</dt>
+    <dd><p>The SDL window to associate the swap chain with.</p>
+</dd>
+    <dt><code>swapChainDescription</code> <a class="xref" href="HexaEngine.Core.Graphics.SwapChainDescription.html">SwapChainDescription</a></dt>
+    <dd><p>The description of the swap chain.</p>
+</dd>
+    <dt><code>fullscreenDescription</code> <a class="xref" href="HexaEngine.Core.Graphics.SwapChainFullscreenDescription.html">SwapChainFullscreenDescription</a></dt>
+    <dd><p>The description of the fullscreen mode.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ISwapChain.html">ISwapChain</a></dt>
+    <dd><p>The created swap chain.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSwapChain_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSwapChain*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSwapChain_HexaEngine_Core_Windows_SdlWindow_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSwapChain(HexaEngine.Core.Windows.SdlWindow)">
+  CreateSwapChain(SdlWindow)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a swap chain associated with a SDL window for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ISwapChain CreateSwapChain(SdlWindow window)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>window</code> <a class="xref" href="HexaEngine.Core.Windows.SdlWindow.html">SdlWindow</a></dt>
+    <dd><p>The SDL window to associate the swap chain with.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ISwapChain.html">ISwapChain</a></dt>
+    <dd><p>The created swap chain.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSwapChain_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSwapChain*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateSwapChain_HexaEngine_Core_Windows_SdlWindow_HexaEngine_Core_Graphics_SwapChainDescription_HexaEngine_Core_Graphics_SwapChainFullscreenDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateSwapChain(HexaEngine.Core.Windows.SdlWindow,HexaEngine.Core.Graphics.SwapChainDescription,HexaEngine.Core.Graphics.SwapChainFullscreenDescription)">
+  CreateSwapChain(SdlWindow, SwapChainDescription, SwapChainFullscreenDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a swap chain associated with a SDL window for rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>window</code> <a class="xref" href="HexaEngine.Core.Windows.SdlWindow.html">SdlWindow</a></dt>
+    <dd><p>The SDL window to associate the swap chain with.</p>
+</dd>
+    <dt><code>swapChainDescription</code> <a class="xref" href="HexaEngine.Core.Graphics.SwapChainDescription.html">SwapChainDescription</a></dt>
+    <dd><p>The description of the swap chain.</p>
+</dd>
+    <dt><code>fullscreenDescription</code> <a class="xref" href="HexaEngine.Core.Graphics.SwapChainFullscreenDescription.html">SwapChainFullscreenDescription</a></dt>
+    <dd><p>The description of the fullscreen mode.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ISwapChain.html">ISwapChain</a></dt>
+    <dd><p>The created swap chain.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture1D_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture1D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture1D_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_SubresourceData___HexaEngine_Core_Graphics_BindFlags_HexaEngine_Core_Graphics_Usage_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture1D(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.SubresourceData[],HexaEngine.Core.Graphics.BindFlags,HexaEngine.Core.Graphics.Usage,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  CreateTexture1D(Format, int, int, int, SubresourceData[]?, BindFlags, Usage, CpuAccessFlags, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L293"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a 1D texture with the given parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The format of the texture.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the texture.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of textures in the array.</p>
+</dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of mip levels.</p>
+</dd>
+    <dt><code>subresources</code> <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a>[]</dt>
+    <dd><p>The initial subresources for the texture.</p>
+</dd>
+    <dt><code>bindFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+    <dd><p>The bind flags for the texture.</p>
+</dd>
+    <dt><code>usage</code> <a class="xref" href="HexaEngine.Core.Graphics.Usage.html">Usage</a></dt>
+    <dd><p>The usage flags for the texture.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the texture.</p>
+</dd>
+    <dt><code>misc</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous flags for the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd><p>The created 1D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture1D_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture1D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture1D_HexaEngine_Core_Graphics_Texture1DDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture1D(HexaEngine.Core.Graphics.Texture1DDescription)">
+  CreateTexture1D(Texture1DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L240"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a 1D texture with the given description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture1D CreateTexture1D(Texture1DDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd><p>The description of the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd><p>The created 1D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture1D_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture1D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture1D_HexaEngine_Core_Graphics_Texture1DDescription_HexaEngine_Core_Graphics_SubresourceData___" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture1D(HexaEngine.Core.Graphics.Texture1DDescription,HexaEngine.Core.Graphics.SubresourceData[])">
+  CreateTexture1D(Texture1DDescription, SubresourceData[]?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L262"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a 1D texture with the given description and initial subresources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture1D CreateTexture1D(Texture1DDescription description, SubresourceData[]? subresources)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd><p>The description of the texture.</p>
+</dd>
+    <dt><code>subresources</code> <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a>[]</dt>
+    <dd><p>The initial subresources for the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd><p>The created 1D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture2D_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture2D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture2D_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_SubresourceData___HexaEngine_Core_Graphics_BindFlags_HexaEngine_Core_Graphics_Usage_HexaEngine_Core_Graphics_CpuAccessFlags_System_Int32_System_Int32_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture2D(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.SubresourceData[],HexaEngine.Core.Graphics.BindFlags,HexaEngine.Core.Graphics.Usage,HexaEngine.Core.Graphics.CpuAccessFlags,System.Int32,System.Int32,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  CreateTexture2D(Format, int, int, int, int, SubresourceData[]?, BindFlags, Usage, CpuAccessFlags, int, int, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L311"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a 2D texture with the given parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, int sampleCount = 1, int sampleQuality = 0, ResourceMiscFlag misc = ResourceMiscFlag.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The format of the texture.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the texture.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The height of the texture.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of textures in the array.</p>
+</dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of mip levels.</p>
+</dd>
+    <dt><code>subresources</code> <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a>[]</dt>
+    <dd><p>The initial subresources for the texture.</p>
+</dd>
+    <dt><code>bindFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+    <dd><p>The bind flags for the texture.</p>
+</dd>
+    <dt><code>usage</code> <a class="xref" href="HexaEngine.Core.Graphics.Usage.html">Usage</a></dt>
+    <dd><p>The usage flags for the texture.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the texture.</p>
+</dd>
+    <dt><code>sampleCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of samples per pixel for multisampled textures.</p>
+</dd>
+    <dt><code>sampleQuality</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The quality level for multisampled textures.</p>
+</dd>
+    <dt><code>misc</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous flags for the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></dt>
+    <dd><p>The created 2D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture2D_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture2D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture2D_HexaEngine_Core_Graphics_Texture2DDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture2D(HexaEngine.Core.Graphics.Texture2DDescription)">
+  CreateTexture2D(Texture2DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L247"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a 2D texture with the given description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture2D CreateTexture2D(Texture2DDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture2DDescription.html">Texture2DDescription</a></dt>
+    <dd><p>The description of the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></dt>
+    <dd><p>The created 2D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture2D_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture2D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture2D_HexaEngine_Core_Graphics_Texture2DDescription_HexaEngine_Core_Graphics_SubresourceData___" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture2D(HexaEngine.Core.Graphics.Texture2DDescription,HexaEngine.Core.Graphics.SubresourceData[])">
+  CreateTexture2D(Texture2DDescription, SubresourceData[]?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a 2D texture with the given description and initial subresources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture2D CreateTexture2D(Texture2DDescription description, SubresourceData[]? subresources)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture2DDescription.html">Texture2DDescription</a></dt>
+    <dd><p>The description of the texture.</p>
+</dd>
+    <dt><code>subresources</code> <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a>[]</dt>
+    <dd><p>The initial subresources for the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture2D.html">ITexture2D</a></dt>
+    <dd><p>The created 2D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture3D_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture3D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture3D_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_SubresourceData___HexaEngine_Core_Graphics_BindFlags_HexaEngine_Core_Graphics_Usage_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture3D(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.SubresourceData[],HexaEngine.Core.Graphics.BindFlags,HexaEngine.Core.Graphics.Usage,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  CreateTexture3D(Format, int, int, int, int, SubresourceData[]?, BindFlags, Usage, CpuAccessFlags, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L327"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a 3D texture with the given parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The format of the texture.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the texture.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The height of the texture.</p>
+</dd>
+    <dt><code>depth</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The depth of the texture.</p>
+</dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of mip levels.</p>
+</dd>
+    <dt><code>subresources</code> <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a>[]</dt>
+    <dd><p>The initial subresources for the texture.</p>
+</dd>
+    <dt><code>bindFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+    <dd><p>The bind flags for the texture.</p>
+</dd>
+    <dt><code>usage</code> <a class="xref" href="HexaEngine.Core.Graphics.Usage.html">Usage</a></dt>
+    <dd><p>The usage flags for the texture.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the texture.</p>
+</dd>
+    <dt><code>misc</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous flags for the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture3D.html">ITexture3D</a></dt>
+    <dd><p>The created 3D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture3D_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture3D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture3D_HexaEngine_Core_Graphics_Texture3DDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture3D(HexaEngine.Core.Graphics.Texture3DDescription)">
+  CreateTexture3D(Texture3DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a 3D texture with the given description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture3D CreateTexture3D(Texture3DDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture3DDescription.html">Texture3DDescription</a></dt>
+    <dd><p>The description of the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture3D.html">ITexture3D</a></dt>
+    <dd><p>The created 3D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture3D_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture3D*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateTexture3D_HexaEngine_Core_Graphics_Texture3DDescription_HexaEngine_Core_Graphics_SubresourceData___" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateTexture3D(HexaEngine.Core.Graphics.Texture3DDescription,HexaEngine.Core.Graphics.SubresourceData[])">
+  CreateTexture3D(Texture3DDescription, SubresourceData[]?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L278"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a 3D texture with the given description and initial subresources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITexture3D CreateTexture3D(Texture3DDescription description, SubresourceData[]? subresources)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture3DDescription.html">Texture3DDescription</a></dt>
+    <dd><p>The description of the texture.</p>
+</dd>
+    <dt><code>subresources</code> <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a>[]</dt>
+    <dd><p>The initial subresources for the texture.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture3D.html">ITexture3D</a></dt>
+    <dd><p>The created 3D texture.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateUnorderedAccessView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateUnorderedAccessView*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_CreateUnorderedAccessView_HexaEngine_Core_Graphics_IResource_HexaEngine_Core_Graphics_UnorderedAccessViewDescription_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.CreateUnorderedAccessView(HexaEngine.Core.Graphics.IResource,HexaEngine.Core.Graphics.UnorderedAccessViewDescription)">
+  CreateUnorderedAccessView(IResource, UnorderedAccessViewDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L357"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates an unordered access view for a resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></dt>
+    <dd><p>The resource to create the view for.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.UnorderedAccessViewDescription.html">UnorderedAccessViewDescription</a></dt>
+    <dd><p>The description of the unordered access view.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+    <dd><p>The created unordered access view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_SetGlobalCBV_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.SetGlobalCBV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_SetGlobalCBV_System_String_HexaEngine_Core_Graphics_IBuffer_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.SetGlobalCBV(System.String,HexaEngine.Core.Graphics.IBuffer)">
+  SetGlobalCBV(string, IBuffer?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L463"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetGlobalCBV(string name, IBuffer? cbv)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>cbv</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_SetGlobalSRV_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.SetGlobalSRV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_SetGlobalSRV_System_String_HexaEngine_Core_Graphics_IShaderResourceView_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.SetGlobalSRV(System.String,HexaEngine.Core.Graphics.IShaderResourceView)">
+  SetGlobalSRV(string, IShaderResourceView?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L461"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetGlobalSRV(string name, IShaderResourceView? srv)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>srv</code> <a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_SetGlobalSampler_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.SetGlobalSampler*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_SetGlobalSampler_System_String_HexaEngine_Core_Graphics_ISamplerState_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.SetGlobalSampler(System.String,HexaEngine.Core.Graphics.ISamplerState)">
+  SetGlobalSampler(string, ISamplerState?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L465"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetGlobalSampler(string name, ISamplerState? sampler)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>sampler</code> <a class="xref" href="HexaEngine.Core.Graphics.ISamplerState.html">ISamplerState</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_IGraphicsDevice_SetGlobalUAV_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.SetGlobalUAV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_IGraphicsDevice_SetGlobalUAV_System_String_HexaEngine_Core_Graphics_IUnorderedAccessView_System_UInt32_" data-uid="HexaEngine.Core.Graphics.IGraphicsDevice.SetGlobalUAV(System.String,HexaEngine.Core.Graphics.IUnorderedAccessView,System.UInt32)">
+  SetGlobalUAV(string, IUnorderedAccessView?, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L467"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetGlobalUAV(string name, IUnorderedAccessView? uav, uint initialCount = 4294967295)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>uav</code> <a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+    <dd></dd>
+    <dt><code>initialCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/IGraphicsDevice.cs/#L67" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,2953 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class PostFxGraphResourceBuilder </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class PostFxGraphResourceBuilder ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_PostFx_PostFxGraphResourceBuilder.md&amp;value=---%0Auid%3A%20HexaEngine.PostFx.PostFxGraphResourceBuilder%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder">
+
+
+
+  <h1 id="HexaEngine_PostFx_PostFxGraphResourceBuilder" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder" class="text-break">
+Class PostFxGraphResourceBuilder  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.PostFx.html">PostFx</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class PostFxGraphResourceBuilder : IGraphResourceBuilder</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">PostFxGraphResourceBuilder</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Graphics.Graph.IGraphResourceBuilder.html">IGraphResourceBuilder</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder__ctor_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.#ctor*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder__ctor_HexaEngine_Graphics_Graph_GraphResourceBuilder_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.#ctor(HexaEngine.Graphics.Graph.GraphResourceBuilder,HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Graphics.Format,System.Int32,System.Int32)">
+  PostFxGraphResourceBuilder(GraphResourceBuilder, IGraphicsDevice, Format, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PostFxGraphResourceBuilder(GraphResourceBuilder resourceBuilder, IGraphicsDevice device, Format format, int width, int height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resourceBuilder</code> <a class="xref" href="HexaEngine.Graphics.Graph.GraphResourceBuilder.html">GraphResourceBuilder</a></dt>
+    <dd></dd>
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Container_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Container*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Container" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Container">
+  Container
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GraphResourceContainer? Container { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.GraphResourceContainer.html">GraphResourceContainer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Device_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Device*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Device" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Device">
+  Device
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IGraphicsDevice Device { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Format_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Format*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Format" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Format">
+  Format
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Format Format { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GBuffers_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GBuffers*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GBuffers" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GBuffers">
+  GBuffers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;GBuffer&gt; GBuffers { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.GBuffer.html">GBuffer</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Height_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Height*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Height" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Height">
+  Height
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Height { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Output_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Output*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Output" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Output">
+  Output
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IRenderTargetView? Output { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_OutputViewport_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.OutputViewport*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_OutputViewport" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.OutputViewport">
+  OutputViewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Viewport OutputViewport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_ShadowAtlas_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.ShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_ShadowAtlas" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.ShadowAtlas">
+  ShadowAtlas
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;ShadowAtlas&gt; ShadowAtlas { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Textures_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Textures*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Textures" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Textures">
+  Textures
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;Texture2D&gt; Textures { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Viewport_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Viewport*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Viewport" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Viewport">
+  Viewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Viewport Viewport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_ViewportHalf_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.ViewportHalf*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_ViewportHalf" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.ViewportHalf">
+  ViewportHalf
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Viewport ViewportHalf { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Width_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Width*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_Width" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.Width">
+  Width
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Width { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_AddResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.AddResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_AddResource_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.AddResource(System.String)">
+  AddResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef AddResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_AddResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.AddResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_AddResource__1_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.AddResource``1(System.String)">
+  AddResource&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L240"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;T&gt; AddResource&lt;T&gt;(string name) where T : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBuffer_System_String_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBuffer(System.String,HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.ResourceMiscFlag,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateBuffer(string, Format, int, int, GpuAccessFlags, CpuAccessFlags, ResourceMiscFlag, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture2D&gt; CreateBuffer(string name, Format format, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceMiscFlag = ResourceMiscFlag.None, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>resourceMiscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd></dd>
+    <dt><code>creationFlags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBuffer_System_String_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBuffer(System.String,HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateBuffer(string, Format, int, int, GpuAccessFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture2D&gt; CreateBuffer(string name, Format format, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>creationFlags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBuffer_System_String_System_Int32_System_Int32_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBuffer(System.String,System.Int32,System.Int32,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.ResourceMiscFlag,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateBuffer(string, int, int, GpuAccessFlags, CpuAccessFlags, ResourceMiscFlag, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture2D&gt; CreateBuffer(string name, int arraySize = 1, int mipLevels = 1, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.RW, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceMiscFlag = ResourceMiscFlag.None, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>resourceMiscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd></dd>
+    <dt><code>creationFlags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBufferHalfRes_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBufferHalfRes*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBufferHalfRes_System_String_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBufferHalfRes(System.String,HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateBufferHalfRes(string, Format, int, int, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture2D&gt; CreateBufferHalfRes(string name, Format format, int arraySize = 1, int mipLevels = 1, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>creationFlags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBufferHalfRes_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBufferHalfRes*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBufferHalfRes_System_String_System_Int32_System_Int32_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBufferHalfRes(System.String,System.Int32,System.Int32,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateBufferHalfRes(string, int, int, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture2D&gt; CreateBufferHalfRes(string name, int arraySize = 1, int mipLevels = 1, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>creationFlags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBufferQuarterRes_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBufferQuarterRes*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBufferQuarterRes_System_String_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBufferQuarterRes(System.String,HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateBufferQuarterRes(string, Format, int, int, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture2D&gt; CreateBufferQuarterRes(string name, Format format, int arraySize = 1, int mipLevels = 1, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd></dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>creationFlags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBufferQuarterRes_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBufferQuarterRes*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateBufferQuarterRes_System_String_System_Int32_System_Int32_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateBufferQuarterRes(System.String,System.Int32,System.Int32,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateBufferQuarterRes(string, int, int, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture2D&gt; CreateBufferQuarterRes(string name, int arraySize = 1, int mipLevels = 1, ResourceCreationFlags creationFlags = ResourceCreationFlags.Shared)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>creationFlags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateComputePipelineState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateComputePipelineState_HexaEngine_Core_Graphics_ComputePipelineStateDescEx_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateComputePipelineState(HexaEngine.Core.Graphics.ComputePipelineStateDescEx,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateComputePipelineState(ComputePipelineStateDescEx, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L265"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;IComputePipelineState&gt; CreateComputePipelineState(ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDescEx.html">ComputePipelineStateDescEx</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IComputePipelineState.html">IComputePipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateComputePipelineState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateComputePipelineState_System_String_HexaEngine_Core_Graphics_ComputePipelineStateDescEx_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateComputePipelineState(System.String,HexaEngine.Core.Graphics.ComputePipelineStateDescEx,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateComputePipelineState(string, ComputePipelineStateDescEx, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;IComputePipelineState&gt; CreateComputePipelineState(string name, ComputePipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDescEx.html">ComputePipelineStateDescEx</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IComputePipelineState.html">IComputePipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateConstantBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateConstantBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateConstantBuffer__1_System_String_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateConstantBuffer``1(System.String,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateConstantBuffer&lt;T&gt;(string, CpuAccessFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L275"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;ConstantBuffer&lt;T&gt;&gt; CreateConstantBuffer&lt;T&gt;(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.ConstantBuffer-1.html">ConstantBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateConstantBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateConstantBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateConstantBuffer__1_System_String___0_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateConstantBuffer``1(System.String,``0,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateConstantBuffer&lt;T&gt;(string, T, CpuAccessFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L280"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;ConstantBuffer&lt;T&gt;&gt; CreateConstantBuffer&lt;T&gt;(string name, T value, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.ConstantBuffer-1.html">ConstantBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateDepthMipChain_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateDepthMipChain*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateDepthMipChain_System_String_HexaEngine_Core_Graphics_DepthStencilBufferDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateDepthMipChain(System.String,HexaEngine.Core.Graphics.DepthStencilBufferDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateDepthMipChain(string, DepthStencilBufferDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L285"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;DepthMipChain&gt; CreateDepthMipChain(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.DepthMipChain.html">DepthMipChain</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateDepthStencilBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateDepthStencilBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateDepthStencilBuffer_System_String_HexaEngine_Core_Graphics_DepthStencilBufferDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateDepthStencilBuffer(System.String,HexaEngine.Core.Graphics.DepthStencilBufferDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateDepthStencilBuffer(string, DepthStencilBufferDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L290"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;DepthStencil&gt; CreateDepthStencilBuffer(string name, DepthStencilBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateGBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateGBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateGBuffer_System_String_HexaEngine_Core_Graphics_GBufferDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateGBuffer(System.String,HexaEngine.Core.Graphics.GBufferDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateGBuffer(string, GBufferDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L295"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;GBuffer&gt; CreateGBuffer(string name, GBufferDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.GBufferDescription.html">GBufferDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.GBuffer.html">GBuffer</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateGraphicsPipelineState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateGraphicsPipelineState_HexaEngine_Core_Graphics_GraphicsPipelineStateDescEx_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateGraphicsPipelineState(HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateGraphicsPipelineState(GraphicsPipelineStateDescEx, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L300"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;IGraphicsPipelineState&gt; CreateGraphicsPipelineState(GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx.html">GraphicsPipelineStateDescEx</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateGraphicsPipelineState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateGraphicsPipelineState_System_String_HexaEngine_Core_Graphics_GraphicsPipelineStateDescEx_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateGraphicsPipelineState(System.String,HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateGraphicsPipelineState(string, GraphicsPipelineStateDescEx, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L305"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;IGraphicsPipelineState&gt; CreateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx.html">GraphicsPipelineStateDescEx</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateSamplerState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateSamplerState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateSamplerState_System_String_HexaEngine_Core_Graphics_SamplerStateDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateSamplerState(System.String,HexaEngine.Core.Graphics.SamplerStateDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateSamplerState(string, SamplerStateDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L315"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;ISamplerState&gt; CreateSamplerState(string name, SamplerStateDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.SamplerStateDescription.html">SamplerStateDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.ISamplerState.html">ISamplerState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateShadowAtlas_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateShadowAtlas_System_String_HexaEngine_Lights_ShadowAtlasDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateShadowAtlas(System.String,HexaEngine.Lights.ShadowAtlasDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateShadowAtlas(string, ShadowAtlasDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L320"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;ShadowAtlas&gt; CreateShadowAtlas(string name, ShadowAtlasDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlasDescription.html">ShadowAtlasDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateStructuredBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateStructuredBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateStructuredBuffer__1_System_String_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateStructuredBuffer``1(System.String,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateStructuredBuffer&lt;T&gt;(string, CpuAccessFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L325"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;StructuredBuffer&lt;T&gt;&gt; CreateStructuredBuffer&lt;T&gt;(string name, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateStructuredBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateStructuredBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateStructuredBuffer__1_System_String_System_UInt32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateStructuredBuffer``1(System.String,System.UInt32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateStructuredBuffer&lt;T&gt;(string, uint, CpuAccessFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L330"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;StructuredBuffer&lt;T&gt;&gt; CreateStructuredBuffer&lt;T&gt;(string name, uint initialCapacity, CpuAccessFlags accessFlags, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>initialCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateStructuredUavBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateStructuredUavBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateStructuredUavBuffer__1_System_String_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_BufferUnorderedAccessViewFlags_HexaEngine_Core_Graphics_BufferExtendedShaderResourceViewFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateStructuredUavBuffer``1(System.String,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags,HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateStructuredUavBuffer&lt;T&gt;(string, CpuAccessFlags, BufferUnorderedAccessViewFlags, BufferExtendedShaderResourceViewFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L335"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;StructuredUavBuffer&lt;T&gt;&gt; CreateStructuredUavBuffer&lt;T&gt;(string name, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>uavFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags.html">BufferUnorderedAccessViewFlags</a></dt>
+    <dd></dd>
+    <dt><code>srvFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags.html">BufferExtendedShaderResourceViewFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateStructuredUavBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateStructuredUavBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateStructuredUavBuffer__1_System_String_System_UInt32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_BufferUnorderedAccessViewFlags_HexaEngine_Core_Graphics_BufferExtendedShaderResourceViewFlags_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateStructuredUavBuffer``1(System.String,System.UInt32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags,HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateStructuredUavBuffer&lt;T&gt;(string, uint, CpuAccessFlags, BufferUnorderedAccessViewFlags, BufferExtendedShaderResourceViewFlags, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L340"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;StructuredUavBuffer&lt;T&gt;&gt; CreateStructuredUavBuffer&lt;T&gt;(string name, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, ResourceCreationFlags flags = ResourceCreationFlags.Default) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>initialCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd></dd>
+    <dt><code>uavFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags.html">BufferUnorderedAccessViewFlags</a></dt>
+    <dd></dd>
+    <dt><code>srvFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags.html">BufferExtendedShaderResourceViewFlags</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateTexture1D_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateTexture1D*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateTexture1D_System_String_HexaEngine_Core_Graphics_Texture1DDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateTexture1D(System.String,HexaEngine.Core.Graphics.Texture1DDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateTexture1D(string, Texture1DDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L345"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture1D&gt; CreateTexture1D(string name, Texture1DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateTexture2D_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateTexture2D*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateTexture2D_System_String_HexaEngine_Core_Graphics_Texture2DDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateTexture2D(System.String,HexaEngine.Core.Graphics.Texture2DDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateTexture2D(string, Texture2DDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L350"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture2D&gt; CreateTexture2D(string name, Texture2DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture2DDescription.html">Texture2DDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateTexture3D_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateTexture3D*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_CreateTexture3D_System_String_HexaEngine_Core_Graphics_Texture3DDescription_HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.CreateTexture3D(System.String,HexaEngine.Core.Graphics.Texture3DDescription,HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  CreateTexture3D(string, Texture3DDescription, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L355"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture3D&gt; CreateTexture3D(string name, Texture3DDescription description, ResourceCreationFlags flags = ResourceCreationFlags.Default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture3DDescription.html">Texture3DDescription</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture3D.html">Texture3D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_DisposeResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.DisposeResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_DisposeResource_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.DisposeResource(System.String)">
+  DisposeResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool DisposeResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetComputePipeline_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetComputePipeline*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetComputePipeline_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetComputePipeline(System.String)">
+  GetComputePipeline(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;IComputePipeline&gt; GetComputePipeline(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IComputePipeline.html">IComputePipeline</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetConstantBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetConstantBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetConstantBuffer__1_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetConstantBuffer``1(System.String)">
+  GetConstantBuffer&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;ConstantBuffer&lt;T&gt;&gt; GetConstantBuffer&lt;T&gt;(string name) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.ConstantBuffer-1.html">ConstantBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetDepthMipChain_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetDepthMipChain*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetDepthMipChain_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetDepthMipChain(System.String)">
+  GetDepthMipChain(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;DepthMipChain&gt; GetDepthMipChain(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.DepthMipChain.html">DepthMipChain</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetDepthStencilBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetDepthStencilBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetDepthStencilBuffer_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetDepthStencilBuffer(System.String)">
+  GetDepthStencilBuffer(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;DepthStencil&gt; GetDepthStencilBuffer(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.DepthStencil.html">DepthStencil</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetGBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetGBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetGBuffer_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetGBuffer(System.String)">
+  GetGBuffer(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;GBuffer&gt; GetGBuffer(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.GBuffer.html">GBuffer</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetGraphicsPipelineState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetGraphicsPipelineState_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetGraphicsPipelineState(System.String)">
+  GetGraphicsPipelineState(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L125"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;IGraphicsPipelineState&gt; GetGraphicsPipelineState(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsPipelineState.html">IGraphicsPipelineState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetOrAddResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetOrAddResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetOrAddResource_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetOrAddResource(System.String)">
+  GetOrAddResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef GetOrAddResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetOrAddResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetOrAddResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetOrAddResource__1_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetOrAddResource``1(System.String)">
+  GetOrAddResource&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L245"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;T&gt; GetOrAddResource&lt;T&gt;(string name) where T : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetResource_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetResource(System.String)">
+  GetResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef? GetResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetResource__1_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetResource``1(System.String)">
+  GetResource&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L250"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;T&gt; GetResource&lt;T&gt;(string name) where T : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetSamplerState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetSamplerState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetSamplerState_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetSamplerState(System.String)">
+  GetSamplerState(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;ISamplerState&gt; GetSamplerState(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.ISamplerState.html">ISamplerState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetShadowAtlas_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetShadowAtlas_System_Int32_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetShadowAtlas(System.Int32)">
+  GetShadowAtlas(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ShadowAtlas GetShadowAtlas(int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetShadowAtlas_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetShadowAtlas_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetShadowAtlas(System.String)">
+  GetShadowAtlas(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;ShadowAtlas&gt; GetShadowAtlas(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetStructuredBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetStructuredBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetStructuredBuffer__1_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetStructuredBuffer``1(System.String)">
+  GetStructuredBuffer&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;StructuredBuffer&lt;T&gt;&gt; GetStructuredBuffer&lt;T&gt;(string name) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredBuffer-1.html">StructuredBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetStructuredUavBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetStructuredUavBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetStructuredUavBuffer__1_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetStructuredUavBuffer``1(System.String)">
+  GetStructuredUavBuffer&lt;T&gt;(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;StructuredUavBuffer&lt;T&gt;&gt; GetStructuredUavBuffer&lt;T&gt;(string name) where T : unmanaged</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer</a>&lt;T&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetTexture1D_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetTexture1D*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetTexture1D_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetTexture1D(System.String)">
+  GetTexture1D(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture1D&gt; GetTexture1D(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetTexture2D_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetTexture2D*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetTexture2D_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetTexture2D(System.String)">
+  GetTexture2D(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L170"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture2D&gt; GetTexture2D(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture2D.html">Texture2D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetTexture3D_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetTexture3D*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_GetTexture3D_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.GetTexture3D(System.String)">
+  GetTexture3D(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L175"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef&lt;Texture3D&gt; GetTexture3D(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Texture3D.html">Texture3D</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_RemoveResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.RemoveResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_RemoveResource_System_String_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.RemoveResource(System.String)">
+  RemoveResource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveResource(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_TryGetResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.TryGetResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_TryGetResource_System_String_HexaEngine_Graphics_Graph_ResourceRef__" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.TryGetResource(System.String,HexaEngine.Graphics.Graph.ResourceRef@)">
+  TryGetResource(string, out ResourceRef?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L185"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetResource(string name, out ResourceRef? resourceRef)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>resourceRef</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_TryGetResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.TryGetResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_TryGetResource__1_System_String_HexaEngine_Graphics_Graph_ResourceRef___0___" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.TryGetResource``1(System.String,HexaEngine.Graphics.Graph.ResourceRef{``0}@)">
+  TryGetResource&lt;T&gt;(string, out ResourceRef&lt;T&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L255"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetResource&lt;T&gt;(string name, out ResourceRef&lt;T&gt;? resourceRef) where T : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>resourceRef</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef-1.html">ResourceRef</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateComputePipelineState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateComputePipelineState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateComputePipelineState_System_String_HexaEngine_Core_Graphics_ComputePipelineStateDescEx_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateComputePipelineState(System.String,HexaEngine.Core.Graphics.ComputePipelineStateDescEx)">
+  UpdateComputePipelineState(string, ComputePipelineStateDescEx)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L190"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateComputePipelineState(string name, ComputePipelineStateDescEx desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.ComputePipelineStateDescEx.html">ComputePipelineStateDescEx</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateDepthMipChain_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateDepthMipChain*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateDepthMipChain_System_String_HexaEngine_Core_Graphics_DepthStencilBufferDescription_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateDepthMipChain(System.String,HexaEngine.Core.Graphics.DepthStencilBufferDescription)">
+  UpdateDepthMipChain(string, DepthStencilBufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateDepthMipChain(string name, DepthStencilBufferDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateDepthStencilBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateDepthStencilBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateDepthStencilBuffer_System_String_HexaEngine_Core_Graphics_DepthStencilBufferDescription_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateDepthStencilBuffer(System.String,HexaEngine.Core.Graphics.DepthStencilBufferDescription)">
+  UpdateDepthStencilBuffer(string, DepthStencilBufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateDepthStencilBuffer(string name, DepthStencilBufferDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.DepthStencilBufferDescription.html">DepthStencilBufferDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateGBuffer_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateGBuffer*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateGBuffer_System_String_HexaEngine_Core_Graphics_GBufferDescription_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateGBuffer(System.String,HexaEngine.Core.Graphics.GBufferDescription)">
+  UpdateGBuffer(string, GBufferDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L205"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateGBuffer(string name, GBufferDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.GBufferDescription.html">GBufferDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateGraphicsPipelineState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateGraphicsPipelineState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateGraphicsPipelineState_System_String_HexaEngine_Core_Graphics_GraphicsPipelineStateDescEx_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateGraphicsPipelineState(System.String,HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx)">
+  UpdateGraphicsPipelineState(string, GraphicsPipelineStateDescEx)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateGraphicsPipelineState(string name, GraphicsPipelineStateDescEx desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.GraphicsPipelineStateDescEx.html">GraphicsPipelineStateDescEx</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateResource_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateResource*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateResource__2_System_String___1_System_Func_HexaEngine_Core_Graphics_IGraphicsDevice___1___0__System_Collections_Generic_IList___0__" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateResource``2(System.String,``1,System.Func{HexaEngine.Core.Graphics.IGraphicsDevice,``1,``0},System.Collections.Generic.IList{``0})">
+  UpdateResource&lt;TType, TDesc&gt;(string, TDesc, Func&lt;IGraphicsDevice, TDesc, TType&gt;, IList&lt;TType&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L260"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateResource&lt;TType, TDesc&gt;(string name, TDesc desc, Func&lt;IGraphicsDevice, TDesc, TType&gt; constructor, IList&lt;TType&gt; group) where TType : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <span class="xref">TDesc</span></dt>
+    <dd></dd>
+    <dt><code>constructor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a>, TDesc, TType&gt;</dt>
+    <dd></dd>
+    <dt><code>group</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;TType&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TType</code></dt>
+    <dd></dd>
+    <dt><code>TDesc</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateSamplerState_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateSamplerState*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateSamplerState_System_String_HexaEngine_Core_Graphics_SamplerStateDescription_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateSamplerState(System.String,HexaEngine.Core.Graphics.SamplerStateDescription)">
+  UpdateSamplerState(string, SamplerStateDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L215"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateSamplerState(string name, SamplerStateDescription desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.SamplerStateDescription.html">SamplerStateDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateShadowAtlas_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateShadowAtlas*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateShadowAtlas_System_String_HexaEngine_Lights_ShadowAtlasDescription_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateShadowAtlas(System.String,HexaEngine.Lights.ShadowAtlasDescription)">
+  UpdateShadowAtlas(string, ShadowAtlasDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L220"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateShadowAtlas(string name, ShadowAtlasDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlasDescription.html">ShadowAtlasDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateTexture1D_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateTexture1D*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateTexture1D_System_String_HexaEngine_Core_Graphics_Texture1DDescription_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateTexture1D(System.String,HexaEngine.Core.Graphics.Texture1DDescription)">
+  UpdateTexture1D(string, Texture1DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L225"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateTexture1D(string name, Texture1DDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateTexture2D_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateTexture2D*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateTexture2D_System_String_HexaEngine_Core_Graphics_Texture2DDescription_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateTexture2D(System.String,HexaEngine.Core.Graphics.Texture2DDescription)">
+  UpdateTexture2D(string, Texture2DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L230"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateTexture2D(string name, Texture2DDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture2DDescription.html">Texture2DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateTexture3D_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateTexture3D*"></a>
+
+  <h3 id="HexaEngine_PostFx_PostFxGraphResourceBuilder_UpdateTexture3D_System_String_HexaEngine_Core_Graphics_Texture3DDescription_" data-uid="HexaEngine.PostFx.PostFxGraphResourceBuilder.UpdateTexture3D(System.String,HexaEngine.Core.Graphics.Texture3DDescription)">
+  UpdateTexture3D(string, Texture3DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L235"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateTexture3D(string name, Texture3DDescription description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture3DDescription.html">Texture3DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/PostFxGraphResourceBuilder.cs/#L10" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
