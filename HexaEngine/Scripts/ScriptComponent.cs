@@ -23,7 +23,7 @@
     [OldName("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "HexaEngine.Components.ScriptBehaviour")]
     [Guid("340856B8-4341-4615-B109-26DB6D6536DE")]
     [EditorComponent<ScriptComponent>("Script Behaviour")]
-    public class ScriptComponent : IScriptComponent
+    public sealed class ScriptComponent : IComponent, IHasFlags<ScriptFlags>
     {
         private GameObject gameObject = null!;
         private ScriptFlags flags;
@@ -285,11 +285,9 @@
 
         public void Awake()
         {
-            ScriptAssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
-            ScriptAssemblyManager.AssemblyLoaded += AssemblyLoaded;
         }
 
-        private void AssembliesUnloaded(object? sender, EventArgs? e)
+        internal void OnAssembliesUnloaded()
         {
             if (scriptType == null)
             {
@@ -300,7 +298,7 @@
             DestroyInstance();
         }
 
-        private void AssemblyLoaded(object? sender, Assembly e)
+        internal void OnAssemblyLoaded()
         {
             CreateInstance();
             ScriptLoad();
@@ -355,8 +353,6 @@
                 return;
             }
             awaked = false;
-            ScriptAssemblyManager.AssembliesUnloaded -= AssembliesUnloaded;
-            ScriptAssemblyManager.AssemblyLoaded -= AssemblyLoaded;
             if (Application.InEditMode || destroyDelegate == null)
             {
                 DestroyInstance();

@@ -12,13 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommandLineParser" Version="2.9.1" />
-		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
-		<PackageReference Include="System.IO.Hashing" Version="10.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+	  <PackageReference Include="HexaEngine.Core" Version="1.0.0.1" />
 	</ItemGroup>
 
 </Project>

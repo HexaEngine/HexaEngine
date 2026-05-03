@@ -340,29 +340,29 @@
                         editorCamera.Transform.Orientation = orientation;
                         editorCameraState.OrbitPosition = orbitPosition;
                         editorCameraState.FreePosition = position;
-                        editorCameraState.FreeRotation = editorCamera.Transform.Rotation;
+                        editorCameraState.FreeRotation = orientation.ToPitchYawRoll();
                         changed = true;
                     }
                 }
                 if (editorCameraState.Mode == EditorCameraMode.Free && !leftCtrl)
                 {
                     var position = editorCamera.Transform.Position;
-                    var rotation = editorCamera.Transform.Orientation.ToYawPitchRoll();
+                    var rotation = editorCamera.Transform.Orientation.ToPitchYawRoll();
 
                     if (delta.X != 0 | delta.Y != 0 || first)
                     {
-                        var deltaT = new Vector3(delta.X, delta.Y, 0) * MouseSensitivity;
+                        var deltaT = new Vector3(delta.Y, delta.X, 0) * MouseSensitivity;
                         rotation += deltaT;
 
                         const float maxAngle = 1.5690509975f; // 89.9° (90° would cause nan values.)
 
-                        if (rotation.Y < -maxAngle)
+                        if (rotation.X < -maxAngle)
                         {
-                            rotation = new Vector3(rotation.X, -maxAngle, rotation.Z);
+                            rotation = new Vector3(-maxAngle, rotation.Y, rotation.Z);
                         }
-                        if (rotation.Y > maxAngle)
+                        if (rotation.X > maxAngle)
                         {
-                            rotation = new Vector3(rotation.X, maxAngle, rotation.Z);
+                            rotation = new Vector3(maxAngle, rotation.Y, rotation.Z);
                         }
                     }
 
@@ -375,32 +375,32 @@
 
                     if (ImGui.IsKeyDown(ImGuiKey.W))
                     {
-                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), editorCamera.Transform.Rotation.Y.ToRad(), 0f);
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.Y.ToRad(), editorCamera.Transform.Rotation.X.ToRad(), 0f);
                         position += Vector3.Transform(Vector3.UnitZ, rotationM) * speedMult;
                     }
                     if (ImGui.IsKeyDown(ImGuiKey.S))
                     {
-                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.Y.ToRad(), 0, 0f);
                         position += Vector3.Transform(-Vector3.UnitZ, rotationM) * speedMult;
                     }
                     if (ImGui.IsKeyDown(ImGuiKey.A))
                     {
-                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.Y.ToRad(), 0, 0f);
                         position += Vector3.Transform(-Vector3.UnitX, rotationM) * speedMult;
                     }
                     if (ImGui.IsKeyDown(ImGuiKey.D))
                     {
-                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.Y.ToRad(), 0, 0f);
                         position += Vector3.Transform(Vector3.UnitX, rotationM) * speedMult;
                     }
                     if (ImGui.IsKeyDown(ImGuiKey.Space))
                     {
-                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.Y.ToRad(), 0, 0f);
                         position += Vector3.Transform(Vector3.UnitY, rotationM) * speedMult;
                     }
                     if (ImGui.IsKeyDown(ImGuiKey.C))
                     {
-                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.X.ToRad(), 0, 0f);
+                        var rotationM = Matrix4x4.CreateFromYawPitchRoll(editorCamera.Transform.Rotation.Y.ToRad(), 0, 0f);
                         position += Vector3.Transform(-Vector3.UnitY, rotationM) * speedMult;
                     }
 

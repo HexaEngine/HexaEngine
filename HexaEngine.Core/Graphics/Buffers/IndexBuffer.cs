@@ -9,73 +9,16 @@
     /// <typeparam name="T">The type of indices in the buffer (must be unmanaged and either uint or ushort).</typeparam>
     public unsafe class IndexBuffer<T> : IIndexBuffer<T>, IIndexBuffer, IBuffer where T : unmanaged
     {
-        private const int DefaultCapacity = 8;
-
         private readonly string dbgName;
 
         private IBuffer buffer;
         private BufferDescription description;
+        private uint capacity;
 
         private readonly Format format;
         private readonly IndexFormat indexFormat;
 
-        private T* items;
-        private uint count;
-        private uint capacity;
-
-        private bool isDirty;
-
         private bool disposedValue;
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, CPU access flags, filename, and line number.
-        /// </summary>
-        /// <param name="flags">The CPU access flags indicating the intended usage of the buffer.</param>
-        /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
-        /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
-        /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
-        public IndexBuffer(CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
-        {
-            if (typeof(T) == typeof(uint))
-            {
-                indexFormat = IndexFormat.UInt32;
-            }
-            else if (typeof(T) == typeof(ushort))
-            {
-                indexFormat = IndexFormat.UInt16;
-            }
-            else
-            {
-                throw new("Index buffers can only be type of uint or ushort");
-            }
-
-            dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
-
-            items = AllocT<T>(DefaultCapacity);
-            ZeroMemoryT(items, (uint)DefaultCapacity);
-            capacity = DefaultCapacity;
-
-            description = new(sizeof(T) * DefaultCapacity, BindFlags.IndexBuffer, Usage.Default, flags);
-            if ((flags & CpuAccessFlags.Write) != 0)
-            {
-                description.Usage = Usage.Dynamic;
-            }
-            if ((flags & CpuAccessFlags.Read) != 0)
-            {
-                description.Usage = Usage.Staging;
-            }
-            if ((flags & CpuAccessFlags.None) != 0)
-            {
-                throw new InvalidOperationException("If cpu access flags are none initial data must be provided");
-            }
-
-            format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
-
-            var device = Application.GraphicsDevice;
-            buffer = device.CreateBuffer(description);
-            buffer.DebugName = dbgName;
-            MemoryManager.Register(buffer);
-        }
 
         /// <summary>
         /// Creates a new instance of the <see cref="IndexBuffer{T}"/> class with the specified graphics device, indices, CPU access flags, filename, and line number.
@@ -85,7 +28,7 @@
         /// <param name="filename">The filename of the source code file calling this constructor (for debugging purposes).</param>
         /// <param name="lineNumber">The line number in the source code file calling this constructor (for debugging purposes).</param>
         /// <exception cref="InvalidOperationException">Thrown if the type parameter is not uint or ushort.</exception>
-        public IndexBuffer(T[] indices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public IndexBuffer(ReadOnlySpan<T> indices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) == typeof(uint))
             {
@@ -103,7 +46,6 @@
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = (uint)indices.Length;
-            count = capacity;
 
             var device = Application.GraphicsDevice;
             description = new(sizeof(T) * (int)capacity, BindFlags.IndexBuffer, Usage.Default, flags);
@@ -128,8 +70,11 @@
 
             format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
 
-            items = AllocCopyT(indices);
-            buffer = device.CreateBuffer(items, capacity, description);
+            fixed (T* ptr = indices)
+            {
+                buffer = device.CreateBuffer(ptr, capacity, description);
+            }
+
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
         }
@@ -161,7 +106,6 @@
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = count;
-            this.count = count;
 
             var device = Application.GraphicsDevice;
             description = new(sizeof(T) * (int)capacity, BindFlags.IndexBuffer, Usage.Default, flags);
@@ -183,8 +127,7 @@
 
             format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
 
-            items = AllocCopyT(indices, count);
-            buffer = device.CreateBuffer(items, capacity, description);
+            buffer = device.CreateBuffer(indices, capacity, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
         }
@@ -233,9 +176,7 @@
             format = typeof(T) == typeof(uint) ? Graphics.Format.R32UInt : Graphics.Format.R16UInt;
 
             var device = Application.GraphicsDevice;
-            items = AllocT<T>(capacity);
-            ZeroMemoryT(items, capacity);
-            buffer = device.CreateBuffer(items, capacity, description);
+            buffer = device.CreateBuffer((T*)null, capacity, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
         }
@@ -259,39 +200,45 @@
         /// <summary>
         /// Gets the number of indices in the buffer.
         /// </summary>
-        public uint Count => count;
+        public uint Count => capacity;
 
         /// <summary>
-        /// Gets or sets the capacity of the index buffer.
+        /// Resizes the buffer to the specified capacity and updates its contents with the provided items.
         /// </summary>
-        /// <exception cref="InvalidOperationException">Thrown if the specified capacity is less than the current count.</exception>
-        public uint Capacity
+        /// <remarks>This method releases the existing buffer and creates a new one with the specified
+        /// capacity. Any previous data in the buffer is discarded. Ensure that the capacity is appropriate for the
+        /// intended usage to avoid resource allocation issues.</remarks>
+        /// <param name="items">A pointer to the array of items to be stored in the buffer. The array must contain at least as many elements
+        /// as specified by the capacity parameter.</param>
+        /// <param name="capacity">The new capacity of the buffer, specified as an unsigned integer. Must be greater than zero.</param>
+        public void Resize(T* items, uint capacity)
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => capacity;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set
-            {
-                if (capacity == value)
-                {
-                    return;
-                }
+            MemoryManager.Unregister(buffer);
+            buffer.Dispose();
+            var device = Application.GraphicsDevice;
+            buffer = device.CreateBuffer(items, capacity, description);
+            buffer.DebugName = dbgName;
+            this.capacity = capacity;
+            MemoryManager.Register(buffer);
+        }
 
-                var tmp = AllocT<T>((int)value);
-                var oldsize = count * sizeof(uint);
-                var newsize = value * sizeof(uint);
-                Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
-                Free(items);
-                items = tmp;
-                capacity = value;
-                count = capacity < count ? capacity : count;
-                MemoryManager.Unregister(buffer);
-                buffer.Dispose();
-                var device = Application.GraphicsDevice;
-                buffer = device.CreateBuffer(items, capacity, description);
-                buffer.DebugName = dbgName;
-                MemoryManager.Register(buffer);
-            }
+        /// <summary>
+        /// Resizes the buffer to the specified capacity, releasing any existing resources and allocating a new buffer
+        /// with the given size.
+        /// </summary>
+        /// <remarks>This method unregisters the current buffer from the memory manager, disposes of it,
+        /// and creates a new buffer with the specified capacity. Ensure that the capacity is set appropriately to avoid
+        /// runtime errors or resource leaks.</remarks>
+        /// <param name="capacity">The new capacity for the buffer, specified as an unsigned integer. Must be greater than zero.</param>
+        public void Resize(uint capacity)
+        {
+            MemoryManager.Unregister(buffer);
+            buffer.Dispose();
+            var device = Application.GraphicsDevice;
+            buffer = device.CreateBuffer((T*)null, capacity, description);
+            buffer.DebugName = dbgName;
+            this.capacity = capacity;
+            MemoryManager.Register(buffer);
         }
 
         /// <summary>
@@ -330,136 +277,30 @@
         public bool IsDisposed => buffer.IsDisposed;
 
         /// <summary>
-        /// Gets or sets the value at the specified index in the index buffer.
+        /// Updates the graphics buffer with the specified items using the provided graphics context.
         /// </summary>
-        /// <param name="index">The index of the value to get or set.</param>
-        /// <returns>The value at the specified index.</returns>
-        public T this[uint index]
+        /// <param name="context">The graphics context used to perform the buffer update operation.</param>
+        /// <param name="items">A pointer to the array of items to write to the buffer.</param>
+        /// <param name="count">The number of items to write. Must not exceed the buffer's capacity.</param>
+        public void Update(IGraphicsContext context, T* items, uint count)
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => items[index];
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set
-            {
-                items[index] = value;
-                isDirty = true;
-            }
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(count, capacity);
+            context.Write(buffer, items, (int)(count * sizeof(T)));
         }
 
         /// <summary>
-        /// Resets the counter of indices to zero.
+        /// Updates the contents of the buffer with the specified data using the provided graphics context.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ResetCounter()
+        /// <remarks>Throws an ArgumentOutOfRangeException if the specified size exceeds the buffer's
+        /// capacity.</remarks>
+        /// <param name="context">The graphics context used to write data to the buffer. This context must be valid and properly initialized.</param>
+        /// <param name="data">A pointer to the data to be written to the buffer. The data must be formatted appropriately for the buffer's
+        /// usage.</param>
+        /// <param name="size">The size, in bytes, of the data to write. Must not exceed the total capacity of the buffer.</param>
+        public void Update(IGraphicsContext context, void* data, uint size)
         {
-            count = 0;
-        }
-
-        /// <summary>
-        /// Ensures that the index buffer has at least the specified capacity.
-        /// </summary>
-        /// <param name="capacity">The minimum capacity to ensure.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void EnsureCapacity(uint capacity)
-        {
-            if (this.capacity < capacity)
-            {
-                Grow(capacity);
-            }
-        }
-
-        /// <summary>
-        /// Increases the capacity of the index buffer.
-        /// </summary>
-        /// <param name="capacity">The new capacity of the index buffer.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Grow(uint capacity)
-        {
-            uint newcapacity = count == 0 ? DefaultCapacity : 2 * count;
-
-            if (newcapacity < capacity)
-            {
-                newcapacity = capacity;
-            }
-
-            Capacity = newcapacity;
-        }
-
-        /// <summary>
-        /// Adds a single index to the index buffer.
-        /// </summary>
-        /// <param name="value">The index value to add.</param>
-        public void Add(T value)
-        {
-            uint index = count;
-            count++;
-            EnsureCapacity(count);
-
-            items[index] = value;
-
-            isDirty = true;
-        }
-
-        /// <summary>
-        /// Adds multiple indices to the index buffer.
-        /// </summary>
-        /// <param name="indices">The indices to add.</param>
-        public void Add(params T[] indices)
-        {
-            uint index = count;
-            count += (uint)indices.Length;
-            EnsureCapacity(count);
-
-            for (int i = 0; i < indices.Length; i++)
-            {
-                items[index + i] = indices[i];
-            }
-
-            isDirty = true;
-        }
-
-        /// <summary>
-        /// Removes the index at the specified position in the index buffer.
-        /// </summary>
-        /// <param name="index">The position of the index to remove.</param>
-        public void RemoveAt(int index)
-        {
-            var size = (count - index) * sizeof(uint);
-            Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
-            isDirty = true;
-        }
-
-        /// <summary>
-        /// Updates the index buffer in the graphics context if it is marked as dirty.
-        /// </summary>
-        /// <param name="context">The graphics context used for the update.</param>
-        /// <returns>True if the index buffer was updated; otherwise, false.</returns>
-        public bool Update(IGraphicsContext context)
-        {
-            if (isDirty)
-            {
-                context.Write(buffer, items, (int)(count * sizeof(uint)));
-                isDirty = false;
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Clears the index buffer, resetting the index count to zero.
-        /// </summary>
-        public void Clear()
-        {
-            count = 0;
-            isDirty = true;
-        }
-
-        /// <summary>
-        /// Flushes the memory associated with the index buffer.
-        /// </summary>
-        public void FlushMemory()
-        {
-            Free(items);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(size, capacity * (uint)sizeof(T));
+            context.Write(buffer, data, (int)size);
         }
 
         /// <summary>
@@ -510,13 +351,6 @@
                 MemoryManager.Unregister(buffer);
                 buffer?.Dispose();
                 capacity = 0;
-                count = 0;
-                if (items != null)
-                {
-                    Free(items);
-                    items = null;
-                }
-
                 disposedValue = true;
             }
 

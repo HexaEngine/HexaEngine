@@ -536,49 +536,76 @@
             return vertexBuffer;
         }
 
-        public bool WriteIndexBuffer(IGraphicsContext context, IIndexBuffer ib)
+        public unsafe bool WriteIndexBuffer(IGraphicsContext context, IIndexBuffer ib)
         {
-            if (indexCount > ushort.MaxValue && ib.Format == IndexFormat.UInt16)
+            if (IndexCount > ushort.MaxValue && ib.Format == IndexFormat.UInt16)
             {
                 return false;
             }
             if (ib is IIndexBuffer<ushort> indexBufferU16)
             {
-                for (uint i = 0; i < indexCount; i++)
+                ushort* data = AllocT<ushort>(IndexCount);
+                try
                 {
-                    indexBufferU16[i] = (ushort)indices[i];
+                    for (uint i = 0; i < IndexCount; i++)
+                    {
+                        data[i] = (ushort)indices[i];
+                    }
+
+                    indexBufferU16.Update(context, data, IndexCount);
                 }
-                return indexBufferU16.Update(context);
+                finally
+                {
+                    Free(data);
+                }
+                return true;
             }
             else if (ib is IIndexBuffer<uint> indexBufferU32)
             {
-                for (uint i = 0; i < indexCount; i++)
+                fixed (uint* data = indices)
                 {
-                    indexBufferU32[i] = indices[i];
+                    indexBufferU32.Update(context, data, IndexCount);
                 }
-                return indexBufferU32.Update(context);
+
+                return true;
             }
             return false;
         }
 
-        public bool WriteVertexBuffer(IGraphicsContext context, IVertexBuffer vb)
+        public unsafe bool WriteVertexBuffer(IGraphicsContext context, IVertexBuffer vb)
         {
             if (vb is not IVertexBuffer<TerrainVertex> vertexBuffer)
             {
                 return false;
             }
 
-            for (int i = 0; i < vertexCount; i++)
+            TerrainVertex* verticies = AllocT<TerrainVertex>(vertexCount);
+            try
             {
-                TerrainVertex vertex = default;
-                vertex.Position = positions[i];
-                vertex.UV = uvs[i];
-                vertex.Normal = normals[i];
-                vertex.Tangent = tangents[i];
-                vertexBuffer[i] = vertex;
+                for (int i = 0; i < vertexCount; i++)
+                {
+                    TerrainVertex vertex = default;
+                    vertex.Position = positions[i];
+                    vertex.UV = uvs[i];
+                    vertex.Normal = normals[i];
+                    vertex.Tangent = tangents[i];
+                    verticies[i] = vertex;
+                }
+
+                if (vertexBuffer.Count < vertexCount)
+                {
+                    vertexBuffer.Resize(verticies, vertexCount);
+                }
+                else
+                {
+                    vertexBuffer.Update(context, verticies, vertexCount);
+                }
+            }
+            finally
+            {
             }
 
-            return vb.Update(context);
+            return true;
         }
 
         public void Generate(HeightMap heightMap)

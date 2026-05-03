@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Scenes
 {
     using System.ComponentModel;
+    using System.Numerics;
     using System.Runtime.CompilerServices;
 
     public class EntityNotifyBase : INotifyPropertyChanged, INotifyPropertyChanging
@@ -42,6 +43,20 @@
         protected bool SetAndNotifyWithRefEqualsTest<T>(ref T? field, T? value, [CallerMemberName] string name = "") where T : class
         {
             if (ReferenceEquals(field, value))
+            {
+                return false;
+            }
+
+            PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(name));
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            return true;
+        }
+
+
+        protected bool SetAndNotifyWithEqualsTest<T>(ref T field, T value, Func<T, T, bool> equals, [CallerMemberName] string name = "")
+        {
+            if (equals(field, value))
             {
                 return false;
             }

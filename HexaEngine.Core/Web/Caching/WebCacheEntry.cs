@@ -60,6 +60,7 @@
         /// <param name="key">The key of the entry.</param>
         /// <param name="size">The size of the entry, in bytes.</param>
         /// <param name="position">The position of the entry in the cache file.</param>
+        /// <param name="expirationDate"></param>
         public WebCacheEntry(string key, uint size, long position, DateTime expirationDate)
         {
             Key = Crc32.Compute(MemoryMarshal.AsBytes(key.AsSpan()));
@@ -76,6 +77,7 @@
         /// <param name="size">The size of the entry, in bytes.</param>
         /// <param name="position">The position of the entry in the cache file.</param>
         /// <param name="lastAccess">The last access time of the entry.</param>
+        /// <param name="expiration"></param>
         public WebCacheEntry(uint key, uint size, long position, DateTime lastAccess, DateTime expiration)
         {
             Key = key;

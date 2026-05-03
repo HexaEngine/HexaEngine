@@ -371,15 +371,30 @@ namespace HexaEngine.D3D11
                 SignatureParameterDesc parameterDesc;
                 reflection.GetInputParameterDesc(i, &parameterDesc);
 
+                var semanticName = Utils.ToStr(parameterDesc.SemanticName);
+
                 InputElementDescription inputElement = new()
                 {
-                    SemanticName = Utils.ToStr(parameterDesc.SemanticName),
+                    SemanticName = semanticName,
                     SemanticIndex = (int)parameterDesc.SemanticIndex,
                     Slot = 0,
                     AlignedByteOffset = -1,
                     Classification = Core.Graphics.InputClassification.PerVertexData,
                     InstanceDataStepRate = 0
                 };
+
+                if (semanticName.StartsWith("INSTANCE_", StringComparison.OrdinalIgnoreCase))
+                {
+                    var span = semanticName.AsSpan("INSTANCE_".Length);
+                    inputElement.Classification = Core.Graphics.InputClassification.PerInstanceData;
+
+                    int idx = span.IndexOf('_');
+                    var part = span[..(idx != -1 ? idx : span.Length)];
+                    if (int.TryParse(part, out int instanceRate))
+                    {
+                        inputElement.InstanceDataStepRate = instanceRate;
+                    }
+                }
 
                 if (parameterDesc.Mask == (byte)RegisterComponentMaskFlags.ComponentX)
                 {

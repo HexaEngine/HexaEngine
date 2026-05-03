@@ -104,11 +104,12 @@
             DPSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
 
             var viewport = atlasHandle.Handles[pass].Viewport;
-            osmBuffer.Local->View = views[0];
-            osmBuffer.Local->Near = DPSMHelper.ZNear;
-            osmBuffer.Local->Far = Range;
-            osmBuffer.Local->HemiDir = pass == 0 ? 1 : -1;
-            osmBuffer.Update(context);
+            DPSMShadowParams shadowParams = default;
+            shadowParams.View = views[0];
+            shadowParams.Near = DPSMHelper.ZNear;
+            shadowParams.Far = Range;
+            shadowParams.HemiDir = pass == 0 ? 1 : -1;
+            osmBuffer.Update(context, shadowParams);
 
             return viewport;
 #nullable enable

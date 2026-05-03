@@ -6,11 +6,6 @@
     public interface IIndexBuffer : IBuffer
     {
         /// <summary>
-        /// Gets or sets the capacity of the index buffer.
-        /// </summary>
-        uint Capacity { get; set; }
-
-        /// <summary>
         /// Gets the number of indices in the buffer.
         /// </summary>
         uint Count { get; }
@@ -34,38 +29,11 @@
         void Bind(IGraphicsContext context, int offset);
 
         /// <summary>
-        /// Clears the index buffer.
-        /// </summary>
-        void Clear();
-
-        /// <summary>
         /// Copies the content of the index buffer to another buffer using the graphics context.
         /// </summary>
         /// <param name="context">The graphics context used for the copy operation.</param>
         /// <param name="buffer">The destination buffer.</param>
         void CopyTo(IGraphicsContext context, IBuffer buffer);
-
-        /// <summary>
-        /// Ensures that the index buffer has the specified capacity.
-        /// </summary>
-        /// <param name="capacity">The desired capacity of the index buffer.</param>
-        void EnsureCapacity(uint capacity);
-
-        /// <summary>
-        /// Flushes the memory of the index buffer.
-        /// </summary>
-        void FlushMemory();
-
-        /// <summary>
-        /// Removes the index at the specified index from the buffer.
-        /// </summary>
-        /// <param name="index">The index to remove.</param>
-        void RemoveAt(int index);
-
-        /// <summary>
-        /// Resets the counter of the index buffer.
-        /// </summary>
-        void ResetCounter();
 
         /// <summary>
         /// Unbinds the index buffer from the graphics context.
@@ -77,8 +45,10 @@
         /// Updates the index buffer using the graphics context.
         /// </summary>
         /// <param name="context">The graphics context used for the update.</param>
+        /// <param name="data"></param>
+        /// <param name="size"></param>
         /// <returns><c>true</c> if the buffer has been updated; otherwise, <c>false</c>.</returns>
-        bool Update(IGraphicsContext context);
+        unsafe void Update(IGraphicsContext context, void* data, uint size);
     }
 
     /// <summary>
@@ -87,22 +57,8 @@
     /// <typeparam name="T">The type of indices in the buffer (must be unmanaged).</typeparam>
     public interface IIndexBuffer<T> : IIndexBuffer where T : unmanaged
     {
-        /// <summary>
-        /// Gets or sets the index at the specified index in the buffer.
-        /// </summary>
-        /// <param name="index">The index of the element to get or set.</param>
-        T this[uint index] { get; set; }
+        unsafe void Resize(T* items, uint capacity);
 
-        /// <summary>
-        /// Adds multiple indices to the buffer.
-        /// </summary>
-        /// <param name="indices">The indices to add to the buffer.</param>
-        void Add(params T[] indices);
-
-        /// <summary>
-        /// Adds a single index to the buffer.
-        /// </summary>
-        /// <param name="value">The index to add to the buffer.</param>
-        void Add(T value);
+        unsafe void Update(IGraphicsContext context, T* items, uint size);
     }
 }

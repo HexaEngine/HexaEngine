@@ -12,16 +12,18 @@
         private readonly List<EventHandler<TEventArgs>> handlers = new();
         private readonly Lock _lock = new();
 
-        public void AddHandler(EventHandler<TEventArgs> handler)
+        public void AddHandler(EventHandler<TEventArgs>? handler)
         {
+            if (handler == null) return;
             lock (_lock)
             {
                 handlers.Add(handler);
             }
         }
 
-        public void RemoveHandler(EventHandler<TEventArgs> handler)
+        public void RemoveHandler(EventHandler<TEventArgs>? handler)
         {
+            if (handler == null) return;
             lock (_lock)
             {
                 handlers.Remove(handler);

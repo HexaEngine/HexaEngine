@@ -111,6 +111,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
         uint slot = 0;
         InterlockedAdd(drawArgs[data.type].InstanceCount, 1, slot);
         uint baseOffset = instanceOffsets[data.type];
+        drawArgs[data.type].StartInstanceLocation = baseOffset;
         instanceDataOut[baseOffset + slot] = data.world;
     }
 }

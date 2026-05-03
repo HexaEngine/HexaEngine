@@ -28,10 +28,19 @@
         /// </summary>
         Vector3 Velocity { get; set; }
 
+        /// <summary>
+        /// Gets or sets the inner angle of the listener's directional cone in radians.
+        /// </summary>
         public float ConeInnerAngle { get; set; }
 
+        /// <summary>
+        /// Gets or sets the outer angle of the listener's directional cone in radians.
+        /// </summary>
         public float ConeOuterAngle { get; set; }
 
+        /// <summary>
+        /// Gets or sets the gain applied to sounds outside the listener's directional cone, where 0.0 means no sound and 1.0 means full volume.
+        /// </summary>
         public float ConeOuterGain { get; set; }
     }
 }

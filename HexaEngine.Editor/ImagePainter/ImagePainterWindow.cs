@@ -352,8 +352,7 @@
                 }
                 ImGui.SetCursorPos(cursorPos);
 
-                *colorCB.Local = colorPicker.Color;
-                colorCB.Update(context);
+                colorCB.Update(context, colorPicker.Color);
 
                 context.ClearRenderTargetView(overlay.RTV, default);
                 context.SetRenderTarget(overlay.RTV, default);

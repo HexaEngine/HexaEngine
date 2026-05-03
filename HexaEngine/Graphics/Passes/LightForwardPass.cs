@@ -80,11 +80,11 @@
             profiler?.Begin("LightForward.Begin");
 
             var cam = CameraManager.Current;
-            var lightParamsBuffer = this.lightParamsBuffer.Value;
-            var lightParams = lightParamsBuffer!.Local;
-            lightParams->LightCount = lights.LightBuffer.Count;
-            lightParams->GlobalProbes = lights.GlobalProbes.Count;
-            lightParamsBuffer.Update(context);
+            var lightParamsBuffer = this.lightParamsBuffer.Value!;
+            ForwardLightParams lightParams = new();
+            lightParams.LightCount = lights.LightBuffer.Count;
+            lightParams.GlobalProbes = lights.GlobalProbes.Count;
+            lightParamsBuffer.Update(context, lightParams);
 
             context.SetViewport(creator.Viewport);
 

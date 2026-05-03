@@ -1,15 +1,14 @@
 ﻿namespace HexaEngine.Scripts
 {
     using HexaEngine.Collections;
-    using HexaEngine.Scenes;
 
     public class ScriptGroup
     {
         private readonly Dictionary<Type, int> map = [];
         private readonly List<ScriptNode> nodes;
         private readonly bool parallel;
-        private readonly FlaggedList<ScriptFlags, IScriptComponent> instances = [];
-        private readonly object _lock = new();
+        private readonly FlaggedList<ScriptFlags, ScriptComponent> instances = [];
+        private readonly Lock _lock = new();
 
         public ScriptGroup(List<ScriptNode> nodes, bool parallel)
         {
@@ -21,7 +20,7 @@
             }
         }
 
-        public bool AddInstance(IScriptComponent component)
+        public bool AddInstance(ScriptComponent component)
         {
             if (component.ScriptType == null) return false;
             lock (_lock)
@@ -38,7 +37,7 @@
             return false;
         }
 
-        public bool RemoveInstance(IScriptComponent component)
+        public bool RemoveInstance(ScriptComponent component)
         {
             lock (_lock)
             {
@@ -48,7 +47,7 @@
 
         public IReadOnlyList<ScriptNode> Nodes => nodes;
 
-        public IReadOnlyDictionary<ScriptFlags, IList<IScriptComponent>> Instances => instances;
+        public IReadOnlyDictionary<ScriptFlags, IList<ScriptComponent>> Instances => instances;
 
         public void ExecuteAwake()
         {

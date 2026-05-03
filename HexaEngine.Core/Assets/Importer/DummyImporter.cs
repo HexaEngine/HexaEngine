@@ -32,6 +32,8 @@
                 ".hexlvl" => true,
                 ".prefab" => true,
                 ".hlsl" => true,
+                ".mp3" => true,
+                ".wav" => true,
                 _ => false,
             };
         }
@@ -50,6 +52,8 @@
                 ".hexlvl" => AssetType.Scene,
                 ".prefab" => AssetType.Prefab,
                 ".hlsl" => AssetType.ShaderSource,
+                ".mp3" => AssetType.Sound,
+                ".wav" => AssetType.Sound,
                 _ => AssetType.Unknown,
             };
 

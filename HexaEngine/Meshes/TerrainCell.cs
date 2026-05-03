@@ -344,7 +344,6 @@
         {
             IVertexBuffer vb = mesh.VertexBuffer;
             lodData.WriteVertexBuffer(context, vb);
-            vb.Update(context);
         }
     }
 }

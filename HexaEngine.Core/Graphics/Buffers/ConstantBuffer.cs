@@ -12,7 +12,6 @@
         private readonly string dbgName;
         private readonly BufferDescription description;
         private IBuffer buffer;
-        private T* items;
         private uint count;
 
 #nullable disable
@@ -21,13 +20,7 @@
         {
             dbgName = $"ConstantBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
-
-            if (accessFlags != CpuAccessFlags.None)
-            {
-                count = length;
-                items = AllocT<T>(length);
-                ZeroMemoryT(items, length);
-            }
+            count = length;
 
             description.Usage = accessFlags switch
             {
@@ -51,7 +44,7 @@
         public ConstantBuffer(uint length, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(accessFlags, length, filename, lineNumber)
         {
             var device = Application.GraphicsDevice;
-            buffer = device.CreateBuffer(items, length, description);
+            buffer = device.CreateBuffer((T*)null, length, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
         }
@@ -68,12 +61,6 @@
             var device = Application.GraphicsDevice;
             fixed (T* src = values)
             {
-                if (description.CPUAccessFlags != CpuAccessFlags.None)
-                {
-                    int size = (int)(count * sizeof(T));
-                    System.Buffer.MemoryCopy(src, items, size, size);
-                }
-
                 buffer = device.CreateBuffer(src, count, description);
                 buffer.DebugName = dbgName;
             }
@@ -92,12 +79,6 @@
             var device = Application.GraphicsDevice;
             count = 1;
             T* src = &value;
-            if (description.CPUAccessFlags != CpuAccessFlags.None)
-            {
-                int size = (int)(count * sizeof(T));
-                System.Buffer.MemoryCopy(src, items, size, size);
-            }
-
             buffer = device.CreateBuffer(src, count, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
@@ -112,7 +93,7 @@
         public ConstantBuffer(CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(accessFlags, 1, filename, lineNumber)
         {
             var device = Application.GraphicsDevice;
-            buffer = device.CreateBuffer(items, 1, description);
+            buffer = device.CreateBuffer((T*)null, 1, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
         }
@@ -154,33 +135,9 @@
         }
 
         /// <summary>
-        /// Gets or sets the element at the specified index in the constant buffer.
-        /// </summary>
-        /// <param name="index">The zero-based index of the element to get or set.</param>
-        /// <returns>The element at the specified index.</returns>
-        public T this[int index]
-        {
-            get { return items[index]; }
-            set
-            {
-                items[index] = value;
-            }
-        }
-
-        /// <summary>
         /// Gets the underlying buffer associated with the constant buffer.
         /// </summary>
         public IBuffer Buffer => buffer;
-
-        /// <summary>
-        /// Gets a pointer to the first element in the constant buffer.
-        /// </summary>
-        public T* Local => items;
-
-        /// <summary>
-        /// Gets a reference to the first element in the constant buffer.
-        /// </summary>
-        public ref T Data => ref items[0];
 
         /// <summary>
         /// Gets the description of the constant buffer.
@@ -215,33 +172,47 @@
         /// <summary>
         /// Resizes the constant buffer to the specified length.
         /// </summary>
+        /// <param name="items"></param>
         /// <param name="length">The new length of the constant buffer.</param>
-        public void Resize(uint length)
+        public void Resize(T* items, uint length)
         {
             var device = Application.GraphicsDevice;
-            var result = items;
-            items = ReAllocT(items, length);
-            items = result;
             count = length;
             MemoryManager.Unregister(buffer);
             buffer.Dispose();
-            buffer = device.CreateBuffer(items, 1, description);
+            buffer = device.CreateBuffer(items, length, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
+        }
+
+        public void Resize(void* data, uint size)
+        {
+            Resize((T*)data, size / (uint)sizeof(T));
+        }
+
+        public void Update(IGraphicsContext context, void* data, uint size)
+        {
+            Update(context, (T*)data, size / (uint)sizeof(T));
         }
 
         /// <summary>
         /// Updates the constant buffer with the current data using the specified graphics context.
         /// </summary>
         /// <param name="context">The graphics context used to update the constant buffer.</param>
-        public void Update(IGraphicsContext context)
+        /// <param name="items"></param>
+        /// <param name="count"></param>
+        public void Update(IGraphicsContext context, T* items, uint count)
         {
             if (description.Usage != Usage.Dynamic)
             {
                 throw new InvalidOperationException();
             }
+            if (count > this.count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the buffer length.");
+            }
 
-            context.Write(buffer, items, buffer.Description.ByteWidth);
+            context.Write(buffer, items, (int)count);
         }
 
         /// <summary>
@@ -249,15 +220,17 @@
         /// </summary>
         /// <param name="context">The graphics context used to update the constant buffer.</param>
         /// <param name="value">The value to update the constant buffer with.</param>
-        public void Update(IGraphicsContext context, T value)
+        public void Update(IGraphicsContext context, in T value)
         {
-            *items = value;
             if (description.Usage != Usage.Dynamic)
             {
                 throw new InvalidOperationException();
             }
 
-            context.Write(buffer, items, buffer.Description.ByteWidth);
+            fixed (T* bufferPtr = &value)
+            {
+                context.Write(buffer, bufferPtr, buffer.Description.ByteWidth);
+            }
         }
 
         /// <summary>
@@ -267,13 +240,6 @@
         {
             MemoryManager.Unregister(buffer);
             count = 0;
-            if (items != null)
-            {
-                Free(items);
-                items = null;
-            }
-
-            items = null;
             buffer.Dispose();
             GC.SuppressFinalize(this);
         }

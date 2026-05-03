@@ -123,8 +123,9 @@
         private uint dirtyCascades;
         private ShadowData shadowDataLast;
 
-        public unsafe bool UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, ConstantBuffer<CSMShadowParams> csmConstantBuffer, Camera camera, out uint updateMask, out bool reproject)
+        public unsafe bool UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, Camera camera, out CSMShadowParams shadowParams, out uint updateMask, out bool reproject)
         {
+            shadowParams = default;
             if (csmBuffer == null)
             {
                 updateMask = 0;
@@ -133,7 +134,7 @@
             }
 
             var camPos = camera.Transform.GlobalPosition;
-            var camRot = camera.Transform.GlobalOrientation.ToYawPitchRoll();
+            var camRot = camera.Transform.GlobalOrientation.ToPitchYawRoll();
 
             var camPosDelta = camPos - camOldPos;
             var camRotDelta = camRot - camOldRot;
@@ -181,25 +182,23 @@
             Matrix4x4* views = ShadowData.GetViews(data);
             float* cascades = ShadowData.GetCascades(data);
 
-            CSMShadowParams shadowParams = default;
+            CSMShadowParams shadowParams1 = default;
 
             if (reproject) // only update matrices if needed if not use the last, because updating everytime would cause numerical instability and performance penalties.
             {
                 var matrices = CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, shadowFrustra, ShadowMapSize, cascadeCount);
-                MemcpyT(matrices, &shadowParams.View0, cascadeCount - 1);
+                MemcpyT(matrices, &shadowParams1.View0, cascadeCount - 1);
                 shadowDataLast = *data;
             }
             else
             {
                 *data = shadowDataLast;
-                MemcpyT(views, &shadowParams.View0, cascadeCount - 1);
+                MemcpyT(views, &shadowParams1.View0, cascadeCount - 1);
             }
 
-            shadowParams.CascadeCount = (uint)(cascadeCount - 1);
-            shadowParams.ActiveCascades = updateMask;
-
-            *csmConstantBuffer.Local = shadowParams;
-            csmConstantBuffer.Update(context);
+            shadowParams1.CascadeCount = (uint)(cascadeCount - 1);
+            shadowParams1.ActiveCascades = updateMask;
+            shadowParams = shadowParams1;
 
             return true;
         }

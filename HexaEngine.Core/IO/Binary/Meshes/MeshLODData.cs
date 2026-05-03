@@ -691,11 +691,19 @@
             var stride = ComputeStride();
             var size = stride * (int)VertexCount;
             var vertices = (byte*)Alloc(size);
-            ZeroMemory(vertices, size);
 
-            WriteVertexData(stride, vertices);
+            VertexBuffer vertexBuffer;
+            try
+            {
+                ZeroMemory(vertices, size);
+                WriteVertexData(stride, vertices);
+                vertexBuffer = new(vertices, stride, VertexCount, accessFlags);
+            }
+            finally
+            {
+                Free(vertices);
+            }
 
-            VertexBuffer vertexBuffer = new(vertices, stride, VertexCount, transferOwnership: true, accessFlags);
             return vertexBuffer;
         }
 
@@ -754,7 +762,7 @@
             }
         }
 
-        public bool WriteIndexBuffer(IGraphicsContext context, IIndexBuffer ib)
+        public unsafe bool WriteIndexBuffer(IGraphicsContext context, IIndexBuffer ib)
         {
             if (IndexCount > ushort.MaxValue && ib.Format == IndexFormat.UInt16)
             {
@@ -762,19 +770,30 @@
             }
             if (ib is IIndexBuffer<ushort> indexBufferU16)
             {
-                for (uint i = 0; i < IndexCount; i++)
+                ushort* data = AllocT<ushort>(IndexCount);
+                try
                 {
-                    indexBufferU16[i] = (ushort)Indices[i];
+                    for (uint i = 0; i < IndexCount; i++)
+                    {
+                        data[i] = (ushort)indices[i];
+                    }
+
+                    indexBufferU16.Update(context, data, IndexCount);
                 }
-                return indexBufferU16.Update(context);
+                finally
+                {
+                    Free(data);
+                }
+                return true;
             }
             else if (ib is IIndexBuffer<uint> indexBufferU32)
             {
-                for (uint i = 0; i < IndexCount; i++)
+                fixed (uint* data = indices)
                 {
-                    indexBufferU32[i] = Indices[i];
+                    indexBufferU32.Update(context, data, IndexCount);
                 }
-                return indexBufferU32.Update(context);
+
+                return true;
             }
             return false;
         }
@@ -793,9 +812,21 @@
                 throw new InvalidOperationException("Buffer too small");
             }
 
-            WriteVertexData(stride, (byte*)vb.Items);
+            var size = (uint)stride * VertexCount;
+            var vertices = AllocT<byte>(size);
 
-            return vb.Update(context);
+            try
+            {
+                ZeroMemory(vertices, size);
+                WriteVertexData(stride, vertices);
+                vb.Update(context, vertices, size);
+            }
+            finally
+            {
+                Free(vertices);
+            }
+
+            return true;
         }
 
         public IEnumerable<UVChannel> GetUVChannels()

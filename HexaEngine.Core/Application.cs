@@ -15,7 +15,7 @@
     using System.Diagnostics;
     using static Extensions.SdlErrorHandlingExtensions;
 
-    /// <summary>
+    /// <summary>3
     /// Provides data for the EditorPlayStateTransition event.
     /// </summary>
     public class EditorPlayStateTransitionEventArgs : EventArgs
@@ -333,6 +333,7 @@
             graphicsContext = graphicsDevice.Context;
             gpuProfiler = graphicsDevice.Profiler;
             var audioAdapter = AudioAdapter.ChooseAudioAdapter(AudioBackend);
+            audioAdapter.InitInstance();
             AudioDeviceDesc audioDeviceDesc = new();
             playbackAudioDevice = audioAdapter.CreatePlaybackDevice(audioDeviceDesc);
 

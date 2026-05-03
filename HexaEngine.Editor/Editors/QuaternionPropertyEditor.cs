@@ -27,7 +27,7 @@
         {
             Quaternion q = (Quaternion)value!;
 
-            var val = q.ToYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
+            var val = q.ToPitchYawRoll().ToDeg().NormalizeEulerAngleDegrees();
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);

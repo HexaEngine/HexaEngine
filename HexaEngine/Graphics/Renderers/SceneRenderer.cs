@@ -250,6 +250,8 @@
             }
         }
 
+        private CBCamera cbCameraLast;
+
         [Profile]
         public unsafe void Render(IGraphicsContext context, IScene scene, Camera camera)
         {
@@ -264,8 +266,9 @@
             }
 
             var cameraBuffer = this.cameraBuffer.Value!;
-            cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
-            cameraBuffer.Update(context);
+            CBCamera cbcamera = new(camera, new(width, height), cbCameraLast);
+            cbCameraLast = cbcamera;
+            cameraBuffer.Update(context, cbcamera);
 
             scene.RenderManager.Update(context);
             scene.WeatherManager.Update(context);
@@ -289,8 +292,9 @@
             }
 
             var cameraBuffer = this.cameraBuffer.Value!;
-            cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
-            cameraBuffer.Update(context);
+            CBCamera cbcamera = new(camera, new(width, height), cbCameraLast);
+            cbCameraLast = cbcamera;
+            cameraBuffer.Update(context, cbcamera);
 
             scene.RenderManager.Update(context);
             scene.WeatherManager.Update(context);

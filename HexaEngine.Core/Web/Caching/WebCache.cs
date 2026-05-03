@@ -395,6 +395,7 @@
         /// <param name="key">The key of the entry.</param>
         /// <param name="data">A pointer to the memory location where the data is stored.</param>
         /// <param name="size">The size of the data, in bytes.</param>
+        /// <param name="expirationDate"></param>
         public unsafe void Set(string key, byte* data, uint size, DateTime expirationDate)
         {
             CheckForExpiredEntries();
@@ -727,7 +728,7 @@
             }
 
             Span<byte> headerBuffer = stackalloc byte[HeaderSize];
-            fs.Read(headerBuffer);
+            fs.ReadExactly(headerBuffer);
 
             var version = BinaryPrimitives.ReadInt32LittleEndian(headerBuffer);
             if (version != Version)
@@ -794,7 +795,7 @@
 
             cacheStream.Position = entry.Position;
             var span = entry.AsSpan();
-            cacheStream.Read(span);
+            cacheStream.ReadExactly(span);
 
             cacheFileSemaphore.Release();
         }

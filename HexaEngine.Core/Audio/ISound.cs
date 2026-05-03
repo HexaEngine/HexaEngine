@@ -2,6 +2,12 @@
 {
     using System;
 
+    public enum PanMode
+    {
+        Balance,
+        Pan
+    }
+
     /// <summary>
     /// Represents a source voice for playing audio with control over its properties and state.
     /// </summary>
@@ -28,6 +34,19 @@
         float Pitch { get; set; }
 
         /// <summary>
+        /// Gets or sets the pan of the audio source, controlling the left-right balance.
+        /// </summary>
+        float Pan { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current pan mode, which determines how the view is adjusted during panning operations.
+        /// </summary>
+        /// <remarks>The pan mode can affect user interactions and the behavior of the view when
+        /// navigating through content. Ensure to set the pan mode appropriately to achieve the desired panning
+        /// effect.</remarks>
+        PanMode PanMode { get; set; }
+
+        /// <summary>
         /// Gets the current state of the source voice.
         /// </summary>
         AudioSourceState State { get; }
@@ -35,32 +54,12 @@
         /// <summary>
         /// Gets or sets the submix voice to which this source voice is connected.
         /// </summary>
-        ISubmixVoice? Submix { get; set; }
-
-        /// <summary>
-        /// Occurs when the source voice is paused.
-        /// </summary>
-        event Action? Paused;
-
-        /// <summary>
-        /// Occurs when the source voice starts playing.
-        /// </summary>
-        event Action? Playing;
-
-        /// <summary>
-        /// Occurs when the source voice is rewound.
-        /// </summary>
-        event Action? Rewinded;
+        IAudioInputNode? Submix { get; set; }
 
         /// <summary>
         /// Occurs when the state of the source voice changes.
         /// </summary>
-        event Action<AudioSourceState>? StateChanged;
-
-        /// <summary>
-        /// Occurs when the source voice is stopped.
-        /// </summary>
-        event Action? Stopped;
+        event EventHandler<AudioSourceState>? StateChanged;
 
         /// <summary>
         /// Pauses the source voice, if playing.

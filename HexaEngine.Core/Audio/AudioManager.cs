@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Audio
 {
-    using HexaEngine.Core;
+    using HexaEngine.Core.Assets;
     using HexaEngine.Core.IO;
 
     /// <summary>
@@ -38,10 +38,25 @@
         /// thrown if the asset path is invalid or if the audio device is not ready.</remarks>
         /// <param name="path">The asset path that identifies the location of the audio asset to be used for the sound source. The path
         /// must refer to a valid and accessible audio resource.</param>
+        /// <param name="flags">The sound flags that specify how the sound should be created.</param>
         /// <returns>An instance of ISound that represents the created sound source, which can be used to control audio playback.</returns>
-        public static ISound CreateSourceVoice(in AssetPath path)
+        public static ISound CreateSound(in AssetPath path, SoundFlags flags)
         {
-            return audioDevice.CreateSound(path);
+            return audioDevice.CreateSound(path, flags);
+        }
+
+        /// <summary>
+        /// Creates a new sound instance using the specified asset reference and sound flags.
+        /// </summary>
+        /// <remarks>Ensure that the asset reference points to a valid sound asset. The behavior of the
+        /// created sound may vary based on the specified flags.</remarks>
+        /// <param name="assetRef">The asset reference that identifies the sound asset to be created. This parameter cannot be null.</param>
+        /// <param name="flags">The sound flags that specify the behavior of the sound instance, such as looping or 3D sound properties.</param>
+        /// <returns>An instance of ISound that represents the created sound. This instance can be used to control playback and
+        /// properties of the sound.</returns>
+        public static ISound CreateSound(in AssetRef assetRef, SoundFlags flags)
+        {
+            return audioDevice.CreateSound(assetRef, flags);
         }
 
         /// <summary>

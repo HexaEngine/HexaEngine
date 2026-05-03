@@ -1,96 +1,113 @@
 ﻿namespace HexaEngine.MiniAudio
 {
     using Hexa.NET.MiniAudio;
-    using HexaGen.Runtime;
-    using System.Runtime.InteropServices;
+    using Hexa.NET.Utilities;
+    using HexaEngine.Core.IO;
 
     internal unsafe class MiniAudioVFSLayer : IDisposable
     {
         MaVfsCallbacks* callbacks;
-        NativeCallback<OnOpen> onOpenCallback;
-        NativeCallback<OnOpenW> onOpenWCallback;
-        NativeCallback<OnClose> onCloseCallback;
-        NativeCallback<OnRead> onReadCallback;
-        NativeCallback<OnWrite> onWriteCallback;
-        NativeCallback<OnSeek> onSeekCallback;
-        NativeCallback<OnTell> onTellCallback;
-        NativeCallback<OnInfo> onInfoCallback;
 
         public MiniAudioVFSLayer()
         {
-            onOpenCallback = new(Open);
-            onOpenWCallback = new(OpenW);
-            onCloseCallback = new(Close);
-            onReadCallback = new(Read);
-            onWriteCallback = new(Write);
-            onSeekCallback = new(Seek);
-            onTellCallback = new(Tell);
-            onInfoCallback = new(Info);
             callbacks = AllocT<MaVfsCallbacks>();
-            callbacks->OnOpen = (void*)Marshal.GetFunctionPointerForDelegate(onOpenCallback);
-            callbacks->OnOpenW = (void*)Marshal.GetFunctionPointerForDelegate(onOpenWCallback);
-            callbacks->OnClose = (void*)Marshal.GetFunctionPointerForDelegate(onCloseCallback);
-            callbacks->OnRead = (void*)Marshal.GetFunctionPointerForDelegate(onReadCallback);
-            callbacks->OnWrite = (void*)Marshal.GetFunctionPointerForDelegate(onWriteCallback);
-            callbacks->OnSeek = (void*)Marshal.GetFunctionPointerForDelegate(onSeekCallback);
-            callbacks->OnTell = (void*)Marshal.GetFunctionPointerForDelegate(onTellCallback);
-            callbacks->OnInfo = (void*)Marshal.GetFunctionPointerForDelegate(onInfoCallback);
+            *callbacks = new(&Open, &OpenW, &Close, &Read, &Write, &Seek, &Tell, &Info);
+        }
+
+        private static MaResult Write(void* pVFs, void* file, void* pSrc, nuint sizeInBytes, nuint* pBytesWritten)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static MaResult Seek(void* pVFs, void* file, long offset, MaSeekOrigin origin)
+        {
+            var stream = GCUtils.GetObject<VirtualStream>(file);
+
+            SeekOrigin seekOrigin = origin switch
+            {
+                MaSeekOrigin.Start => SeekOrigin.Begin,
+                MaSeekOrigin.Current => SeekOrigin.Current,
+                MaSeekOrigin.End => SeekOrigin.End,
+                _ => (SeekOrigin)int.MaxValue
+            };
+
+            if (seekOrigin == (SeekOrigin)int.MaxValue)
+            {
+                return MaResult.InvalidArgs;
+            }
+
+            stream.Seek(offset, seekOrigin);
+            return MaResult.Success;
+        }
+
+        private static MaResult Read(void* pVFs, void* file, void* pDst, nuint sizeInBytes, nuint* pBytesRead)
+        {
+            var stream = GCUtils.GetObject<VirtualStream>(file);
+            ulong read = 0;
+            byte* dst = (byte*)pDst;
+            while (read < sizeInBytes)
+            {
+                ulong remaining = sizeInBytes - read;
+                ulong toRead = Math.Min(remaining, int.MaxValue);
+                Span<byte> span = new(dst + read, (int)toRead);
+                int rd = stream.Read(span);
+                read += (ulong)rd;
+                if (rd == 0)
+                {
+                    break;
+                }
+            }
+
+            *pBytesRead = (nuint)read;
+            return MaResult.Success;
         }
 
         public MaVfsCallbacks* Callbacks => callbacks;
 
-        private MaResult Open(void* pVFs, byte* pFilePath, uint openMode, void** pFile)
+        private static MaResult Open(void* pVFs, byte* pFilePath, uint openMode, void** pFile)
+        {
+            var path = ToStringFromUTF8(pFilePath);
+            if (string.IsNullOrEmpty(path))
+            {
+                return MaResult.InvalidArgs;
+            }
+            var stream = FileSystem.OpenRead(path);
+            *pFile = GCUtils.GCAlloc(stream);
+            return MaResult.Success;
+        }
+
+        private static MaResult OpenW(void* pVFs, char* pFilePath, uint openMode, void** pFile)
         {
             throw new NotImplementedException();
         }
 
-        private MaResult OpenW(void* pVFs, char* pFilePath, uint openMode, void** pFile)
+        private static MaResult Close(void* pVFs, void* file)
         {
-            throw new NotImplementedException();
+            var stream = GCUtils.GetObject<VirtualStream>(file);
+            stream.Dispose();
+            GCUtils.GCFree(file);
+            return MaResult.Success;
         }
 
-        private MaResult Close(void* pVFs, void* file)
+
+        private static MaResult Tell(void* pVFs, void* file, long* pCursor)
         {
-            throw new NotImplementedException();
+            var stream = GCUtils.GetObject<VirtualStream>(file);
+            *pCursor = stream.Position;
+            return MaResult.Success;
         }
 
-        private MaResult Read(void* pDataSource, void* pFramesOut, ulong frameCount, ulong* pFramesRead)
+        private static MaResult Info(void* pVFs, void* file, MaFileInfo* pInfo)
         {
-            throw new NotImplementedException();
-        }
-
-        private MaResult Write(void* pVFs, void* file, void* pSrc, nuint sizeInBytes, nuint* pBytesWritten)
-        {
-            throw new NotImplementedException();
-        }
-
-        private MaResult Seek(void* pDataSource, ulong frameIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        private MaResult Tell(void* pVFs, void* file, long* pCursor)
-        {
-            throw new NotImplementedException();
-        }
-
-        private MaResult Info(void* pVFs, void* file, MaFileInfo* pInfo)
-        {
-            throw new NotImplementedException();
+            var stream = GCUtils.GetObject<VirtualStream>(file);
+            pInfo->SizeInBytes = (ulong)stream.Length;
+            return MaResult.Success;
         }
 
         public void Dispose()
         {
             if (callbacks != null)
             {
-                onOpenCallback.Dispose();
-                onOpenWCallback.Dispose();
-                onCloseCallback.Dispose();
-                onReadCallback.Dispose();
-                onWriteCallback.Dispose();
-                onSeekCallback.Dispose();
-                onTellCallback.Dispose();
-                onInfoCallback.Dispose();
                 Free(callbacks);
                 callbacks = null;
             }

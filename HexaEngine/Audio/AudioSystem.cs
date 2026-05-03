@@ -6,7 +6,7 @@
 
     public class AudioSystem : ISceneSystem
     {
-        private readonly ComponentTypeQuery<IAudioComponent> components = new();
+        private readonly ComponentTypeQuery<AudioComponent> components = new();
 
         public string Name => "AudioSystem";
 

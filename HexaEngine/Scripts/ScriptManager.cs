@@ -6,7 +6,7 @@
 
     public class ScriptManager : ISceneSystem
     {
-        private readonly ComponentTypeQuery<IScriptComponent> components = new();
+        private readonly ComponentTypeQuery<ScriptComponent> components = new();
         private readonly ScriptGraph graph = new();
         private readonly List<ScriptGroup> groups = [];
         private readonly object _lock = new();
@@ -24,6 +24,10 @@
         {
             lock (_lock)
             {
+                foreach (var script in components)
+                {
+                    script.OnAssemblyLoaded();
+                }
                 UpdateGraphInternal();
             }
         }
@@ -32,6 +36,10 @@
         {
             lock (_lock)
             {
+                foreach (var script in components)
+                {
+                    script.OnAssembliesUnloaded();
+                }
                 ClearGroups();
                 graph.Clear();
             }
@@ -123,7 +131,7 @@
             groups.Clear();
         }
 
-        private void OnRemoved(GameObject gameObject, IScriptComponent component)
+        private void OnRemoved(GameObject gameObject, ScriptComponent component)
         {
             lock (_lock)
             {
@@ -138,7 +146,7 @@
             component.Destroy();
         }
 
-        private void OnAdded(GameObject gameObject, IScriptComponent component)
+        private void OnAdded(GameObject gameObject, ScriptComponent component)
         {
             lock (_lock)
             {
@@ -159,7 +167,7 @@
             }
         }
 
-        private void AddToGroup(IScriptComponent component)
+        private void AddToGroup(ScriptComponent component)
         {
             for (int i = 0; i < groups.Count; i++)
             {
@@ -170,7 +178,7 @@
             }
         }
 
-        private void RemoveFromGroup(IScriptComponent component)
+        private void RemoveFromGroup(ScriptComponent component)
         {
             for (int i = 0; i < groups.Count; i++)
             {

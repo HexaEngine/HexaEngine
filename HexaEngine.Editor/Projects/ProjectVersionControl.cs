@@ -169,19 +169,31 @@
                         continue;
                     }
 
-                    if (line.Contains("[user]"))
+                    if (line.StartsWith('[') && line.EndsWith(']'))
                     {
-                        capture = true;
+                        var span = line.AsSpan(1);
+                        span = span[..^1];
+                        if (span.SequenceEqual("user"))
+                        {
+                            capture = true;
+                        }
+                        else
+                        {
+                            capture = false;
+                        }
+                        continue;
                     }
 
-                    if (capture && line.Contains("name"))
+                    if (capture)
                     {
-                        name = line.Split('=', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1];
-                    }
-
-                    if (capture && line.Contains("email"))
-                    {
-                        email = line.Split('=', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1];
+                        if (line.Contains("name"))
+                        {
+                            name = line.Split('=', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1];
+                        }
+                        else if (line.Contains("email"))
+                        {
+                            email = line.Split('=', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1];
+                        }
                     }
                 }
 

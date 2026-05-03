@@ -40,7 +40,7 @@
             psmBuffer = creator.CreateConstantBuffer<PSMShadowParams>("ShadowAtlas.CB.PSM", CpuAccessFlags.Write);
             csmBuffer = creator.CreateConstantBuffer<CSMShadowParams>("ShadowAtlas.CB.CSM", CpuAccessFlags.Write);
             osmBuffer = creator.CreateConstantBuffer<DPSMShadowParams>("ShadowAtlas.CB.OSM", CpuAccessFlags.Write);
-            blurFilter = new(creator, "GaussianBlur", Format.R32G32Float, 1, 1);
+            blurFilter = new(creator, "GaussianBlur", Format.R32G32Float, 1, 1, GaussianRadius.Radius3x3);
             copyEffect = new(creator, "CopyPass", CopyFilter.None);
             clearSliceEffect = new(creator);
             reprojectEffect = new(creator);
@@ -100,7 +100,7 @@
                 return;
             }
 
-            if (source.Width != blurFilter.Width || source.Height != blurFilter.Height || source.Format != blurFilter.Format)
+            if (source.Width > blurFilter.Width || source.Height > blurFilter.Height || source.Format != blurFilter.Format)
             {
                 blurFilter.Resize(source.Format, source.Width, source.Height);
             }
@@ -110,7 +110,7 @@
 
         private void FilterArray(IGraphicsContext context, Texture2D source, uint cascadeMask, CSMShadowParams old, CSMShadowParams now, bool reproject)
         {
-            if (source.Width != blurFilter.Width || source.Height != blurFilter.Height || source.Format != blurFilter.Format)
+            if (source.Width > blurFilter.Width || source.Height > blurFilter.Height || source.Format != blurFilter.Format)
             {
                 blurFilter.Resize(source.Format, source.Width, source.Height);
             }
@@ -234,15 +234,19 @@
             return BVHFilterResult.Skip;
         }
 
+        private CSMShadowParams lastCsmParams;
+
         private void DoDirectional(IGraphicsContext context, ICPUProfiler? profiler, Camera? camera, BVHTree<IDrawable> tree, LightManager lights, LightSource light)
         {
-            var old = csmBuffer.Value![0];
+            var old = lastCsmParams;
             profiler?.Begin("ShadowMap.UpdateDirectional");
             var directionalLight = (DirectionalLight)light;
-            if (!directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, csmBuffer.Value!, camera!, out uint cascadeMask, out var reproject))
+            if (!directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, camera!, out var shadowParams, out uint cascadeMask, out var reproject))
             {
                 return; // false return means nothing to update.
             }
+            csmBuffer.Value!.Update(context, shadowParams);
+            lastCsmParams = shadowParams;
 
             var map = directionalLight.GetMap()!;
             var csmDepthBuffer = directionalLight.GetDepthStencil()!;
@@ -252,8 +256,6 @@
 
             context.SetRenderTarget(map.RTV, csmDepthBuffer.DSV);
             context.SetViewport(map.Viewport);
-
-            var now = csmBuffer.Value![0];
 
             foreach (var node in tree.Enumerate(CascadeFilter, stack, (directionalLight.ShadowFrustra, cascadeMask)))
             {
@@ -266,7 +268,7 @@
                 profiler?.End($"ShadowMap.UpdateDirectional.{drawable.DebugName}");
             }
 
-            FilterArray(context, map, cascadeMask, old, now, reproject);
+            FilterArray(context, map, cascadeMask, old, shadowParams, reproject);
 
             profiler?.End("ShadowMap.UpdateDirectional");
         }

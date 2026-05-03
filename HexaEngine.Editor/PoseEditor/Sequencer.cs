@@ -339,7 +339,7 @@
                 var time = (int)TimeToFrame((float)keyframe.Time);
                 if (time == Frame)
                 {
-                    var rot = keyframe.Value.ToYawPitchRoll().ToDeg();
+                    var rot = keyframe.Value.ToPitchYawRoll().ToDeg();
                     if (ImGui.InputFloat3("Rotation", ref rot))
                     {
                         keyframe.Value = rot.ToRad().ToQuaternion();

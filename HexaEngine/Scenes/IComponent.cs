@@ -40,25 +40,4 @@
 
         public abstract void Destroy();
     }
-
-    public interface IAudioComponent : IComponent
-    {
-        void Update();
-    }
-
-    public interface IScriptComponent : IComponent, INotifyFlagsChanged<ScriptFlags>
-    {
-        int ExecutionOrderIndex { get; set; }
-        Type? ScriptType { get; }
-
-        void ScriptCreate();
-
-        void ScriptLoad();
-
-        void ScriptAwake();
-
-        void FixedUpdate();
-
-        void Update();
-    }
 }

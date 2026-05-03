@@ -61,5 +61,18 @@
         /// Gets or sets the velocity of the audio emitter.
         /// </summary>
         Vector3 Velocity { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the attenuation model used to determine how sound decreases in volume over distance.
+        /// </summary>
+        /// <remarks>Selecting an appropriate attenuation model can affect both the perceived audio
+        /// quality and the performance of audio simulations. Different models may be suitable for different
+        /// environments or use cases.</remarks>
+        AttenuationModel AttenuationModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the directional attenuation factor for the audio emitter.
+        /// </summary>
+        float DirectionalAttenuationFactor { get; set; }
     }
 }

@@ -229,11 +229,7 @@ namespace HexaEngine.Editor.TerrainEditor
 
                 toolContext.Cell = cell;
 
-                unsafe
-                {
-                    *worldBuffer.Local = Matrix4x4.Transpose(cell.Transform);
-                    worldBuffer.Update(context);
-                }
+                worldBuffer.Update(context, Matrix4x4.Transpose(cell.Transform));
                 if (editTerrain)
                 {
                     if (hoversOverTerrain)

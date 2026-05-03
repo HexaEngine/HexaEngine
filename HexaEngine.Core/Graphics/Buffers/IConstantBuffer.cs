@@ -12,17 +12,9 @@
         /// </summary>
         IBuffer Buffer { get; }
 
-        /// <summary>
-        /// Resizes the constant buffer to the specified length.
-        /// </summary>
-        /// <param name="length">The new length of the buffer.</param>
-        void Resize(uint length);
+        unsafe void Resize(void* data, uint size);
 
-        /// <summary>
-        /// Updates the content of the constant buffer using the provided graphics context.
-        /// </summary>
-        /// <param name="context">The graphics context used for the update.</param>
-        void Update(IGraphicsContext context);
+        unsafe void Update(IGraphicsContext context, void* data, uint size);
     }
 
     /// <summary>
@@ -32,21 +24,19 @@
     public interface IConstantBuffer<T> : IConstantBuffer where T : unmanaged
     {
         /// <summary>
-        /// Gets or sets the element at the specified index in the constant buffer.
+        /// Resizes the constant buffer to the specified length.
         /// </summary>
-        /// <param name="index">The index of the element to get or set.</param>
-        T this[int index] { get; set; }
-
-        /// <summary>
-        /// Gets a pointer to the local data of the constant buffer.
-        /// </summary>
-        unsafe T* Local { get; }
+        /// <param name="items"></param>
+        /// <param name="length">The new length of the buffer.</param>
+        unsafe void Resize(T* items, uint length);
 
         /// <summary>
         /// Updates the content of a specific element in the constant buffer using the provided graphics context.
         /// </summary>
         /// <param name="context">The graphics context used for the update.</param>
         /// <param name="value">The new value for the specified element.</param>
-        void Update(IGraphicsContext context, T value);
+        void Update(IGraphicsContext context, in T value);
+
+        unsafe void Update(IGraphicsContext context, T* values, uint count);
     }
 }

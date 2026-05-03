@@ -99,6 +99,7 @@
             engineConfig.PResourceManager = resourceManager;
             engineConfig.Channels = desc.Channels;
             engineConfig.SampleRate = desc.SampleRate;
+        
 
             if (desc.Id != 0)
             {

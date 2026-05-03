@@ -1,10 +1,8 @@
 ﻿namespace HexaEngine.Scripts
 {
-    using HexaEngine.Scenes;
-
-    public struct ScriptExecutionOrderComparer : IComparer<IScriptComponent>
+    public struct ScriptExecutionOrderComparer : IComparer<ScriptComponent>
     {
-        public readonly int Compare(IScriptComponent? x, IScriptComponent? y)
+        public readonly int Compare(ScriptComponent? x, ScriptComponent? y)
         {
             return x == null || y == null ? 0 : x.ExecutionOrderIndex.CompareTo(y.ExecutionOrderIndex);
         }

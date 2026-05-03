@@ -155,7 +155,7 @@
             Vector4 frustumX = MathUtil.NormalizePlane(projectionT.GetRow(3) + projectionT.GetRow(0)); // x + w < 0
             Vector4 frustumY = MathUtil.NormalizePlane(projectionT.GetRow(3) + projectionT.GetRow(1)); // y + w < 0
 
-            occlusionParamBuffer[0] = new()
+            OcclusionParams occlusionParams = new()
             {
                 OcclusionCulling = (cullingFlags & CullingFlags.Occlusion) != 0 ? 1 : 0,
                 FrustumCulling = (cullingFlags & CullingFlags.Frustum) != 0 ? 1 : 0,
@@ -168,7 +168,7 @@
                 P11 = projectionT.M22,
                 DepthBias = depthBias
             };
-            occlusionParamBuffer.Update(context);
+            occlusionParamBuffer.Update(context, occlusionParams);
 
             var bindings = culling.Bindings;
 

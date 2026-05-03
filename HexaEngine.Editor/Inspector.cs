@@ -88,7 +88,7 @@
                 }
                 else if (EditorCameraController.Dimension == EditorCameraDimension.Dim2D)
                 {
-                    DebugDraw.DrawGrid(MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), GridFlags.DrawAxis);
+                    DebugDraw.DrawGrid(MathUtil.RotationPitchYawRoll(float.Pi / 2, 0, 0), GridFlags.DrawAxis);
                 }
             }
 
