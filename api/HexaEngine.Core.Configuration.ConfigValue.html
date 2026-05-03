@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ConfigValue </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ConfigValue ">
+      
+      <meta name="description" content="Represents a configuration value that can hold various data types.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Configuration_ConfigValue.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Configuration.ConfigValue%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Configuration.ConfigValue">
+
+
+
+  <h1 id="HexaEngine_Core_Configuration_ConfigValue" data-uid="HexaEngine.Core.Configuration.ConfigValue" class="text-break">
+Class ConfigValue  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Configuration.html">Configuration</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a configuration value that can hold various data types.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ConfigValue</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ConfigValue</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue__ctor_" data-uid="HexaEngine.Core.Configuration.ConfigValue.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue__ctor_System_Object_System_Reflection_PropertyInfo_HexaEngine_Core_Configuration_DataType_System_String_System_Boolean_" data-uid="HexaEngine.Core.Configuration.ConfigValue.#ctor(System.Object,System.Reflection.PropertyInfo,HexaEngine.Core.Configuration.DataType,System.String,System.Boolean)">
+  ConfigValue(object, PropertyInfo, DataType, string?, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a> class associated with an object instance and property information.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigValue(object instanceObject, PropertyInfo propertyInfo, DataType dataType, string? value, bool isReadOnly)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>instanceObject</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object instance with which this configuration value is associated.</p>
+</dd>
+    <dt><code>propertyInfo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.reflection.propertyinfo">PropertyInfo</a></dt>
+    <dd><p>The property information of the associated property.</p>
+</dd>
+    <dt><code>dataType</code> <a class="xref" href="HexaEngine.Core.Configuration.DataType.html">DataType</a></dt>
+    <dd><p>The data type of the configuration value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The value of the configuration value.</p>
+</dd>
+    <dt><code>isReadOnly</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value indicating whether the configuration value is read-only.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue__ctor_" data-uid="HexaEngine.Core.Configuration.ConfigValue.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue__ctor_System_String_HexaEngine_Core_Configuration_DataType_System_String_System_Boolean_" data-uid="HexaEngine.Core.Configuration.ConfigValue.#ctor(System.String,HexaEngine.Core.Configuration.DataType,System.String,System.Boolean)">
+  ConfigValue(string, DataType, string?, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonConstructor]
+public ConfigValue(string name, DataType dataType, string? value, bool isReadOnly)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the configuration value.</p>
+</dd>
+    <dt><code>dataType</code> <a class="xref" href="HexaEngine.Core.Configuration.DataType.html">DataType</a></dt>
+    <dd><p>The data type of the configuration value.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The value of the configuration value.</p>
+</dd>
+    <dt><code>isReadOnly</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value indicating whether the configuration value is read-only.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_DataType_" data-uid="HexaEngine.Core.Configuration.ConfigValue.DataType*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_DataType" data-uid="HexaEngine.Core.Configuration.ConfigValue.DataType">
+  DataType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the data type of this configuration value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DataType DataType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Configuration.DataType.html">DataType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_DefaultValue_" data-uid="HexaEngine.Core.Configuration.ConfigValue.DefaultValue*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_DefaultValue" data-uid="HexaEngine.Core.Configuration.ConfigValue.DefaultValue">
+  DefaultValue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the default value of this configuration value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public string? DefaultValue { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_EnumType_" data-uid="HexaEngine.Core.Configuration.ConfigValue.EnumType*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_EnumType" data-uid="HexaEngine.Core.Configuration.ConfigValue.EnumType">
+  EnumType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the type of the enumeration associated with this configuration value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public Type? EnumType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_Instance_" data-uid="HexaEngine.Core.Configuration.ConfigValue.Instance*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_Instance" data-uid="HexaEngine.Core.Configuration.ConfigValue.Instance">
+  Instance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the instance associated with this configuration value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public object? Instance { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_IsReadOnly_" data-uid="HexaEngine.Core.Configuration.ConfigValue.IsReadOnly*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_IsReadOnly" data-uid="HexaEngine.Core.Configuration.ConfigValue.IsReadOnly">
+  IsReadOnly
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether this configuration value is read-only.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsReadOnly { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_Name_" data-uid="HexaEngine.Core.Configuration.ConfigValue.Name*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_Name" data-uid="HexaEngine.Core.Configuration.ConfigValue.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the name of this configuration value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_Property_" data-uid="HexaEngine.Core.Configuration.ConfigValue.Property*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_Property" data-uid="HexaEngine.Core.Configuration.ConfigValue.Property">
+  Property
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the property associated with this configuration value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public PropertyInfo? Property { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.reflection.propertyinfo">PropertyInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_SyncObject_" data-uid="HexaEngine.Core.Configuration.ConfigValue.SyncObject*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_SyncObject" data-uid="HexaEngine.Core.Configuration.ConfigValue.SyncObject">
+  SyncObject
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the synchronization object used for thread safety.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public object SyncObject { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_Value_" data-uid="HexaEngine.Core.Configuration.ConfigValue.Value*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_Value" data-uid="HexaEngine.Core.Configuration.ConfigValue.Value">
+  Value
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the value of this configuration value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? Value { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetBool_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetBool*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetBool" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetBool">
+  GetBool()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L272"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a boolean.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool GetBool()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetDouble_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetDouble*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetDouble" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetDouble">
+  GetDouble()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L259"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a double-precision floating-point number.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double GetDouble()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetEnum_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetEnum*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetEnum_System_Type_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetEnum(System.Type)">
+  GetEnum(Type)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L343"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to an enumeration of the specified type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object GetEnum(Type type)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetEnum_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetEnum*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetEnum__1" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetEnum``1">
+  GetEnum&lt;T&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L330"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to an enumeration of the specified type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T GetEnum&lt;T&gt;() where T : struct, Enum</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetFloat_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetFloat*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetFloat" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetFloat">
+  GetFloat()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L246"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a single-precision floating-point number.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float GetFloat()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetInt16_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetInt16*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetInt16" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetInt16">
+  GetInt16()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a signed 16-bit integer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public short GetInt16()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetInt32_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetInt32*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetInt32" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetInt32">
+  GetInt32()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L207"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a signed 32-bit integer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetInt32()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetInt64_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetInt64*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetInt64" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetInt64">
+  GetInt64()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L233"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a signed 64-bit integer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long GetInt64()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetInt8_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetInt8*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetInt8" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetInt8">
+  GetInt8()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a signed 8-bit integer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sbyte GetInt8()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetKeys_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetKeys*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetKeys" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetKeys">
+  GetKeys()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L358"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a collection of key values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;Key&gt; GetKeys()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="HexaEngine.Core.Input.Key.html">Key</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetUInt16_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetUInt16*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetUInt16" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetUInt16">
+  GetUInt16()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to an unsigned 16-bit integer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ushort GetUInt16()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetUInt32_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetUInt32*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetUInt32" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetUInt32">
+  GetUInt32()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L194"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to an unsigned 32-bit integer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint GetUInt32()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetUInt64_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetUInt64*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetUInt64" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetUInt64">
+  GetUInt64()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L220"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to an unsigned 64-bit integer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ulong GetUInt64()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetUInt8_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetUInt8*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetUInt8" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetUInt8">
+  GetUInt8()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to an unsigned 8-bit integer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte GetUInt8()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetVector2_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetVector2*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetVector2" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetVector2">
+  GetVector2()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L285"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a 2D vector of single-precision floating-point numbers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2 GetVector2()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetVector3_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetVector3*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetVector3" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetVector3">
+  GetVector3()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L300"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a 3D vector of single-precision floating-point numbers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3 GetVector3()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_GetVector4_" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetVector4*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_GetVector4" data-uid="HexaEngine.Core.Configuration.ConfigValue.GetVector4">
+  GetVector4()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L315"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to a 4D vector of single-precision floating-point numbers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector4 GetVector4()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector4">Vector4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_Get_" data-uid="HexaEngine.Core.Configuration.ConfigValue.Get*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_Get__1_System_Func_System_String___0__" data-uid="HexaEngine.Core.Configuration.ConfigValue.Get``1(System.Func{System.String,``0})">
+  Get&lt;T&gt;(Func&lt;string?, T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L375"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the value to the specified data type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T Get&lt;T&gt;(Func&lt;string?, T&gt; convert)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>convert</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Configuration_ConfigValue_SetToDefault_" data-uid="HexaEngine.Core.Configuration.ConfigValue.SetToDefault*"></a>
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_SetToDefault" data-uid="HexaEngine.Core.Configuration.ConfigValue.SetToDefault">
+  SetToDefault()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the value of this configuration to its default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetToDefault()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Core_Configuration_ConfigValue_ValueChanged" data-uid="HexaEngine.Core.Configuration.ConfigValue.ValueChanged">
+  ValueChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Occurs when the value of this configuration changes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action&lt;ConfigValue, string?&gt;? ValueChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="HexaEngine.Core.Configuration.ConfigValue.html">ConfigValue</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Configuration/ConfigValue.cs/#L13" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

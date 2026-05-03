@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class TerrainCell </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class TerrainCell ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Meshes_TerrainCell.md&amp;value=---%0Auid%3A%20HexaEngine.Meshes.TerrainCell%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Meshes.TerrainCell">
+
+
+
+  <h1 id="HexaEngine_Meshes_TerrainCell" data-uid="HexaEngine.Meshes.TerrainCell" class="text-break">
+Class TerrainCell  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Meshes.html">Meshes</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class TerrainCell : IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">TerrainCell</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Meshes_TerrainCell__ctor_" data-uid="HexaEngine.Meshes.TerrainCell.#ctor*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell__ctor_HexaEngine_Core_IO_Binary_Terrains_TerrainFile_HexaEngine_Core_IO_Binary_Terrains_TerrainCellData_HexaEngine_Core_IO_ReusableFileStream_System_Boolean_" data-uid="HexaEngine.Meshes.TerrainCell.#ctor(HexaEngine.Core.IO.Binary.Terrains.TerrainFile,HexaEngine.Core.IO.Binary.Terrains.TerrainCellData,HexaEngine.Core.IO.ReusableFileStream,System.Boolean)">
+  TerrainCell(TerrainFile, TerrainCellData, ReusableFileStream, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCell(TerrainFile terrain, TerrainCellData cellData, ReusableFileStream stream, bool isDynamic)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>terrain</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainFile.html">TerrainFile</a></dt>
+    <dd></dd>
+    <dt><code>cellData</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainCellData.html">TerrainCellData</a></dt>
+    <dd></dd>
+    <dt><code>stream</code> <a class="xref" href="HexaEngine.Core.IO.ReusableFileStream.html">ReusableFileStream</a></dt>
+    <dd></dd>
+    <dt><code>isDynamic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Bottom" data-uid="HexaEngine.Meshes.TerrainCell.Bottom">
+  Bottom
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCell? Bottom</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_BoundingBox" data-uid="HexaEngine.Meshes.TerrainCell.BoundingBox">
+  BoundingBox
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox BoundingBox</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">BoundingBox</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_BoundingSphere" data-uid="HexaEngine.Meshes.TerrainCell.BoundingSphere">
+  BoundingSphere
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingSphere BoundingSphere</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">BoundingSphere</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_DrawIndirectOffset" data-uid="HexaEngine.Meshes.TerrainCell.DrawIndirectOffset">
+  DrawIndirectOffset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint DrawIndirectOffset</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_ID" data-uid="HexaEngine.Meshes.TerrainCell.ID">
+  ID
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Point2 ID</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Point2</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Left" data-uid="HexaEngine.Meshes.TerrainCell.Left">
+  Left
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCell? Left</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Offset" data-uid="HexaEngine.Meshes.TerrainCell.Offset">
+  Offset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector3 Offset</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Right" data-uid="HexaEngine.Meshes.TerrainCell.Right">
+  Right
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCell? Right</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Top" data-uid="HexaEngine.Meshes.TerrainCell.Top">
+  Top
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCell? Top</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainCell.html">TerrainCell</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Transform" data-uid="HexaEngine.Meshes.TerrainCell.Transform">
+  Transform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4x4 Transform</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_TransformInv" data-uid="HexaEngine.Meshes.TerrainCell.TransformInv">
+  TransformInv
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4x4 TransformInv</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_TypeId" data-uid="HexaEngine.Meshes.TerrainCell.TypeId">
+  TypeId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint TypeId</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_CellData_" data-uid="HexaEngine.Meshes.TerrainCell.CellData*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_CellData" data-uid="HexaEngine.Meshes.TerrainCell.CellData">
+  CellData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCellData CellData { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainCellData.html">TerrainCellData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_CurrentLODLevel_" data-uid="HexaEngine.Meshes.TerrainCell.CurrentLODLevel*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_CurrentLODLevel" data-uid="HexaEngine.Meshes.TerrainCell.CurrentLODLevel">
+  CurrentLODLevel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int CurrentLODLevel { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_DrawLayers_" data-uid="HexaEngine.Meshes.TerrainCell.DrawLayers*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_DrawLayers" data-uid="HexaEngine.Meshes.TerrainCell.DrawLayers">
+  DrawLayers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;TerrainDrawLayer&gt; DrawLayers { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="HexaEngine.Meshes.TerrainDrawLayer.html">TerrainDrawLayer</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_IndexCount_" data-uid="HexaEngine.Meshes.TerrainCell.IndexCount*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_IndexCount" data-uid="HexaEngine.Meshes.TerrainCell.IndexCount">
+  IndexCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint IndexCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_LODData_" data-uid="HexaEngine.Meshes.TerrainCell.LODData*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_LODData" data-uid="HexaEngine.Meshes.TerrainCell.LODData">
+  LODData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainCellLODData LODData { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainCellLODData.html">TerrainCellLODData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_LODLevels_" data-uid="HexaEngine.Meshes.TerrainCell.LODLevels*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_LODLevels" data-uid="HexaEngine.Meshes.TerrainCell.LODLevels">
+  LODLevels
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int LODLevels { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_Mesh_" data-uid="HexaEngine.Meshes.TerrainCell.Mesh*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Mesh" data-uid="HexaEngine.Meshes.TerrainCell.Mesh">
+  Mesh
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Mesh Mesh { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Resources.Mesh.html">Mesh</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_VertexCount_" data-uid="HexaEngine.Meshes.TerrainCell.VertexCount*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_VertexCount" data-uid="HexaEngine.Meshes.TerrainCell.VertexCount">
+  VertexCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint VertexCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_AddLayer_" data-uid="HexaEngine.Meshes.TerrainCell.AddLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_AddLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Meshes.TerrainCell.AddLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  AddLayer(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainDrawLayer AddLayer(TerrainLayer terrainLayer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>terrainLayer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainDrawLayer.html">TerrainDrawLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_AddLayer_" data-uid="HexaEngine.Meshes.TerrainCell.AddLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_AddLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_HexaEngine_Meshes_ChannelMask__" data-uid="HexaEngine.Meshes.TerrainCell.AddLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer,HexaEngine.Meshes.ChannelMask@)">
+  AddLayer(TerrainLayer, out ChannelMask)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainDrawLayer AddLayer(TerrainLayer terrainLayer, out ChannelMask mask)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>terrainLayer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+    <dt><code>mask</code> <a class="xref" href="HexaEngine.Meshes.ChannelMask.html">ChannelMask</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainDrawLayer.html">TerrainDrawLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_Bind_" data-uid="HexaEngine.Meshes.TerrainCell.Bind*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Bind_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Meshes.TerrainCell.Bind(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Bind(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L246"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Bind(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_ComputeLODJobPriority_" data-uid="HexaEngine.Meshes.TerrainCell.ComputeLODJobPriority*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_ComputeLODJobPriority_System_Int32_" data-uid="HexaEngine.Meshes.TerrainCell.ComputeLODJobPriority(System.Int32)">
+  ComputeLODJobPriority(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public JobPriority ComputeLODJobPriority(int level)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>level</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Jobs.JobPriority.html">JobPriority</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_ContainsLayer_" data-uid="HexaEngine.Meshes.TerrainCell.ContainsLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_ContainsLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Meshes.TerrainCell.ContainsLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  ContainsLayer(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ContainsLayer(TerrainLayer layer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_Dispose_" data-uid="HexaEngine.Meshes.TerrainCell.Dispose*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Dispose" data-uid="HexaEngine.Meshes.TerrainCell.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_Dispose_" data-uid="HexaEngine.Meshes.TerrainCell.Dispose*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Dispose_System_Boolean_" data-uid="HexaEngine.Meshes.TerrainCell.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L256"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_FixHeightMap_" data-uid="HexaEngine.Meshes.TerrainCell.FixHeightMap*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_FixHeightMap" data-uid="HexaEngine.Meshes.TerrainCell.FixHeightMap">
+  FixHeightMap()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FixHeightMap()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_FixNormals_" data-uid="HexaEngine.Meshes.TerrainCell.FixNormals*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_FixNormals" data-uid="HexaEngine.Meshes.TerrainCell.FixNormals">
+  FixNormals()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L303"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FixNormals()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_Generate_" data-uid="HexaEngine.Meshes.TerrainCell.Generate*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Generate" data-uid="HexaEngine.Meshes.TerrainCell.Generate">
+  Generate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L322"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Generate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_GenerateIndicesAndUVs_" data-uid="HexaEngine.Meshes.TerrainCell.GenerateIndicesAndUVs*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_GenerateIndicesAndUVs" data-uid="HexaEngine.Meshes.TerrainCell.GenerateIndicesAndUVs">
+  GenerateIndicesAndUVs()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L295"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GenerateIndicesAndUVs()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_GenerateLOD_" data-uid="HexaEngine.Meshes.TerrainCell.GenerateLOD*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_GenerateLOD" data-uid="HexaEngine.Meshes.TerrainCell.GenerateLOD">
+  GenerateLOD()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L287"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GenerateLOD()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_GenerateLevel_" data-uid="HexaEngine.Meshes.TerrainCell.GenerateLevel*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_GenerateLevel_System_Int32_" data-uid="HexaEngine.Meshes.TerrainCell.GenerateLevel(System.Int32)">
+  GenerateLevel(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L334"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GenerateLevel(int i)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>i</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_GetLayerMask_" data-uid="HexaEngine.Meshes.TerrainCell.GetLayerMask*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_GetLayerMask_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_HexaEngine_Meshes_ChannelMask__" data-uid="HexaEngine.Meshes.TerrainCell.GetLayerMask(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer,HexaEngine.Meshes.ChannelMask@)">
+  GetLayerMask(TerrainLayer, out ChannelMask)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TerrainDrawLayer? GetLayerMask(TerrainLayer terrainLayer, out ChannelMask mask)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>terrainLayer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+    <dt><code>mask</code> <a class="xref" href="HexaEngine.Meshes.ChannelMask.html">ChannelMask</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Meshes.TerrainDrawLayer.html">TerrainDrawLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_IntersectRay_" data-uid="HexaEngine.Meshes.TerrainCell.IntersectRay*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_IntersectRay_Hexa_NET_Mathematics_Ray_System_Numerics_Matrix4x4_System_Numerics_Vector3__" data-uid="HexaEngine.Meshes.TerrainCell.IntersectRay(Hexa.NET.Mathematics.Ray,System.Numerics.Matrix4x4,System.Numerics.Vector3@)">
+  IntersectRay(Ray, Matrix4x4, out Vector3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L282"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IntersectRay(Ray ray, Matrix4x4 transform, out Vector3 pointInTerrain)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ray</code> <span class="xref">Ray</span></dt>
+    <dd></dd>
+    <dt><code>transform</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd></dd>
+    <dt><code>pointInTerrain</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_IntersectRay_" data-uid="HexaEngine.Meshes.TerrainCell.IntersectRay*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_IntersectRay_Hexa_NET_Mathematics_Ray_System_Numerics_Vector3__" data-uid="HexaEngine.Meshes.TerrainCell.IntersectRay(Hexa.NET.Mathematics.Ray,System.Numerics.Vector3@)">
+  IntersectRay(Ray, out Vector3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L277"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IntersectRay(Ray ray, out Vector3 pointInTerrain)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ray</code> <span class="xref">Ray</span></dt>
+    <dd></dd>
+    <dt><code>pointInTerrain</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector3">Vector3</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_RemoveDrawLayer_" data-uid="HexaEngine.Meshes.TerrainCell.RemoveDrawLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_RemoveDrawLayer_HexaEngine_Meshes_TerrainDrawLayer_" data-uid="HexaEngine.Meshes.TerrainCell.RemoveDrawLayer(HexaEngine.Meshes.TerrainDrawLayer)">
+  RemoveDrawLayer(TerrainDrawLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L220"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveDrawLayer(TerrainDrawLayer drawLayer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>drawLayer</code> <a class="xref" href="HexaEngine.Meshes.TerrainDrawLayer.html">TerrainDrawLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_RemoveLayer_" data-uid="HexaEngine.Meshes.TerrainCell.RemoveLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_RemoveLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Meshes.TerrainCell.RemoveLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  RemoveLayer(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L208"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveLayer(TerrainLayer terrainLayer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>terrainLayer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_SetLOD_" data-uid="HexaEngine.Meshes.TerrainCell.SetLOD*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_SetLOD_System_Int32_" data-uid="HexaEngine.Meshes.TerrainCell.SetLOD(System.Int32)">
+  SetLOD(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetLOD(int level)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>level</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_TryAddLayer_" data-uid="HexaEngine.Meshes.TerrainCell.TryAddLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_TryAddLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Meshes.TerrainCell.TryAddLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  TryAddLayer(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L149"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryAddLayer(TerrainLayer layer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_TryAddLayer_" data-uid="HexaEngine.Meshes.TerrainCell.TryAddLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_TryAddLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_HexaEngine_Meshes_TerrainDrawLayer__" data-uid="HexaEngine.Meshes.TerrainCell.TryAddLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer,HexaEngine.Meshes.TerrainDrawLayer@)">
+  TryAddLayer(TerrainLayer, out TerrainDrawLayer?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryAddLayer(TerrainLayer layer, out TerrainDrawLayer? drawLayer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+    <dt><code>drawLayer</code> <a class="xref" href="HexaEngine.Meshes.TerrainDrawLayer.html">TerrainDrawLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_TryAddLayer_" data-uid="HexaEngine.Meshes.TerrainCell.TryAddLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_TryAddLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_HexaEngine_Meshes_TerrainDrawLayer__HexaEngine_Meshes_ChannelMask__" data-uid="HexaEngine.Meshes.TerrainCell.TryAddLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer,HexaEngine.Meshes.TerrainDrawLayer@,HexaEngine.Meshes.ChannelMask@)">
+  TryAddLayer(TerrainLayer, out TerrainDrawLayer?, out ChannelMask)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryAddLayer(TerrainLayer layer, out TerrainDrawLayer? drawLayer, out ChannelMask channelMask)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>layer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+    <dt><code>drawLayer</code> <a class="xref" href="HexaEngine.Meshes.TerrainDrawLayer.html">TerrainDrawLayer</a></dt>
+    <dd></dd>
+    <dt><code>channelMask</code> <a class="xref" href="HexaEngine.Meshes.ChannelMask.html">ChannelMask</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_Unbind_" data-uid="HexaEngine.Meshes.TerrainCell.Unbind*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_Unbind_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Meshes.TerrainCell.Unbind(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Unbind(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L251"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Unbind(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_UpdateLayer_" data-uid="HexaEngine.Meshes.TerrainCell.UpdateLayer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_UpdateLayer_HexaEngine_Core_IO_Binary_Terrains_TerrainLayer_" data-uid="HexaEngine.Meshes.TerrainCell.UpdateLayer(HexaEngine.Core.IO.Binary.Terrains.TerrainLayer)">
+  UpdateLayer(TerrainLayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L232"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateLayer(TerrainLayer terrainLayer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>terrainLayer</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Terrains.TerrainLayer.html">TerrainLayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Meshes_TerrainCell_UpdateVertexBuffer_" data-uid="HexaEngine.Meshes.TerrainCell.UpdateVertexBuffer*"></a>
+
+  <h3 id="HexaEngine_Meshes_TerrainCell_UpdateVertexBuffer_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Meshes.TerrainCell.UpdateVertexBuffer(HexaEngine.Core.Graphics.IGraphicsContext)">
+  UpdateVertexBuffer(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L343"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateVertexBuffer(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Meshes/TerrainCell.cs/#L13" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

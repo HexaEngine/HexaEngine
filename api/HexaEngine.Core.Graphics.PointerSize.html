@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct PointerSize </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct PointerSize ">
+      
+      <meta name="description" content="Represents a size value that can be used with pointer arithmetic.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_PointerSize.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.PointerSize%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.PointerSize">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_PointerSize" data-uid="HexaEngine.Core.Graphics.PointerSize" class="text-break">
+Struct PointerSize  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a size value that can be used with pointer arithmetic.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly struct PointerSize : IEquatable&lt;PointerSize&gt;, IFormattable</code></pre>
+  </div>
+
+
+
+
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iformattable">IFormattable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize__ctor_" data-uid="HexaEngine.Core.Graphics.PointerSize.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize__ctor_System_Int32_" data-uid="HexaEngine.Core.Graphics.PointerSize.#ctor(System.Int32)">
+  PointerSize(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> struct with a specified <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PointerSize(int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The size as an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize__ctor_" data-uid="HexaEngine.Core.Graphics.PointerSize.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize__ctor_System_Int64_" data-uid="HexaEngine.Core.Graphics.PointerSize.#ctor(System.Int64)">
+  PointerSize(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> struct with a specified <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a> size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PointerSize(long size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The size as a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize__ctor_" data-uid="HexaEngine.Core.Graphics.PointerSize.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize__ctor_System_IntPtr_" data-uid="HexaEngine.Core.Graphics.PointerSize.#ctor(System.IntPtr)">
+  PointerSize(nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> struct with a specified <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a> size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PointerSize(nint size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd><p>The size as an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_Zero" data-uid="HexaEngine.Core.Graphics.PointerSize.Zero">
+  Zero
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> with a value of 0.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly PointerSize Zero</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_Equals_" data-uid="HexaEngine.Core.Graphics.PointerSize.Equals*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_Equals_HexaEngine_Core_Graphics_PointerSize_" data-uid="HexaEngine.Core.Graphics.PointerSize.Equals(HexaEngine.Core.Graphics.PointerSize)">
+  Equals(PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(PointerSize other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd><p>An object to compare with this object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_Equals_" data-uid="HexaEngine.Core.Graphics.PointerSize.Equals*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_Equals_System_Object_" data-uid="HexaEngine.Core.Graphics.PointerSize.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether this instance and a specified object are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object? value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if <code class="paramref">obj</code> and this instance are the same type and represent the same value; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_GetHashCode_" data-uid="HexaEngine.Core.Graphics.PointerSize.GetHashCode*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_GetHashCode" data-uid="HexaEngine.Core.Graphics.PointerSize.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the hash code for this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A 32-bit signed integer that is the hash code for this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_ToString_" data-uid="HexaEngine.Core.Graphics.PointerSize.ToString*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_ToString" data-uid="HexaEngine.Core.Graphics.PointerSize.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the fully qualified type name of this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The fully qualified type name.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_ToString_" data-uid="HexaEngine.Core.Graphics.PointerSize.ToString*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_ToString_System_String_" data-uid="HexaEngine.Core.Graphics.PointerSize.ToString(System.String)">
+  ToString(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ToString(string format)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_ToString_" data-uid="HexaEngine.Core.Graphics.PointerSize.ToString*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_ToString_System_String_System_IFormatProvider_" data-uid="HexaEngine.Core.Graphics.PointerSize.ToString(System.String,System.IFormatProvider)">
+  ToString(string?, IFormatProvider?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Formats the value of the current instance using the specified format.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ToString(string? format, IFormatProvider? formatProvider)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The format to use.</p>
+<p>-or-</p>
+<p>A null reference (<code>Nothing</code> in Visual Basic) to use the default format defined for the type of the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iformattable">IFormattable</a> implementation.</p>
+</dd>
+    <dt><code>formatProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iformatprovider">IFormatProvider</a></dt>
+    <dd><p>The provider to use to format the value.</p>
+<p>-or-</p>
+<p>A null reference (<code>Nothing</code> in Visual Basic) to obtain the numeric format information from the current locale setting of the operating system.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The value of the current instance in the specified format.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Addition_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Addition*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Addition_HexaEngine_Core_Graphics_PointerSize_HexaEngine_Core_Graphics_PointerSize_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Addition(HexaEngine.Core.Graphics.PointerSize,HexaEngine.Core.Graphics.PointerSize)">
+  operator +(PointerSize, PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds two <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PointerSize operator +(PointerSize left, PointerSize right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Division_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Division*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Division_HexaEngine_Core_Graphics_PointerSize_System_Int32_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Division(HexaEngine.Core.Graphics.PointerSize,System.Int32)">
+  operator /(PointerSize, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> value by an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> scale.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PointerSize operator /(PointerSize value, int scale)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+    <dt><code>scale</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Equality_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Equality*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Equality_HexaEngine_Core_Graphics_PointerSize_HexaEngine_Core_Graphics_PointerSize_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Equality(HexaEngine.Core.Graphics.PointerSize,HexaEngine.Core.Graphics.PointerSize)">
+  operator ==(PointerSize, PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if two <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> values are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(PointerSize left, PointerSize right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_HexaEngine_Core_Graphics_PointerSize__System_Int32" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit(HexaEngine.Core.Graphics.PointerSize)~System.Int32">
+  implicit operator int(PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> value to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator int(PointerSize value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_HexaEngine_Core_Graphics_PointerSize__System_Int64" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit(HexaEngine.Core.Graphics.PointerSize)~System.Int64">
+  implicit operator long(PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> value to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator long(PointerSize value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_HexaEngine_Core_Graphics_PointerSize__System_IntPtr" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit(HexaEngine.Core.Graphics.PointerSize)~System.IntPtr">
+  implicit operator nint(PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L211"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> value to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator nint(PointerSize value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_HexaEngine_Core_Graphics_PointerSize__System_UIntPtr" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit(HexaEngine.Core.Graphics.PointerSize)~System.UIntPtr">
+  implicit operator nuint(PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L219"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> value to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uintptr">nuint</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator nuint(PointerSize value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uintptr">nuint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_HexaEngine_Core_Graphics_PointerSize__System_Void_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit(HexaEngine.Core.Graphics.PointerSize)~System.Void*">
+  implicit operator void*(PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L235"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> value to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator void*(PointerSize value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_System_Int32__HexaEngine_Core_Graphics_PointerSize" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit(System.Int32)~HexaEngine.Core.Graphics.PointerSize">
+  implicit operator PointerSize(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> value to a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator PointerSize(int value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_System_Int64__HexaEngine_Core_Graphics_PointerSize" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit(System.Int64)~HexaEngine.Core.Graphics.PointerSize">
+  implicit operator PointerSize(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a> value to a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator PointerSize(long value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_System_IntPtr__HexaEngine_Core_Graphics_PointerSize" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit(System.IntPtr)~HexaEngine.Core.Graphics.PointerSize">
+  implicit operator PointerSize(nint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a> value to a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator PointerSize(nint value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Implicit_System_Void___HexaEngine_Core_Graphics_PointerSize" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Implicit(System.Void*)~HexaEngine.Core.Graphics.PointerSize">
+  implicit operator PointerSize(void*)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L227"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a> value to a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static implicit operator PointerSize(void* value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.void">void</a>*</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Inequality_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Inequality*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Inequality_HexaEngine_Core_Graphics_PointerSize_HexaEngine_Core_Graphics_PointerSize_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Inequality(HexaEngine.Core.Graphics.PointerSize,HexaEngine.Core.Graphics.PointerSize)">
+  operator !=(PointerSize, PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if two <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> values are not equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(PointerSize left, PointerSize right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Multiply_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Multiply*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Multiply_HexaEngine_Core_Graphics_PointerSize_System_Int32_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Multiply(HexaEngine.Core.Graphics.PointerSize,System.Int32)">
+  operator *(PointerSize, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> value by an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> scale.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PointerSize operator *(PointerSize value, int scale)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+    <dt><code>scale</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Multiply_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Multiply*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Multiply_System_Int32_HexaEngine_Core_Graphics_PointerSize_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Multiply(System.Int32,HexaEngine.Core.Graphics.PointerSize)">
+  operator *(int, PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> value by an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> scale.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PointerSize operator *(int scale, PointerSize value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>scale</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_Subtraction_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Subtraction*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_Subtraction_HexaEngine_Core_Graphics_PointerSize_HexaEngine_Core_Graphics_PointerSize_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_Subtraction(HexaEngine.Core.Graphics.PointerSize,HexaEngine.Core.Graphics.PointerSize)">
+  operator -(PointerSize, PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subtracts two <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PointerSize operator -(PointerSize left, PointerSize right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_UnaryNegation_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_UnaryNegation*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_UnaryNegation_HexaEngine_Core_Graphics_PointerSize_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_UnaryNegation(HexaEngine.Core.Graphics.PointerSize)">
+  operator -(PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Negates a <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a> value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PointerSize operator -(PointerSize value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_PointerSize_op_UnaryPlus_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_UnaryPlus*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_PointerSize_op_UnaryPlus_HexaEngine_Core_Graphics_PointerSize_" data-uid="HexaEngine.Core.Graphics.PointerSize.op_UnaryPlus(HexaEngine.Core.Graphics.PointerSize)">
+  operator +(PointerSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the current <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PointerSize operator +(PointerSize value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.PointerSize.html">PointerSize</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/PointerSize.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

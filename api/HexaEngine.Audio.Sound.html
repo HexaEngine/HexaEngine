@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Sound </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Sound ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Audio_Sound.md&amp;value=---%0Auid%3A%20HexaEngine.Audio.Sound%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Audio.Sound">
+
+
+
+  <h1 id="HexaEngine_Audio_Sound" data-uid="HexaEngine.Audio.Sound" class="text-break">
+Class Sound  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Audio.html">Audio</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class Sound : ISound, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">Sound</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Audio.ISound.html">ISound</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Audio_Sound_Emitter_" data-uid="HexaEngine.Audio.Sound.Emitter*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Emitter" data-uid="HexaEngine.Audio.Sound.Emitter">
+  Emitter
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the emitter for controlling the audio source's spatial properties.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEmitter? Emitter { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IEmitter.html">IEmitter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Gain_" data-uid="HexaEngine.Audio.Sound.Gain*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Gain" data-uid="HexaEngine.Audio.Sound.Gain">
+  Gain
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the gain (volume) of the source voice.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Gain { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Looping_" data-uid="HexaEngine.Audio.Sound.Looping*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Looping" data-uid="HexaEngine.Audio.Sound.Looping">
+  Looping
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the source voice is looping.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Looping { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_NativeSound_" data-uid="HexaEngine.Audio.Sound.NativeSound*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_NativeSound" data-uid="HexaEngine.Audio.Sound.NativeSound">
+  NativeSound
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the underlying native sound object. This property provides access to the low-level sound implementation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ISound NativeSound { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.ISound.html">ISound</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Pan_" data-uid="HexaEngine.Audio.Sound.Pan*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Pan" data-uid="HexaEngine.Audio.Sound.Pan">
+  Pan
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the pan of the audio source, controlling the left-right balance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Pan { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_PanMode_" data-uid="HexaEngine.Audio.Sound.PanMode*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_PanMode" data-uid="HexaEngine.Audio.Sound.PanMode">
+  PanMode
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the current pan mode, which determines how the view is adjusted during panning operations.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PanMode PanMode { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.PanMode.html">PanMode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="HexaEngine_Audio_Sound_PanMode_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The pan mode can affect user interactions and the behavior of the view when
+navigating through content. Ensure to set the pan mode appropriately to achieve the desired panning
+effect.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Pitch_" data-uid="HexaEngine.Audio.Sound.Pitch*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Pitch" data-uid="HexaEngine.Audio.Sound.Pitch">
+  Pitch
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the pitch of the audio source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Pitch { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_State_" data-uid="HexaEngine.Audio.Sound.State*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_State" data-uid="HexaEngine.Audio.Sound.State">
+  State
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the current state of the source voice.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AudioSourceState State { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.AudioSourceState.html">AudioSourceState</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Submix_" data-uid="HexaEngine.Audio.Sound.Submix*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Submix" data-uid="HexaEngine.Audio.Sound.Submix">
+  Submix
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the submix voice to which this source voice is connected.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IAudioInputNode? Submix { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IAudioInputNode.html">IAudioInputNode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Audio_Sound_Create_" data-uid="HexaEngine.Audio.Sound.Create*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Create_HexaEngine_Core_Assets_AssetRef__HexaEngine_Core_Audio_SoundFlags_" data-uid="HexaEngine.Audio.Sound.Create(HexaEngine.Core.Assets.AssetRef@,HexaEngine.Core.Audio.SoundFlags)">
+  Create(in AssetRef, SoundFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Sound Create(in AssetRef assetRef, SoundFlags flags = SoundFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>assetRef</code> <a class="xref" href="HexaEngine.Core.Assets.AssetRef.html">AssetRef</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Audio.SoundFlags.html">SoundFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Audio.Sound.html">Sound</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Create_" data-uid="HexaEngine.Audio.Sound.Create*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Create_HexaEngine_Core_IO_AssetPath__HexaEngine_Core_Audio_SoundFlags_" data-uid="HexaEngine.Audio.Sound.Create(HexaEngine.Core.IO.AssetPath@,HexaEngine.Core.Audio.SoundFlags)">
+  Create(in AssetPath, SoundFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Sound Create(in AssetPath filePath, SoundFlags flags = SoundFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>filePath</code> <a class="xref" href="HexaEngine.Core.IO.AssetPath.html">AssetPath</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Audio.SoundFlags.html">SoundFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Audio.Sound.html">Sound</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Create_" data-uid="HexaEngine.Audio.Sound.Create*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Create_System_IO_Stream__HexaEngine_Core_Audio_SoundFlags_" data-uid="HexaEngine.Audio.Sound.Create(System.IO.Stream@,HexaEngine.Core.Audio.SoundFlags)">
+  Create(in Stream, SoundFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Sound Create(in Stream stream, SoundFlags flags = SoundFlags.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.Audio.SoundFlags.html">SoundFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Audio.Sound.html">Sound</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Dispose_" data-uid="HexaEngine.Audio.Sound.Dispose*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Dispose" data-uid="HexaEngine.Audio.Sound.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Pause_" data-uid="HexaEngine.Audio.Sound.Pause*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Pause" data-uid="HexaEngine.Audio.Sound.Pause">
+  Pause()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Pauses the source voice, if playing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Pause()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Play_" data-uid="HexaEngine.Audio.Sound.Play*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Play" data-uid="HexaEngine.Audio.Sound.Play">
+  Play()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Starts or resumes playing the source voice.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Play()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Rewind_" data-uid="HexaEngine.Audio.Sound.Rewind*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Rewind" data-uid="HexaEngine.Audio.Sound.Rewind">
+  Rewind()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Rewinds the source voice to the beginning.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Rewind()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Audio_Sound_Stop_" data-uid="HexaEngine.Audio.Sound.Stop*"></a>
+
+  <h3 id="HexaEngine_Audio_Sound_Stop" data-uid="HexaEngine.Audio.Sound.Stop">
+  Stop()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Stops playing the source voice.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Stop()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Audio_Sound_StateChanged" data-uid="HexaEngine.Audio.Sound.StateChanged">
+  StateChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Occurs when the state of the source voice changes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;AudioSourceState&gt;? StateChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Audio.AudioSourceState.html">AudioSourceState</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Audio/Sound.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

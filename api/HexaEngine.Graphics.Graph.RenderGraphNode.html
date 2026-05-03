@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class RenderGraphNode </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class RenderGraphNode ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Graphics_Graph_RenderGraphNode.md&amp;value=---%0Auid%3A%20HexaEngine.Graphics.Graph.RenderGraphNode%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Graphics.Graph.RenderGraphNode">
+
+
+
+  <h1 id="HexaEngine_Graphics_Graph_RenderGraphNode" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode" class="text-break">
+Class RenderGraphNode  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L5"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Graphics.html">Graphics</a>.<a class="xref" href="HexaEngine.Graphics.Graph.html">Graph</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class RenderGraphNode : INode&lt;RenderGraphNode&gt;</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">RenderGraphNode</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Collections.INode-1.html">INode</a>&lt;<a class="xref" href="HexaEngine.Graphics.Graph.RenderGraphNode.html">RenderGraphNode</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode__ctor_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.#ctor*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode__ctor_HexaEngine_Graphics_Graph_RenderPass_HexaEngine_Graphics_Graph_GraphNodeRegistry_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.#ctor(HexaEngine.Graphics.Graph.RenderPass,HexaEngine.Graphics.Graph.GraphNodeRegistry)">
+  RenderGraphNode(RenderPass, GraphNodeRegistry)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RenderGraphNode(RenderPass pass, GraphNodeRegistry registry)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pass</code> <a class="xref" href="HexaEngine.Graphics.Graph.RenderPass.html">RenderPass</a></dt>
+    <dd></dd>
+    <dt><code>registry</code> <a class="xref" href="HexaEngine.Graphics.Graph.GraphNodeRegistry.html">GraphNodeRegistry</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_Builder_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Builder*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_Builder" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Builder">
+  Builder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GraphDependencyBuilder Builder { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.GraphDependencyBuilder.html">GraphDependencyBuilder</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_Container_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Container*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_Container" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Container">
+  Container
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GraphResourceContainer Container { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.GraphResourceContainer.html">GraphResourceContainer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_Dependencies_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Dependencies*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_Dependencies" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Dependencies">
+  Dependencies
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HashSet&lt;RenderGraphNode&gt; Dependencies { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="HexaEngine.Graphics.Graph.RenderGraphNode.html">RenderGraphNode</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_Dependents_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Dependents*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_Dependents" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Dependents">
+  Dependents
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HashSet&lt;RenderGraphNode&gt; Dependents { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="HexaEngine.Graphics.Graph.RenderGraphNode.html">RenderGraphNode</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_Name_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Name*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_Name" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_Pass_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Pass*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_Pass" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Pass">
+  Pass
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RenderPass Pass { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.RenderPass.html">RenderPass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_Type_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Type*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_Type" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Type">
+  Type
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Type Type { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_AddDependency_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.AddDependency*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_AddDependency_HexaEngine_Graphics_Graph_RenderGraphNode_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.AddDependency(HexaEngine.Graphics.Graph.RenderGraphNode)">
+  AddDependency(RenderGraphNode)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddDependency(RenderGraphNode node)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>node</code> <a class="xref" href="HexaEngine.Graphics.Graph.RenderGraphNode.html">RenderGraphNode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_AddDependent_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.AddDependent*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_AddDependent_HexaEngine_Graphics_Graph_RenderGraphNode_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.AddDependent(HexaEngine.Graphics.Graph.RenderGraphNode)">
+  AddDependent(RenderGraphNode)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddDependent(RenderGraphNode node)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>node</code> <a class="xref" href="HexaEngine.Graphics.Graph.RenderGraphNode.html">RenderGraphNode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_BuildDependencies_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.BuildDependencies*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_BuildDependencies" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.BuildDependencies">
+  BuildDependencies()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void BuildDependencies()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_Reset_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Reset*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_Reset_System_Boolean_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.Reset(System.Boolean)">
+  Reset(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reset(bool clearContainer = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>clearContainer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_ResolveDependencies_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.ResolveDependencies*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_ResolveDependencies" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.ResolveDependencies">
+  ResolveDependencies()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ResolveDependencies()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_RenderGraphNode_ToString_" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.ToString*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_RenderGraphNode_ToString" data-uid="HexaEngine.Graphics.Graph.RenderGraphNode.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string that represents the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/RenderGraphNode.cs/#L5" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class HBAO </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class HBAO ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_PostFx_BuildIn_HBAO.md&amp;value=---%0Auid%3A%20HexaEngine.PostFx.BuildIn.HBAO%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.PostFx.BuildIn.HBAO">
+
+
+
+  <h1 id="HexaEngine_PostFx_BuildIn_HBAO" data-uid="HexaEngine.PostFx.BuildIn.HBAO" class="text-break">
+Class HBAO  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.PostFx.html">PostFx</a>.<a class="xref" href="HexaEngine.PostFx.BuildIn.html">BuildIn</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorDisplayName(&quot;HBAO&quot;)]
+public class HBAO : PostFxBase, IPostFx, INotifyPropertyChanged, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.PostFx.PostFxBase.html">PostFxBase</a></div>
+      <div><span class="xref">HBAO</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.PostFx.IPostFx.html">IPostFx</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_dirty">PostFxBase.dirty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Input">PostFxBase.Input</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_InputResource">PostFxBase.InputResource</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Output">PostFxBase.Output</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_OutputResource">PostFxBase.OutputResource</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Viewport">PostFxBase.Viewport</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_DisplayName">PostFxBase.DisplayName</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Initialized">PostFxBase.Initialized</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Enabled">PostFxBase.Enabled</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_OnEnabledChanged">PostFxBase.OnEnabledChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_OnReload">PostFxBase.OnReload</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_PropertyChanged">PostFxBase.PropertyChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_CreateDisplayName">PostFxBase.CreateDisplayName()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Compose_HexaEngine_Core_Graphics_IGraphicsContext_">PostFxBase.Compose(IGraphicsContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_SetOutput_HexaEngine_Core_Graphics_IRenderTargetView_HexaEngine_Core_Graphics_ITexture2D_Hexa_NET_Mathematics_Viewport_">PostFxBase.SetOutput(IRenderTargetView, ITexture2D, Viewport)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_SetInput_HexaEngine_Core_Graphics_IShaderResourceView_HexaEngine_Core_Graphics_ITexture2D_">PostFxBase.SetInput(IShaderResourceView, ITexture2D)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_NotifyPropertyChanged_System_String_">PostFxBase.NotifyPropertyChanged(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_NotifyPropertyChangedAndSet__1___0____0_System_String_">PostFxBase.NotifyPropertyChangedAndSet&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_NotifyPropertyChangedAndSetAndReload__1___0____0_System_String_">PostFxBase.NotifyPropertyChangedAndSetAndReload&lt;T&gt;(ref T, T, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_NotifyReload">PostFxBase.NotifyReload()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_Dispose">PostFxBase.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.PostFx.PostFxBase.html#HexaEngine_PostFx_PostFxBase_ResetSettings">PostFxBase.ResetSettings()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_ColorSpace_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.ColorSpace*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_ColorSpace" data-uid="HexaEngine.PostFx.BuildIn.HBAO.ColorSpace">
+  ColorSpace
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the color space of the post-processing effect. (eg. SDR or HDR)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override PostFxColorSpace ColorSpace { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.PostFx.PostFxColorSpace.html">PostFxColorSpace</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_Flags_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Flags*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_Flags" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the flags associated with the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override PostFxFlags Flags { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.PostFx.PostFxFlags.html">PostFxFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_Name_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Name*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_Name" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the name of the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string Name { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_NumSamplingDirections_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.NumSamplingDirections*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_NumSamplingDirections" data-uid="HexaEngine.PostFx.BuildIn.HBAO.NumSamplingDirections">
+  NumSamplingDirections
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint NumSamplingDirections { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_NumSamplingSteps_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.NumSamplingSteps*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_NumSamplingSteps" data-uid="HexaEngine.PostFx.BuildIn.HBAO.NumSamplingSteps">
+  NumSamplingSteps
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint NumSamplingSteps { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_Power_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Power*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_Power" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Power">
+  Power
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Power { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_SamplingRadius_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.SamplingRadius*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_SamplingRadius" data-uid="HexaEngine.PostFx.BuildIn.HBAO.SamplingRadius">
+  SamplingRadius
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float SamplingRadius { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_SamplingStep_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.SamplingStep*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_SamplingStep" data-uid="HexaEngine.PostFx.BuildIn.HBAO.SamplingStep">
+  SamplingStep
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float SamplingStep { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_DisposeCore_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.DisposeCore*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_DisposeCore" data-uid="HexaEngine.PostFx.BuildIn.HBAO.DisposeCore">
+  DisposeCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L207"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs the core disposal logic for the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void DisposeCore()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_Draw_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Draw*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_Draw_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Draw(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Draw(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Draw(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_Initialize_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Initialize*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_Initialize_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_PostFx_PostFxGraphResourceBuilder_System_Int32_System_Int32_HexaEngine_Core_Graphics_ShaderMacro___" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Initialize(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.PostFx.PostFxGraphResourceBuilder,System.Int32,System.Int32,HexaEngine.Core.Graphics.ShaderMacro[])">
+  Initialize(IGraphicsDevice, PostFxGraphResourceBuilder, int, int, ShaderMacro[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Initialize(IGraphicsDevice device, PostFxGraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd><p>The graphics device.</p>
+</dd>
+    <dt><code>creator</code> <a class="xref" href="HexaEngine.PostFx.PostFxGraphResourceBuilder.html">PostFxGraphResourceBuilder</a></dt>
+    <dd><p>The resource builder for creating resources.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the rendering area.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The height of the rendering area.</p>
+</dd>
+    <dt><code>macros</code> <a class="xref" href="HexaEngine.Core.Graphics.ShaderMacro.html">ShaderMacro</a>[]</dt>
+    <dd><p>The shader macros to use during initialization.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_PrePassDraw_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.PrePassDraw*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_PrePassDraw_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Graphics_Graph_GraphResourceBuilder_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.PrePassDraw(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Graphics.Graph.GraphResourceBuilder)">
+  PrePassDraw(IGraphicsContext, GraphResourceBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws the post-processing effect during the pre-pass stage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context.</p>
+</dd>
+    <dt><code>creator</code> <a class="xref" href="HexaEngine.Graphics.Graph.GraphResourceBuilder.html">GraphResourceBuilder</a></dt>
+    <dd><p>The resource builder for creating resources.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_Resize_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Resize*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_Resize_System_Int32_System_Int32_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Resize(System.Int32,System.Int32)">
+  Resize(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the post-processing effect to match the new dimensions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Resize(int width, int height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new width of the rendering area.</p>
+</dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The new height of the rendering area.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_SetupDependencies_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.SetupDependencies*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_SetupDependencies_HexaEngine_PostFx_PostFxDependencyBuilder_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.SetupDependencies(HexaEngine.PostFx.PostFxDependencyBuilder)">
+  SetupDependencies(PostFxDependencyBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets up dependencies for the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void SetupDependencies(PostFxDependencyBuilder builder)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>builder</code> <a class="xref" href="HexaEngine.PostFx.PostFxDependencyBuilder.html">PostFxDependencyBuilder</a></dt>
+    <dd><p>The dependency builder.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_Update_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Update*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_Update_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.Update(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Update(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the post-processing effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Update(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_PostFx_BuildIn_HBAO_UpdateBindings_" data-uid="HexaEngine.PostFx.BuildIn.HBAO.UpdateBindings*"></a>
+
+  <h3 id="HexaEngine_PostFx_BuildIn_HBAO_UpdateBindings" data-uid="HexaEngine.PostFx.BuildIn.HBAO.UpdateBindings">
+  UpdateBindings()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L183"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when a resource has changed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void UpdateBindings()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/PostFx/BuildIn/HBAO.cs/#L16" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

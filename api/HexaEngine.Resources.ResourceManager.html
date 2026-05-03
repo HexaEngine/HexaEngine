@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ResourceManager </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ResourceManager ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Resources_ResourceManager.md&amp;value=---%0Auid%3A%20HexaEngine.Resources.ResourceManager%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Resources.ResourceManager">
+
+
+
+  <h1 id="HexaEngine_Resources_ResourceManager" data-uid="HexaEngine.Resources.ResourceManager" class="text-break">
+Class ResourceManager  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Resources.html">Resources</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ResourceManager : IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ResourceManager</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.GraphicsPipelineResourceFactoryExtensions.html#HexaEngine_Resources_Factories_GraphicsPipelineResourceFactoryExtensions_LoadPipeline_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_ResourceGuid_HexaEngine_Core_Graphics_GraphicsPipelineDesc_">GraphicsPipelineResourceFactoryExtensions.LoadPipeline(ResourceManager, ResourceGuid, GraphicsPipelineDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.GraphicsPipelineResourceFactoryExtensions.html#HexaEngine_Resources_Factories_GraphicsPipelineResourceFactoryExtensions_LoadPipelineAsync_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_ResourceGuid_HexaEngine_Core_Graphics_GraphicsPipelineDesc_">GraphicsPipelineResourceFactoryExtensions.LoadPipelineAsync(ResourceManager, ResourceGuid, GraphicsPipelineDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.GraphicsPipelineResourceFactoryExtensions.html#HexaEngine_Resources_Factories_GraphicsPipelineResourceFactoryExtensions_UpdatePipeline_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_ResourceInstance_HexaEngine_Core_Graphics_IGraphicsPipeline__HexaEngine_Core_Graphics_GraphicsPipelineDesc_">GraphicsPipelineResourceFactoryExtensions.UpdatePipeline(ResourceManager, ResourceInstance&lt;IGraphicsPipeline&gt;?, GraphicsPipelineDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialResourceFactoryExtensions_LoadMaterialAsync__1_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShaderDesc_HexaEngine_Core_IO_Binary_Materials_MaterialData_">MaterialResourceFactoryExtensions.LoadMaterialAsync&lt;T&gt;(ResourceManager, MaterialShaderDesc, MaterialData)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialResourceFactoryExtensions_LoadMaterial__1_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShaderDesc_HexaEngine_Core_IO_Binary_Materials_MaterialData_">MaterialResourceFactoryExtensions.LoadMaterial&lt;T&gt;(ResourceManager, MaterialShaderDesc, MaterialData)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialResourceFactoryExtensions_UpdateMaterial_HexaEngine_Resources_ResourceManager_HexaEngine_Core_IO_Binary_Materials_MaterialData_">MaterialResourceFactoryExtensions.UpdateMaterial(ResourceManager, MaterialData?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialResourceFactoryExtensions_UpdateMaterialAsync__1_HexaEngine_Resources_ResourceManager_HexaEngine_Core_IO_Binary_Materials_MaterialData_">MaterialResourceFactoryExtensions.UpdateMaterialAsync&lt;T&gt;(ResourceManager, MaterialData)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialResourceFactoryExtensions_UpdateMaterialAsync__1_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShaderDesc_HexaEngine_Core_IO_Binary_Materials_MaterialData_">MaterialResourceFactoryExtensions.UpdateMaterialAsync&lt;T&gt;(ResourceManager, MaterialShaderDesc, MaterialData)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialResourceFactoryExtensions_UpdateMaterial__1_HexaEngine_Resources_ResourceManager_HexaEngine_Core_IO_Binary_Materials_MaterialData_">MaterialResourceFactoryExtensions.UpdateMaterial&lt;T&gt;(ResourceManager, MaterialData?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialResourceFactoryExtensions_UpdateMaterial__1_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShaderDesc_HexaEngine_Core_IO_Binary_Materials_MaterialData_">MaterialResourceFactoryExtensions.UpdateMaterial&lt;T&gt;(ResourceManager, MaterialShaderDesc, MaterialData?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialShaderResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialShaderResourceFactoryExtensions_LoadMaterialShader_HexaEngine_Resources_ResourceManager_System_Int32_HexaEngine_Resources_MaterialShaderDesc_">MaterialShaderResourceFactoryExtensions.LoadMaterialShader(ResourceManager, int, MaterialShaderDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialShaderResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialShaderResourceFactoryExtensions_LoadMaterialShaderAsync_HexaEngine_Resources_ResourceManager_System_Int32_HexaEngine_Resources_MaterialShaderDesc_">MaterialShaderResourceFactoryExtensions.LoadMaterialShaderAsync(ResourceManager, int, MaterialShaderDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialShaderResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialShaderResourceFactoryExtensions_LoadMaterialShaderAsync__1_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShaderDesc_">MaterialShaderResourceFactoryExtensions.LoadMaterialShaderAsync&lt;T&gt;(ResourceManager, MaterialShaderDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialShaderResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialShaderResourceFactoryExtensions_LoadMaterialShader__1_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShaderDesc_">MaterialShaderResourceFactoryExtensions.LoadMaterialShader&lt;T&gt;(ResourceManager, MaterialShaderDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialShaderResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialShaderResourceFactoryExtensions_RecompileShaders_HexaEngine_Resources_ResourceManager_">MaterialShaderResourceFactoryExtensions.RecompileShaders(ResourceManager)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialShaderResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialShaderResourceFactoryExtensions_UpdateMaterialShader_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShader_HexaEngine_Core_IO_Binary_Materials_MaterialData_">MaterialShaderResourceFactoryExtensions.UpdateMaterialShader(ResourceManager, MaterialShader?, MaterialData)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialShaderResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialShaderResourceFactoryExtensions_UpdateMaterialShader_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShader_HexaEngine_Resources_MaterialShaderDesc_">MaterialShaderResourceFactoryExtensions.UpdateMaterialShader(ResourceManager, MaterialShader?, MaterialShaderDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialShaderResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialShaderResourceFactoryExtensions_UpdateMaterialShaderAsync_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShader_HexaEngine_Core_IO_Binary_Materials_MaterialData_">MaterialShaderResourceFactoryExtensions.UpdateMaterialShaderAsync(ResourceManager, MaterialShader?, MaterialData)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialShaderResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialShaderResourceFactoryExtensions_UpdateMaterialShaderAsync_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MaterialShader_HexaEngine_Resources_MaterialShaderDesc_">MaterialShaderResourceFactoryExtensions.UpdateMaterialShaderAsync(ResourceManager, MaterialShader?, MaterialShaderDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialTextureResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialTextureResourceFactoryExtensions_LoadTexture_HexaEngine_Resources_ResourceManager_HexaEngine_Core_IO_Binary_Materials_MaterialTexture_">MaterialTextureResourceFactoryExtensions.LoadTexture(ResourceManager, MaterialTexture)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MaterialTextureResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MaterialTextureResourceFactoryExtensions_LoadTextureAsync_HexaEngine_Resources_ResourceManager_HexaEngine_Core_IO_Binary_Materials_MaterialTexture_">MaterialTextureResourceFactoryExtensions.LoadTextureAsync(ResourceManager, MaterialTexture)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MeshResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MeshResourceFactoryExtensions_LoadMesh_HexaEngine_Resources_ResourceManager_HexaEngine_Core_IO_Binary_Meshes_IMeshData_HexaEngine_Core_IO_Binary_Meshes_ILODData_">MeshResourceFactoryExtensions.LoadMesh(ResourceManager, IMeshData, ILODData)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MeshResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MeshResourceFactoryExtensions_LoadMesh_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MeshDesc_">MeshResourceFactoryExtensions.LoadMesh(ResourceManager, MeshDesc)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MeshResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MeshResourceFactoryExtensions_LoadMeshAsync_HexaEngine_Resources_ResourceManager_HexaEngine_Core_IO_Binary_Meshes_IMeshData_HexaEngine_Core_IO_Binary_Meshes_ILODData_">MeshResourceFactoryExtensions.LoadMeshAsync(ResourceManager, IMeshData, ILODData)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Resources.Factories.MeshResourceFactoryExtensions.html#HexaEngine_Resources_Factories_MeshResourceFactoryExtensions_LoadMeshAsync_HexaEngine_Resources_ResourceManager_HexaEngine_Resources_MeshDesc_">MeshResourceFactoryExtensions.LoadMeshAsync(ResourceManager, MeshDesc)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Resources_ResourceManager__ctor_" data-uid="HexaEngine.Resources.ResourceManager.#ctor*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager__ctor_System_String_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Audio_IAudioDevice_Microsoft_Extensions_DependencyInjection_ServiceCollection_" data-uid="HexaEngine.Resources.ResourceManager.#ctor(System.String,HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Audio.IAudioDevice,Microsoft.Extensions.DependencyInjection.ServiceCollection)">
+  ResourceManager(string, IGraphicsDevice, IAudioDevice, ServiceCollection)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceManager(string name, IGraphicsDevice graphicsDevice, IAudioDevice audioDevice, ServiceCollection descriptors)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>graphicsDevice</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>audioDevice</code> <a class="xref" href="HexaEngine.Core.Audio.IAudioDevice.html">IAudioDevice</a></dt>
+    <dd></dd>
+    <dt><code>descriptors</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.servicecollection">ServiceCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Resources_ResourceManager_AudioDevice_" data-uid="HexaEngine.Resources.ResourceManager.AudioDevice*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_AudioDevice" data-uid="HexaEngine.Resources.ResourceManager.AudioDevice">
+  AudioDevice
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IAudioDevice AudioDevice { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Audio.IAudioDevice.html">IAudioDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_GraphicsDevice_" data-uid="HexaEngine.Resources.ResourceManager.GraphicsDevice*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_GraphicsDevice" data-uid="HexaEngine.Resources.ResourceManager.GraphicsDevice">
+  GraphicsDevice
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IGraphicsDevice GraphicsDevice { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_Name_" data-uid="HexaEngine.Resources.ResourceManager.Name*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_Name" data-uid="HexaEngine.Resources.ResourceManager.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_ServiceProvider_" data-uid="HexaEngine.Resources.ResourceManager.ServiceProvider*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_ServiceProvider" data-uid="HexaEngine.Resources.ResourceManager.ServiceProvider">
+  ServiceProvider
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IServiceProvider ServiceProvider { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_Shared_" data-uid="HexaEngine.Resources.ResourceManager.Shared*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_Shared" data-uid="HexaEngine.Resources.ResourceManager.Shared">
+  Shared
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ResourceManager Shared { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Resources.ResourceManager.html">ResourceManager</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_SyncObject_" data-uid="HexaEngine.Resources.ResourceManager.SyncObject*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_SyncObject" data-uid="HexaEngine.Resources.ResourceManager.SyncObject">
+  SyncObject
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object SyncObject { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Resources_ResourceManager_AddFactory_" data-uid="HexaEngine.Resources.ResourceManager.AddFactory*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_AddFactory_HexaEngine_Resources_IResourceFactory_" data-uid="HexaEngine.Resources.ResourceManager.AddFactory(HexaEngine.Resources.IResourceFactory)">
+  AddFactory(IResourceFactory)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddFactory(IResourceFactory factory)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>factory</code> <a class="xref" href="HexaEngine.Resources.IResourceFactory.html">IResourceFactory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_BeginNoGCRegion_" data-uid="HexaEngine.Resources.ResourceManager.BeginNoGCRegion*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_BeginNoGCRegion" data-uid="HexaEngine.Resources.ResourceManager.BeginNoGCRegion">
+  BeginNoGCRegion()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void BeginNoGCRegion()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_CreateInstanceAsync_" data-uid="HexaEngine.Resources.ResourceManager.CreateInstanceAsync*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_CreateInstanceAsync__2_HexaEngine_Resources_ResourceGuid___1_" data-uid="HexaEngine.Resources.ResourceManager.CreateInstanceAsync``2(HexaEngine.Resources.ResourceGuid,``1)">
+  CreateInstanceAsync&lt;T, TData&gt;(ResourceGuid, TData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;T?&gt; CreateInstanceAsync&lt;T, TData&gt;(ResourceGuid id, TData data) where T : ResourceInstance</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="HexaEngine.Resources.ResourceGuid.html">ResourceGuid</a></dt>
+    <dd></dd>
+    <dt><code>data</code> <span class="xref">TData</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+    <dt><code>TData</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_CreateInstance_" data-uid="HexaEngine.Resources.ResourceManager.CreateInstance*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_CreateInstance__2_HexaEngine_Resources_ResourceGuid___1_" data-uid="HexaEngine.Resources.ResourceManager.CreateInstance``2(HexaEngine.Resources.ResourceGuid,``1)">
+  CreateInstance&lt;T, TData&gt;(ResourceGuid, TData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T? CreateInstance&lt;T, TData&gt;(ResourceGuid id, TData data) where T : ResourceInstance</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="HexaEngine.Resources.ResourceGuid.html">ResourceGuid</a></dt>
+    <dd></dd>
+    <dt><code>data</code> <span class="xref">TData</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+    <dt><code>TData</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_DestroyInstance_" data-uid="HexaEngine.Resources.ResourceManager.DestroyInstance*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_DestroyInstance_HexaEngine_Resources_ResourceInstance_" data-uid="HexaEngine.Resources.ResourceManager.DestroyInstance(HexaEngine.Resources.ResourceInstance)">
+  DestroyInstance(ResourceInstance?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L218"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool DestroyInstance(ResourceInstance? instance)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>instance</code> <a class="xref" href="HexaEngine.Resources.ResourceInstance.html">ResourceInstance</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_Dispose_" data-uid="HexaEngine.Resources.ResourceManager.Dispose*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_Dispose" data-uid="HexaEngine.Resources.ResourceManager.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L269"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_Dispose_" data-uid="HexaEngine.Resources.ResourceManager.Dispose*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_Dispose_System_Boolean_" data-uid="HexaEngine.Resources.ResourceManager.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L255"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_EndNoGCRegion_" data-uid="HexaEngine.Resources.ResourceManager.EndNoGCRegion*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_EndNoGCRegion" data-uid="HexaEngine.Resources.ResourceManager.EndNoGCRegion">
+  EndNoGCRegion()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EndNoGCRegion()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_GetFactoryByResourceType_" data-uid="HexaEngine.Resources.ResourceManager.GetFactoryByResourceType*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_GetFactoryByResourceType_System_Type_" data-uid="HexaEngine.Resources.ResourceManager.GetFactoryByResourceType(System.Type)">
+  GetFactoryByResourceType(Type)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IResourceFactory? GetFactoryByResourceType(Type type)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Resources.IResourceFactory.html">IResourceFactory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_GetFactoryByResourceType_" data-uid="HexaEngine.Resources.ResourceManager.GetFactoryByResourceType*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_GetFactoryByResourceType__2" data-uid="HexaEngine.Resources.ResourceManager.GetFactoryByResourceType``2">
+  GetFactoryByResourceType&lt;T, TData&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IResourceFactory&lt;T, TData&gt;? GetFactoryByResourceType&lt;T, TData&gt;() where T : ResourceInstance</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Resources.IResourceFactory-2.html">IResourceFactory</a>&lt;T, TData&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+    <dt><code>TData</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_GetFactory_" data-uid="HexaEngine.Resources.ResourceManager.GetFactory*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_GetFactory__1" data-uid="HexaEngine.Resources.ResourceManager.GetFactory``1">
+  GetFactory&lt;T&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T? GetFactory&lt;T&gt;() where T : IResourceFactory</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_GetInstance_" data-uid="HexaEngine.Resources.ResourceManager.GetInstance*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_GetInstance__1_HexaEngine_Resources_ResourceGuid_" data-uid="HexaEngine.Resources.ResourceManager.GetInstance``1(HexaEngine.Resources.ResourceGuid)">
+  GetInstance&lt;T&gt;(ResourceGuid)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T? GetInstance&lt;T&gt;(ResourceGuid id) where T : ResourceInstance</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="HexaEngine.Resources.ResourceGuid.html">ResourceGuid</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_Release_" data-uid="HexaEngine.Resources.ResourceManager.Release*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_Release" data-uid="HexaEngine.Resources.ResourceManager.Release">
+  Release()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Release()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_RemoveFactory_" data-uid="HexaEngine.Resources.ResourceManager.RemoveFactory*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_RemoveFactory_HexaEngine_Resources_IResourceFactory_" data-uid="HexaEngine.Resources.ResourceManager.RemoveFactory(HexaEngine.Resources.IResourceFactory)">
+  RemoveFactory(IResourceFactory)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveFactory(IResourceFactory factory)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>factory</code> <a class="xref" href="HexaEngine.Resources.IResourceFactory.html">IResourceFactory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_ToString_" data-uid="HexaEngine.Resources.ResourceManager.ToString*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_ToString" data-uid="HexaEngine.Resources.ResourceManager.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L250"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string that represents the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_TryCreateInstance_" data-uid="HexaEngine.Resources.ResourceManager.TryCreateInstance*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_TryCreateInstance__2_HexaEngine_Resources_ResourceGuid___1___0__" data-uid="HexaEngine.Resources.ResourceManager.TryCreateInstance``2(HexaEngine.Resources.ResourceGuid,``1,``0@)">
+  TryCreateInstance&lt;T, TData&gt;(ResourceGuid, TData, out T?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L196"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryCreateInstance&lt;T, TData&gt;(ResourceGuid id, TData data, out T? instance) where T : ResourceInstance</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="HexaEngine.Resources.ResourceGuid.html">ResourceGuid</a></dt>
+    <dd></dd>
+    <dt><code>data</code> <span class="xref">TData</span></dt>
+    <dd></dd>
+    <dt><code>instance</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+    <dt><code>TData</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_TryGetFactoryByResourceType_" data-uid="HexaEngine.Resources.ResourceManager.TryGetFactoryByResourceType*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_TryGetFactoryByResourceType_System_Type_HexaEngine_Resources_IResourceFactory__" data-uid="HexaEngine.Resources.ResourceManager.TryGetFactoryByResourceType(System.Type,HexaEngine.Resources.IResourceFactory@)">
+  TryGetFactoryByResourceType(Type, out IResourceFactory?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetFactoryByResourceType(Type type, out IResourceFactory? factory)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd></dd>
+    <dt><code>factory</code> <a class="xref" href="HexaEngine.Resources.IResourceFactory.html">IResourceFactory</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_TryGetFactoryByResourceType_" data-uid="HexaEngine.Resources.ResourceManager.TryGetFactoryByResourceType*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_TryGetFactoryByResourceType__2_HexaEngine_Resources_IResourceFactory___0___1___" data-uid="HexaEngine.Resources.ResourceManager.TryGetFactoryByResourceType``2(HexaEngine.Resources.IResourceFactory{``0,``1}@)">
+  TryGetFactoryByResourceType&lt;T, TData&gt;(out IResourceFactory&lt;T, TData&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetFactoryByResourceType&lt;T, TData&gt;(out IResourceFactory&lt;T, TData&gt;? factory) where T : ResourceInstance</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>factory</code> <a class="xref" href="HexaEngine.Resources.IResourceFactory-2.html">IResourceFactory</a>&lt;T, TData&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+    <dt><code>TData</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_TryGetFactory_" data-uid="HexaEngine.Resources.ResourceManager.TryGetFactory*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_TryGetFactory__1___0__" data-uid="HexaEngine.Resources.ResourceManager.TryGetFactory``1(``0@)">
+  TryGetFactory&lt;T&gt;(out T?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetFactory&lt;T&gt;(out T? factory) where T : IResourceFactory</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>factory</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Resources_ResourceManager_TryGetInstance_" data-uid="HexaEngine.Resources.ResourceManager.TryGetInstance*"></a>
+
+  <h3 id="HexaEngine_Resources_ResourceManager_TryGetInstance__1_HexaEngine_Resources_ResourceGuid___0__" data-uid="HexaEngine.Resources.ResourceManager.TryGetInstance``1(HexaEngine.Resources.ResourceGuid,``0@)">
+  TryGetInstance&lt;T&gt;(ResourceGuid, out T?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetInstance&lt;T&gt;(ResourceGuid id, out T? instance) where T : ResourceInstance</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="HexaEngine.Resources.ResourceGuid.html">ResourceGuid</a></dt>
+    <dd></dd>
+    <dt><code>instance</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Resources/ResourceManager.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

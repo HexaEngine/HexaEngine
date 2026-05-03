@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ShadowAtlas </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ShadowAtlas ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Lights_ShadowAtlas.md&amp;value=---%0Auid%3A%20HexaEngine.Lights.ShadowAtlas%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Lights.ShadowAtlas">
+
+
+
+  <h1 id="HexaEngine_Lights_ShadowAtlas" data-uid="HexaEngine.Lights.ShadowAtlas" class="text-break">
+Class ShadowAtlas  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Lights.html">Lights</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ShadowAtlas : IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ShadowAtlas</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas__ctor_" data-uid="HexaEngine.Lights.ShadowAtlas.#ctor*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas__ctor_HexaEngine_Lights_ShadowAtlasDescription_System_String_System_Int32_" data-uid="HexaEngine.Lights.ShadowAtlas.#ctor(HexaEngine.Lights.ShadowAtlasDescription,System.String,System.Int32)">
+  ShadowAtlas(ShadowAtlasDescription, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ShadowAtlas(ShadowAtlasDescription description, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlasDescription.html">ShadowAtlasDescription</a></dt>
+    <dd></dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_DebugName_" data-uid="HexaEngine.Lights.ShadowAtlas.DebugName*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_DebugName" data-uid="HexaEngine.Lights.ShadowAtlas.DebugName">
+  DebugName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string DebugName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_IsDisposed_" data-uid="HexaEngine.Lights.ShadowAtlas.IsDisposed*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_IsDisposed" data-uid="HexaEngine.Lights.ShadowAtlas.IsDisposed">
+  IsDisposed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsDisposed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_LayerCount_" data-uid="HexaEngine.Lights.ShadowAtlas.LayerCount*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_LayerCount" data-uid="HexaEngine.Lights.ShadowAtlas.LayerCount">
+  LayerCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int LayerCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_RTV_" data-uid="HexaEngine.Lights.ShadowAtlas.RTV*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_RTV" data-uid="HexaEngine.Lights.ShadowAtlas.RTV">
+  RTV
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IRenderTargetView RTV { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_SRV_" data-uid="HexaEngine.Lights.ShadowAtlas.SRV*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_SRV" data-uid="HexaEngine.Lights.ShadowAtlas.SRV">
+  SRV
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IShaderResourceView SRV { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Size_" data-uid="HexaEngine.Lights.ShadowAtlas.Size*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Size" data-uid="HexaEngine.Lights.ShadowAtlas.Size">
+  Size
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Size { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Viewport_" data-uid="HexaEngine.Lights.ShadowAtlas.Viewport*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Viewport" data-uid="HexaEngine.Lights.ShadowAtlas.Viewport">
+  Viewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Viewport Viewport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Viewport</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Alloc_" data-uid="HexaEngine.Lights.ShadowAtlas.Alloc*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Alloc_System_Int32_HexaEngine_Lights_SpatialCacheHandle_" data-uid="HexaEngine.Lights.ShadowAtlas.Alloc(System.Int32,HexaEngine.Lights.SpatialCacheHandle)">
+  Alloc(int, SpatialCacheHandle?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ShadowAtlasHandle Alloc(int desiredSize, SpatialCacheHandle? cacheHandle = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desiredSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>cacheHandle</code> <a class="xref" href="HexaEngine.Lights.SpatialCacheHandle.html">SpatialCacheHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.ShadowAtlasHandle.html">ShadowAtlasHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Alloc_" data-uid="HexaEngine.Lights.ShadowAtlas.Alloc*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Alloc_System_Numerics_Vector2_HexaEngine_Lights_SpatialCacheHandle_" data-uid="HexaEngine.Lights.ShadowAtlas.Alloc(System.Numerics.Vector2,HexaEngine.Lights.SpatialCacheHandle)">
+  Alloc(Vector2, SpatialCacheHandle?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ShadowAtlasHandle Alloc(Vector2 size, SpatialCacheHandle? cacheHandle = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>cacheHandle</code> <a class="xref" href="HexaEngine.Lights.SpatialCacheHandle.html">SpatialCacheHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.ShadowAtlasHandle.html">ShadowAtlasHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Alloc_" data-uid="HexaEngine.Lights.ShadowAtlas.Alloc*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Alloc_System_UInt32_HexaEngine_Lights_SpatialCacheHandle_" data-uid="HexaEngine.Lights.ShadowAtlas.Alloc(System.UInt32,HexaEngine.Lights.SpatialCacheHandle)">
+  Alloc(uint, SpatialCacheHandle?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ShadowAtlasHandle Alloc(uint desiredSize, SpatialCacheHandle? cacheHandle = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desiredSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>cacheHandle</code> <a class="xref" href="HexaEngine.Lights.SpatialCacheHandle.html">SpatialCacheHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.ShadowAtlasHandle.html">ShadowAtlasHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_AllocRange_" data-uid="HexaEngine.Lights.ShadowAtlas.AllocRange*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_AllocRange_System_Int32_System_Int32_HexaEngine_Lights_SpatialCacheHandle___" data-uid="HexaEngine.Lights.ShadowAtlas.AllocRange(System.Int32,System.Int32,HexaEngine.Lights.SpatialCacheHandle[])">
+  AllocRange(int, int, SpatialCacheHandle[]?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ShadowAtlasRangeHandle AllocRange(int desiredSize, int count, SpatialCacheHandle[]? cacheHandles = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desiredSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>cacheHandles</code> <a class="xref" href="HexaEngine.Lights.SpatialCacheHandle.html">SpatialCacheHandle</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.ShadowAtlasRangeHandle.html">ShadowAtlasRangeHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_AllocRange_" data-uid="HexaEngine.Lights.ShadowAtlas.AllocRange*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_AllocRange_System_UInt32_System_Int32_HexaEngine_Lights_SpatialCacheHandle___" data-uid="HexaEngine.Lights.ShadowAtlas.AllocRange(System.UInt32,System.Int32,HexaEngine.Lights.SpatialCacheHandle[])">
+  AllocRange(uint, int, SpatialCacheHandle[]?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ShadowAtlasRangeHandle AllocRange(uint desiredSize, int count, SpatialCacheHandle[]? cacheHandles = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desiredSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>cacheHandles</code> <a class="xref" href="HexaEngine.Lights.SpatialCacheHandle.html">SpatialCacheHandle</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.ShadowAtlasRangeHandle.html">ShadowAtlasRangeHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Cache_" data-uid="HexaEngine.Lights.ShadowAtlas.Cache*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Cache_HexaEngine_Lights_ShadowAtlasHandle_" data-uid="HexaEngine.Lights.ShadowAtlas.Cache(HexaEngine.Lights.ShadowAtlasHandle)">
+  Cache(ShadowAtlasHandle)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SpatialCacheHandle Cache(ShadowAtlasHandle handle)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>handle</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlasHandle.html">ShadowAtlasHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.SpatialCacheHandle.html">SpatialCacheHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_CacheRange_" data-uid="HexaEngine.Lights.ShadowAtlas.CacheRange*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_CacheRange_HexaEngine_Lights_ShadowAtlasRangeHandle_" data-uid="HexaEngine.Lights.ShadowAtlas.CacheRange(HexaEngine.Lights.ShadowAtlasRangeHandle)">
+  CacheRange(ShadowAtlasRangeHandle)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L149"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SpatialCacheHandle[] CacheRange(ShadowAtlasRangeHandle handle)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>handle</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlasRangeHandle.html">ShadowAtlasRangeHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Lights.SpatialCacheHandle.html">SpatialCacheHandle</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Clear_" data-uid="HexaEngine.Lights.ShadowAtlas.Clear*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Clear" data-uid="HexaEngine.Lights.ShadowAtlas.Clear">
+  Clear()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Dispose_" data-uid="HexaEngine.Lights.ShadowAtlas.Dispose*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Dispose" data-uid="HexaEngine.Lights.ShadowAtlas.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L194"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Dispose_" data-uid="HexaEngine.Lights.ShadowAtlas.Dispose*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Dispose_System_Boolean_" data-uid="HexaEngine.Lights.ShadowAtlas.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_Free_" data-uid="HexaEngine.Lights.ShadowAtlas.Free*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_Free_HexaEngine_Lights_ShadowAtlasHandle_" data-uid="HexaEngine.Lights.ShadowAtlas.Free(HexaEngine.Lights.ShadowAtlasHandle)">
+  Free(ShadowAtlasHandle)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Free(ShadowAtlasHandle handle)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>handle</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlasHandle.html">ShadowAtlasHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Lights_ShadowAtlas_FreeRange_" data-uid="HexaEngine.Lights.ShadowAtlas.FreeRange*"></a>
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_FreeRange_HexaEngine_Lights_ShadowAtlasRangeHandle_" data-uid="HexaEngine.Lights.ShadowAtlas.FreeRange(HexaEngine.Lights.ShadowAtlasRangeHandle)">
+  FreeRange(ShadowAtlasRangeHandle)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L170"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FreeRange(ShadowAtlasRangeHandle handle)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>handle</code> <a class="xref" href="HexaEngine.Lights.ShadowAtlasRangeHandle.html">ShadowAtlasRangeHandle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Lights_ShadowAtlas_OnDisposing" data-uid="HexaEngine.Lights.ShadowAtlas.OnDisposing">
+  OnDisposing
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action&lt;ShadowAtlas&gt;? OnDisposing</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="HexaEngine.Lights.ShadowAtlas.html">ShadowAtlas</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Lights/ShadowAtlas.cs/#L9" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class NodeEditor </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class NodeEditor ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Materials_NodeEditor.md&amp;value=---%0Auid%3A%20HexaEngine.Materials.NodeEditor%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Materials.NodeEditor">
+
+
+
+  <h1 id="HexaEngine_Materials_NodeEditor" data-uid="HexaEngine.Materials.NodeEditor" class="text-break">
+Class NodeEditor  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Materials.html">Materials</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class NodeEditor</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">NodeEditor</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_currentId" data-uid="HexaEngine.Materials.NodeEditor.currentId">
+  currentId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected int currentId</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_initialized" data-uid="HexaEngine.Materials.NodeEditor.initialized">
+  initialized
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool initialized</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_links" data-uid="HexaEngine.Materials.NodeEditor.links">
+  links
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected readonly List&lt;Link&gt; links</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Materials.Link.html">Link</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_nodes" data-uid="HexaEngine.Materials.NodeEditor.nodes">
+  nodes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected readonly List&lt;Node&gt; nodes</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Materials.Node.html">Node</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Materials_NodeEditor_CurrentId_" data-uid="HexaEngine.Materials.NodeEditor.CurrentId*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_CurrentId" data-uid="HexaEngine.Materials.NodeEditor.CurrentId">
+  CurrentId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int CurrentId { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_Links_" data-uid="HexaEngine.Materials.NodeEditor.Links*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_Links" data-uid="HexaEngine.Materials.NodeEditor.Links">
+  Links
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public List&lt;Link&gt; Links { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Materials.Link.html">Link</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_Nodes_" data-uid="HexaEngine.Materials.NodeEditor.Nodes*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_Nodes" data-uid="HexaEngine.Materials.NodeEditor.Nodes">
+  Nodes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Node&gt; Nodes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Materials.Node.html">Node</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Materials_NodeEditor_AddLink_" data-uid="HexaEngine.Materials.NodeEditor.AddLink*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_AddLink_HexaEngine_Materials_Link_" data-uid="HexaEngine.Materials.NodeEditor.AddLink(HexaEngine.Materials.Link)">
+  AddLink(Link)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L261"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddLink(Link link)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>link</code> <a class="xref" href="HexaEngine.Materials.Link.html">Link</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_AddNode_" data-uid="HexaEngine.Materials.NodeEditor.AddNode*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_AddNode_HexaEngine_Materials_Node_" data-uid="HexaEngine.Materials.NodeEditor.AddNode(HexaEngine.Materials.Node)">
+  AddNode(Node)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L273"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddNode(Node node)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>node</code> <a class="xref" href="HexaEngine.Materials.Node.html">Node</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_BeginModify_" data-uid="HexaEngine.Materials.NodeEditor.BeginModify*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_BeginModify" data-uid="HexaEngine.Materials.NodeEditor.BeginModify">
+  BeginModify()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L516"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void BeginModify()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_BeginUpdate_" data-uid="HexaEngine.Materials.NodeEditor.BeginUpdate*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_BeginUpdate" data-uid="HexaEngine.Materials.NodeEditor.BeginUpdate">
+  BeginUpdate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L526"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool BeginUpdate()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_CreateLink_" data-uid="HexaEngine.Materials.NodeEditor.CreateLink*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_CreateLink_HexaEngine_Materials_Pin_HexaEngine_Materials_Pin_" data-uid="HexaEngine.Materials.NodeEditor.CreateLink(HexaEngine.Materials.Pin,HexaEngine.Materials.Pin)">
+  CreateLink(Pin, Pin)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L301"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Link CreateLink(Pin input, Pin output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>input</code> <a class="xref" href="HexaEngine.Materials.Pin.html">Pin</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="HexaEngine.Materials.Pin.html">Pin</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.Link.html">Link</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_CreateLinkFromId_" data-uid="HexaEngine.Materials.NodeEditor.CreateLinkFromId*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_CreateLinkFromId_HexaEngine_Materials_LinkId_" data-uid="HexaEngine.Materials.NodeEditor.CreateLinkFromId(HexaEngine.Materials.LinkId)">
+  CreateLinkFromId(LinkId)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Link CreateLinkFromId(LinkId id)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="HexaEngine.Materials.LinkId.html">LinkId</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.Link.html">Link</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_CreateNode_" data-uid="HexaEngine.Materials.NodeEditor.CreateNode*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_CreateNode_System_String_System_Boolean_System_Boolean_" data-uid="HexaEngine.Materials.NodeEditor.CreateNode(System.String,System.Boolean,System.Boolean)">
+  CreateNode(string, bool, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L317"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Node CreateNode(string name, bool removable = true, bool isStatic = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>removable</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>isStatic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.Node.html">Node</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_Deserialize_" data-uid="HexaEngine.Materials.NodeEditor.Deserialize*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_Deserialize_System_String_" data-uid="HexaEngine.Materials.NodeEditor.Deserialize(System.String)">
+  Deserialize(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static NodeEditor Deserialize(string json)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>json</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.NodeEditor.html">NodeEditor</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_Destroy_" data-uid="HexaEngine.Materials.NodeEditor.Destroy*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_Destroy" data-uid="HexaEngine.Materials.NodeEditor.Destroy">
+  Destroy()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L324"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Destroy()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_Draw_" data-uid="HexaEngine.Materials.NodeEditor.Draw*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_Draw" data-uid="HexaEngine.Materials.NodeEditor.Draw">
+  Draw()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L340"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Draw()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_EndModify_" data-uid="HexaEngine.Materials.NodeEditor.EndModify*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_EndModify" data-uid="HexaEngine.Materials.NodeEditor.EndModify">
+  EndModify()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L520"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void EndModify()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_EndUpdate_" data-uid="HexaEngine.Materials.NodeEditor.EndUpdate*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_EndUpdate" data-uid="HexaEngine.Materials.NodeEditor.EndUpdate">
+  EndUpdate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L536"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool EndUpdate()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_FindStack_" data-uid="HexaEngine.Materials.NodeEditor.FindStack*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_FindStack__1_System_Collections_Generic_Stack___0__System_Func___0_System_Boolean__" data-uid="HexaEngine.Materials.NodeEditor.FindStack``1(System.Collections.Generic.Stack{``0},System.Func{``0,System.Boolean})">
+  FindStack&lt;T&gt;(Stack&lt;T&gt;, Func&lt;T, bool&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T FindStack&lt;T&gt;(Stack&lt;T&gt; values, Func&lt;T, bool&gt; compare)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.stack-1">Stack</a>&lt;T&gt;</dt>
+    <dd></dd>
+    <dt><code>compare</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;T, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_GetLink_" data-uid="HexaEngine.Materials.NodeEditor.GetLink*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_GetLink_System_Int32_" data-uid="HexaEngine.Materials.NodeEditor.GetLink(System.Int32)">
+  GetLink(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L344"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Link? GetLink(int id)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.Link.html">Link</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_GetNode_" data-uid="HexaEngine.Materials.NodeEditor.GetNode*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_GetNode_System_Int32_" data-uid="HexaEngine.Materials.NodeEditor.GetNode(System.Int32)">
+  GetNode(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L358"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Node? GetNode(int id)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.Node.html">Node</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_GetNode_" data-uid="HexaEngine.Materials.NodeEditor.GetNode*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_GetNode__1" data-uid="HexaEngine.Materials.NodeEditor.GetNode``1">
+  GetNode&lt;T&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L390"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T GetNode&lt;T&gt;() where T : Node</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_GetNodes_" data-uid="HexaEngine.Materials.NodeEditor.GetNodes*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_GetNodes__1" data-uid="HexaEngine.Materials.NodeEditor.GetNodes``1">
+  GetNodes&lt;T&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L403"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;T&gt; GetNodes&lt;T&gt;() where T : Node</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_GetPin_" data-uid="HexaEngine.Materials.NodeEditor.GetPin*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_GetPin_System_Int32_" data-uid="HexaEngine.Materials.NodeEditor.GetPin(System.Int32)">
+  GetPin(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L372"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Pin? GetPin(int id)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.Pin.html">Pin</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_GetUniqueId_" data-uid="HexaEngine.Materials.NodeEditor.GetUniqueId*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_GetUniqueId" data-uid="HexaEngine.Materials.NodeEditor.GetUniqueId">
+  GetUniqueId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L415"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetUniqueId()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_Initialize_" data-uid="HexaEngine.Materials.NodeEditor.Initialize*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_Initialize_System_Boolean_" data-uid="HexaEngine.Materials.NodeEditor.Initialize(System.Boolean)">
+  Initialize(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L429"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Initialize(bool createContext = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>createContext</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_RemoveFromStack2_" data-uid="HexaEngine.Materials.NodeEditor.RemoveFromStack2*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_RemoveFromStack2__1_System_Collections_Generic_Stack___0____0_" data-uid="HexaEngine.Materials.NodeEditor.RemoveFromStack2``1(System.Collections.Generic.Stack{``0},``0)">
+  RemoveFromStack2&lt;T&gt;(Stack&lt;T&gt;, T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void RemoveFromStack2&lt;T&gt;(Stack&lt;T&gt; values, T value) where T : IEquatable&lt;T&gt;</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.stack-1">Stack</a>&lt;T&gt;</dt>
+    <dd></dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_RemoveFromStack_" data-uid="HexaEngine.Materials.NodeEditor.RemoveFromStack*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_RemoveFromStack__1_System_Collections_Generic_Stack___0__System_Func___0_System_Boolean__" data-uid="HexaEngine.Materials.NodeEditor.RemoveFromStack``1(System.Collections.Generic.Stack{``0},System.Func{``0,System.Boolean})">
+  RemoveFromStack&lt;T&gt;(Stack&lt;T&gt;, Func&lt;T, bool&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void RemoveFromStack&lt;T&gt;(Stack&lt;T&gt; values, Func&lt;T, bool&gt; compare)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.stack-1">Stack</a>&lt;T&gt;</dt>
+    <dd></dd>
+    <dt><code>compare</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;T, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_RemoveFromStack_" data-uid="HexaEngine.Materials.NodeEditor.RemoveFromStack*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_RemoveFromStack__1_System_Collections_Generic_Stack___0____0_" data-uid="HexaEngine.Materials.NodeEditor.RemoveFromStack``1(System.Collections.Generic.Stack{``0},``0)">
+  RemoveFromStack&lt;T&gt;(Stack&lt;T&gt;, T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void RemoveFromStack&lt;T&gt;(Stack&lt;T&gt; values, T value) where T : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.stack-1">Stack</a>&lt;T&gt;</dt>
+    <dd></dd>
+    <dt><code>value</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_RemoveLink_" data-uid="HexaEngine.Materials.NodeEditor.RemoveLink*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_RemoveLink_HexaEngine_Materials_Link_" data-uid="HexaEngine.Materials.NodeEditor.RemoveLink(HexaEngine.Materials.Link)">
+  RemoveLink(Link)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L449"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveLink(Link link)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>link</code> <a class="xref" href="HexaEngine.Materials.Link.html">Link</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_RemoveNode_" data-uid="HexaEngine.Materials.NodeEditor.RemoveNode*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_RemoveNode_HexaEngine_Materials_Node_" data-uid="HexaEngine.Materials.NodeEditor.RemoveNode(HexaEngine.Materials.Node)">
+  RemoveNode(Node)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L455"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveNode(Node node)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>node</code> <a class="xref" href="HexaEngine.Materials.Node.html">Node</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_RestoreState_" data-uid="HexaEngine.Materials.NodeEditor.RestoreState*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_RestoreState_System_String_" data-uid="HexaEngine.Materials.NodeEditor.RestoreState(System.String)">
+  RestoreState(string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L425"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void RestoreState(string? state)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>state</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_SaveState_" data-uid="HexaEngine.Materials.NodeEditor.SaveState*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_SaveState" data-uid="HexaEngine.Materials.NodeEditor.SaveState">
+  SaveState()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L420"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual string SaveState()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_Serialize_" data-uid="HexaEngine.Materials.NodeEditor.Serialize*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_Serialize" data-uid="HexaEngine.Materials.NodeEditor.Serialize">
+  Serialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L461"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Serialize()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_TreeTraversal_" data-uid="HexaEngine.Materials.NodeEditor.TreeTraversal*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_TreeTraversal_HexaEngine_Materials_Node_System_Boolean_" data-uid="HexaEngine.Materials.NodeEditor.TreeTraversal(HexaEngine.Materials.Node,System.Boolean)">
+  TreeTraversal(Node, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Node[] TreeTraversal(Node root, bool includeStatic)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>root</code> <a class="xref" href="HexaEngine.Materials.Node.html">Node</a></dt>
+    <dd></dd>
+    <dt><code>includeStatic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.Node.html">Node</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_TreeTraversal2_" data-uid="HexaEngine.Materials.NodeEditor.TreeTraversal2*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_TreeTraversal2_HexaEngine_Materials_Node_System_Boolean_" data-uid="HexaEngine.Materials.NodeEditor.TreeTraversal2(HexaEngine.Materials.Node,System.Boolean)">
+  TreeTraversal2(Node, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Node[][] TreeTraversal2(Node root, bool includeStatic)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>root</code> <a class="xref" href="HexaEngine.Materials.Node.html">Node</a></dt>
+    <dd></dd>
+    <dt><code>includeStatic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.Node.html">Node</a>[][]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_TryCreateLink_" data-uid="HexaEngine.Materials.NodeEditor.TryCreateLink*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_TryCreateLink_HexaEngine_Materials_Pin_HexaEngine_Materials_Pin_" data-uid="HexaEngine.Materials.NodeEditor.TryCreateLink(HexaEngine.Materials.Pin,HexaEngine.Materials.Pin)">
+  TryCreateLink(Pin, Pin)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L292"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Link? TryCreateLink(Pin input, Pin output)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>input</code> <a class="xref" href="HexaEngine.Materials.Pin.html">Pin</a></dt>
+    <dd></dd>
+    <dt><code>output</code> <a class="xref" href="HexaEngine.Materials.Pin.html">Pin</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Materials.Link.html">Link</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Materials_NodeEditor_Validate_" data-uid="HexaEngine.Materials.NodeEditor.Validate*"></a>
+
+  <h3 id="HexaEngine_Materials_NodeEditor_Validate_HexaEngine_Materials_Pin_HexaEngine_Materials_Pin_" data-uid="HexaEngine.Materials.NodeEditor.Validate(HexaEngine.Materials.Pin,HexaEngine.Materials.Pin)">
+  Validate(Pin, Pin)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L229"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool Validate(Pin startPin, Pin endPin)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>startPin</code> <a class="xref" href="HexaEngine.Materials.Pin.html">Pin</a></dt>
+    <dd></dd>
+    <dt><code>endPin</code> <a class="xref" href="HexaEngine.Materials.Pin.html">Pin</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_LinkAdded" data-uid="HexaEngine.Materials.NodeEditor.LinkAdded">
+  LinkAdded
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Link&gt;? LinkAdded</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.Link.html">Link</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_LinkRemoved" data-uid="HexaEngine.Materials.NodeEditor.LinkRemoved">
+  LinkRemoved
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Link&gt;? LinkRemoved</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.Link.html">Link</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_NodeAdded" data-uid="HexaEngine.Materials.NodeEditor.NodeAdded">
+  NodeAdded
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Node&gt;? NodeAdded</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.Node.html">Node</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_NodePinValueChanged" data-uid="HexaEngine.Materials.NodeEditor.NodePinValueChanged">
+  NodePinValueChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Pin&gt;? NodePinValueChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.Pin.html">Pin</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_NodePinValueChanging" data-uid="HexaEngine.Materials.NodeEditor.NodePinValueChanging">
+  NodePinValueChanging
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Pin&gt;? NodePinValueChanging</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.Pin.html">Pin</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_NodeRemoved" data-uid="HexaEngine.Materials.NodeEditor.NodeRemoved">
+  NodeRemoved
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Node&gt;? NodeRemoved</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.Node.html">Node</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_NodeValueChanged" data-uid="HexaEngine.Materials.NodeEditor.NodeValueChanged">
+  NodeValueChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Node&gt;? NodeValueChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.Node.html">Node</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_NodeValueChanging" data-uid="HexaEngine.Materials.NodeEditor.NodeValueChanging">
+  NodeValueChanging
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Node&gt;? NodeValueChanging</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.Node.html">Node</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_ValueChanged" data-uid="HexaEngine.Materials.NodeEditor.ValueChanged">
+  ValueChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;NodeEditor&gt;? ValueChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.NodeEditor.html">NodeEditor</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Materials_NodeEditor_ValueChanging" data-uid="HexaEngine.Materials.NodeEditor.ValueChanging">
+  ValueChanging
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;NodeEditor&gt;? ValueChanging</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Materials.NodeEditor.html">NodeEditor</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Materials/NodeEditorBase.cs/#L7" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

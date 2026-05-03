@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Texture1D </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Texture1D ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_Texture1D.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.Texture1D%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.Texture1D">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_Texture1D" data-uid="HexaEngine.Core.Graphics.Texture1D" class="text-break">
+Class Texture1D  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L6"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class Texture1D : Texture&lt;ITexture1D, Texture1DDescription&gt;, ITexture1D, IResource, IShaderResourceView, IRenderTargetView, IUnorderedAccessView, IDeviceChild, INative, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Core.DisposableBase.html">DisposableBase</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html">Texture</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a>, <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a>&gt;</div>
+      <div><span class="xref">Texture1D</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html">IDeviceChild</a></div>
+      <div><span class="xref">INative</span></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_CreateArraySlices">Texture&lt;ITexture1D, Texture1DDescription&gt;.CreateArraySlices()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_CopyTo_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IResource_">Texture&lt;ITexture1D, Texture1DDescription&gt;.CopyTo(IGraphicsContext, IResource)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_Dimension">Texture&lt;ITexture1D, Texture1DDescription&gt;.Dimension</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_Description">Texture&lt;ITexture1D, Texture1DDescription&gt;.Description</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_Format">Texture&lt;ITexture1D, Texture1DDescription&gt;.Format</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_CpuAccessFlags">Texture&lt;ITexture1D, Texture1DDescription&gt;.CpuAccessFlags</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_GpuAccessFlags">Texture&lt;ITexture1D, Texture1DDescription&gt;.GpuAccessFlags</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_MiscFlag">Texture&lt;ITexture1D, Texture1DDescription&gt;.MiscFlag</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_CanWrite">Texture&lt;ITexture1D, Texture1DDescription&gt;.CanWrite</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_CanRead">Texture&lt;ITexture1D, Texture1DDescription&gt;.CanRead</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_RowPitch">Texture&lt;ITexture1D, Texture1DDescription&gt;.RowPitch</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_SlicePitch">Texture&lt;ITexture1D, Texture1DDescription&gt;.SlicePitch</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_NativePointer">Texture&lt;ITexture1D, Texture1DDescription&gt;.NativePointer</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_DebugName">Texture&lt;ITexture1D, Texture1DDescription&gt;.DebugName</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_SRV">Texture&lt;ITexture1D, Texture1DDescription&gt;.SRV</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_RTV">Texture&lt;ITexture1D, Texture1DDescription&gt;.RTV</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_UAV">Texture&lt;ITexture1D, Texture1DDescription&gt;.UAV</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_RTVArraySlices">Texture&lt;ITexture1D, Texture1DDescription&gt;.RTVArraySlices</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_SRVArraySlices">Texture&lt;ITexture1D, Texture1DDescription&gt;.SRVArraySlices</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.Texture-2.html#HexaEngine_Core_Graphics_Texture_2_UAVArraySlices">Texture&lt;ITexture1D, Texture1DDescription&gt;.UAVArraySlices</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.DisposableBase.html#HexaEngine_Core_DisposableBase_IsDisposed">DisposableBase.IsDisposed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.DisposableBase.html#HexaEngine_Core_DisposableBase_OnDisposed">DisposableBase.OnDisposed</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.DisposableBase.html#HexaEngine_Core_DisposableBase_Dispose">DisposableBase.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetAs__1_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetAs&lt;T&gt;(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetPointer_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetPointer(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Extensions.SRVExtensions.html#HexaEngine_Core_Extensions_SRVExtensions_ToTexRef_HexaEngine_Core_Graphics_IShaderResourceView_">SRVExtensions.ToTexRef(IShaderResourceView?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D__ctor_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D__ctor_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.ResourceMiscFlag,System.String,System.Int32)">
+  Texture1D(Format, int, int, int, GpuAccessFlags, CpuAccessFlags, ResourceMiscFlag, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a> class with the specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Texture1D(Format format, int width, int arraySize, int mipLevels, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.Read, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The format of the texture.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the texture.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The array size of the texture.</p>
+</dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of mip levels for the texture.</p>
+</dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd><p>The GPU access flags for the texture (default is read-only).</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the texture.</p>
+</dd>
+    <dt><code>miscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous flags for the texture (default is none).</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D__ctor_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D__ctor_HexaEngine_Core_Graphics_Texture1DDescription_HexaEngine_Core_Graphics_IScratchImage_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor(HexaEngine.Core.Graphics.Texture1DDescription,HexaEngine.Core.Graphics.IScratchImage,System.String,System.Int32)">
+  Texture1D(Texture1DDescription, IScratchImage, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a> class using the specified <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Texture1D(Texture1DDescription description, IScratchImage scratchImage, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a> used to create the texture.</p>
+</dd>
+    <dt><code>scratchImage</code> <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd><p>The source image of the texture.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D__ctor_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D__ctor_HexaEngine_Core_Graphics_Texture1DDescription_HexaEngine_Core_Graphics_SubresourceData_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor(HexaEngine.Core.Graphics.Texture1DDescription,HexaEngine.Core.Graphics.SubresourceData,System.String,System.Int32)">
+  Texture1D(Texture1DDescription, SubresourceData, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a> class using the provided <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a> and a single <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a> for initial data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Texture1D(Texture1DDescription description, SubresourceData initialData, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a> used to create the texture.</p>
+</dd>
+    <dt><code>initialData</code> <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a></dt>
+    <dd><p>A single <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a> containing the initial data for the texture.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D__ctor_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D__ctor_HexaEngine_Core_Graphics_Texture1DDescription_HexaEngine_Core_Graphics_SubresourceData___System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor(HexaEngine.Core.Graphics.Texture1DDescription,HexaEngine.Core.Graphics.SubresourceData[],System.String,System.Int32)">
+  Texture1D(Texture1DDescription, SubresourceData[], string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a> class using the provided <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a> and initial data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Texture1D(Texture1DDescription description, SubresourceData[] initialData, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a> used to create the texture.</p>
+</dd>
+    <dt><code>initialData</code> <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a>[]</dt>
+    <dd><p>An array of <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a> containing the initial data for the texture.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D__ctor_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D__ctor_HexaEngine_Core_Graphics_Texture1DDescription_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor(HexaEngine.Core.Graphics.Texture1DDescription,System.String,System.Int32)">
+  Texture1D(Texture1DDescription, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a> class using the provided <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Texture1D(Texture1DDescription description, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a> used to create the texture.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D__ctor_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D__ctor_HexaEngine_Core_Graphics_TextureFileDescription_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Texture1D.#ctor(HexaEngine.Core.Graphics.TextureFileDescription,System.String,System.Int32)">
+  Texture1D(TextureFileDescription, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Texture1D.html">Texture1D</a> class using the specified <a class="xref" href="HexaEngine.Core.Graphics.TextureFileDescription.html">TextureFileDescription</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Texture1D(TextureFileDescription description, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>description</code> <a class="xref" href="HexaEngine.Core.Graphics.TextureFileDescription.html">TextureFileDescription</a></dt>
+    <dd><p>The <a class="xref" href="HexaEngine.Core.Graphics.TextureFileDescription.html">TextureFileDescription</a> used to create the texture.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The file path of the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source code file where this constructor is called. (auto-generated)</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_ArraySize_" data-uid="HexaEngine.Core.Graphics.Texture1D.ArraySize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_ArraySize" data-uid="HexaEngine.Core.Graphics.Texture1D.ArraySize">
+  ArraySize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the array size of the texture.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ArraySize { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_Dimension_" data-uid="HexaEngine.Core.Graphics.Texture1D.Dimension*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_Dimension" data-uid="HexaEngine.Core.Graphics.Texture1D.Dimension">
+  Dimension
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the dimension of the resource.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ResourceDimension Dimension { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ResourceDimension.html">ResourceDimension</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_MipLevels_" data-uid="HexaEngine.Core.Graphics.Texture1D.MipLevels*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_MipLevels" data-uid="HexaEngine.Core.Graphics.Texture1D.MipLevels">
+  MipLevels
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the number of mip levels in the texture.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MipLevels { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_Width_" data-uid="HexaEngine.Core.Graphics.Texture1D.Width*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_Width" data-uid="HexaEngine.Core.Graphics.Texture1D.Width">
+  Width
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the width of the texture.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Width { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_CreateArraySlices_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateArraySlices*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_CreateArraySlices_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Graphics_ITexture1D_HexaEngine_Core_Graphics_Texture1DDescription_HexaEngine_Core_Graphics_IRenderTargetView____HexaEngine_Core_Graphics_IShaderResourceView____HexaEngine_Core_Graphics_IUnorderedAccessView____" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateArraySlices(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Graphics.ITexture1D,HexaEngine.Core.Graphics.Texture1DDescription,HexaEngine.Core.Graphics.IRenderTargetView[]@,HexaEngine.Core.Graphics.IShaderResourceView[]@,HexaEngine.Core.Graphics.IUnorderedAccessView[]@)">
+  CreateArraySlices(IGraphicsDevice, ITexture1D, Texture1DDescription, out IRenderTargetView[]?, out IShaderResourceView[]?, out IUnorderedAccessView[]?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void CreateArraySlices(IGraphicsDevice device, ITexture1D resource, Texture1DDescription desc, out IRenderTargetView[]? rtvArraySlices, out IShaderResourceView[]? srvArraySlices, out IUnorderedAccessView[]? uavArraySlices)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+    <dt><code>rtvArraySlices</code> <a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a>[]</dt>
+    <dd></dd>
+    <dt><code>srvArraySlices</code> <a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a>[]</dt>
+    <dd></dd>
+    <dt><code>uavArraySlices</code> <a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_CreateRTV_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateRTV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_CreateRTV_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Graphics_ITexture1D_HexaEngine_Core_Graphics_Texture1DDescription_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateRTV(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Graphics.ITexture1D,HexaEngine.Core.Graphics.Texture1DDescription)">
+  CreateRTV(IGraphicsDevice, ITexture1D, Texture1DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override IRenderTargetView CreateRTV(IGraphicsDevice device, ITexture1D resource, Texture1DDescription desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IRenderTargetView.html">IRenderTargetView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_CreateSRV_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateSRV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_CreateSRV_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Graphics_ITexture1D_HexaEngine_Core_Graphics_Texture1DDescription_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateSRV(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Graphics.ITexture1D,HexaEngine.Core.Graphics.Texture1DDescription)">
+  CreateSRV(IGraphicsDevice, ITexture1D, Texture1DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override IShaderResourceView CreateSRV(IGraphicsDevice device, ITexture1D resource, Texture1DDescription desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_CreateTexture_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateTexture*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_CreateTexture_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Graphics_IScratchImage_HexaEngine_Core_Graphics_Texture1DDescription_HexaEngine_Core_Graphics_BindFlags__" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateTexture(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Graphics.IScratchImage,HexaEngine.Core.Graphics.Texture1DDescription,HexaEngine.Core.Graphics.BindFlags@)">
+  CreateTexture(IGraphicsDevice, IScratchImage, Texture1DDescription, out BindFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override ITexture1D CreateTexture(IGraphicsDevice device, IScratchImage scratchImage, Texture1DDescription desc, out BindFlags bindFlags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>scratchImage</code> <a class="xref" href="HexaEngine.Core.Graphics.IScratchImage.html">IScratchImage</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+    <dt><code>bindFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_CreateTexture_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateTexture*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_CreateTexture_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Graphics_Texture1DDescription_HexaEngine_Core_Graphics_SubresourceData___HexaEngine_Core_Graphics_BindFlags__" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateTexture(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Graphics.Texture1DDescription,HexaEngine.Core.Graphics.SubresourceData[],HexaEngine.Core.Graphics.BindFlags@)">
+  CreateTexture(IGraphicsDevice, Texture1DDescription, SubresourceData[]?, out BindFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override ITexture1D CreateTexture(IGraphicsDevice device, Texture1DDescription desc, SubresourceData[]? initialData, out BindFlags bindFlags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+    <dt><code>initialData</code> <a class="xref" href="HexaEngine.Core.Graphics.SubresourceData.html">SubresourceData</a>[]</dt>
+    <dd></dd>
+    <dt><code>bindFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_CreateTexture_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateTexture*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_CreateTexture_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Graphics_TextureFileDescription_HexaEngine_Core_Graphics_Texture1DDescription__HexaEngine_Core_Graphics_BindFlags__" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateTexture(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Graphics.TextureFileDescription,HexaEngine.Core.Graphics.Texture1DDescription@,HexaEngine.Core.Graphics.BindFlags@)">
+  CreateTexture(IGraphicsDevice, TextureFileDescription, out Texture1DDescription, out BindFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override ITexture1D CreateTexture(IGraphicsDevice device, TextureFileDescription fileDesc, out Texture1DDescription desc, out BindFlags bindFlags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>fileDesc</code> <a class="xref" href="HexaEngine.Core.Graphics.TextureFileDescription.html">TextureFileDescription</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+    <dt><code>bindFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BindFlags.html">BindFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_CreateUAV_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateUAV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_CreateUAV_HexaEngine_Core_Graphics_IGraphicsDevice_HexaEngine_Core_Graphics_ITexture1D_HexaEngine_Core_Graphics_Texture1DDescription_" data-uid="HexaEngine.Core.Graphics.Texture1D.CreateUAV(HexaEngine.Core.Graphics.IGraphicsDevice,HexaEngine.Core.Graphics.ITexture1D,HexaEngine.Core.Graphics.Texture1DDescription)">
+  CreateUAV(IGraphicsDevice, ITexture1D, Texture1DDescription)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override IUnorderedAccessView CreateUAV(IGraphicsDevice device, ITexture1D resource, Texture1DDescription desc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>resource</code> <a class="xref" href="HexaEngine.Core.Graphics.ITexture1D.html">ITexture1D</a></dt>
+    <dd></dd>
+    <dt><code>desc</code> <a class="xref" href="HexaEngine.Core.Graphics.Texture1DDescription.html">Texture1DDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_GetDimensions_" data-uid="HexaEngine.Core.Graphics.Texture1D.GetDimensions*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_GetDimensions" data-uid="HexaEngine.Core.Graphics.Texture1D.GetDimensions">
+  GetDimensions()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Point3 GetDimensions()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Point3</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Texture1D_Resize_" data-uid="HexaEngine.Core.Graphics.Texture1D.Resize*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Texture1D_Resize_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag_" data-uid="HexaEngine.Core.Graphics.Texture1D.Resize(HexaEngine.Core.Graphics.Format,System.Int32,System.Int32,System.Int32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.GpuAccessFlags,HexaEngine.Core.Graphics.ResourceMiscFlag)">
+  Resize(Format, int, int, int, CpuAccessFlags, GpuAccessFlags, ResourceMiscFlag)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L211"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resizes the texture with the specified parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize(Format format, int width, int arraySize, int mipLevels, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.Read, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="HexaEngine.Core.Graphics.Format.html">Format</a></dt>
+    <dd><p>The format of the resized texture.</p>
+</dd>
+    <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The width of the resized texture.</p>
+</dd>
+    <dt><code>arraySize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The array size of the resized texture.</p>
+</dd>
+    <dt><code>mipLevels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of mip levels for the resized texture.</p>
+</dd>
+    <dt><code>cpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the resized texture.</p>
+</dd>
+    <dt><code>gpuAccessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.GpuAccessFlags.html">GpuAccessFlags</a></dt>
+    <dd><p>The GPU access flags for the resized texture (default is GpuAccessFlags.Read).</p>
+</dd>
+    <dt><code>miscFlag</code> <a class="xref" href="HexaEngine.Core.Graphics.ResourceMiscFlag.html">ResourceMiscFlag</a></dt>
+    <dd><p>The miscellaneous flags for the resized texture (default is ResourceMiscFlag.None).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Graphics_Texture1D_Resize_HexaEngine_Core_Graphics_Format_System_Int32_System_Int32_System_Int32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_GpuAccessFlags_HexaEngine_Core_Graphics_ResourceMiscFlag__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method resizes the texture to the specified dimensions with the provided access flags and format. If CPU and GPU access flags
+conflict or GPU access flags are used for reading, appropriate bindings and usage are adjusted. After resizing, the previous texture
+is disposed, and new resources are created accordingly. The texture will be ready to use for rendering, shader resource, or unordered access.</p>
+</div>
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Texture1D.cs/#L6" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

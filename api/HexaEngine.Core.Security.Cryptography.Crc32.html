@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Crc32 </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Crc32 ">
+      
+      <meta name="description" content="Implements a 32-bit CRC hash algorithm compatible with Zip etc.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Security_Cryptography_Crc32.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Security.Cryptography.Crc32%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Security.Cryptography.Crc32">
+
+
+
+  <h1 id="HexaEngine_Core_Security_Cryptography_Crc32" data-uid="HexaEngine.Core.Security.Cryptography.Crc32" class="text-break">
+Class Crc32  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Security.html">Security</a>.<a class="xref" href="HexaEngine.Core.Security.Cryptography.html">Cryptography</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Implements a 32-bit CRC hash algorithm compatible with Zip etc.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class Crc32 : HashAlgorithm, ICryptoTransform, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm">HashAlgorithm</a></div>
+      <div><span class="xref">Crc32</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.icryptotransform">ICryptoTransform</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.clear">HashAlgorithm.Clear()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.computehash#system-security-cryptography-hashalgorithm-computehash(system-byte())">HashAlgorithm.ComputeHash(byte[])</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.computehash#system-security-cryptography-hashalgorithm-computehash(system-byte()-system-int32-system-int32)">HashAlgorithm.ComputeHash(byte[], int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.computehash#system-security-cryptography-hashalgorithm-computehash(system-io-stream)">HashAlgorithm.ComputeHash(Stream)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.computehashasync">HashAlgorithm.ComputeHashAsync(Stream, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.create#system-security-cryptography-hashalgorithm-create">HashAlgorithm.Create()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.create#system-security-cryptography-hashalgorithm-create(system-string)">HashAlgorithm.Create(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.dispose#system-security-cryptography-hashalgorithm-dispose">HashAlgorithm.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.transformblock">HashAlgorithm.TransformBlock(byte[], int, int, byte[], int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.transformfinalblock">HashAlgorithm.TransformFinalBlock(byte[], int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.trycomputehash">HashAlgorithm.TryComputeHash(ReadOnlySpan&lt;byte&gt;, Span&lt;byte&gt;, out int)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.canreusetransform">HashAlgorithm.CanReuseTransform</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.cantransformmultipleblocks">HashAlgorithm.CanTransformMultipleBlocks</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.hash">HashAlgorithm.Hash</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.inputblocksize">HashAlgorithm.InputBlockSize</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.hashalgorithm.outputblocksize">HashAlgorithm.OutputBlockSize</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+  <h2 id="HexaEngine_Core_Security_Cryptography_Crc32_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Crc32 should only be used for backward compatibility with older file formats
+and algorithms. It is not secure enough for new applications.
+If you need to call multiple times for the same data either use the HashAlgorithm
+interface or remember that the result of one Compute call needs to be ~ (XOR) before
+being passed in as the seed for the next Compute call.</p>
+</div>
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32__ctor_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32__ctor" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.#ctor">
+  Crc32()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Create a new <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> with a <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial">DefaultPolynomial</a> and <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultSeed">DefaultSeed</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Crc32()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32__ctor_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32__ctor_System_UInt32_System_UInt32_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.#ctor(System.UInt32,System.UInt32)">
+  Crc32(uint, uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Create a new <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> with a supplied polynomial and see.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Crc32(uint polynomial, uint seed)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>polynomial</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The polynomial to use in calculating.</p>
+</dd>
+    <dt><code>seed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial seed to start from.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.DefaultPolynomial">
+  DefaultPolynomial
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const uint DefaultPolynomial = 3988292384</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_DefaultSeed" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.DefaultSeed">
+  DefaultSeed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const uint DefaultSeed = 4294967295</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_HashSize_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.HashSize*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_HashSize" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.HashSize">
+  HashSize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the size, in bits, of the computed hash code.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int HashSize { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The size, in bits, of the computed hash code.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_Byte__System_Int32_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.Byte*,System.Int32)">
+  Compute(byte*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with the
+<a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultSeed">DefaultSeed</a> and <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial">DefaultPolynomial</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(byte* buffer, int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>The byte* buffer to calculate a CRC32 for.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The length of the buffer in bytes.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_Byte___" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.Byte[])">
+  Compute(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with the
+<a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultSeed">DefaultSeed</a> and <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial">DefaultPolynomial</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(byte[] buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The byte[] buffer to calculate a CRC32 for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_ReadOnlySpan_System_Byte__" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.ReadOnlySpan{System.Byte})">
+  Compute(ReadOnlySpan&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with the
+<a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultSeed">DefaultSeed</a> and <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial">DefaultPolynomial</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(ReadOnlySpan&lt;byte&gt; buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte span buffer to calculate a CRC32 for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_Span_System_Byte__" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.Span{System.Byte})">
+  Compute(Span&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with the
+<a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultSeed">DefaultSeed</a> and <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial">DefaultPolynomial</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(Span&lt;byte&gt; buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte span buffer to calculate a CRC32 for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_UInt32_System_Byte__System_Int32_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.UInt32,System.Byte*,System.Int32)">
+  Compute(uint, byte*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with a
+specified <code class="paramref">seed</code> and <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial">DefaultPolynomial</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(uint seed, byte* buffer, int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>seed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial seed to start from.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>The byte* buffer to calculate a CRC32 for.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The length of the buffer in bytes.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_UInt32_System_Byte___" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.UInt32,System.Byte[])">
+  Compute(uint, byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with a
+specified <code class="paramref">seed</code> and <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial">DefaultPolynomial</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(uint seed, byte[] buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>seed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial seed to start from.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The byte[] buffer to calculate a CRC32 for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_UInt32_System_ReadOnlySpan_System_Byte__" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.UInt32,System.ReadOnlySpan{System.Byte})">
+  Compute(uint, ReadOnlySpan&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with a
+specified <code class="paramref">seed</code> and <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial">DefaultPolynomial</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(uint seed, ReadOnlySpan&lt;byte&gt; buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>seed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial seed to start from.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte span buffer to calculate a CRC32 for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_UInt32_System_Span_System_Byte__" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.UInt32,System.Span{System.Byte})">
+  Compute(uint, Span&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with a
+specified <code class="paramref">seed</code> and <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html#HexaEngine_Core_Security_Cryptography_Crc32_DefaultPolynomial">DefaultPolynomial</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(uint seed, Span&lt;byte&gt; buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>seed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial seed to start from.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte span buffer to calculate a CRC32 for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_UInt32_System_UInt32_System_Byte__System_Int32_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.UInt32,System.UInt32,System.Byte*,System.Int32)">
+  Compute(uint, uint, byte*, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with a
+specified <code class="paramref">seed</code> and <code class="paramref">polynomial</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(uint polynomial, uint seed, byte* buffer, int size)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>polynomial</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>seed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial seed to start from.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>*</dt>
+    <dd><p>The byte* buffer to calculate a CRC32 for.</p>
+</dd>
+    <dt><code>size</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The length of the buffer in bytes.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_UInt32_System_UInt32_System_Byte___" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.UInt32,System.UInt32,System.Byte[])">
+  Compute(uint, uint, byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with a
+specified <code class="paramref">seed</code> and <code class="paramref">polynomial</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(uint polynomial, uint seed, byte[] buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>polynomial</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>seed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial seed to start from.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The byte[] buffer to calculate a CRC32 for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_UInt32_System_UInt32_System_ReadOnlySpan_System_Byte__" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.UInt32,System.UInt32,System.ReadOnlySpan{System.Byte})">
+  Compute(uint, uint, ReadOnlySpan&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with a
+specified <code class="paramref">seed</code> and <code class="paramref">polynomial</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(uint polynomial, uint seed, ReadOnlySpan&lt;byte&gt; buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>polynomial</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>seed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial seed to start from.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte span buffer to calculate a CRC32 for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Compute_System_UInt32_System_UInt32_System_Span_System_Byte__" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Compute(System.UInt32,System.UInt32,System.Span{System.Byte})">
+  Compute(uint, uint, Span&lt;byte&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate the <a class="xref" href="HexaEngine.Core.Security.Cryptography.Crc32.html">Crc32</a> for a given <code class="paramref">buffer</code> with a
+specified <code class="paramref">seed</code> and <code class="paramref">polynomial</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint Compute(uint polynomial, uint seed, Span&lt;byte&gt; buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>polynomial</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+    <dt><code>seed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial seed to start from.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</dt>
+    <dd><p>The byte span buffer to calculate a CRC32 for.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The CRC32 for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_HashCore_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.HashCore*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_HashCore_System_Byte___System_Int32_System_Int32_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.HashCore(System.Byte[],System.Int32,System.Int32)">
+  HashCore(byte[], int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, routes data written to the object into the hash algorithm for computing the hash.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void HashCore(byte[] array, int ibStart, int cbSize)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>array</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The input to compute the hash code for.</p>
+</dd>
+    <dt><code>ibStart</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The offset into the byte array from which to begin using data.</p>
+</dd>
+    <dt><code>cbSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of bytes in the byte array to use as data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_HashData_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.HashData*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_HashData_System_IO_Stream_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.HashData(System.IO.Stream)">
+  HashData(Stream)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L291"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint HashData(Stream stream)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_HashFinal_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.HashFinal*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_HashFinal" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.HashFinal">
+  HashFinal()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>When overridden in a derived class, finalizes the hash computation after the last data is processed by the cryptographic hash algorithm.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override byte[] HashFinal()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The computed hash code.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Security_Cryptography_Crc32_Initialize_" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Initialize*"></a>
+
+  <h3 id="HexaEngine_Core_Security_Cryptography_Crc32_Initialize" data-uid="HexaEngine.Core.Security.Cryptography.Crc32.Initialize">
+  Initialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resets the hash algorithm to its initial state.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Initialize()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Security/Cryptography/Crc32.cs/#L19" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

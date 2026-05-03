@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IDrawable </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IDrawable ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Graphics_IDrawable.md&amp;value=---%0Auid%3A%20HexaEngine.Graphics.IDrawable%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Graphics.IDrawable">
+
+
+
+  <h1 id="HexaEngine_Graphics_IDrawable" data-uid="HexaEngine.Graphics.IDrawable" class="text-break">
+Interface IDrawable  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Graphics.html">Graphics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IDrawable : IComponent, IHasFlags&lt;RendererFlags&gt;</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.IComponent.html#HexaEngine_Scenes_IComponent_Guid">IComponent.Guid</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.IComponent.html#HexaEngine_Scenes_IComponent_GameObject">IComponent.GameObject</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.IComponent.html#HexaEngine_Scenes_IComponent_IsSerializable">IComponent.IsSerializable</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.IComponent.html#HexaEngine_Scenes_IComponent_Awake">IComponent.Awake()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Scenes.IComponent.html#HexaEngine_Scenes_IComponent_Destroy">IComponent.Destroy()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Collections.IHasFlags-1.html#HexaEngine_Collections_IHasFlags_1_Flags">IHasFlags&lt;RendererFlags&gt;.Flags</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Graphics_IDrawable_BatchSupport_" data-uid="HexaEngine.Graphics.IDrawable.BatchSupport*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_BatchSupport" data-uid="HexaEngine.Graphics.IDrawable.BatchSupport">
+  BatchSupport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool BatchSupport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_BoundingBox_" data-uid="HexaEngine.Graphics.IDrawable.BoundingBox*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_BoundingBox" data-uid="HexaEngine.Graphics.IDrawable.BoundingBox">
+  BoundingBox
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">BoundingBox BoundingBox { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">BoundingBox</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_DebugName_" data-uid="HexaEngine.Graphics.IDrawable.DebugName*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_DebugName" data-uid="HexaEngine.Graphics.IDrawable.DebugName">
+  DebugName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string DebugName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_QueueIndex_" data-uid="HexaEngine.Graphics.IDrawable.QueueIndex*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_QueueIndex" data-uid="HexaEngine.Graphics.IDrawable.QueueIndex">
+  QueueIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">uint QueueIndex { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Graphics_IDrawable_Bake_" data-uid="HexaEngine.Graphics.IDrawable.Bake*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_Bake_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Graphics.IDrawable.Bake(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Bake(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Bake(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_Draw_" data-uid="HexaEngine.Graphics.IDrawable.Draw*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_Draw_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Graphics_RenderPath_" data-uid="HexaEngine.Graphics.IDrawable.Draw(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Graphics.RenderPath)">
+  Draw(IGraphicsContext, RenderPath)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Draw(IGraphicsContext context, RenderPath path)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>path</code> <a class="xref" href="HexaEngine.Graphics.RenderPath.html">RenderPath</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_Draw_" data-uid="HexaEngine.Graphics.IDrawable.Draw*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_Draw_HexaEngine_Core_Graphics_IGraphicsContext_System_String_" data-uid="HexaEngine.Graphics.IDrawable.Draw(HexaEngine.Core.Graphics.IGraphicsContext,System.String)">
+  Draw(IGraphicsContext, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Draw(IGraphicsContext deferred, string pass)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>deferred</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>pass</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_DrawDepth_" data-uid="HexaEngine.Graphics.IDrawable.DrawDepth*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_DrawDepth_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Graphics.IDrawable.DrawDepth(HexaEngine.Core.Graphics.IGraphicsContext)">
+  DrawDepth(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DrawDepth(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_DrawShadowMap_" data-uid="HexaEngine.Graphics.IDrawable.DrawShadowMap*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_DrawShadowMap_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IBuffer_HexaEngine_Lights_ShadowType_" data-uid="HexaEngine.Graphics.IDrawable.DrawShadowMap(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.IBuffer,HexaEngine.Lights.ShadowType)">
+  DrawShadowMap(IGraphicsContext, IBuffer, ShadowType)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+    <dt><code>light</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd></dd>
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Lights.ShadowType.html">ShadowType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_Load_" data-uid="HexaEngine.Graphics.IDrawable.Load*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_Load_HexaEngine_Core_Graphics_IGraphicsDevice_" data-uid="HexaEngine.Graphics.IDrawable.Load(HexaEngine.Core.Graphics.IGraphicsDevice)">
+  Load(IGraphicsDevice)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Load(IGraphicsDevice device)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_Unload_" data-uid="HexaEngine.Graphics.IDrawable.Unload*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_Unload" data-uid="HexaEngine.Graphics.IDrawable.Unload">
+  Unload()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Unload()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_Update_" data-uid="HexaEngine.Graphics.IDrawable.Update*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_Update_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Graphics.IDrawable.Update(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Update(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Update(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_IDrawable_VisibilityTest_" data-uid="HexaEngine.Graphics.IDrawable.VisibilityTest*"></a>
+
+  <h3 id="HexaEngine_Graphics_IDrawable_VisibilityTest_HexaEngine_Graphics_Culling_CullingContext_" data-uid="HexaEngine.Graphics.IDrawable.VisibilityTest(HexaEngine.Graphics.Culling.CullingContext)">
+  VisibilityTest(CullingContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void VisibilityTest(CullingContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Graphics.Culling.CullingContext.html">CullingContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Graphics_IDrawable_DrawableInvalidated" data-uid="HexaEngine.Graphics.IDrawable.DrawableInvalidated">
+  DrawableInvalidated
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">event DrawableInvalidatedEventHandler? DrawableInvalidated</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.DrawableInvalidatedEventHandler.html">DrawableInvalidatedEventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Graphics_IDrawable_QueueIndexChanged" data-uid="HexaEngine.Graphics.IDrawable.QueueIndexChanged">
+  QueueIndexChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">event QueueIndexChangedEventHandler? QueueIndexChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.QueueIndexChangedEventHandler.html">QueueIndexChangedEventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/IDrawable.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

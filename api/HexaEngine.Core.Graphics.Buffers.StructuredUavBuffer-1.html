@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class StructuredUavBuffer&lt;T&gt; </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class StructuredUavBuffer&lt;T&gt; ">
+      
+      <meta name="description" content="Represents a structured buffer with unordered access view (UAV) capabilities.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1.md&amp;value=---%0Auid%3A%20HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1">
+
+
+
+  <h1 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1" class="text-break">
+Class StructuredUavBuffer&lt;T&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.Graphics.html">Graphics</a>.<a class="xref" href="HexaEngine.Core.Graphics.Buffers.html">Buffers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a structured buffer with unordered access view (UAV) capabilities.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class StructuredUavBuffer&lt;T&gt; : IStructuredUavBuffer&lt;T&gt;, IStructuredUavBuffer, IBuffer, IResource, IDeviceChild, INative, IDisposable where T : unmanaged</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of elements stored in the buffer.</p>
+</dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">StructuredUavBuffer&lt;T&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.Buffers.IStructuredUavBuffer-1.html">IStructuredUavBuffer</a>&lt;T&gt;</div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.Buffers.IStructuredUavBuffer.html">IStructuredUavBuffer</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IResource.html">IResource</a></div>
+      <div><a class="xref" href="HexaEngine.Core.Graphics.IDeviceChild.html">IDeviceChild</a></div>
+      <div><span class="xref">INative</span></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetAs__1_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetAs&lt;T&gt;(IDeviceChild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="HexaEngine.Core.Graphics.IDeviceChildExtensions.html#HexaEngine_Core_Graphics_IDeviceChildExtensions_GetPointer_HexaEngine_Core_Graphics_IDeviceChild_">IDeviceChildExtensions.GetPointer(IDeviceChild?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1__ctor_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_BufferUnorderedAccessViewFlags_HexaEngine_Core_Graphics_BufferExtendedShaderResourceViewFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.#ctor(HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags,HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags,System.String,System.Int32)">
+  StructuredUavBuffer(CpuAccessFlags, BufferUnorderedAccessViewFlags, BufferExtendedShaderResourceViewFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer&lt;T&gt;</a> class with default capacity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StructuredUavBuffer(CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the buffer.</p>
+</dd>
+    <dt><code>uavFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags.html">BufferUnorderedAccessViewFlags</a></dt>
+    <dd><p>The unordered access view (UAV) flags for the buffer.</p>
+</dd>
+    <dt><code>srvFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags.html">BufferExtendedShaderResourceViewFlags</a></dt>
+    <dd><p>The extended shader resource view flags for the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the source file where the constructor is called.</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source file where the constructor is called.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1__ctor_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1__ctor_System_UInt32_HexaEngine_Core_Graphics_CpuAccessFlags_HexaEngine_Core_Graphics_BufferUnorderedAccessViewFlags_HexaEngine_Core_Graphics_BufferExtendedShaderResourceViewFlags_System_String_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.#ctor(System.UInt32,HexaEngine.Core.Graphics.CpuAccessFlags,HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags,HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags,System.String,System.Int32)">
+  StructuredUavBuffer(uint, CpuAccessFlags, BufferUnorderedAccessViewFlags, BufferExtendedShaderResourceViewFlags, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer-1.html">StructuredUavBuffer&lt;T&gt;</a> class with a specified initial capacity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StructuredUavBuffer(uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, string filename = &quot;&quot;, int lineNumber = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>initialCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The initial capacity of the buffer.</p>
+</dd>
+    <dt><code>accessFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.CpuAccessFlags.html">CpuAccessFlags</a></dt>
+    <dd><p>The CPU access flags for the buffer.</p>
+</dd>
+    <dt><code>uavFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags.html">BufferUnorderedAccessViewFlags</a></dt>
+    <dd><p>The unordered access view (UAV) flags for the buffer.</p>
+</dd>
+    <dt><code>srvFlags</code> <a class="xref" href="HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags.html">BufferExtendedShaderResourceViewFlags</a></dt>
+    <dd><p>The extended shader resource view flags for the buffer.</p>
+</dd>
+    <dt><code>filename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the source file where the constructor is called.</p>
+</dd>
+    <dt><code>lineNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The line number in the source file where the constructor is called.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_CanRead_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.CanRead*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_CanRead" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.CanRead">
+  CanRead
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L239"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the buffer allows read access.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool CanRead { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_CanWrite_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.CanWrite*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_CanWrite" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.CanWrite">
+  CanWrite
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L234"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the buffer allows write access.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool CanWrite { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Capacity_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Capacity*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Capacity" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Capacity">
+  Capacity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L244"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the capacity of the buffer. Setting a new capacity may result in resizing the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint Capacity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_CopyBuffer_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.CopyBuffer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_CopyBuffer" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.CopyBuffer">
+  CopyBuffer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L229"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the copy buffer associated with the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IBuffer? CopyBuffer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Count_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Count*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Count" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Count">
+  Count
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L319"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the number of elements currently in the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint Count { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_DebugName_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.DebugName*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_DebugName" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.DebugName">
+  DebugName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L334"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the debug name of the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? DebugName { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Description_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Description*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Description" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Description">
+  Description
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L309"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the description of the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BufferDescription Description { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.BufferDescription.html">BufferDescription</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Dimension_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Dimension*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Dimension" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Dimension">
+  Dimension
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L324"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the resource dimension of the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceDimension Dimension { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.ResourceDimension.html">ResourceDimension</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_IsDisposed_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.IsDisposed*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_IsDisposed" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.IsDisposed">
+  IsDisposed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L339"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the buffer is disposed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsDisposed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Item_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Item*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Item_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Item(System.Int32)">
+  this[int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L157"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the value at the specified <code class="paramref">index</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T this[int index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The zero-based index of the element to get or set.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>The value at the specified <code class="paramref">index</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Item_System_Int32__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Setting a value at the specified index marks the buffer as dirty, indicating that it needs to be updated.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Item_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Item*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Item_System_UInt32_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Item(System.UInt32)">
+  this[uint]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the value at the specified <code class="paramref">index</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T this[uint index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The zero-based index of the element to get or set.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>The value at the specified <code class="paramref">index</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Item_System_UInt32__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Setting a value at the specified index marks the buffer as dirty, indicating that it needs to be updated.</p>
+</div>
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Items_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Items*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Items" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Items">
+  Items
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L341"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T* Items { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Length_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Length*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Length" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Length">
+  Length
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the length of the buffer in bytes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Length { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Local_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Local*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Local" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Local">
+  Local
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L198"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the native pointer to the underlying array of items.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T* Local { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt>T*</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_NativePointer_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.NativePointer*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_NativePointer" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.NativePointer">
+  NativePointer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L329"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the native pointer to the underlying buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public nint NativePointer { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.intptr">nint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_SRV_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.SRV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_SRV" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.SRV">
+  SRV
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L224"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the shader resource view (SRV) associated with the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IShaderResourceView SRV { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IShaderResourceView.html">IShaderResourceView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_UAV_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.UAV*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_UAV" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.UAV">
+  UAV
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L219"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the unordered access view (UAV) associated with the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IUnorderedAccessView UAV { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.Graphics.IUnorderedAccessView.html">IUnorderedAccessView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Add_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Add*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Add__0_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Add(`0)">
+  Add(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L408"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds an item to the buffer and returns a reference to the added item.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ref T Add(T item)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>item</code> <span class="xref">T</span></dt>
+    <dd><p>The item to add to the buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>A reference to the added item.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Clear_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Clear*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Clear" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Clear">
+  Clear()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L355"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the buffer, setting the counter to zero and marking the buffer as dirty.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Clear_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Clear*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Clear_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Clear(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Clear(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L497"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears the unordered access view of the buffer with the specified values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used to perform the clear operation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Contains_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Contains*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Contains__0_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Contains(`0)">
+  Contains(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L440"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the buffer contains the specified item.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Contains(T item)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>item</code> <span class="xref">T</span></dt>
+    <dd><p>The item to locate in the buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the item is found in the buffer; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_CopyTo_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.CopyTo*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_CopyTo_HexaEngine_Core_Graphics_IGraphicsContext_HexaEngine_Core_Graphics_IBuffer_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.CopyTo(HexaEngine.Core.Graphics.IGraphicsContext,HexaEngine.Core.Graphics.IBuffer)">
+  CopyTo(IGraphicsContext, IBuffer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L563"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies the content of the buffer to another buffer using the graphics context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CopyTo(IGraphicsContext context, IBuffer buffer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used to perform the copy operation.</p>
+</dd>
+    <dt><code>buffer</code> <a class="xref" href="HexaEngine.Core.Graphics.IBuffer.html">IBuffer</a></dt>
+    <dd><p>The destination buffer to copy the data to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Dispose_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Dispose" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L599"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Disposes of the buffer and associated resources, suppressing finalization.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Dispose_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Dispose*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Dispose_System_Boolean_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Dispose(System.Boolean)">
+  Dispose(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L572"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Disposes of the buffer and associated resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>disposing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if called from the Dispose method, false if called from the finalizer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_EnsureCapacity_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.EnsureCapacity*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_EnsureCapacity_System_UInt32_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.EnsureCapacity(System.UInt32)">
+  EnsureCapacity(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L377"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Ensures that the buffer has a capacity of at least the specified value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EnsureCapacity(uint capacity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>capacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The minimum capacity to ensure for the buffer.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Erase_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Erase*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Erase" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Erase">
+  Erase()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L365"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Erases all items in the buffer, setting the counter to zero and marking the buffer as dirty.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Erase()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_IndexOf_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.IndexOf*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_IndexOf__0_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.IndexOf(`0)">
+  IndexOf(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L458"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the index of the first occurrence of the specified item in the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int IndexOf(T item)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>item</code> <span class="xref">T</span></dt>
+    <dd><p>The item to locate in the buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the first occurrence of the item in the buffer, or -1 if the item is not found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Read_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Read*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Read_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Read(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Read(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L542"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads data from the buffer using the graphics context and copies it to the internal items array.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Read(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used to perform the read operation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Remove_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Remove*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Remove__0_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Remove(`0)">
+  Remove(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L423"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes the specified item from the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Remove(T item)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>item</code> <span class="xref">T</span></dt>
+    <dd><p>The item to remove from the buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the item was successfully removed; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_RemoveAt_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.RemoveAt*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_RemoveAt_System_Int32_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.RemoveAt(System.Int32)">
+  RemoveAt(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L475"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes the item at the specified index from the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveAt(int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index of the item to remove.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_RemoveAt_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.RemoveAt*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_RemoveAt_System_UInt32_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.RemoveAt(System.UInt32)">
+  RemoveAt(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L486"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes the item at the specified index from the buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveAt(uint index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The index of the item to remove.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_ResetCounter_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.ResetCounter*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_ResetCounter" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.ResetCounter">
+  ResetCounter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L346"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resets the counter of items in the buffer to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ResetCounter()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Update_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Update*"></a>
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Update_HexaEngine_Core_Graphics_IGraphicsContext_" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Update(HexaEngine.Core.Graphics.IGraphicsContext)">
+  Update(IGraphicsContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L507"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the buffer data on the graphics context. If the buffer is dirty, it writes the data to the copy buffer and copies it to the main buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Update(IGraphicsContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsContext.html">IGraphicsContext</a></dt>
+    <dd><p>The graphics context used to perform the update operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the buffer was updated, false otherwise.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_OnDisposed" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.OnDisposed">
+  OnDisposed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Occurs when the buffer is disposed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler? OnDisposed</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Core_Graphics_Buffers_StructuredUavBuffer_1_Resize" data-uid="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer`1.Resize">
+  Resize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L300"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;CapacityChangedEventArgs&gt; Resize</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.Buffers.CapacityChangedEventArgs.html">CapacityChangedEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/Graphics/Buffers/StructuredUavBuffer.cs/#L23" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

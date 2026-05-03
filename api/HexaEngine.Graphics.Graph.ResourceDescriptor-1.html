@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ResourceDescriptor&lt;T&gt; </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ResourceDescriptor&lt;T&gt; ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Graphics_Graph_ResourceDescriptor_1.md&amp;value=---%0Auid%3A%20HexaEngine.Graphics.Graph.ResourceDescriptor%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1">
+
+
+
+  <h1 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1" class="text-break">
+Class ResourceDescriptor&lt;T&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L5"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Graphics.html">Graphics</a>.<a class="xref" href="HexaEngine.Graphics.Graph.html">Graph</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ResourceDescriptor&lt;T&gt; : IResourceDescriptor&lt;T&gt;, IResourceDescriptor where T : struct</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ResourceDescriptor&lt;T&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="HexaEngine.Graphics.Graph.IResourceDescriptor-1.html">IResourceDescriptor</a>&lt;T&gt;</div>
+      <div><a class="xref" href="HexaEngine.Graphics.Graph.IResourceDescriptor.html">IResourceDescriptor</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1__ctor_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.#ctor*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1__ctor__0_HexaEngine_Graphics_Graph_ResourceRef_HexaEngine_Graphics_Graph_GraphResourceContainer_System_Func_HexaEngine_Core_Graphics_IGraphicsDevice__0_System_IDisposable__HexaEngine_Graphics_Graph_ResourceCreationFlags_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.#ctor(`0,HexaEngine.Graphics.Graph.ResourceRef,HexaEngine.Graphics.Graph.GraphResourceContainer,System.Func{HexaEngine.Core.Graphics.IGraphicsDevice,`0,System.IDisposable},HexaEngine.Graphics.Graph.ResourceCreationFlags)">
+  ResourceDescriptor(T, ResourceRef, GraphResourceContainer?, Func&lt;IGraphicsDevice, T, IDisposable&gt;, ResourceCreationFlags)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceDescriptor(T desc, ResourceRef @ref, GraphResourceContainer? container, Func&lt;IGraphicsDevice, T, IDisposable&gt; constructor, ResourceCreationFlags flags)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>desc</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>ref</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+    <dt><code>container</code> <a class="xref" href="HexaEngine.Graphics.Graph.GraphResourceContainer.html">GraphResourceContainer</a></dt>
+    <dd></dd>
+    <dt><code>constructor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a>, T, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Constructor_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Constructor*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Constructor" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Constructor">
+  Constructor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Func&lt;IGraphicsDevice, T, IDisposable&gt; Constructor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a>, T, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Container_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Container*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Container" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Container">
+  Container
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GraphResourceContainer? Container { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.GraphResourceContainer.html">GraphResourceContainer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Desc_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Desc*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Desc" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Desc">
+  Desc
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T Desc { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Flags_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Flags*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Flags" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceCreationFlags Flags { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceCreationFlags.html">ResourceCreationFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_IsCreated_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.IsCreated*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_IsCreated" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.IsCreated">
+  IsCreated
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool IsCreated { get; protected set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_IsShared_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.IsShared*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_IsShared" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.IsShared">
+  IsShared
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool IsShared { get; protected set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Ref_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Ref*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Ref" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Ref">
+  Ref
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResourceRef Ref { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceRef.html">ResourceRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_ShareSource_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.ShareSource*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_ShareSource" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.ShareSource">
+  ShareSource
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ResourceDescriptor&lt;T&gt;? ShareSource { get; protected set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Graphics.Graph.ResourceDescriptor-1.html">ResourceDescriptor</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Construct_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Construct*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_Construct__1_HexaEngine_Core_Graphics_IGraphicsDevice_System_Collections_Generic_List___0__" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.Construct``1(HexaEngine.Core.Graphics.IGraphicsDevice,System.Collections.Generic.List{``0})">
+  Construct&lt;TType&gt;(IGraphicsDevice, List&lt;TType&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TType Construct&lt;TType&gt;(IGraphicsDevice device, List&lt;TType&gt; group) where TType : class, IDisposable</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>device</code> <a class="xref" href="HexaEngine.Core.Graphics.IGraphicsDevice.html">IGraphicsDevice</a></dt>
+    <dd></dd>
+    <dt><code>group</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;TType&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">TType</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TType</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_ToString_" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.ToString*"></a>
+
+  <h3 id="HexaEngine_Graphics_Graph_ResourceDescriptor_1_ToString" data-uid="HexaEngine.Graphics.Graph.ResourceDescriptor`1.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string that represents the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine/Graphics/Graph/ResourceDescriptor.cs/#L5" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Node </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Node ">
+      
+      <meta name="description" content="Represents a node in a 3D scene hierarchy.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_IO_Binary_Meshes_Node.md&amp;value=---%0Auid%3A%20HexaEngine.Core.IO.Binary.Meshes.Node%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.IO.Binary.Meshes.Node">
+
+
+
+  <h1 id="HexaEngine_Core_IO_Binary_Meshes_Node" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node" class="text-break">
+Class Node  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.IO.html">IO</a>.<a class="xref" href="HexaEngine.Core.IO.Binary.html">Binary</a>.<a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.html">Meshes</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a node in a 3D scene hierarchy.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class Node</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">Node</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node__ctor_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node__ctor_System_String_System_Numerics_Matrix4x4_HexaEngine_Core_IO_Binary_Meshes_NodeFlags_HexaEngine_Core_IO_Binary_Meshes_Node_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.#ctor(System.String,System.Numerics.Matrix4x4,HexaEngine.Core.IO.Binary.Meshes.NodeFlags,HexaEngine.Core.IO.Binary.Meshes.Node)">
+  Node(string, Matrix4x4, NodeFlags, Node?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a> class with specified values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Node(string name, Matrix4x4 transform, NodeFlags flags, Node? parent)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the node.</p>
+</dd>
+    <dt><code>transform</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>The transformation matrix of the node.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.NodeFlags.html">NodeFlags</a></dt>
+    <dd><p>The flags associated with the node.</p>
+</dd>
+    <dt><code>parent</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a></dt>
+    <dd><p>The parent node in the hierarchy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node__ctor_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node__ctor_System_String_System_Numerics_Matrix4x4_HexaEngine_Core_IO_Binary_Meshes_NodeFlags_HexaEngine_Core_IO_Binary_Meshes_Node_HexaEngine_Core_IO_Binary_Metadata_Metadata_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.#ctor(System.String,System.Numerics.Matrix4x4,HexaEngine.Core.IO.Binary.Meshes.NodeFlags,HexaEngine.Core.IO.Binary.Meshes.Node,HexaEngine.Core.IO.Binary.Metadata.Metadata)">
+  Node(string, Matrix4x4, NodeFlags, Node?, Metadata)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a> class with specified values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Node(string name, Matrix4x4 transform, NodeFlags flags, Node? parent, Metadata metadata)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the node.</p>
+</dd>
+    <dt><code>transform</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>The transformation matrix of the node.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.NodeFlags.html">NodeFlags</a></dt>
+    <dd><p>The flags associated with the node.</p>
+</dd>
+    <dt><code>parent</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a></dt>
+    <dd><p>The parent node in the hierarchy.</p>
+</dd>
+    <dt><code>metadata</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Metadata.Metadata.html">Metadata</a></dt>
+    <dd><p>The metadata associated with the node.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node__ctor_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node__ctor_System_String_System_Numerics_Matrix4x4_HexaEngine_Core_IO_Binary_Meshes_NodeFlags_System_Collections_Generic_List_System_UInt32__HexaEngine_Core_IO_Binary_Meshes_Node_System_Collections_Generic_List_HexaEngine_Core_IO_Binary_Meshes_Node__HexaEngine_Core_IO_Binary_Metadata_Metadata_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.#ctor(System.String,System.Numerics.Matrix4x4,HexaEngine.Core.IO.Binary.Meshes.NodeFlags,System.Collections.Generic.List{System.UInt32},HexaEngine.Core.IO.Binary.Meshes.Node,System.Collections.Generic.List{HexaEngine.Core.IO.Binary.Meshes.Node},HexaEngine.Core.IO.Binary.Metadata.Metadata)">
+  Node(string, Matrix4x4, NodeFlags, List&lt;uint&gt;, Node?, List&lt;Node&gt;, Metadata)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a> class with specified values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Node(string name, Matrix4x4 transform, NodeFlags flags, List&lt;uint&gt; meshes, Node? parent, List&lt;Node&gt; children, Metadata metadata)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the node.</p>
+</dd>
+    <dt><code>transform</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>The transformation matrix of the node.</p>
+</dd>
+    <dt><code>flags</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.NodeFlags.html">NodeFlags</a></dt>
+    <dd><p>The flags associated with the node.</p>
+</dd>
+    <dt><code>meshes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd><p>The list of mesh IDs associated with the node.</p>
+</dd>
+    <dt><code>parent</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a></dt>
+    <dd><p>The parent node in the hierarchy.</p>
+</dd>
+    <dt><code>children</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a>&gt;</dt>
+    <dd><p>The list of child nodes.</p>
+</dd>
+    <dt><code>metadata</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Metadata.Metadata.html">Metadata</a></dt>
+    <dd><p>The metadata associated with the node.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_Children" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Children">
+  Children
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the list of child nodes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Node&gt; Children</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_Flags" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the flags associated with the node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public NodeFlags Flags</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.NodeFlags.html">NodeFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_Meshes" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Meshes">
+  Meshes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the list of mesh IDs associated with the node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;uint&gt; Meshes</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_Metadata" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Metadata">
+  Metadata
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the metadata associated with the node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Metadata Metadata</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Metadata.Metadata.html">Metadata</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_Name" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the name of the node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_Parent" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Parent">
+  Parent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the parent node in the hierarchy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Node? Parent</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_Transform" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Transform">
+  Transform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the transformation matrix of the node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4x4 Transform</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_CountBones_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.CountBones*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_CountBones_System_Int32__" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.CountBones(System.Int32@)">
+  CountBones(ref int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L237"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Recursively counts the total number of bones in the hierarchy, starting from this node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CountBones(ref int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The current count, which will be updated by this method.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_CountNodes_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.CountNodes*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_CountNodes_System_Int32__" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.CountNodes(System.Int32@)">
+  CountNodes(ref int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L224"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Recursively counts the total number of nodes in the hierarchy, starting from this node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CountNodes(ref int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The current count, which will be updated by this method.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_FillBoneTransforms_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FillBoneTransforms*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_FillBoneTransforms_System_Numerics_Matrix4x4___System_Int32__" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FillBoneTransforms(System.Numerics.Matrix4x4[],System.Int32@)">
+  FillBoneTransforms(Matrix4x4[], ref int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L304"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Fills an array with bone transformation matrices in a depth-first order, starting from this node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FillBoneTransforms(Matrix4x4[] locals, ref int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>locals</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a>[]</dt>
+    <dd><p>The array to be filled with bone transformation matrices.</p>
+</dd>
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The current index in the array, which will be updated by this method.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_FillBones_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FillBones*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_FillBones_HexaEngine_Core_IO_Binary_Meshes_Node___System_Int32__" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FillBones(HexaEngine.Core.IO.Binary.Meshes.Node[],System.Int32@)">
+  FillBones(Node[], ref int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Fills an array with bones in a depth-first order, starting from this node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FillBones(Node[] nodes, ref int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodes</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a>[]</dt>
+    <dd><p>The array to be filled with bones.</p>
+</dd>
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The current index in the array, which will be updated by this method.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_FillNodes_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FillNodes*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_FillNodes_HexaEngine_Core_IO_Binary_Meshes_Node___System_Int32__" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FillNodes(HexaEngine.Core.IO.Binary.Meshes.Node[],System.Int32@)">
+  FillNodes(Node[], ref int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L255"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Fills an array with nodes in a depth-first order, starting from this node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FillNodes(Node[] nodes, ref int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodes</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a>[]</dt>
+    <dd><p>The array to be filled with nodes.</p>
+</dd>
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The current index in the array, which will be updated by this method.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_FillTransforms_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FillTransforms*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_FillTransforms_System_Numerics_Matrix4x4___System_Int32__" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FillTransforms(System.Numerics.Matrix4x4[],System.Int32@)">
+  FillTransforms(Matrix4x4[], ref int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L289"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Fills an array with local transformation matrices in a depth-first order, starting from this node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void FillTransforms(Matrix4x4[] locals, ref int index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>locals</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a>[]</dt>
+    <dd><p>The array to be filled with local transformation matrices.</p>
+</dd>
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The current index in the array, which will be updated by this method.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_FindNode_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FindNode*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_FindNode_System_String_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.FindNode(System.String)">
+  FindNode(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L397"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Node? FindNode(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_GetGlobalTransform_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.GetGlobalTransform*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_GetGlobalTransform" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.GetGlobalTransform">
+  GetGlobalTransform()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L363"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the global transformation matrix of the node in the hierarchy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4x4 GetGlobalTransform()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>The global transformation matrix.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_GetGlobalTransform_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.GetGlobalTransform*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_GetGlobalTransform_System_Numerics_Matrix4x4_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.GetGlobalTransform(System.Numerics.Matrix4x4)">
+  GetGlobalTransform(Matrix4x4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L378"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the global transformation matrix of the node in the hierarchy, considering a root transformation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4x4 GetGlobalTransform(Matrix4x4 root)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>root</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>The root transformation matrix.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.matrix4x4">Matrix4x4</a></dt>
+    <dd><p>The global transformation matrix.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_Read_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Read*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_Read_System_IO_Stream_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Read(System.IO.Stream,System.Text.Encoding,Hexa.NET.Mathematics.Endianness)">
+  Read(Stream, Encoding, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L173"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads the <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a> data from the specified stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Read(Stream stream, Encoding encoding, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>encoding</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a></dt>
+    <dd><p>The encoding used for strings.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness of the binary data in the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_ReadFrom_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.ReadFrom*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_ReadFrom_System_IO_Stream_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.ReadFrom(System.IO.Stream,System.Text.Encoding,Hexa.NET.Mathematics.Endianness)">
+  ReadFrom(Stream, Encoding, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a> instance from the specified stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Node ReadFrom(Stream stream, Encoding encoding, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to read from.</p>
+</dd>
+    <dt><code>encoding</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a></dt>
+    <dd><p>The encoding used for strings.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness of the binary data in the stream.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a></dt>
+    <dd><p>The read <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a> instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_ToString_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.ToString*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_ToString" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L392"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string representation of the node, which is its name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the node.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_TraverseTree_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.TraverseTree*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_TraverseTree_HexaEngine_Core_IO_Binary_Meshes_PlainNode___System_Int32__System_Int32_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.TraverseTree(HexaEngine.Core.IO.Binary.Meshes.PlainNode[],System.Int32@,System.Int32)">
+  TraverseTree(PlainNode[], ref int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L323"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Traverses the hierarchy and populates an array of <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.PlainNode.html">PlainNode</a> instances representing nodes in a tree structure.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void TraverseTree(PlainNode[] nodes, ref int index, int parent = -1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodes</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.PlainNode.html">PlainNode</a>[]</dt>
+    <dd><p>The array to be populated with <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.PlainNode.html">PlainNode</a> instances.</p>
+</dd>
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The current index in the array, which will be updated by this method.</p>
+</dd>
+    <dt><code>parent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The parent ID for the current node in the hierarchy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_TraverseTreeBones_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.TraverseTreeBones*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_TraverseTreeBones_HexaEngine_Core_IO_Binary_Meshes_PlainNode___System_Int32__System_Int32_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.TraverseTreeBones(HexaEngine.Core.IO.Binary.Meshes.PlainNode[],System.Int32@,System.Int32)">
+  TraverseTreeBones(PlainNode[], ref int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L340"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Traverses the hierarchy and populates an array of <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.PlainNode.html">PlainNode</a> instances representing bones in a tree structure.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void TraverseTreeBones(PlainNode[] nodes, ref int index, int parent = -1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodes</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.PlainNode.html">PlainNode</a>[]</dt>
+    <dd><p>The array to be populated with <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.PlainNode.html">PlainNode</a> instances.</p>
+</dd>
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The current index in the array, which will be updated by this method.</p>
+</dd>
+    <dt><code>parent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The parent ID for the current node in the hierarchy.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Meshes_Node_Write_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Write*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Meshes_Node_Write_System_IO_Stream_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.Binary.Meshes.Node.Write(System.IO.Stream,System.Text.Encoding,Hexa.NET.Mathematics.Endianness)">
+  Write(Stream, Encoding, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes the <a class="xref" href="HexaEngine.Core.IO.Binary.Meshes.Node.html">Node</a> data to the specified stream.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Write(Stream stream, Encoding encoding, Endianness endianness)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The stream to write to.</p>
+</dd>
+    <dt><code>encoding</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a></dt>
+    <dd><p>The encoding used for strings.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness of the binary data in the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Meshes/Node.cs/#L47" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

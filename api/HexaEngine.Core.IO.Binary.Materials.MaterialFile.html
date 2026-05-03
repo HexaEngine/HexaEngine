@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class MaterialFile </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MaterialFile ">
+      
+      <meta name="description" content="Represents data for a material, including properties, textures, shaders, and metadata.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/HexaEngine/HexaEngine/new/main/apiSpec/new?filename=HexaEngine_Core_IO_Binary_Materials_MaterialFile.md&amp;value=---%0Auid%3A%20HexaEngine.Core.IO.Binary.Materials.MaterialFile%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile">
+
+
+
+  <h1 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile" class="text-break">
+Class MaterialFile  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="HexaEngine.html">HexaEngine</a>.<a class="xref" href="HexaEngine.Core.html">Core</a>.<a class="xref" href="HexaEngine.Core.IO.html">IO</a>.<a class="xref" href="HexaEngine.Core.IO.Binary.html">Binary</a>.<a class="xref" href="HexaEngine.Core.IO.Binary.Materials.html">Materials</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>HexaEngine.Core.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents data for a material, including properties, textures, shaders, and metadata.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class MaterialFile : MaterialData</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html">MaterialData</a></div>
+      <div><span class="xref">MaterialFile</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_updatedEventHandlers">MaterialData.updatedEventHandlers</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Empty">MaterialData.Empty</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Name">MaterialData.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Guid">MaterialData.Guid</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Properties">MaterialData.Properties</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Textures">MaterialData.Textures</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Shaders">MaterialData.Shaders</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Passes">MaterialData.Passes</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Metadata">MaterialData.Metadata</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Flags">MaterialData.Flags</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Updated">MaterialData.Updated</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_HasProperty_HexaEngine_Core_IO_Binary_Materials_MaterialPropertyType_">MaterialData.HasProperty(MaterialPropertyType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_GetProperty_HexaEngine_Core_IO_Binary_Materials_MaterialPropertyType_">MaterialData.GetProperty(MaterialPropertyType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_TryGetProperty_HexaEngine_Core_IO_Binary_Materials_MaterialPropertyType_HexaEngine_Core_IO_Binary_Materials_MaterialProperty__">MaterialData.TryGetProperty(MaterialPropertyType, out MaterialProperty)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_GetPropertyIndex_HexaEngine_Core_IO_Binary_Materials_MaterialPropertyType_">MaterialData.GetPropertyIndex(MaterialPropertyType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_HasTexture_HexaEngine_Core_IO_Binary_Materials_MaterialTextureType_">MaterialData.HasTexture(MaterialTextureType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_GetTexture_HexaEngine_Core_IO_Binary_Materials_MaterialTextureType_">MaterialData.GetTexture(MaterialTextureType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_TryGetTexture_HexaEngine_Core_IO_Binary_Materials_MaterialTextureType_HexaEngine_Core_IO_Binary_Materials_MaterialTexture__">MaterialData.TryGetTexture(MaterialTextureType, out MaterialTexture)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_GetTextureIndex_HexaEngine_Core_IO_Binary_Materials_MaterialTextureType_">MaterialData.GetTextureIndex(MaterialTextureType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_HasShader_HexaEngine_Core_IO_Binary_Materials_MaterialShaderType_">MaterialData.HasShader(MaterialShaderType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_GetShader_HexaEngine_Core_IO_Binary_Materials_MaterialShaderType_">MaterialData.GetShader(MaterialShaderType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_TryGetShader_HexaEngine_Core_IO_Binary_Materials_MaterialShaderType_HexaEngine_Core_IO_Binary_Materials_MaterialShader__">MaterialData.TryGetShader(MaterialShaderType, out MaterialShader)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_GetShaderIndex_HexaEngine_Core_IO_Binary_Materials_MaterialShaderType_">MaterialData.GetShaderIndex(MaterialShaderType)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_GetShaderMacros">MaterialData.GetShaderMacros()</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Read_System_IO_Stream_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_HexaEngine_Core_IO_Version_">MaterialData.Read(Stream, Encoding, Endianness, Version)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_GetMaterial_HexaEngine_Core_Assets_AssetRef_Hexa_NET_Logging_ILogger_">MaterialData.GetMaterial(AssetRef, ILogger)</a>
+    </div>
+    <div>
+      <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html#HexaEngine_Core_IO_Binary_Materials_MaterialData_Dispose">MaterialData.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor">
+  MaterialFile()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MaterialFile()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor_HexaEngine_Core_IO_Binary_Materials_MaterialData_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor(HexaEngine.Core.IO.Binary.Materials.MaterialData)">
+  MaterialFile(MaterialData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> class from a <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html">MaterialData</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MaterialFile(MaterialData material)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>material</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html">MaterialData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor_System_String_System_Guid_HexaEngine_Core_IO_Binary_Materials_MaterialData_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor(System.String,System.Guid,HexaEngine.Core.IO.Binary.Materials.MaterialData)">
+  MaterialFile(string, Guid, MaterialData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html">MaterialData</a> class from another MaterialData.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MaterialFile(string name, Guid guid, MaterialData material)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the material.</p>
+</dd>
+    <dt><code>guid</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd><p>The GUID of the material.</p>
+</dd>
+    <dt><code>material</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialData.html">MaterialData</a></dt>
+    <dd><p>The source material.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor_System_String_System_Guid_HexaEngine_Core_IO_Binary_Metadata_Metadata_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor(System.String,System.Guid,HexaEngine.Core.IO.Binary.Metadata.Metadata)">
+  MaterialFile(string, Guid, Metadata?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> class with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MaterialFile(string name, Guid guid, Metadata? metadata = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the material.</p>
+</dd>
+    <dt><code>guid</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd><p>The GUID of the material.</p>
+</dd>
+    <dt><code>metadata</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Metadata.Metadata.html">Metadata</a></dt>
+    <dd><p>The optional metadata associated with the material. If not provided, an empty metadata instance is used.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile__ctor_System_String_System_Guid_System_Collections_Generic_List_HexaEngine_Core_IO_Binary_Materials_MaterialProperty__System_Collections_Generic_List_HexaEngine_Core_IO_Binary_Materials_MaterialTexture__System_Collections_Generic_List_HexaEngine_Core_IO_Binary_Materials_MaterialShader__HexaEngine_Core_IO_Binary_Metadata_Metadata_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.#ctor(System.String,System.Guid,System.Collections.Generic.List{HexaEngine.Core.IO.Binary.Materials.MaterialProperty},System.Collections.Generic.List{HexaEngine.Core.IO.Binary.Materials.MaterialTexture},System.Collections.Generic.List{HexaEngine.Core.IO.Binary.Materials.MaterialShader},HexaEngine.Core.IO.Binary.Metadata.Metadata)">
+  MaterialFile(string, Guid, List&lt;MaterialProperty&gt;, List&lt;MaterialTexture&gt;, List&lt;MaterialShader&gt;, Metadata?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> class with the specified name, properties, textures, shaders, and optional metadata.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MaterialFile(string name, Guid guid, List&lt;MaterialProperty&gt; properties, List&lt;MaterialTexture&gt; textures, List&lt;MaterialShader&gt; shaders, Metadata? metadata = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the material.</p>
+</dd>
+    <dt><code>guid</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd><p>The GUID of the material.</p>
+</dd>
+    <dt><code>properties</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialProperty.html">MaterialProperty</a>&gt;</dt>
+    <dd><p>The list of material properties.</p>
+</dd>
+    <dt><code>textures</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialTexture.html">MaterialTexture</a>&gt;</dt>
+    <dd><p>The list of material textures.</p>
+</dd>
+    <dt><code>shaders</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialShader.html">MaterialShader</a>&gt;</dt>
+    <dd><p>The list of material shaders.</p>
+</dd>
+    <dt><code>metadata</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Metadata.Metadata.html">Metadata</a></dt>
+    <dd><p>The optional metadata associated with the material. If not provided, an empty metadata instance is used.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_Clone_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.Clone*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_Clone" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L230"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Deep clones a <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MaterialFile Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a></dt>
+    <dd><p>The deep cloned <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_Read_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.Read*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_Read_System_IO_Stream_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.Read(System.IO.Stream)">
+  Read(Stream)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Read(Stream src)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_ReadFrom_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.ReadFrom*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_ReadFrom_HexaEngine_Core_Assets_Artifact_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.ReadFrom(HexaEngine.Core.Assets.Artifact)">
+  ReadFrom(Artifact)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MaterialFile ReadFrom(Artifact artifact)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>artifact</code> <a class="xref" href="HexaEngine.Core.Assets.Artifact.html">Artifact</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_ReadFrom_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.ReadFrom*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_ReadFrom_System_IO_Stream_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.ReadFrom(System.IO.Stream)">
+  ReadFrom(Stream)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads a <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> instance from the specified <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static MaterialFile ReadFrom(Stream src)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> to read from.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a></dt>
+    <dd><p>A <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> instance read from the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_Save_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.Save*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_Save_System_String_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.Save(System.String,System.Text.Encoding,Hexa.NET.Mathematics.Endianness)">
+  Save(string, Encoding, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes the <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> instance to the specified <code class="paramref">path</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Save(string path, Encoding encoding, Endianness endianness = Endianness.LittleEndian)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>path</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The path to write the <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> to.</p>
+</dd>
+    <dt><code>encoding</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a></dt>
+    <dd><p>The character encoding to use for writing strings.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness of the data in the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_SetPropertyBool_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.SetPropertyBool*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_SetPropertyBool_HexaEngine_Core_IO_Binary_Materials_MaterialPropertyType_System_Boolean_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.SetPropertyBool(HexaEngine.Core.IO.Binary.Materials.MaterialPropertyType,System.Boolean)">
+  SetPropertyBool(MaterialPropertyType, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L244"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetPropertyBool(MaterialPropertyType type, bool value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialPropertyType.html">MaterialPropertyType</a></dt>
+    <dd></dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_SetPropertyFloat_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.SetPropertyFloat*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_SetPropertyFloat_HexaEngine_Core_IO_Binary_Materials_MaterialPropertyType_System_Single_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.SetPropertyFloat(HexaEngine.Core.IO.Binary.Materials.MaterialPropertyType,System.Single)">
+  SetPropertyFloat(MaterialPropertyType, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L257"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetPropertyFloat(MaterialPropertyType type, float value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialPropertyType.html">MaterialPropertyType</a></dt>
+    <dd></dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_Write_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.Write*"></a>
+
+  <h3 id="HexaEngine_Core_IO_Binary_Materials_MaterialFile_Write_System_IO_Stream_System_Text_Encoding_Hexa_NET_Mathematics_Endianness_" data-uid="HexaEngine.Core.IO.Binary.Materials.MaterialFile.Write(System.IO.Stream,System.Text.Encoding,Hexa.NET.Mathematics.Endianness)">
+  Write(Stream, Encoding, Endianness)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L215"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes the <a class="xref" href="HexaEngine.Core.IO.Binary.Materials.MaterialFile.html">MaterialFile</a> instance to the specified <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Write(Stream dst, Encoding encoding, Endianness endianness = Endianness.LittleEndian)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dst</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> to write to.</p>
+</dd>
+    <dt><code>encoding</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a></dt>
+    <dd><p>The character encoding to use for writing strings.</p>
+</dd>
+    <dt><code>endianness</code> <span class="xref">Endianness</span></dt>
+    <dd><p>The endianness of the data in the stream.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/HexaEngine/HexaEngine/blob/main/HexaEngine.Core/IO/Binary/Materials/MaterialFile.cs/#L13" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
