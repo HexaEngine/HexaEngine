@@ -243,7 +243,7 @@
                 drawList.PathLineTo(pp);
             }
 
-            drawList.PathStroke(color, 0, thickness);
+            drawList.PathStroke(color, thickness);
         }
 
         private static void RenderMessages(string title, List<LogMessage> messages)

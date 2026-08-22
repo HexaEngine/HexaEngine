@@ -160,7 +160,7 @@
             }
             if (Minimap)
             {
-                ImNodes.MiniMap(0.2f, Location, null, default);
+                ImNodes.MiniMap(0.2f, Location);
             }
 
             if (droppedPin != null && !contextMenuOpen)

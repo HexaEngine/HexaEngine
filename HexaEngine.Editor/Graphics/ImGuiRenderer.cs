@@ -95,7 +95,7 @@ namespace HexaEngine.Editor.Graphics
                 return;
             }
 
-            if (data->CmdListsCount == 0)
+            if (data->CmdLists.Size == 0)
             {
                 return;
             }
@@ -151,7 +151,7 @@ namespace HexaEngine.Editor.Graphics
             var indexResource = ctx.Map(bd.indexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
             var vertexResourcePointer = (ImDrawVert*)vertexResource.PData;
             var indexResourcePointer = (ImDrawIdx*)indexResource.PData;
-            for (int n = 0; n < data->CmdListsCount; n++)
+            for (int n = 0; n < data->CmdLists.Size; n++)
             {
                 var cmdlList = data->CmdLists.Data[n];
 
@@ -196,7 +196,7 @@ namespace HexaEngine.Editor.Graphics
             int global_idx_offset = 0;
             int global_vtx_offset = 0;
             Vector2 clip_off = data->DisplayPos;
-            for (int n = 0; n < data->CmdListsCount; n++)
+            for (int n = 0; n < data->CmdLists.Size; n++)
             {
                 var cmdList = data->CmdLists.Data[n];
 
@@ -231,7 +231,7 @@ namespace HexaEngine.Editor.Graphics
                         ctx.SetScissorRect((int)clip_min.X, (int)clip_min.Y, (int)clip_max.X, (int)clip_max.Y);
 
                         // Bind texture, Draw
-                        var texId = cmd.TexRef.GetTexID();
+                        var texId = cmd.GetTexID();
                         srvWrapper.NativePointer = (nint)texId.Handle;
                         bd.pso.Bindings.SetSRV("fontTex", srvWrapper);
                         if (Samplers.TryGetValue(texId, out var sampler))
@@ -668,11 +668,11 @@ namespace HexaEngine.Editor.Graphics
         private static unsafe void InitPlatformInterface()
         {
             ImGuiPlatformIOPtr platformIo = ImGui.GetPlatformIO();
-            platformIo.RendererCreateWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererCreateWindow>(CreateWindow);
-            platformIo.RendererDestroyWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererDestroyWindow>(DestroyWindow);
-            platformIo.RendererSetWindowSize = (void*)Marshal.GetFunctionPointerForDelegate<RendererSetWindowSize>(SetWindowSize);
-            platformIo.RendererRenderWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererRenderWindow>(RenderWindow);
-            platformIo.RendererSwapBuffers = (void*)Marshal.GetFunctionPointerForDelegate<RendererSwapBuffers>(SwapBuffers);
+            platformIo.RendererCreateWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererCreatewindow>(CreateWindow);
+            platformIo.RendererDestroyWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererDestroywindow>(DestroyWindow);
+            platformIo.RendererSetWindowSize = (void*)Marshal.GetFunctionPointerForDelegate<RendererSetwindowsize>(SetWindowSize);
+            platformIo.RendererRenderWindow = (void*)Marshal.GetFunctionPointerForDelegate<RendererRenderwindow>(RenderWindow);
+            platformIo.RendererSwapBuffers = (void*)Marshal.GetFunctionPointerForDelegate<RendererSwapbuffers>(SwapBuffers);
         }
 
         private static unsafe void ShutdownPlatformInterface()

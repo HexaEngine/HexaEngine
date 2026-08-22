@@ -35,8 +35,8 @@
         {
             if (debug)
             {
-                DXGI.GetDebugInterface1(0, out IDXGIDebug);
-                DXGI.GetDebugInterface1(0, out IDXGIInfoQueue);
+                DXGI.GetDebugInterface1(0, out IDXGIDebug).ThrowIf();
+                DXGI.GetDebugInterface1(0, out IDXGIInfoQueue).ThrowIf();
 
                 InfoQueueFilter filter = new();
                 filter.DenyList.NumIDs = 1;

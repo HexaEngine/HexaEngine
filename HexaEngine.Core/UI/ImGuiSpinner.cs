@@ -110,7 +110,7 @@
                 drawList->PathLineTo(pp);
             }
 
-            ImGui.PathStroke(drawList, color, 0, thickness);
+            ImGui.PathStroke(drawList, color, thickness);
         }
     }
 }

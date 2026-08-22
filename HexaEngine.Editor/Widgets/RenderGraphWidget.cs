@@ -372,7 +372,7 @@
                 }
             }*/
 
-            ImNodes.MiniMap(1, ImNodesMiniMapLocation.TopRight, null, default);
+            ImNodes.MiniMap(1, ImNodesMiniMapLocation.TopRight);
             ImNodes.EndNodeEditor();
         }
 

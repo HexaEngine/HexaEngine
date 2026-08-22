@@ -31,8 +31,7 @@
             for (int i = 0; i < masks.Count; i++)
             {
                 var mask = masks[i];
-                Vector2 cur = default;
-                ImGui.GetCursorPos(ref cur);
+                Vector2 cur = ImGui.GetCursorPos();
 
                 var isActive = current == mask;
 

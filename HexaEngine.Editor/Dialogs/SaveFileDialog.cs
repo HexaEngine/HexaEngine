@@ -150,8 +150,7 @@
                 float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
 
                 float widthDrives = 100 + ImGui.GetStyle().ItemSpacing.X * 2;
-                Vector2 contentRegion = default;
-                ImGui.GetContentRegionAvail(ref contentRegion);
+                Vector2 contentRegion = ImGui.GetContentRegionAvail();
                 float width = contentRegion.X - ImGui.GetStyle().ItemSpacing.X - widthDrives;
                 if (ImGui.BeginChild(1, new Vector2(widthDrives, -footerHeightToReserve), ImGuiChildFlags.None, ImGuiWindowFlags.HorizontalScrollbar))
                 {

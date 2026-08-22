@@ -78,8 +78,15 @@ struct ShadowData
 
 float Attenuation(float distance, float range)
 {
-	float att = saturate(1.0f - (distance * distance / (range * range)));
-	return att * att;
+    float distanceSq = max(distance * distance, 1e-4);
+
+    // Smoothly kill the light near its finite rendering range.
+    float x = distance / range;
+    float cutoff = saturate(1.0 - x * x * x * x);
+    cutoff *= cutoff;
+
+    // Physical point-light falloff.
+    return cutoff / distanceSq;
 }
 
 float3 LambertDiffuse(float3 radiance, float3 L, float3 N)

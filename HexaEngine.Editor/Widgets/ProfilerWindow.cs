@@ -208,11 +208,11 @@
                                         continue;
                                     }
 
-                                    ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                                    ImPlot.PlotShaded(name, ref buffer.Values[0], buffer.Length, fill, 1, 0, ImPlotShadedFlags.None, buffer.Head);
+                                    ImPlot.PushStyleVar(ImPlotStyleVar.MinorAlpha, 0.25f);
+                                    //ImPlot.PlotShaded(name, ref buffer.Values[0], buffer.Length, fill, 1, 0, ImPlotShadedFlags.None, buffer.Head);
                                     ImPlot.PopStyleVar();
 
-                                    ImPlot.PlotLine(name, ref buffer.Values[0], buffer.Length, 1, 0, ImPlotLineFlags.None, buffer.Head);
+                                    //ImPlot.PlotLine(name, ref buffer.Values[0], buffer.Length, 1, 0, ImPlotLineFlags.None, buffer.Head);
                                 }
                             }
 
@@ -303,13 +303,13 @@
                 ImPlot.SetNextAxesToFit();
                 if (ImPlot.BeginPlot("Memory", new Vector2(-1, 0), ImPlotFlags.NoInputs))
                 {
-                    ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                    ImPlot.PlotShaded("Memory (RAM)", ref MemoryUsage.Values[0], MemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, MemoryUsage.Head);
-                    ImPlot.PlotShaded("Video Memory (VRAM)", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, VideoMemoryUsage.Head);
+                    ImPlot.PushStyleVar(ImPlotStyleVar.MinorAlpha, 0.25f);
+                    //ImPlot.PlotShaded("Memory (RAM)", ref MemoryUsage.Values[0], MemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, MemoryUsage.Head);
+                    //ImPlot.PlotShaded("Video Memory (VRAM)", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, VideoMemoryUsage.Head);
                     ImPlot.PopStyleVar();
 
-                    ImPlot.PlotLine("Memory (RAM)", ref MemoryUsage.Values[0], MemoryUsage.Length, 1, 0, ImPlotLineFlags.None, MemoryUsage.Head);
-                    ImPlot.PlotLine("Video Memory (VRAM)", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, 1, 0, ImPlotLineFlags.None, VideoMemoryUsage.Head);
+                    //ImPlot.PlotLine("Memory (RAM)", ref MemoryUsage.Values[0], MemoryUsage.Length, 1, 0, ImPlotLineFlags.None, MemoryUsage.Head);
+                    //ImPlot.PlotLine("Video Memory (VRAM)", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, 1, 0, ImPlotLineFlags.None, VideoMemoryUsage.Head);
                     ImPlot.EndPlot();
                 }
 
@@ -354,15 +354,15 @@
                     ImPlot.SetNextAxesToFit();
                     if (ImPlot.BeginPlot("Scene Update", new Vector2(-1, 0)))
                     {
-                        ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                        ImPlot.PlotShaded("Total", ref TotalUpdate.Values[0], TotalUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, TotalUpdate.Head);
-                        ImPlot.PlotShaded("Scene Tick", ref SceneTick.Values[0], SceneTick.Length, fill, 1, 0, ImPlotShadedFlags.None, SceneTick.Head);
-                        ImPlot.PlotShaded("FixedUpdate", ref FixedUpdate.Values[0], FixedUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, FixedUpdate.Head);
+                        ImPlot.PushStyleVar(ImPlotStyleVar.MinorAlpha, 0.25f);
+                        //ImPlot.PlotShaded("Total", ref TotalUpdate.Values[0], TotalUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, TotalUpdate.Head);
+                        //ImPlot.PlotShaded("Scene Tick", ref SceneTick.Values[0], SceneTick.Length, fill, 1, 0, ImPlotShadedFlags.None, SceneTick.Head);
+                        //ImPlot.PlotShaded("FixedUpdate", ref FixedUpdate.Values[0], FixedUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, FixedUpdate.Head);
                         ImPlot.PopStyleVar();
 
-                        ImPlot.PlotLine("Total", ref TotalUpdate.Values[0], TotalUpdate.Length, 1, 0, ImPlotLineFlags.None, TotalUpdate.Head);
-                        ImPlot.PlotLine("Scene Tick", ref SceneTick.Values[0], SceneTick.Length, 1, 0, ImPlotLineFlags.None, SceneTick.Head);
-                        ImPlot.PlotLine("FixedUpdate", ref FixedUpdate.Values[0], FixedUpdate.Length, 1, 0, ImPlotLineFlags.None, FixedUpdate.Head);
+                        //ImPlot.PlotLine("Total", ref TotalUpdate.Values[0], TotalUpdate.Length, 1, 0, ImPlotLineFlags.None, TotalUpdate.Head);
+                        //ImPlot.PlotLine("Scene Tick", ref SceneTick.Values[0], SceneTick.Length, 1, 0, ImPlotLineFlags.None, SceneTick.Head);
+                        //ImPlot.PlotLine("FixedUpdate", ref FixedUpdate.Values[0], FixedUpdate.Length, 1, 0, ImPlotLineFlags.None, FixedUpdate.Head);
 
                         for (int i = 0; i < scene.Systems.Count; i++)
                         {
@@ -372,11 +372,11 @@
                                 continue;
                             }
 
-                            ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-                            ImPlot.PlotShaded(system.Name, ref buffer.Values[0], buffer.Length, fill, 1, 0, ImPlotShadedFlags.None, buffer.Head);
+                            ImPlot.PushStyleVar(ImPlotStyleVar.MinorAlpha, 0.25f);
+                            //ImPlot.PlotShaded(system.Name, ref buffer.Values[0], buffer.Length, fill, 1, 0, ImPlotShadedFlags.None, buffer.Head);
                             ImPlot.PopStyleVar();
 
-                            ImPlot.PlotLine(system.Name, ref buffer.Values[0], buffer.Length, 1, 0, ImPlotLineFlags.None, buffer.Head);
+                            //ImPlot.PlotLine(system.Name, ref buffer.Values[0], buffer.Length, 1, 0, ImPlotLineFlags.None, buffer.Head);
                         }
 
                         ImPlot.EndPlot();
@@ -391,10 +391,6 @@
                 ImPlot.SetNextAxesToFit();
                 if (ImPlot.BeginPlot("Physics", new Vector2(-1, 0), ImPlotFlags.NoInputs))
                 {
-                    // TODO: PhysX Profiler.
-                    ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
-
-                    ImPlot.PopStyleVar();
 
                     ImPlot.EndPlot();
                 }

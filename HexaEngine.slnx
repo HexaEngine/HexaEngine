@@ -1,0 +1,203 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="MinSizeRel" />
+    <BuildType Name="Release" />
+    <BuildType Name="RelWithDebInfo" />
+    <BuildType Name="TraceLeak" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Analyzers/">
+    <Project Path="HexaEngine.Analyzers.Annotations/HexaEngine.Analyzers.Annotations.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+      <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+      <BuildType Solution="TraceLeak|x64" Project="Release" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="HexaEngine.Analyzers/HexaEngine.Analyzers.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+      <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+      <BuildType Solution="TraceLeak|x64" Project="Release" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Backends/">
+    <Project Path="HexaEngine.Audio.Common/HexaEngine.Audio.Common.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+      <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+      <BuildType Solution="TraceLeak|x64" Project="Release" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="HexaEngine.D3D11/HexaEngine.D3D11.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="TraceLeak" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="HexaEngine.D3D12/HexaEngine.D3D12.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+      <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+      <BuildType Solution="TraceLeak|x64" Project="Release" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="HexaEngine.Dummy/HexaEngine.Dummy.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+      <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+      <BuildType Solution="TraceLeak|x64" Project="Release" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="HexaEngine.MiniAudio/HexaEngine.MiniAudio.csproj">
+      <BuildType Solution="MinSizeRel|*" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|*" Project="Debug" />
+      <BuildType Solution="TraceLeak|*" Project="Release" />
+    </Project>
+    <Project Path="HexaEngine.OpenAL/HexaEngine.OpenAL.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="TraceLeak" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="HexaEngine.Vulkan/HexaEngine.Vulkan.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="TraceLeak" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="HexaEngine.XAudio/HexaEngine.XAudio.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="TraceLeak" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Libs/">
+    <Project Path="HexaEngine.Dotnet/HexaEngine.Dotnet.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+      <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+      <BuildType Solution="TraceLeak|x64" Project="Release" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="HexaEngine.Analyzers.Tests/HexaEngine.Analyzers.Tests.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+      <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+      <BuildType Solution="TraceLeak|x64" Project="Release" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="HexaEngine.PerformanceTests/HexaEngine.PerformanceTests.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+      <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+      <BuildType Solution="TraceLeak|x64" Project="Release" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="HexaEngine.Tests/HexaEngine.Tests.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+      <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+      <BuildType Solution="TraceLeak|x64" Project="Release" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="TestApp/TestApp.csproj">
+      <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+      <BuildType Solution="MinSizeRel|x64" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|x64" Project="TraceLeak" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tools/">
+    <Project Path="HexaAssetTool/HexaAssetTool.csproj">
+      <BuildType Solution="MinSizeRel|*" Project="Release" />
+      <BuildType Solution="RelWithDebInfo|*" Project="TraceLeak" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Project Path="App/App.csproj">
+    <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+    <BuildType Solution="MinSizeRel|x64" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|x64" Project="TraceLeak" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CrashReporter/CrashReporter.csproj">
+    <BuildType Solution="MinSizeRel|*" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|*" Project="Debug" />
+    <BuildType Solution="TraceLeak|*" Project="Release" />
+  </Project>
+  <Project Path="Editor/Editor.csproj">
+    <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+    <BuildType Solution="MinSizeRel|x64" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+    <Platform Solution="Debug|x64" Project="x64" />
+    <Platform Solution="MinSizeRel|x64" Project="x64" />
+    <Platform Solution="Release|x64" Project="x64" />
+    <Platform Solution="RelWithDebInfo|x64" Project="x64" />
+  </Project>
+  <Project Path="HexaEngine.Core/HexaEngine.Core.csproj">
+    <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+    <BuildType Solution="MinSizeRel|x64" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+    <Platform Solution="Debug|x64" Project="x64" />
+    <Platform Solution="MinSizeRel|x64" Project="x64" />
+    <Platform Solution="Release|x64" Project="x64" />
+    <Platform Solution="RelWithDebInfo|x64" Project="x64" />
+  </Project>
+  <Project Path="HexaEngine.Editor/HexaEngine.Editor.csproj">
+    <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+    <BuildType Solution="MinSizeRel|x64" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|x64" Project="Debug" />
+    <BuildType Solution="TraceLeak|Any CPU" Project="Debug" />
+    <BuildType Solution="TraceLeak|x64" Project="Release" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="HexaEngine.Sdk/HexaEngine.Sdk.csproj">
+    <BuildType Solution="MinSizeRel|*" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|*" Project="Debug" />
+    <BuildType Solution="TraceLeak|*" Project="Release" />
+  </Project>
+  <Project Path="HexaEngine/HexaEngine.csproj">
+    <BuildType Solution="MinSizeRel|Any CPU" Project="Debug" />
+    <BuildType Solution="MinSizeRel|x64" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|Any CPU" Project="Release" />
+    <BuildType Solution="RelWithDebInfo|x64" Project="TraceLeak" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+</Solution>

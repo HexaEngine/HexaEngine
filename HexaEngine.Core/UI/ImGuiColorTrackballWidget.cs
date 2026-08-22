@@ -104,7 +104,7 @@
                         {
                             int vert_start_idx = drawList->VtxBuffer.Size;
                             drawList->PathArcTo(center, (wheel_r_inner + wheel_r_outer) * 0.5f, a0, a1, segment_per_arc);
-                            drawList->PathStroke(uint.MaxValue, 0, wheel_thickness);
+                            drawList->PathStroke(uint.MaxValue, wheel_thickness);
                             int vert_end_idx = drawList->VtxBuffer.Size;
 
                             Vector2 gradient_p0 = new(center.X + MathF.Cos(a0) * wheel_r_inner, center.Y + MathF.Sin(a0) * wheel_r_inner);
@@ -311,7 +311,7 @@
                         {
                             int vert_start_idx = drawList->VtxBuffer.Size;
                             drawList->PathArcTo(center, (wheel_r_inner + wheel_r_outer) * 0.5f, a0, a1, segment_per_arc);
-                            drawList->PathStroke(uint.MaxValue, 0, wheel_thickness);
+                            drawList->PathStroke(uint.MaxValue, wheel_thickness);
                             int vert_end_idx = drawList->VtxBuffer.Size;
 
                             Vector2 gradient_p0 = new(center.X + MathF.Cos(a0) * wheel_r_inner, center.Y + MathF.Sin(a0) * wheel_r_inner);

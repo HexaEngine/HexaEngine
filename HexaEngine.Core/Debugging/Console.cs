@@ -364,8 +364,7 @@
                 }
 
                 // Display colored command output.
-                Vector2 size = default;
-                ImGui.CalcTextSize(ref size, "00:00:00:0000");    // Timestamp.
+                Vector2 size = ImGui.CalcTextSize( "00:00:00:0000");    // Timestamp.
                 float timestampWidth = size.X;
 
                 var enumerator = messages.GetEnumerator();
