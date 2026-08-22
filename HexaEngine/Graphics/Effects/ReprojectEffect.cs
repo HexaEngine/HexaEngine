@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics.Graph;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public enum ReprojectFlags
     {
@@ -12,61 +13,87 @@
         VSM
     }
 
+    /// <summary>
+    /// Reprojects a cascade slice using a constant per-cascade texel shift and depth offset.
+    /// This is valid because a cascade's orthographic frustum only translates between updates
+    /// (rotation/scale are stable), so the shift is identical for every pixel and doesn't need
+    /// a per-pixel matrix round-trip. Renders into a graph-managed scratch texture rather than the
+    /// slice itself, since reading a shifted location while writing the same slice in-place
+    /// would be a data race between invocations.
+    /// </summary>
     public class ReprojectEffect : DisposableBase
     {
-        private readonly IComputePipelineState computePipelineState;
+        private readonly IGraphicsPipelineState pipeline;
         private readonly ConstantBuffer<ReprojectParams> paramBuffer;
+        private readonly ISamplerState linearClampSampler;
+        private readonly ResourceRef<Texture2D> scratch;
 
         private struct ReprojectParams
         {
-            public Matrix4x4 PrevViewProjInv;
-            public Matrix4x4 ViewProj;
+            public Vector2 TexelShift;
             public Vector2 TexelSize;
+            public float DepthDelta;
             public uint VSM;
-            public float Padd;
+            public Vector2 Padding;
         }
 
-        public ReprojectEffect(IGraphicsDevice device)
-        {
-            computePipelineState = device.CreateComputePipelineState(new ComputePipelineDesc()
-            {
-                Path = "HexaEngine.Core:shaders/filter/reproject/cs.hlsl"
-            });
-            paramBuffer = new(CpuAccessFlags.Write);
-            computePipelineState.Bindings.SetCBV("CBParams", paramBuffer);
-        }
-
-        public ReprojectEffect(IGraphResourceBuilder builder)
+        public ReprojectEffect(IGraphResourceBuilder builder, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             var device = builder.Device;
-
-            computePipelineState = device.CreateComputePipelineState(new ComputePipelineDesc()
+            pipeline = device.CreateGraphicsPipelineState(new GraphicsPipelineDesc()
             {
-                Path = "HexaEngine.Core:shaders/filter/reproject/cs.hlsl"
-            });
+                VertexShader = "HexaEngine.Core:shaders/quad.hlsl",
+                PixelShader = "HexaEngine.Core:shaders/filter/reproject/ps.hlsl"
+            }, GraphicsPipelineStateDesc.DefaultFullscreen);
             paramBuffer = new(CpuAccessFlags.Write);
-            computePipelineState.Bindings.SetCBV("CBParams", paramBuffer);
+            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            scratch = builder.CreateTexture2D($"{filename}_REPROJECT_SCRATCH_{lineNumber}", new(Format.R32G32Float, 1, 1, 1, 1, GpuAccessFlags.RW), ResourceCreationFlags.Shared);
+            SetupState();
         }
 
-        public unsafe void Reproject(IGraphicsContext context, IUnorderedAccessView uav, uint width, uint height, Matrix4x4 prevViewProjInv, Matrix4x4 viewProj, ReprojectFlags flags)
+        private void SetupState()
         {
+            pipeline.Bindings.SetCBV("Params", paramBuffer);
+            pipeline.Bindings.SetSampler("linearClampSampler", linearClampSampler);
+        }
+
+        /// <summary>
+        /// Reprojects <paramref name="source"/> into the graph-managed scratch texture, exposed via <see cref="Scratch"/>
+        /// for the caller to blit back into the actual destination slice. <paramref name="texelShift"/> is the shift
+        /// (in texels) of a fixed world point from the old cascade frame to the new one, and <paramref name="depthDelta"/>
+        /// is the constant depth offset between those two frames.
+        /// </summary>
+        public unsafe void Reproject(IGraphicsContext context, IShaderResourceView source, uint width, uint height, Format format, Vector2 texelShift, float depthDelta, ReprojectFlags flags)
+        {
+            var tex = scratch.Value!;
+            if (tex.Width != (int)width || tex.Height != (int)height || tex.Format != format)
+            {
+                tex.Resize(format, (int)width, (int)height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            }
+
             ReprojectParams reprojectParams = default;
-            reprojectParams.PrevViewProjInv = prevViewProjInv;
-            reprojectParams.ViewProj = viewProj;
+            reprojectParams.TexelShift = texelShift;
             reprojectParams.TexelSize = new(1f / width, 1f / height);
+            reprojectParams.DepthDelta = depthDelta;
             reprojectParams.VSM = ((flags & ReprojectFlags.VSM) != 0) ? 1u : 0u;
 
             paramBuffer.Update(context, reprojectParams);
-            computePipelineState.Bindings.SetUAV("inputTex", uav);
-            context.SetComputePipelineState(computePipelineState);
-            context.Dispatch((uint)MathF.Ceiling(width / 32f), (uint)MathF.Ceiling(height / 32f), 1);
-            context.SetComputePipelineState(null);
+            pipeline.Bindings.SetSRV("inputTex", source);
+            context.SetRenderTarget(tex.RTV, null);
+            context.SetViewport(tex.Viewport);
+            context.SetGraphicsPipelineState(pipeline);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipelineState(null);
+            context.SetRenderTarget(null, null);
         }
+
+        public Texture2D Scratch => scratch.Value!;
 
         protected override void DisposeCore()
         {
-            computePipelineState.Dispose();
+            pipeline.Dispose();
             paramBuffer.Dispose();
+            linearClampSampler.Dispose();
         }
     }
 }

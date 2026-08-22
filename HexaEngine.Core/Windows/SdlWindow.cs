@@ -154,6 +154,14 @@
             int w;
             int h;
             SDL.GetWindowSize(window, &w, &h);
+            width = w;
+            height = h;
+
+            int rX;
+            int rY;
+            SDL.GetWindowPosition(window, &rX, &rY);
+            x = rX;
+            y = rY;
 
             cursors = (SDLCursor**)AllocArray((uint)SDLSystemCursor.Count);
             cursors[(int)CursorType.Arrow] = SdlCheckError(SDL.CreateSystemCursor(SDLSystemCursor.Default));
@@ -169,8 +177,6 @@
             cursors[(int)CursorType.No] = SdlCheckError(SDL.CreateSystemCursor(SDLSystemCursor.NotAllowed));
             cursors[(int)CursorType.Hand] = SdlCheckError(SDL.CreateSystemCursor(SDLSystemCursor.Pointer));
 
-            Width = w;
-            Height = h;
             Viewport = new(0, 0, w, h, 0, 1);
             created = true;
             destroyed = false;

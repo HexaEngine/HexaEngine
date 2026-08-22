@@ -124,7 +124,7 @@
                 else if (reproject)
                 {
                     Reproject(context, source, i, old, now);
-                    blurFilter.Blur(context, source.SRVArraySlices![i], source.RTVArraySlices![i], source.Width, source.Height);
+                    //blurFilter.Blur(context, source.SRVArraySlices![i], source.RTVArraySlices![i], source.Width, source.Height);
                 }
             }
         }
@@ -289,12 +289,23 @@
         private unsafe void Reproject(IGraphicsContext context, Texture2D texture, int slice, CSMShadowParams old, CSMShadowParams now)
         {
             var oldViewProj = Matrix4x4.Transpose(old[slice]);
-            var newViewProj = now[slice];
+            var newViewProj = Matrix4x4.Transpose(now[slice]);
 
-            Matrix4x4.Invert(oldViewProj, out var oldViewProjInv);
-            oldViewProjInv = Matrix4x4.Transpose(oldViewProjInv);
+            // an orthographic cascade only translates between updates (rotation/scale stable), so the
+            // shift is identical for every pixel; derive it once from a fixed reference point instead of
+            // doing a per-pixel matrix round-trip.
+            var ndcOld = Vector4.Transform(new Vector4(Vector3.Zero, 1f), oldViewProj);
+            var ndcNew = Vector4.Transform(new Vector4(Vector3.Zero, 1f), newViewProj);
+            ndcOld /= ndcOld.W;
+            ndcNew /= ndcNew.W;
 
-            reprojectEffect.Reproject(context, texture.UAVArraySlices![slice], (uint)texture.Width, (uint)texture.Height, oldViewProjInv, newViewProj, ReprojectFlags.VSM);
+            var ndcDelta = new Vector2(ndcNew.X - ndcOld.X, ndcNew.Y - ndcOld.Y);
+            var uvDelta = new Vector2(ndcDelta.X * 0.5f, -ndcDelta.Y * 0.5f);
+            var texelShift = uvDelta * texture.Width;
+            var depthDelta = ndcNew.Z - ndcOld.Z;
+
+            reprojectEffect.Reproject(context, texture.SRVArraySlices![slice], (uint)texture.Width, (uint)texture.Height, texture.Format, texelShift, depthDelta, ReprojectFlags.VSM);
+            copyEffect.Copy(context, reprojectEffect.Scratch.SRV!, texture.RTVArraySlices![slice], texture.Viewport);
         }
 
         public override void Release()

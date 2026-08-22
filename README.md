@@ -15,7 +15,7 @@ A work in progress Game Engine written in C#, aiming for high performance and cr
 - [Hexa.NET.Utilities](https://github.com/HexaEngine/Hexa.NET.Utilities) A utility library for working with unmanaged memory and more.
 
 ## Build
-- .NET SDK 8.0
+- .NET SDK 9.0+ (some sub-projects target .NET 10.0)
 
 ### Platforms
 | OS       | Supported          |
@@ -38,8 +38,9 @@ A work in progress Game Engine written in C#, aiming for high performance and cr
 ### Audio Backends
 | API          | Supported          |
 | ------------ | ------------------ |
-| OpenAL Soft  | ✅ |
-| XAudio2      | 🚧 |
+| MiniAudio    | ✅ |
+| OpenAL Soft  | 🚧 (legacy, not wired into the engine) |
+| XAudio2      | 🚧 (legacy, not wired into the engine) |
 
 # Features
 
@@ -81,7 +82,7 @@ A work in progress Game Engine written in C#, aiming for high performance and cr
 - ECS-like Scene Architecture with support for data-driven and non-data-driven execution
 - Multi-threaded scene updates (Rendering and Scene ticks run in parallel for maximum performance)
 - Thread-Safe Resource Management via Factories with automatic cleanup
-- Abstraction layer for various Graphics and Audio APIs like D3D11, D3D12, Vulkan, OpenALSoft, and XAudio2 + X3DAudio
+- Abstraction layer for various Graphics and Audio APIs like D3D11, D3D12, Vulkan, and MiniAudio
 - Asynchronous loading for meshes and more
 - Thread-safe caches with lazy disk writing
 
@@ -135,10 +136,12 @@ A work in progress Game Engine written in C#, aiming for high performance and cr
   - Button, TextBox, Image, Grid, StackPanel
 
 ## Audio System
-- Playing Wav files
+- Powered by MiniAudio
+- Playback of common audio formats (via MiniAudio decoders)
 - 3D-Spatial audio processing
 - Listeners
 - Emitters
+- Buffer and scripting support for audio playback
 
 ## Screenshots
 ![image](https://github.com/user-attachments/assets/81428c20-44c6-4fcd-bd4a-b861cecf9851)

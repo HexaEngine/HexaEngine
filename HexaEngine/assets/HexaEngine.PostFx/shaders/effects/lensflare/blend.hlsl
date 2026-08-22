@@ -32,7 +32,7 @@ float4 main(VSOut pin) : SV_Target
 
 #ifdef LENS_STARBURST_TEXTURE
     float2 lensStarTexcoord = mul(lensStarburstMatrix, float3(pin.Tex, 1.0)).xy;
-    lensDirt += lensStarburstTex.SampleLevel(linearClampSampler, pin.Tex, 0) * starburstIntensity;
+    lensDirt += lensStarburstTex.SampleLevel(linearClampSampler, lensStarTexcoord, 0) * starburstIntensity;
 #endif
 
     lensFlare *= lensDirt;

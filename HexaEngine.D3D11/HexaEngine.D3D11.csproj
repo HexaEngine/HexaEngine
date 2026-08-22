@@ -16,8 +16,8 @@
 		<AnalysisLevel>latest</AnalysisLevel>
 
 		<PackageId>HexaEngine.D3D11</PackageId>
-		<AssemblyVersion>1.0.0.1</AssemblyVersion>
-		<PackageVersion>1.0.0.1</PackageVersion>
+		<AssemblyVersion>1.0.0.2</AssemblyVersion>
+		<PackageVersion>1.0.0.2</PackageVersion>
 		<Description>Direct3D 11 rendering module for HexaEngine. Implements rendering backend, resource management and shader integration for D3D11-based platforms.</Description>
 		<PackageTags>HexaEngine;graphics;d3d11;rendering;direct3d;engine;windows</PackageTags>
 		<Authors>Juna Meinhold</Authors>

@@ -3,9 +3,11 @@ SamplerState linearClampSampler : register(s0);
 
 cbuffer Params
 {
-	float4x4 prevViewProjInv;
-	float4x4 viewProj;
-	bool vsm;
+	float2 texelShift; // shift (in texels) of a fixed world point from the old cascade frame to the new one
+	float2 texelSize;
+	float depthDelta; // constant depth offset from the old cascade frame to the new one
+	uint vsm;
+	float2 padding;
 }
 struct VSOut
 {
@@ -13,24 +15,21 @@ struct VSOut
 	float2 Tex : TEXCOORD;
 };
 
-// reprojects a depth buffer.
+// reprojects a cascade slice by a constant per-cascade texel shift + depth offset, valid because
+// an orthographic cascade only translates (never rotates/rescales) relative to the light between updates.
 float4 main(VSOut pin) : SV_TARGET
 {
-	float depth = inputTex.SampleLevel(linearClampSampler, pin.Tex, 0).r;
-
-	float4 ndc = float4(pin.Tex * 2.0f - 1.0f, depth, 1.0f);
-	ndc.y *= -1;
-	float4 wp = mul(ndc, prevViewProjInv);
-
-	float3 positionWS = wp.xyz / wp.w;
-	float4 position = mul(float4(positionWS, 1), viewProj);
-	float depthNew = position.z / position.w;
+	float2 srcUV = pin.Tex - texelShift * texelSize;
+	float2 moments = inputTex.SampleLevel(linearClampSampler, srcUV, 0).rg;
+	float depth = moments.r;
+	float depthNew = depth + depthDelta;
 
 	float4 output = 0;
 	output.r = depthNew;
 	if (vsm)
 	{
-		output.g = depthNew * depthNew;
+		// shift the existing (blurred) moment instead of collapsing variance to zero: E[(d+delta)^2] = E[d^2] + 2*delta*E[d] + delta^2
+		output.g = moments.g + depthDelta * (2.0f * depth + depthDelta);
 	}
 	return output;
 }
